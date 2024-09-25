@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "local-seek-map",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

@@ -5,17 +5,9 @@ import { useEffect, useState } from "react";
 import { DeleteLogo, ReloadIcon, UpdateLogo } from "../../components/Logos";
 import { Link } from "expo-router";
 import BasicButton from "../../components/BasicButton";
+import { days } from "../../schema/generalConst";
 
 export default function DeleteSchedule() {
-  const days = [
-    "Domingo",
-    "Lunes",
-    "Martes",
-    "Miercoles",
-    "Jueves",
-    "Viernes",
-    "Sabado",
-  ];
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);

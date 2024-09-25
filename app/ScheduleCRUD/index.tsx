@@ -1,11 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import BasicSelectable from "../../components/BasicSelectable";
-import {
-  CreateLogo,
-  DeleteLogo,
-  ReadLogo,
-  UpdateLogo,
-} from "../../components/Logos";
+import { CreateLogo, ReadLogo, UpdateLogo } from "../../components/Logos";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { useEffect, useState } from "react";

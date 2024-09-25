@@ -10,13 +10,6 @@ import { useLocalIdStore } from "../../libs/scheduleZustang";
 import { createSchedule } from "../../libs/schedule";
 
 export default function CreateProduct() {
-  // useEffect(() => {
-  //   const response = async () => {
-  //     const schedules = await getAllSchedules()
-  //     console.log(schedules)
-  //   }
-  //   response()
-  // })
   const dayRef = useRef(null);
   const AMHourFromRef = useRef(null);
   const AMHourToRef = useRef(null);
@@ -36,11 +29,6 @@ export default function CreateProduct() {
     const EXHourTo = EXHourToRef.current.getValue();
     const dateFrom = new Date();
 
-    // if(!name || !location ) {
-    //   Alert.alert("Por favor rellenar los campos obligatorios")
-    //   return
-    // }
-
     const newSchedule: LocalHours = {
       localId,
       dayNumber,
@@ -52,7 +40,7 @@ export default function CreateProduct() {
       EXHourTo,
       dateFrom,
     };
-    console.log(createSchedule(newSchedule));
+    createSchedule(newSchedule);
   };
   return (
     <View className="flex justify-center items-center bg-white h-full w-full">
