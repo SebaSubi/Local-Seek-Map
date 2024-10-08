@@ -8,7 +8,7 @@ interface HeaderProps {
 export default function Header({ title, props }: HeaderProps) {
   return (
     <View className="flex items-center justify-end bg-[#324e64] rounded-bl-3xl rounded-br-3xl h-24 p-2">
-      <Text className="text-white font-bold" {...props}>
+      <Text className="text-white font-bold text-lg" {...props}>
         {title}
       </Text>
     </View>

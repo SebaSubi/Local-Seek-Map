@@ -1,11 +1,14 @@
 import { Alert } from "react-native";
 import { Local } from "../schema/GeneralSchema";
+import { Platform } from 'react-native';
+
+const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
 export async function getLocals() {
-  const url = "http://localhost:3000/store";
+  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
   try {
-    const rawData = await fetch(url);
+    const rawData = await fetch(API_URL);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Stores");
     }
@@ -18,7 +21,7 @@ export async function getLocals() {
 
 export async function createLocal(local: Local) {
   try {
-    const response = await fetch("http://localhost:3000/store", {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +43,7 @@ export async function createLocal(local: Local) {
 }
 
 export async function getLocal(id: string) {
-  const url = `http://localhost:3000/store/${id}`;
+  const url = `${API_URL}/${id}`;
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {
