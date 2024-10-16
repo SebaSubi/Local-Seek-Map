@@ -5,5 +5,6 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "import/no-unresolved": "off",
+    "react/display-name": "off",
   },
 };

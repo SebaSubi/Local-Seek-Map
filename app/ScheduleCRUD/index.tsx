@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import BasicSelectable from "../../components/BasicSelectable";
 import { CreateLogo, ReadLogo, UpdateLogo } from "../../components/Logos";
 import { Stack } from "expo-router";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { getLocals } from "../../libs/local";
 import { useLocalIdStore } from "../../libs/scheduleZustang";
 import { Local } from "../../schema/GeneralSchema";
+import BasicWarning from "../../components/BasicWarning";
 
 export default function ProductCrud() {
   const [screen, setScreen] = useState(false);
@@ -63,15 +64,21 @@ export default function ProductCrud() {
         </>
       ) : (
         <>
-          {locals.map((local) => (
-            <Pressable
-              key={local.id}
-              className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-              onPress={() => handlePress(local.id)}
-            >
-              <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
-            </Pressable>
-          ))}
+          {locals === undefined ? (
+            <ActivityIndicator size="large" />
+          ) : locals.length === 0 ? (
+            <Text>No hay locales disponibles</Text>
+          ) : (
+            locals.map((local) => (
+              <Pressable
+                key={local.id}
+                className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
+                onPress={() => handlePress(local.id)}
+              >
+                <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
+              </Pressable>
+            ))
+          )}
         </>
       )}
     </View>

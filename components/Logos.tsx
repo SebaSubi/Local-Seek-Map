@@ -2,7 +2,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export const CreateLogo = () => {
   return <Entypo name="plus" size={24} color="black" />;
@@ -33,13 +33,17 @@ export const LocalIcon = () => {
 };
 
 export const ScheduleIcon = () => {
-  return  <MaterialIcons name="schedule" size={24} color="black" />
-}
+  return <MaterialIcons name="schedule" size={24} color="black" />;
+};
 
 export const ServiceIcon = () => {
-  return <MaterialCommunityIcons name="soccer" size={24} color="black" />
-}
+  return <MaterialCommunityIcons name="soccer" size={24} color="black" />;
+};
 
 export const ReloadIcon = () => {
-  return <AntDesign name="reload1" size={24} color="black" />
-}
+  return <AntDesign name="reload1" size={24} color="black" />;
+};
+
+export const WarningIcon = () => {
+  return <AntDesign name="warning" size={35} color="black" />;
+};
