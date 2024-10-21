@@ -54,7 +54,7 @@ export async function deleteSchedule(id: string) {
       headers: {
         "content-Type": "application/json",
       },
-      body: JSON.stringify({ dateTo: new Date() }),
+      body: JSON.stringify({ dateTo: new Date() }), // I should delete this
     });
 
     if (!response.ok) {

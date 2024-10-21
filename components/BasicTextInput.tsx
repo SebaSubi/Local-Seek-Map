@@ -16,6 +16,7 @@ const BasicTextInput = forwardRef(
       textStyle,
       containerStyle,
       defaultValue = " ",
+      viewRef,
     }: {
       placeholder: string;
       inputType: "text" | "number";
@@ -23,6 +24,7 @@ const BasicTextInput = forwardRef(
       textStyle?: string;
       containerStyle?: string;
       defaultValue?: string;
+      viewRef?: any;
     },
     ref, // This ref will come from the parent component
   ) => {
@@ -49,7 +51,7 @@ const BasicTextInput = forwardRef(
     }
 
     return (
-      <View className={`w-3/4 ${containerStyle}`}>
+      <View ref={viewRef} className={`w-3/4 ${containerStyle}`}>
         {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
         <TextInput
           className="w-full bg-[#e1e8e8] h-12 rounded-2xl text-center opacity-15"

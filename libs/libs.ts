@@ -6,15 +6,15 @@ export function scheduleInputValidation(
   if (
     schedule.AMHourFrom > schedule.AMHourTo ||
     schedule.PMHourFrom > schedule.PMHourTo ||
-    schedule.PMHourFrom < schedule.PMHourTo
+    schedule.PMHourFrom < schedule.AMHourTo
   )
     return "La hora inicial no puede ser mayor a la hora final";
 
-  if (
-    !schedule.AMHourFrom.includes(":") ||
-    !schedule.AMHourTo.includes(":") ||
-    !schedule.PMHourFrom.includes(":") ||
-    !schedule.PMHourTo.includes(":")
-  )
-    return "Las horas deben tener el siguiente formato: ";
+  if (schedule.dayNumber === null || schedule.dayNumber === 0)
+    return "El día no puede estar vacío o ser 0";
+
+  if (schedule.AMHourFrom === null || schedule.AMHourTo === null)
+    return "Debe por lo menos tener un horario de mañana";
+
+  return "Correct";
 }

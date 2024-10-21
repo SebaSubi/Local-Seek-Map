@@ -3,6 +3,7 @@ import { WarningIcon } from "./Logos";
 
 export default function BasicWarning({
   text,
+  cancelButton = true,
   buttonRight,
   buttonLeft,
   onPressRight,
@@ -10,7 +11,8 @@ export default function BasicWarning({
   style,
 }: {
   text: string;
-  buttonRight: string;
+  cancelButton: boolean;
+  buttonRight?: string;
   buttonLeft: string;
   style?: string;
   onPressRight?: () => void;
@@ -24,28 +26,45 @@ export default function BasicWarning({
         <WarningIcon />
       </View>
       <Text className="ml-5 mr-5 text-lg text-center">{text}</Text>
-      <Pressable
-        style={{
-          borderTopWidth: 1,
-          borderRightWidth: 1,
-          borderTopColor: "white",
-          borderRightColor: "white",
-        }}
-        className="flex flex-col items-center justify-center absolute bottom-0 left-0 rounded-sm w-1/2 h-12"
-        onPress={onPressLeft}
-      >
-        <Text>{buttonLeft}</Text>
-      </Pressable>
-      <Pressable
-        style={{
-          borderTopWidth: 1,
-          borderTopColor: "white",
-        }}
-        className="flex flex-col items-center justify-center absolute bottom-0 right-0 rounded-sm w-1/2 h-12"
-        onPress={onPressRight}
-      >
-        <Text className="text-red-500">{buttonRight}</Text>
-      </Pressable>
+      {cancelButton ? (
+        <Pressable
+          style={{
+            borderTopWidth: 1,
+            borderRightWidth: 1,
+            borderTopColor: "white",
+            borderRightColor: "white",
+          }}
+          className="flex flex-col items-center justify-center absolute bottom-0 rounded-sm w-full h-12"
+          onPress={onPressLeft}
+        >
+          <Text>Ok</Text>
+        </Pressable>
+      ) : (
+        <>
+          <Pressable
+            style={{
+              borderTopWidth: 1,
+              borderRightWidth: 1,
+              borderTopColor: "white",
+              borderRightColor: "white",
+            }}
+            className="flex flex-col items-center justify-center absolute bottom-0 left-0 rounded-sm w-1/2 h-12"
+            onPress={onPressLeft}
+          >
+            <Text>{buttonLeft}</Text>
+          </Pressable>
+          <Pressable
+            style={{
+              borderTopWidth: 1,
+              borderTopColor: "white",
+            }}
+            className="flex flex-col items-center justify-center absolute bottom-0 right-0 rounded-sm w-1/2 h-12"
+            onPress={onPressRight}
+          >
+            <Text className="text-red-500">{buttonRight}</Text>
+          </Pressable>
+        </>
+      )}
     </View>
   );
 }

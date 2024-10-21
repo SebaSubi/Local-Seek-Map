@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import BasicSelectable from "../components/BasicSelectable";
 import {
   LocalIcon,
@@ -6,6 +6,7 @@ import {
   ScheduleIcon,
   ServiceIcon,
 } from "../components/Logos";
+import { Link } from "expo-router";
 
 export default function Page() {
   return (

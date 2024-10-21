@@ -13,15 +13,21 @@ import {
   updateSchedule,
 } from "../../libs/schedule";
 import BasicWarning from "../../components/BasicWarning";
+import TimeSelect from "../../components/TimeSelect";
+import { scheduleInputValidation } from "../../libs/libs";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [schedules, setSchedules] = useState<LocalHours[]>([]);
-  const localId = useLocalIdStore((state) => state.localId); //Make sure this works
+  const [error, setError] = useState("");
+
+  const localId = useLocalIdStore((state) => state.localId);
   const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
   const scheduleId = useLocalIdStore((state) => state.scheduleId);
 
   const dayNumberRef = useRef<any>(null);
+
+  // Create refs for each TimeSelect component
   const AMHourFromRef = useRef<any>(null);
   const AMHourToRef = useRef<any>(null);
   const PMHourFromRef = useRef<any>(null);
@@ -49,26 +55,44 @@ export default function CreateProduct() {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
           setScheduleId(schedule.id);
-          console.log("Schedule Id: " + scheduleId);
           localWarning = true;
         }
       });
     }
-    if (!localWarning) {
-      handleSubmit();
-    } else {
+    const localSchedule = createNewSchedule();
+    if (localWarning) {
       return;
+    }
+    console.log(scheduleInputValidation(localSchedule));
+    if (scheduleInputValidation(localSchedule) !== "Correct") {
+      setError(scheduleInputValidation(localSchedule) as string);
+    } else {
+      handleSubmit();
     }
   };
 
   function createNewSchedule() {
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
-    const AMHourFrom = AMHourFromRef.current?.getValue();
-    const AMHourTo = AMHourToRef.current?.getValue();
-    const PMHourFrom = PMHourFromRef.current?.getValue();
-    const PMHourTo = PMHourToRef.current?.getValue();
-    const EXHourFrom = EXHourFromRef.current?.getValue();
-    const EXHourTo = EXHourToRef.current?.getValue();
+
+    // Use refs to access selected times from TimeSelect components
+    const AMHourFrom = AMHourFromRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, { hour12: false });
+    const AMHourTo = AMHourToRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, { hour12: false });
+    const PMHourFrom = PMHourFromRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, { hour12: false });
+    const PMHourTo = PMHourToRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, { hour12: false });
+    const EXHourFrom = EXHourFromRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, { hour12: false });
+    const EXHourTo = EXHourToRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, { hour12: false });
 
     const newSchedule: LocalHours = {
       localId,
@@ -81,6 +105,8 @@ export default function CreateProduct() {
       EXHourTo,
       dateFrom: new Date(),
     };
+    console.log(newSchedule);
+
     return newSchedule;
   }
 
@@ -110,50 +136,14 @@ export default function CreateProduct() {
           placeholder="Numero de Dia"
           title="Dia de la semana (1 = Domingo):"
           textStyle="mt-4"
-          ref={dayNumberRef} // Attach the ref
+          ref={dayNumberRef}
         />
-        <BasicTextInput
-          inputType="text"
-          placeholder="Apertura Mañana"
-          title="Horario de Apertura de Mañana:"
-          textStyle="mt-4"
-          ref={AMHourFromRef} // Attach the ref
-        />
-        <BasicTextInput
-          inputType="text"
-          placeholder="Hora Cerrada Mañana"
-          title="Horario de Cerrado Mañana:"
-          textStyle="mt-4"
-          ref={AMHourToRef} // Attach the ref
-        />
-        <BasicTextInput
-          inputType="text"
-          placeholder="Apertura Tarde"
-          title="Apertura Tarde:"
-          textStyle="mt-4"
-          ref={PMHourFromRef} // Attach the ref
-        />
-        <BasicTextInput
-          inputType="text"
-          placeholder="Cerrada Tarde"
-          title="Horario de Cerrada Tarde:"
-          textStyle="mt-4"
-          ref={PMHourToRef} // Attach the ref
-        />
-        <BasicTextInput
-          inputType="number"
-          placeholder="Apertura Noche"
-          title="Horario Apertura Noche:"
-          textStyle="mt-4"
-          ref={EXHourFromRef} // Attach the ref
-        />
-        <BasicTextInput
-          inputType="text"
-          placeholder="Cerrada Noche"
-          title="Horario de Cerrada Noche:"
-          textStyle="mt-4"
-          ref={EXHourToRef} // Attach the ref
-        />
+        <TimeSelect text="Hora de Apertura Mañana:" ref={AMHourFromRef} />
+        <TimeSelect text="Hora de Cerrada Mañana:" ref={AMHourToRef} />
+        <TimeSelect text="Hora de Apertura Tarde:" ref={PMHourFromRef} />
+        <TimeSelect text="Hora de Cerrada Tarde:" ref={PMHourToRef} />
+        <TimeSelect text="Hora de Apertura Noche:" ref={EXHourFromRef} />
+        <TimeSelect text="Hora de Cerrada Noche:" ref={EXHourToRef} />
         <View className="flex flex-col justify-center items-center w-3/4 mt-3">
           <BasicButton
             logo={<CreateLogo />}
@@ -163,15 +153,29 @@ export default function CreateProduct() {
           />
         </View>
       </View>
+
       {warning && (
         <BasicWarning
           text="El dia que indicaste ya existe dentro de este horario, desea actualizarlo con los nuevo datos?"
+          cancelButton={false}
           buttonLeft="Cancelar"
           buttonRight="Reemplazar"
           onPressRight={() => {
             handleUpdate();
           }}
           onPressLeft={() => setWarning(false)}
+          style="absolute"
+        />
+      )}
+      {error && (
+        <BasicWarning
+          text={error}
+          cancelButton={true}
+          buttonLeft="Ok"
+          onPressLeft={() => {
+            setError("");
+            setWarning(false);
+          }}
           style="absolute"
         />
       )}
