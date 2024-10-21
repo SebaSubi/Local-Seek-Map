@@ -4,17 +4,19 @@ import React from "react";
 export default function BasicLine({
   color = "000000",
   thickness = 1,
-  width = "100%",
+  width = 350,
   margin = 10,
-}: {
-  color: string;
-  thickness: number;
-  width: number | string;
-  margin: number | string;
 }) {
   return (
-    <View
-      className={`h-[${thickness}px] bg-[${color}] w-[${width}] mv-[${margin}]`}
-    ></View>
+    <>
+      <View
+        style={{
+          height: thickness,
+          backgroundColor: color,
+          width: width,
+          marginVertical: margin,
+        }}
+      ></View>
+    </>
   );
 }

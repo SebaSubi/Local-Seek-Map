@@ -2,15 +2,17 @@ import { View, Text, Image } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { colors } from "../../../constants/colors";
 import { EmptyHeartIcon } from "../../../components/Logos";
+import BasicLine from "../../../components/BasicLine";
+import LocalInformation from "../../../components/LocalInformation";
 
 export default function LocalPage() {
   const { name, image } = useLocalSearchParams();
 
   return (
     <View className="flex justify-center">
-      <View className="flex flex-row justify-between">
+      <View className="flex flex-row justify-between items-center">
         <Text className="text-5xl font-bold p-2 pl-5">{name}</Text>
-        <View className="pr-5 p-2">
+        <View className="pr-6 p-2">
           <EmptyHeartIcon color={colors.primary.orange} size={36} />
         </View>
       </View>
@@ -18,7 +20,7 @@ export default function LocalPage() {
         <View
           style={{
             borderRadius: 20,
-            backgroundColor: colors.primary.bone,
+            backgroundColor: colors.primary.lightGray,
           }}
         >
           <Image
@@ -34,7 +36,13 @@ export default function LocalPage() {
             }}
           />
         </View>
-        <View className="flex flex-row"></View>
+        <View className="flex flex-row justify-evenly w-full m-1 mt-2">
+          <Text className="text-xl font-bold">Productos</Text>
+          <Text className="text-xl font-bold">Horarios</Text>
+          <Text className="text-xl font-bold">Información</Text>
+        </View>
+        <BasicLine color={colors.primary.blue} width={350} />
+        <LocalInformation />
       </View>
     </View>
   );

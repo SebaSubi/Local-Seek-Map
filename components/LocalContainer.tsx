@@ -26,7 +26,7 @@ export default function LocalContainer({ local }: LocalContainerProps) {
       >
         <View className="flex flex-row items-center h-28 w-full bg-slate-300 rounded-2xl border">
           <View
-            className={`h-5/6 w-24 bg-[${colors.primary.bone}] rounded-lg ml-2 flex items-center justify-center`}
+            className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
           >
             <Image
               style={{
