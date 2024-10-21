@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, Dimensions, Alert, Modal, Pressable } from 'react-native';
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
-import { getProducts, deleteProduct } from "../../libs/product";
+import { getProducts } from "../../libs/product";
 import { getProductTypes } from "../../libs/productType";
 import BasicSearchButton from "../../components/BasicSearchBar";
 import { Product } from "../../schema/GeneralSchema";
 
-const DeleteProductScreen = () => {
+const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,27 +32,22 @@ const DeleteProductScreen = () => {
   };
 
   useEffect(() => {
-    filterProducts();
-  }, [searchText, products]);
-
-  const filterProducts = () => {
     if (searchText.trim()) {
       const results = products.filter(product => {
         const category = categories.find(cat => cat.id === product.productTypeId);
-        const categoryName = category ? category.name.toLowerCase() : "";
-
+        const categoryName = category ? category.name : ""; 
         return (
           product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          categoryName.includes(searchText.toLowerCase())
+          categoryName.toLowerCase().includes(searchText.toLowerCase()) 
         );
       });
       setFilteredProducts(results);
     } else {
       setFilteredProducts(products);
     }
-  };
+  }, [searchText, products, categories]); 
 
-  async function fetchProducts() {
+  const fetchProducts = async () => {
     try {
       const response = await getProducts();
       const fetchedProducts = response.activeProducts;
@@ -69,25 +64,11 @@ const DeleteProductScreen = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleProductPress = (product: Product) => {
     setSelectedProduct(product);
     setIsModalVisible(true);
-  };
-
-  const handleDeleteProduct = async () => {
-    if (!selectedProduct) return;
-
-    try {
-      await deleteProduct(selectedProduct.id); 
-      Alert.alert("Éxito", "Producto eliminado exitosamente");
-      setIsModalVisible(false);
-      fetchProducts(); 
-    } catch (error) {
-      console.log("Error al eliminar producto", error);
-      Alert.alert("Error", "No se pudo eliminar el producto");
-    }
   };
 
   const ProductItem = ({ name, imgURL, category, onPress }: { name: string; imgURL: string; category: string; onPress: () => void }) => {
@@ -105,7 +86,7 @@ const DeleteProductScreen = () => {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          header: () => <Header title="Eliminar Producto" />,
+          header: () => <Header title="Consultar Producto" />,
         }}
       />
       <View style={styles.searchButtonContainer}>
@@ -145,15 +126,23 @@ const DeleteProductScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>¿Estás seguro de que quieres borrar el producto: {selectedProduct.name}?</Text>
-              <View style={styles.buttonContainer}>
-                <Pressable style={styles.customButton} onPress={handleDeleteProduct}>
-                  <Text style={styles.customButtonText}>Eliminar</Text>
-                </Pressable>
-                <Pressable style={styles.customButton} onPress={() => setIsModalVisible(false)}>
-                  <Text style={styles.customButtonText}>Cancelar</Text>
-                </Pressable>
+              <Image source={{ uri: selectedProduct.imgURL || 'https://via.placeholder.com/150' }} style={styles.modalImage} />
+              <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
+              
+              <View style={styles.modalInfoContainer}>
+                <Text style={styles.modalInfoLabel}>Descripción:</Text>
+                <Text style={styles.modalInfoText}>{selectedProduct.description || 'No disponible'}</Text>
+
+                <Text style={styles.modalInfoLabel}>Marca:</Text>
+                <Text style={styles.modalInfoText}>{selectedProduct.brand || 'No disponible'}</Text>
+
+                <Text style={styles.modalInfoLabel}>Medida:</Text>
+                <Text style={styles.modalInfoText}>{selectedProduct.mesurement || 'No disponible'}</Text>
               </View>
+
+              <Pressable style={styles.customButton} onPress={() => setIsModalVisible(false)}>
+                <Text style={styles.customButtonText}>Cerrar</Text>
+              </Pressable>
             </View>
           </View>
         </Modal>
@@ -173,6 +162,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  productCategory: {
+    textAlign: 'center',
+    color: '#324e64'
   },
   listContent: {
     justifyContent: 'center',
@@ -197,25 +190,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  productCategory: {
-    textAlign: 'center',
-    color: '#324e64'
-  },
   loadingText: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 18,
-  },
-  buttonContainer: {
-    width: '100%',
-    borderRadius: 30,
   },
   customButton: {
     backgroundColor: '#e1e8e8',
     padding: 10,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 10,
   },
   customButtonText: {
     color: '#324e64',
@@ -235,12 +220,33 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
+  modalInfoContainer: {
+    width: '100%',
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  modalInfoLabel: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  modalInfoText: {
+    marginBottom: 15,
+    lineHeight: 18,
+  },
+  modalImage: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 10,
   },
 });
 
-export default DeleteProductScreen;
+export default ReadProductScreen;
