@@ -2,6 +2,7 @@ import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { LocalDisplay } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
+import { colors } from "../constants/colors";
 
 type LocalContainerProps = {
   local: LocalDisplay;
@@ -24,7 +25,9 @@ export default function LocalContainer({ local }: LocalContainerProps) {
         key={local.id}
       >
         <View className="flex flex-row items-center h-28 w-full bg-slate-300 rounded-2xl border">
-          <View className="h-5/6 w-24 bg-slate-800 rounded-lg ml-2 flex items-center justify-center">
+          <View
+            className={`h-5/6 w-24 bg-[${colors.primary.bone}] rounded-lg ml-2 flex items-center justify-center`}
+          >
             <Image
               style={{
                 height: "85%",
