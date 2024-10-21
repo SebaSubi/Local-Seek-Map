@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
-import { Local } from "../../schema/GeneralSchema";
-import { getLocals } from "../../libs/local";
+import { LocalDisplay } from "../../schema/GeneralSchema";
+import { getDisplayLocals } from "../../libs/local";
 import LocalContainer from "../../components/LocalContainer";
 
 export default function ReadLocal() {
-  const [locals, setLocals] = useState<Local[]>([]);
+  const [locals, setLocals] = useState<LocalDisplay[]>([]);
 
   async function fetchAndSetLocals() {
-    const locals = await getLocals();
+    const locals = await getDisplayLocals();
     setLocals(locals);
   }
 

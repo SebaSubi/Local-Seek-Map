@@ -62,6 +62,20 @@ export interface Local {
   viewLocal?: ViewLocal[];
 }
 
+export interface LocalDisplay {
+  id: string;
+  name: string;
+  location: string;
+  whatsapp: number | null;
+  instagram: string | null;
+  facebook: string | null;
+  webpage: string | null;
+  image: string | null;
+  dateFrom: Date;
+  dateTo: Date | null;
+  localType: string;
+}
+
 export interface LocalProduct {
   id: string;
   local: Local;

@@ -19,6 +19,21 @@ export async function getLocals() {
   }
 }
 
+export async function getDisplayLocals() {
+  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+
+  try {
+    const rawData = await fetch(`${API_URL}/display`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Stores");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting stores", error);
+  }
+}
+
 export async function createLocal(local: Local) {
   try {
     const response = await fetch(API_URL, {
