@@ -56,5 +56,19 @@ export async function getLocal(id: string) {
   }
 }
 
+export async function getProductsOfALocal(id: string) {
+  const url = `${API_URL}/products/${id}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Stores");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting store products", error);
+  }
+}
+
 //esto es una prueba de como escribir en este teclado jeje, esta bueno porque no tiene tanto recorrido de los dedos y no es tan livianito cuando apretas as teclas.
 //banco banco banco banco banco banco banco banco banco banco banco banco. No me acostumboro al cmd de apple, es de gays.
