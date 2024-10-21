@@ -13,7 +13,6 @@ export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalHours>();
   const [loaded, setLoaded] = useState(false);
 
-  const dayRef = useRef(null);
   const AMHourFromRef = useRef(null);
   const AMHourToRef = useRef(null);
   const PMHourFromRef = useRef(null);
@@ -26,16 +25,15 @@ export default function UpdateSchedule() {
   useEffect(() => {
     const fetchData = async () => {
       const schedules = await getScheduleByScheduleId(scheduleId);
-      setLoaded(true);
       const filteredSchedules = schedules.filter(
         (schedule) => !schedule.dateTo,
       );
-      setSchedule(filteredSchedules);
+      setSchedule(filteredSchedules[0]);
+      setLoaded(true);
     };
     fetchData();
-  }, []);
+  }, [scheduleId]);
 
-  console.log(schedule);
   const handleSubmit = async () => {
     const dayNumber = schedule.dayNumber;
     const AMHourFrom = AMHourFromRef.current.getValue();
@@ -62,8 +60,10 @@ export default function UpdateSchedule() {
       EXHourTo,
       dateFrom,
     };
+    if (JSON.stringify(schedule) === JSON.stringify(newSchedule)) return;
     updateSchedule(scheduleId, newSchedule);
   };
+
   return loaded ? (
     <View className="flex justify-center items-center bg-white h-full w-full">
       <Stack.Screen
@@ -75,7 +75,8 @@ export default function UpdateSchedule() {
       <BasicTextInput
         inputType="text"
         placeholder="Apertura Mañana"
-        submitText={false}
+        // submitText={false}
+        defaultValue={schedule.AMHourFrom}
         title="Horario de Apertura de Mañana:"
         textStyle="mt-4"
         ref={AMHourFromRef}
@@ -84,7 +85,8 @@ export default function UpdateSchedule() {
       <BasicTextInput
         inputType="text"
         placeholder="Hora Cerrada Mañana"
-        submitText={false}
+        // submitText={false}
+        defaultValue={schedule.AMHourTo}
         title="Horario de Cerrado Mañana:"
         textStyle="mt-4"
         ref={AMHourToRef}
@@ -93,7 +95,8 @@ export default function UpdateSchedule() {
       <BasicTextInput
         inputType="text"
         placeholder="Apertura Tarde"
-        submitText={false}
+        // submitText={false}
+        defaultValue={schedule.PMHourFrom}
         title="Apertura Tarde:"
         textStyle="mt-4"
         ref={PMHourFromRef}
@@ -102,7 +105,8 @@ export default function UpdateSchedule() {
       <BasicTextInput
         inputType="text"
         placeholder="Cerrada Tarde"
-        submitText={false}
+        // submitText={false}
+        defaultValue={schedule.PMHourTo}
         title="Horario de Cerrada Tarde:"
         textStyle="mt-4"
         ref={PMHourToRef}
@@ -111,7 +115,8 @@ export default function UpdateSchedule() {
       <BasicTextInput
         inputType="number"
         placeholder="Apertura Noche"
-        submitText={false}
+        // submitText={false}
+        defaultValue={schedule.EXHourFrom ? schedule.EXHourFrom : ""}
         title="Horario Apertura Noche:"
         textStyle="mt-4"
         ref={EXHourFromRef}
@@ -120,7 +125,8 @@ export default function UpdateSchedule() {
       <BasicTextInput
         inputType="text"
         placeholder="Cerrada Noche"
-        submitText={false}
+        // submitText={false}
+        defaultValue={schedule.EXHourTo ? schedule.EXHourTo : ""}
         title="Horario de Cerrada Noche:"
         textStyle="mt-4"
         ref={EXHourToRef}

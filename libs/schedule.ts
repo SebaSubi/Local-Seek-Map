@@ -54,7 +54,7 @@ export async function deleteSchedule(id: string) {
       headers: {
         "content-Type": "application/json",
       },
-      body: JSON.stringify({ dateTo: new Date() }),
+      body: JSON.stringify({ dateTo: new Date() }), // I should delete this
     });
 
     if (!response.ok) {
@@ -77,8 +77,10 @@ export async function updateSchedule(id: string, schedule: LocalHours) {
     });
     if (!response.ok) {
       console.log("Error updating schedule");
+      // console.log(response);
     } else {
       const json = response.json();
+      console.log("Updated Schedule");
       return json;
     }
   } catch (error) {}

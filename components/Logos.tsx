@@ -36,6 +36,8 @@ export const LocalIcon = () => {
 export const ScheduleIcon = () => {
   return <MaterialIcons name="schedule" size={24} color="black" />;
 };
+  return <MaterialIcons name="schedule" size={24} color="black" />;
+};
 
 export const ServiceIcon = () => {
   return <MaterialCommunityIcons name="soccer" size={24} color="black" />;
@@ -71,4 +73,9 @@ export const WebIcon = ({ color = "black", size = 24 }) => {
 
 export const LocationIcon = ({ color = "black", size = 24 }) => {
   return <FontAwesome6 name="location-dot" size={size} color={color} />;
+};
+
+
+export const WarningIcon = () => {
+  return <AntDesign name="warning" size={35} color="black" />;
 };
