@@ -1,35 +1,37 @@
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import BasicTextInput from "../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { CreateLogo } from "../../components/Logos";
 import BasicButton from "../../components/BasicButton";
-import { getLocals } from "../../libs/local";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { createProduct } from "../../libs/product";
+import { Product } from "../../schema/GeneralSchema";
+import CategorySelectButton from "../../components/CategorySelectButton";
 
 export default function CreateProduct() {
-  const nameRef = useRef(null);
-  const brandRef = useRef(null);
-  const typeRef = useRef(null);
-  const priceRef = useRef(null);
-  const descriptionRef = useRef(null);
+  const [name, setName] = useState('');
+  const [brand, setBrand] = useState('');
+  const [mesurement, setMesurement] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handleSubmit = async () => {
-    const name = nameRef.current.getValue();
-    const brand = brandRef.current.getValue();
-    const type = typeRef.current.getValue();
-    const price = priceRef.current.getValue();
-    const description = descriptionRef.current.getValue();
+    if (!name || !brand || !mesurement || !description) {
+      Alert.alert("Error", "Por favor complete todos los campos");
+      return;
+    }
 
-    const data = {
+    const newProduct: Product = {
       name,
       brand,
-      type,
-      price,
+      mesurement,
       description,
+      productTypeId: selectedCategory,
     };
 
-    const response = await getLocals();
+    const response = await createProduct(newProduct);
+    console.log(response);
   };
 
   return (
@@ -45,7 +47,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Nombre de Producto: "
         textStyle="mt-2"
-        ref={nameRef}
+        value={name} 
+        onChangeText={setName} 
       />
 
       <BasicTextInput
@@ -54,25 +57,25 @@ export default function CreateProduct() {
         submitText={false}
         title="Marca del Producto: "
         textStyle="mt-4"
-        ref={brandRef}
+        value={brand} 
+        onChangeText={setBrand} 
       />
 
       <BasicTextInput
         inputType="text"
-        placeholder="Tipo"
+        placeholder="Cantidad"
         submitText={false}
-        title="Categoria de Producto"
+        title="Cantidad del Producto: "
         textStyle="mt-4"
-        ref={typeRef}
+        value={mesurement} 
+        onChangeText={setMesurement} 
       />
 
-      <BasicTextInput
-        inputType="number"
-        placeholder="Precio"
-        submitText={false}
-        title="Precio de Producto: "
-        textStyle="mt-4"
-        ref={priceRef}
+      <CategorySelectButton
+        title="Categoria del Producto:"
+        placeholder="Seleccione una categoría"
+        onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
+        selectedCategory={selectedCategory}
       />
 
       <BasicTextInput
@@ -81,18 +84,13 @@ export default function CreateProduct() {
         submitText={false}
         title="Descripcion de Producto: "
         textStyle="mt-4"
-        ref={descriptionRef}
+        value={description} 
+        onChangeText={setDescription} 
       />
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton
-          logo={<CreateLogo />}
-          text="Crear Producto"
-          style="mt-3"
-          onPress={handleSubmit}
-        />
+        <BasicButton logo={<CreateLogo />} text="Crear Producto" style="mt-3" onPress={handleSubmit} />
       </View>
     </View>
   );
-} //For the Brand and for the Tupe, we will have to make them select from ones we give them, or else the database will get filled with garbage. We might have to make a new component for that.
-// Also add that you can change the imput type to number for the price. And it only accepts numbers
+}

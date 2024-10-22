@@ -1,9 +1,13 @@
 import { Alert } from "react-native";
 import { LocalHours } from "../schema/GeneralSchema";
+import { Platform } from 'react-native';
 
 export async function createSchedule(schedule: LocalHours) {
+  const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/schedule" : "http://localhost:3000/schedule";
+
+
   try {
-    const response = await fetch("http://localhost:3000/schedule", {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,7 +29,7 @@ export async function createSchedule(schedule: LocalHours) {
 
 export async function getScheduleByScheduleId(id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/schedule/${id}`);
+    const response = await fetch(`API_URL/${id}`);
     if (!response.ok) {
       console.log("Error fetching the Schedules");
     } else {
@@ -37,7 +41,7 @@ export async function getScheduleByScheduleId(id: string) {
 
 export async function getSchedule(id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/schedule/local/${id}`);
+    const response = await fetch(`API_URL/local/${id}`);
     if (!response.ok) {
       console.log("Error fetching schedule");
     } else {
@@ -49,7 +53,7 @@ export async function getSchedule(id: string) {
 
 export async function deleteSchedule(id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/schedule/${id}`, {
+    const response = await fetch(`API_URL/${id}`, {
       method: "PATCH",
       headers: {
         "content-Type": "application/json",
@@ -68,7 +72,7 @@ export async function deleteSchedule(id: string) {
 
 export async function updateSchedule(id: string, schedule: LocalHours) {
   try {
-    const response = await fetch(`http://localhost:3000/schedule/${id}`, {
+    const response = await fetch(`API_URL/${id}`, {
       method: "PUT",
       headers: {
         "content-Type": "application/json",

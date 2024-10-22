@@ -124,25 +124,28 @@ export interface ViewLocal {
 }
 
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
-  updatedAt: Date;
+  updatedAt?: Date;
   brand: string;
   mesurement: string;
-  imgURL: string;
+  imgURL?: string;
   price?: number;
   description: string;
-  productFavorites: ProductFavorites[];
-  local: LocalProduct[];
-  type: ProductType;
-  productDiscountDeal: ProductDiscountDeal[];
-  productTypeId: string;
+  dateFrom?: Date;
+  dateTo?: Date;
+  productFavorites?: ProductFavorites[];
+  local?: LocalProduct[];
+  type?: ProductType;
+  productDiscountDeal?: ProductDiscountDeal[];
+  productTypeId?: string;
 }
 
 export interface ProductType {
   id: string;
   name: string;
   product: Product[];
+  dateTo?: Date;
 }
 
 export interface ProductDiscountDeal {
