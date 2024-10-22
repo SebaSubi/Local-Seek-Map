@@ -2,7 +2,8 @@ import { Product } from "../schema/GeneralSchema";
 import { Alert } from "react-native";
 import { Platform } from 'react-native';
 
-const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/product" : "http://localhost:3000/product";
+// const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/product" : "http://localhost:3000/product";
+const API_URL = Platform.OS === 'android' ? "http://192.168.0.135:3000/product": "";
 
 export async function getProducts() {
   try {

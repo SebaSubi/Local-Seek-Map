@@ -200,11 +200,13 @@ const ReadProductScreen = () => {
                 placeholder="Medida"
               />
 
-              <CategorySelectButton
-                placeholder="Seleccione una categoría"
-                onSelectCategory={(categoryId: string) => setSelectedCategory(categoryId)}
-                selectedCategory={selectedCategory}
-              />
+              <View style={{ marginBottom: 20, marginLeft: 60, marginTop: 10, width: 240, justifyContent: 'center' }}>
+                <CategorySelectButton
+                  placeholder="Seleccione una categoría"
+                  onSelectCategory={(categoryId: string) => setSelectedCategory(categoryId)}
+                  selectedCategory={selectedCategory}
+                />
+              </View>
 
               <View style={styles.buttonContainer}>
                 <Pressable style={styles.customButton} onPress={handleSaveChanges}>

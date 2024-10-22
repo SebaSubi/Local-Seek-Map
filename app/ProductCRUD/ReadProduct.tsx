@@ -101,7 +101,7 @@ const ReadProductScreen = () => {
         <FlatList
           data={filteredProducts}
           renderItem={({ item }) => {
-            const category = categories.find(cat => cat.id === item.productTypeId); 
+            const category = categories.find(cat => cat.id === item.productTypeId);
             return (
               <ProductItem 
                 name={item.name} 
@@ -113,7 +113,7 @@ const ReadProductScreen = () => {
           }}
           keyExtractor={item => item.id.toString()}
           numColumns={3}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[styles.listContent, { flexGrow: 1 }]} // Aquí
         />
       )}
 
@@ -158,10 +158,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     backgroundColor: '#f8f8f8',
   },
-  searchButtonContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+  searchButton: {
+    marginBottom: 15,
+    marginHorizontal: 10,
   },
   productCategory: {
     textAlign: 'center',
@@ -169,6 +168,8 @@ const styles = StyleSheet.create({
   },
   listContent: {
     justifyContent: 'center',
+    paddingBottom: 20,
+    paddingTop: 10, 
   },
   productContainer: {
     flex: 1 / 3,
@@ -180,6 +181,11 @@ const styles = StyleSheet.create({
     borderColor: '#324e64',
     borderWidth: 2,
     maxWidth: Dimensions.get('window').width / 3 - 26,
+  },
+  searchButtonContainer: {
+    marginBottom: 10, 
+    marginHorizontal: 10,
+    zIndex: 1, 
   },
   productImage: {
     width: 70,

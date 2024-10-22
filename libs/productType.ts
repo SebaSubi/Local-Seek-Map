@@ -1,10 +1,11 @@
 import { Platform } from 'react-native';
 
 export async function getProductTypes() {
-  const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/productType" : "http://localhost:3000/productType";
+  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/productType" : "http://localhost:3000/productType";
+const API_URL = Platform.OS === 'android' ? "http://192.168.0.135:3000/productType": "";
 
   try {
-    const rawData = await fetch(url);
+    const rawData = await fetch(API_URL);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Types");
     }

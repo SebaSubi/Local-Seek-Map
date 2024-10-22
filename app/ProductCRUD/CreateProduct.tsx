@@ -1,4 +1,4 @@
-import { View, Alert } from "react-native";
+import { View, Alert, Image, Button } from "react-native";
 import BasicTextInput from "../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { createProduct } from "../../libs/product";
 import { Product } from "../../schema/GeneralSchema";
 import CategorySelectButton from "../../components/CategorySelectButton";
+import * as ImagePicker from 'expo-image-picker';
 
 export default function CreateProduct() {
   const [name, setName] = useState('');
@@ -15,9 +16,31 @@ export default function CreateProduct() {
   const [mesurement, setMesurement] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null); 
+
+  const handleImagePicker = async () => {
+    // Solicitar permisos para acceder a la galería
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      Alert.alert("Error", "Se necesitan permisos para acceder a la galería.");
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!pickerResult.canceled) {
+      setImage(pickerResult.assets[0].uri); 
+    }
+  };
 
   const handleSubmit = async () => {
-    if (!name || !brand || !mesurement || !description) {
+    if (!name || !brand || !mesurement || !description || !image) {
       Alert.alert("Error", "Por favor complete todos los campos");
       return;
     }
@@ -28,10 +51,21 @@ export default function CreateProduct() {
       mesurement,
       description,
       productTypeId: selectedCategory,
+      imgURL: image, 
     };
 
-    const response = await createProduct(newProduct);
-    console.log(response);
+    try {
+      await createProduct(newProduct);
+      Alert.alert("Éxito", "Producto creado exitosamente");
+      setName('');
+      setBrand('');
+      setMesurement('');
+      setDescription('');
+      setSelectedCategory(null);
+      setImage(null); 
+    } catch (error) {
+      Alert.alert("Error", "No se pudo crear el producto");
+    }
   };
 
   return (
@@ -47,8 +81,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Nombre de Producto: "
         textStyle="mt-2"
-        value={name} 
-        onChangeText={setName} 
+        value={name}
+        onChangeText={setName}
       />
 
       <BasicTextInput
@@ -57,8 +91,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Marca del Producto: "
         textStyle="mt-4"
-        value={brand} 
-        onChangeText={setBrand} 
+        value={brand}
+        onChangeText={setBrand}
       />
 
       <BasicTextInput
@@ -67,8 +101,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Cantidad del Producto: "
         textStyle="mt-4"
-        value={mesurement} 
-        onChangeText={setMesurement} 
+        value={mesurement}
+        onChangeText={setMesurement}
       />
 
       <CategorySelectButton
@@ -84,9 +118,15 @@ export default function CreateProduct() {
         submitText={false}
         title="Descripcion de Producto: "
         textStyle="mt-4"
-        value={description} 
-        onChangeText={setDescription} 
+        value={description}
+        onChangeText={setDescription}
       />
+
+      <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+
+      {image && (
+        <Image source={{ uri: image }} style={{ width: 100, height: 100, marginTop: 10 }} />
+      )}
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
         <BasicButton logo={<CreateLogo />} text="Crear Producto" style="mt-3" onPress={handleSubmit} />

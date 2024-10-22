@@ -1,5 +1,5 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, FlatList } from "react-native";
 import { getProductTypes } from "../libs/productType";
 
 const CategorySelectButton = forwardRef(({
@@ -46,8 +46,8 @@ const CategorySelectButton = forwardRef(({
     setShowCategories(false); 
   };
 
-  if (loading) return <Text>Loading categories...</Text>;
-  if (error) return <Text>Error loading categories</Text>;
+  if (loading) return <Text>Cargando categorias...</Text>;
+  if (error) return <Text>Error Cargando categorias</Text>;
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -66,10 +66,11 @@ const CategorySelectButton = forwardRef(({
       </TouchableOpacity>
 
       {showCategories && (
-        <ScrollView style={styles.dropdown} nestedScrollEnabled={true}>
-          {categories.map((category) => (
+        <FlatList 
+          data={categories}
+          keyExtractor={(category) => category.id}
+          renderItem={({ item: category }) => (
             <TouchableOpacity
-              key={category.id}
               onPress={() => handleCategoryPress(category.id)}
               style={[
                 styles.categoryButton,
@@ -78,8 +79,10 @@ const CategorySelectButton = forwardRef(({
             >
               <Text style={styles.categoryText}>{category.name}</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+          )}
+          style={styles.dropdown}
+          nestedScrollEnabled={true} 
+        />
       )}
     </View>
   );
@@ -89,7 +92,6 @@ const styles = StyleSheet.create({
   container: {
     width: '75%',
     marginTop: 12,
-    // border,
   },
   title: {
     fontSize: 14,

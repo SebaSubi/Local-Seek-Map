@@ -78,16 +78,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
+        marginTop: 10, 
     },
     textInput: {
         backgroundColor: '#e1e8e8',
         textAlign: 'center',
         color: '#000',
-        width: '75%',
+        width: '70%', 
         height: 48,
         borderRadius: 24,
-        marginTop: 8,
-        marginRight: 8,
+        marginRight: 4, 
+        marginLeft: 34,
     },
     filterButton: {
         height: 48,
@@ -96,6 +97,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#e1e8e8',
+        // marginRight: 1, 
     },
     modalContainer: {
         flex: 1,
