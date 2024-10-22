@@ -14,6 +14,7 @@ export default function LocalContainer({ local }: LocalContainerProps) {
       href={{
         pathname: "/LocalCRUD/LocalPage/[id]",
         params: {
+          id: local.id,
           name: local.name,
           image: local.image ?? "https://via.placeholder.com/150",
         },
