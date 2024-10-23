@@ -1,12 +1,17 @@
 import { Alert } from "react-native";
 import { Local } from "../schema/GeneralSchema";
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
-const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+// const API_URL =
+// Platform.OS === "android"
+//   ? "http://10.0.2.2:3000/store"
+//   : "http://192.168.155.114:3000/store";
+const API_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/store"
+    : "http://localhost:3000/store";
 
 export async function getLocals() {
-  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
-
   try {
     const rawData = await fetch(API_URL);
     if (!rawData.ok) {
@@ -16,6 +21,58 @@ export async function getLocals() {
     return json;
   } catch (error) {
     console.log("Error getting stores", error);
+  }
+}
+
+export async function getIfLocalOpen(id: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/openStore/${id}`);
+    if (!rawData.ok) {
+      throw new Error("Error fetching if store is open");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getLocalsByName(name: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/searchName/${name}`);
+    if (!rawData.ok) {
+      throw new Error("Error fetching locals by name");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getOpenLocals() {
+  try {
+    const rawData = await fetch(`${API_URL}/openSchedules`);
+    if (!rawData.ok) {
+      throw new Error("Error getting open stores");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getStoresByCategory(category: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/categoryName/${category}`);
+    if (!rawData.ok) {
+      throw new Error("Error getting open stores");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
   }
 }
 
