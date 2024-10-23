@@ -29,17 +29,19 @@ export default function LocalContainer({ local }: LocalContainerProps) {
           <View
             className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
           >
-            <Image
-              style={{
-                height: "85%",
-                width: "85%",
-                borderRadius: 4,
-                resizeMode: "contain",
-              }}
-              source={{
-                uri: local.image ?? "https://via.placeholder.com/150",
-              }}
-            ></Image>
+            <View className="h-[90%] w-[90%]">
+              <Image
+                style={{
+                  height: "100%",
+                  width: "auto",
+                  borderRadius: 4,
+                  resizeMode: "contain",
+                }}
+                source={{
+                  uri: local.image ?? "https://via.placeholder.com/150",
+                }}
+              ></Image>
+            </View>
           </View>
           <View className="flex flex-col ml-2 pb-3">
             <Text className="mt-1 font-bold text-xl">{local.name}</Text>
