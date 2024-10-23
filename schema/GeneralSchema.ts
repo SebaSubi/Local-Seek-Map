@@ -90,8 +90,8 @@ export interface LocalHours {
   id?: string;
   local?: Local;
   localId?: string;
-  dateFrom: Date,
-  dateTo?: Date,
+  dateFrom: Date;
+  dateTo?: Date;
   dayNumber: number;
   AMHourFrom: string;
   AMHourTo: string;

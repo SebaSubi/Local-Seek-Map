@@ -1,14 +1,25 @@
 import { View, Text, Image, Pressable } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { LocalDisplay } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
 import { colors } from "../constants/colors";
+import { getIfLocalOpen } from "../libs/local";
 
 type LocalContainerProps = {
   local: LocalDisplay;
 };
 
 export default function LocalContainer({ local }: LocalContainerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchLocals = async () => {
+      const open = await getIfLocalOpen(local.id);
+      setIsOpen(open);
+    };
+    fetchLocals();
+  }, [local.id]);
+
   return (
     <Link
       href={{
@@ -47,7 +58,11 @@ export default function LocalContainer({ local }: LocalContainerProps) {
               Categoria:{" "}
               {local.localType ? local.localType : "CategoryPlaceHolder"}
             </Text>
-            <Text className="text-green-700 font-bold text-lg">Abierto</Text>
+            <Text
+              className={`${isOpen ? "text-green-700 " : "text-red-500 "}font-bold text-lg`}
+            >
+              {isOpen ? "Abierto" : "Cerrado"}
+            </Text>
           </View>
         </View>
       </Pressable>
