@@ -1,13 +1,29 @@
 import { View, Text, Image } from "react-native";
 import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { Local } from "../../../schema/GeneralSchema";
 import { colors } from "../../../constants/colors";
 import { EmptyHeartIcon } from "../../../components/Logos";
 import BasicLine from "../../../components/BasicLine";
 import LocalInformation from "../../../components/LocalInformation";
+import { getLocal } from "../../../libs/local";
 
 export default function LocalPage() {
-  const { name, image } = useLocalSearchParams();
+  const { id, name, image } = useLocalSearchParams();
 
+  const [local, setLocals] = useState<Local>();
+
+  async function fetchAndSetLocals() {
+    const searchLocal = await getLocal(id as string);
+    setLocals(searchLocal);
+  }
+
+  useEffect(() => {
+    const fetchLocals = async () => {
+      await fetchAndSetLocals();
+    };
+    fetchLocals();
+  }, []);
   return (
     <View className="flex justify-center">
       <View className="flex flex-row justify-between items-center">
@@ -41,8 +57,23 @@ export default function LocalPage() {
           <Text className="text-xl font-bold">Horarios</Text>
           <Text className="text-xl font-bold">Información</Text>
         </View>
-        <BasicLine color={colors.primary.blue} width={350} />
-        <LocalInformation />
+        {local &&
+        (local.facebook ||
+          local.instagram ||
+          local.webpage ||
+          local.whatsapp ||
+          local.location) ? (
+          <>
+            <BasicLine color={colors.primary.blue} width={350} />
+            <LocalInformation
+              instagram={local.instagram}
+              whatsapp={local.whatsapp}
+              facebook={local.facebook}
+              location={local.location}
+              webpage={local.webpage}
+            />
+          </>
+        ) : null}
       </View>
     </View>
   );

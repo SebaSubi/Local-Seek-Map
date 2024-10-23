@@ -20,12 +20,12 @@ export default function InformationSlot({
 }) {
   return (
     <View
-      className={`flex flex-row bg-[${colors.primary.lightGray}] w-3/4 rounded-2xl h-10 items-center justify-start`}
+      className={`flex flex-row bg-[${colors.primary.lightGray}] w-10/12 rounded-2xl h-10 items-center justify-start`}
     >
       <View className="pl-3 mb-1">
         <Icon color={IconColor} size={30} />
       </View>
-      <Text className="text-lg pl-3 mb-1">{text}</Text>
+      <Text className="text-lg pl-2 mb-1">{text}</Text>
     </View>
   );
 }

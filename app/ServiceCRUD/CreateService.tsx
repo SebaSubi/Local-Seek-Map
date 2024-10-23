@@ -37,7 +37,7 @@ export default function CreateProduct() {
       />
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton logo={<CreateLogo />} text="Crear Local" style="mt-3" />
+        <BasicButton logo={<CreateLogo />} text="Crear Servicio" style="mt-3" />
       </View>
     </View>
   );
