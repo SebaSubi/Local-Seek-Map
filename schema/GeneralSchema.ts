@@ -182,3 +182,13 @@ export interface Service {
   reservationURL: string;
   description: string;
 }
+
+export type DisplayService = {
+  serviceId: string;
+  localId: string;
+  serviceName: string;
+  serviceImage: string | null;
+  localServiceId: string;
+  localImage: string | null;
+  localName: string;
+} 

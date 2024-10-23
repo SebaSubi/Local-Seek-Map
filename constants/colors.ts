@@ -1,11 +1,11 @@
 export const colors = {
     primary: {
-        blue: "#324e64",
-        white: "#ffffff",
-        orange: "#ff7034",
+        blue: "#324E64",
+        white: "#FFFFFF",
+        orange: "#FF7034",
         lightGray: "#e1e8e8"
     },
     secondary: {
-        lightBlue: "#aac2cd"
+        lightBlue: "#AAC2CD"
     }
 }

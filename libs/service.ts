@@ -2,13 +2,13 @@
 // import { Service } from "../schema/GeneralSchema";
 import { Platform } from 'react-native';
 
-const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/service" : "http://localhost:3000/service";
 
 export async function getDisplayServices() {
     // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
     try {
-        const rawData = await fetch(API_URL);
+        const rawData = await fetch(`${API_URL}/display`);
         if (!rawData.ok) {
             throw new Error("Failed to fetch Stores");
         }
