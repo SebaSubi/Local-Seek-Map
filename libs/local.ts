@@ -1,12 +1,12 @@
 import { Alert } from "react-native";
 import { Local } from "../schema/GeneralSchema";
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
-const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+// const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+const API_URL =
+  Platform.OS === "android" ? "http://192.168.155.1:3000/store" : "";
 
 export async function getLocals() {
-  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
-
   try {
     const rawData = await fetch(API_URL);
     if (!rawData.ok) {
@@ -20,8 +20,6 @@ export async function getLocals() {
 }
 
 export async function getDisplayLocals() {
-  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
-
   try {
     const rawData = await fetch(`${API_URL}/display`);
     if (!rawData.ok) {
@@ -84,6 +82,3 @@ export async function getProductsOfALocal(id: string) {
     console.log("Error getting store products", error);
   }
 }
-
-//esto es una prueba de como escribir en este teclado jeje, esta bueno porque no tiene tanto recorrido de los dedos y no es tan livianito cuando apretas as teclas.
-//banco banco banco banco banco banco banco banco banco banco banco banco. No me acostumboro al cmd de apple, es de gays.

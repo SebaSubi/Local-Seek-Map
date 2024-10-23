@@ -48,8 +48,8 @@ export default function ProductCrud() {
 const styles = {
   container: {
     flex: 1,
-    justifyContent: "center" as const,  
-    alignItems: "center" as const,      
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     backgroundColor: "#f8f9fa",
     padding: 20,
   },
