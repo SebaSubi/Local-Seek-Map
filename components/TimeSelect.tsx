@@ -1,6 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { View, Text, Pressable, TouchableWithoutFeedback } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { specificDate } from "../constants/consts";
 
 const options: Intl.DateTimeFormatOptions = {
   hour: "2-digit",
@@ -14,7 +15,7 @@ interface TimeSelectProps {
 }
 
 const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(specificDate);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [textVisibility, setTextVisibility] = useState(false);
 

@@ -1,63 +1,126 @@
-import { Text, View } from "react-native";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
-import { getSchedule } from "../../libs/schedule";
-import { useEffect, useState } from "react";
+import { FlatList, Text, View } from "react-native";
+import ScheduleBox from "../../components/ScheduleBox";
+import { shift } from "../../constants/consts";
+
+type Shift = {
+  shiftOpen: shift;
+  shiftClose: shift;
+};
 
 export default function DeleteSchedule() {
-  const days = [
-    "Domingo",
-    "Lunes",
-    "Martes",
-    "Miercoles",
-    "Jueves",
-    "Viernes",
-    "Sabado",
+  const shifts: Shift[] = [
+    // <ScheduleBox key={1} shiftOpen="AMHourFrom" shiftClose="AMHourTo" />,
+    // <ScheduleBox key={2} shiftOpen="PMHourFrom" shiftClose="PMHourTo" />,
+    // <ScheduleBox key={2} shiftOpen="EXHourFrom" shiftClose="EXHourTo" />,
+    {
+      shiftOpen: "AMHourFrom",
+      shiftClose: "AMHourTo",
+    },
+    {
+      shiftOpen: "PMHourFrom",
+      shiftClose: "PMHourTo",
+    },
+    {
+      shiftOpen: "EXHourFrom",
+      shiftClose: "EXHourTo",
+    },
   ];
-  const [schedule, setSchedule] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const localId = useLocalIdStore((state) => state.localId);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const schedules = await getSchedule(localId);
-      const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo, //This should be in the backend
-      );
-      setSchedule(filteredSchedules);
-      setLoading(false);
-    };
-    fetchData();
-  }, [localId]);
 
   return (
-    <View className="flex flex-col items-center justify-center">
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : schedule.length ? (
-        <View
-          style={{ height: schedule.length * 65 }}
-          className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
-        >
-          {schedule.map((schedule, index) => (
-            <View
-              key={schedule.id}
-              className="flex flex-col items-center justify-center"
-            >
-              <Text className="font-bold text-xl mt-3" key={index}>
-                {days[schedule.dayNumber - 1]}
-              </Text>
-              <View className="flex flex-row items-center justify-center">
-                <Text>
-                  {schedule.AMHourFrom} - {schedule.AMHourTo}{" "}
-                  {schedule.PMHourFrom} - {schedule.PMHourTo}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      ) : (
-        <Text>No schedules available</Text>
-      )}
+    <View className="flex flex-col  h-full w-full">
+      <FlatList
+        data={shifts}
+        keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={{ paddingHorizontal: 0 }}
+        renderItem={({ item, index }) => (
+          <View className="flex flex-col w-full items-center">
+            <Text className="text-xl mt-10">
+              {index === 0
+                ? "Primer Turno"
+                : index === 1
+                  ? "Segundo Turno"
+                  : index === 2
+                    ? "Tercer Turno"
+                    : null}
+            </Text>
+            <ScheduleBox
+              shiftOpen={item.shiftOpen}
+              shiftClose={item.shiftClose}
+            />
+          </View>
+        )}
+      />
     </View>
   );
 }
+
+// {loading ? (
+//         <Text>Loading...</Text>
+//       ) : schedule.length ? (
+//         <>
+//           <View
+//             style={{ height: schedule.length * 48 }}
+//             className="flex flex-col  w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
+//           >
+//             {schedule.map((schedule, index) => (
+//               <>
+//                 <View
+//                   className={`w-4/5 h-0.5 bg-black ml-7 ${index === 0 ? "mt-4" : "mt-2"} rounded-lg`}
+//                 ></View>
+//                 <View
+//                   key={schedule.id}
+//                   className="flex flex-row justify-between items-center"
+//                 >
+//                   <Text
+//                     className={`font-bold text-base ml-12 mt-2`}
+//                     key={index}
+//                   >
+//                     {days[schedule.dayNumber - 1]}
+//                   </Text>
+//                   <Text className="mr-12">
+//                     {schedule.AMHourFrom} - {schedule.AMHourTo}
+//                   </Text>
+//                 </View>
+//                 {index === 5 && (
+//                   <View
+//                     className={`w-4/5 h-0.5 bg-black ml-7 mb-4 mt-2 rounded-lg`}
+//                   ></View>
+//                 )}
+//               </>
+//             ))}
+//           </View>
+//           <View
+//             style={{ height: schedule.length * 48 }}
+//             className="flex flex-col  w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
+//           >
+//             {schedule.map((schedule, index) => (
+//               <>
+//                 <View
+//                   className={`w-4/5 h-0.5 bg-black ml-7 ${index === 0 ? "mt-4" : "mt-2"} rounded-lg`}
+//                 ></View>
+//                 <View
+//                   key={schedule.id}
+//                   className="flex flex-row justify-between items-center"
+//                 >
+//                   <Text
+//                     className={`font-bold text-base ml-12 mt-2`}
+//                     key={index}
+//                   >
+//                     {days[schedule.dayNumber - 1]}
+//                   </Text>
+//                   <Text className="mr-12">
+//                     {schedule.PMHourFrom} - {schedule.PMHourTo}
+//                   </Text>
+//                 </View>
+//                 {index === 5 && (
+//                   <View
+//                     className={`w-4/5 h-0.5 bg-black ml-7 mb-4 mt-2 rounded-lg`}
+//                   ></View>
+//                 )}
+//               </>
+//             ))}
+//           </View>
+//         </>
+//       ) : (
+//         <Text>No schedules available</Text>
+//       )}

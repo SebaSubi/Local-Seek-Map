@@ -6,6 +6,7 @@ export default function BasicLine({
   thickness = 1,
   width = 350,
   margin = 10,
+  styles = {},
 }) {
   return (
     <>
@@ -15,6 +16,7 @@ export default function BasicLine({
           backgroundColor: color,
           width: width,
           marginVertical: margin,
+          ...styles,
         }}
       ></View>
     </>
