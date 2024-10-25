@@ -1,7 +1,7 @@
 import { LocalHours } from "../schema/GeneralSchema";
 
 export function scheduleInputValidation(
-  schedule: LocalHours,
+  schedule: LocalHours
 ): string | boolean {
   if (
     schedule.AMHourFrom > schedule.AMHourTo ||

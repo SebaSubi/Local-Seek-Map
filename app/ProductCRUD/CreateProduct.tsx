@@ -4,11 +4,12 @@ import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { CreateLogo } from "../../components/Logos";
 import BasicButton from "../../components/BasicButton";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { createProduct } from "../../libs/product";
 import { Product } from "../../schema/GeneralSchema";
 import CategorySelectButton from "../../components/CategorySelectButton";
 import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinary } from "../../libs/cloudinary";
 
 export default function CreateProduct() {
   const [name, setName] = useState("");
@@ -46,13 +47,17 @@ export default function CreateProduct() {
       return;
     }
 
+    // Subir imagen a Cloudinary
+    const uploadedImageUrl = await uploadImageToCloudinary(image);
+    if (!uploadedImageUrl) return;
+
     const newProduct: Product = {
       name,
       brand,
       mesurement,
       description,
       productTypeId: selectedCategory,
-      imgURL: image,
+      imgURL: uploadedImageUrl, // Usar la URL de Cloudinary
     };
 
     try {
