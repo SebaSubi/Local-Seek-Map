@@ -11,10 +11,10 @@ import CategorySelectButton from "../../components/CategorySelectButton";
 import * as ImagePicker from "expo-image-picker";
 
 export default function CreateProduct() {
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [mesurement, setMesurement] = useState("");
-  const [description, setDescription] = useState("");
+  const name = useRef("");
+  const brand = useRef("");
+  const mesurement = useRef("");
+  const description = useRef("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
@@ -58,10 +58,10 @@ export default function CreateProduct() {
     try {
       await createProduct(newProduct);
       Alert.alert("Éxito", "Producto creado exitosamente");
-      setName("");
-      setBrand("");
-      setMesurement("");
-      setDescription("");
+      name.current = "";
+      brand.current = "";
+      mesurement.current = "";
+      description.current = "";
       setSelectedCategory(null);
       setImage(null);
     } catch (error) {
@@ -82,8 +82,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Nombre de Producto: "
         textStyle="mt-2"
-        value={name}
-        onChangeText={setName}
+        value={name.current}
+        ref={name}
       />
 
       <BasicTextInput
@@ -92,8 +92,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Marca del Producto: "
         textStyle="mt-4"
-        value={brand}
-        onChangeText={setBrand}
+        value={brand.current}
+        ref={brand}
       />
 
       <BasicTextInput
@@ -102,8 +102,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Cantidad del Producto: "
         textStyle="mt-4"
-        value={mesurement}
-        onChangeText={setMesurement}
+        value={mesurement.current}
+        ref={mesurement}
       />
 
       <CategorySelectButton
@@ -119,8 +119,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Descripcion de Producto: "
         textStyle="mt-4"
-        value={description}
-        onChangeText={setDescription}
+        value={description.current}
+        ref={description}
       />
 
       <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
