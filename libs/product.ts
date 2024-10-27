@@ -33,7 +33,7 @@ export async function getActiveProducts() {
 export async function updateProduct(product: Product) {
   try {
     const response = await fetch(API_URL, {
-      method: "PUT", 
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,14 +42,14 @@ export async function updateProduct(product: Product) {
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to update Product");
-      return false; 
+      return false;
     }
 
-    return true; 
+    return true;
   } catch (error) {
     console.log("Error updating product", error);
     Alert.alert("Error", "Error updating product");
-    return false; 
+    return false;
   }
 }
 
@@ -58,20 +58,20 @@ export async function getProductById(productId: string) {
 
   try {
     const response = await fetch(url);
-    console.log("Response Status:", response.status); 
-    const text = await response.text(); 
-    console.log("Response Body:", text); 
+    console.log("Response Status:", response.status);
+    const text = await response.text();
+    console.log("Response Body:", text);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch product: ${response.status} ${response.statusText}`);
     }
 
-    const product: Product = JSON.parse(text); 
+    const product: Product = JSON.parse(text);
     return product;
   } catch (error) {
     console.error("Error fetching product:", error);
     Alert.alert("Error", `Error al obtener el producto: ${error.message}`);
-    return null; 
+    return null;
   }
 }
 
@@ -91,6 +91,7 @@ export async function createProduct(product: Product) {
       Alert.alert("Error", "Failed to create Product");
     } else {
       console.log("Product succesfully added to dataBase");
+      return response.ok
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -99,19 +100,19 @@ export async function createProduct(product: Product) {
 }
 
 export const searchProductsByName = async (searchInput: string) => {
-  const cleanedInput = searchInput.trim(); 
-  const url = `${API_URL}/search/${cleanedInput}`; 
+  const cleanedInput = searchInput.trim();
+  const url = `${API_URL}/search/${cleanedInput}`;
 
   try {
-      const response = await fetch(url);
-      if (!response.ok) {
-          throw new Error('Error searching products');
-      }
-      const data = await response.json();
-      return data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Error searching products');
+    }
+    const data = await response.json();
+    return data;
   } catch (error) {
-      console.error('Error searching products:', error);
-      throw error;
+    console.error('Error searching products:', error);
+    throw error;
   }
 };
 
@@ -123,8 +124,8 @@ export type ProductSearch = {
 
 export async function deleteProduct(id: string) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, { 
-      method: "PATCH", 
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -132,12 +133,12 @@ export async function deleteProduct(id: string) {
 
     if (!response.ok) {
       console.error("Error deleting product");
-      const errorResponse = await response.json(); 
-      console.error(errorResponse); 
-      throw new Error('Error al eliminar el producto'); 
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error('Error al eliminar el producto');
     }
-    
-    return await response.json(); 
+
+    return await response.json();
   } catch (error) {
     console.error("Error en deleteProduct:", error);
   }
