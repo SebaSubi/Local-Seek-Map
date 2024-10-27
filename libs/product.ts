@@ -96,6 +96,7 @@ export async function createProduct(product: Product) {
       Alert.alert("Error", "Failed to create Product");
     } else {
       console.log("Product succesfully added to dataBase");
+      return response.ok
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -110,12 +111,12 @@ export const searchProductsByName = async (searchInput: string) => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error("Error searching products");
+      throw new Error('Error searching products');
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error searching products:", error);
+    console.error('Error searching products:', error);
     throw error;
   }
 };
@@ -138,7 +139,7 @@ export async function deleteProduct(id: string) {
       console.error("Error deleting product");
       const errorResponse = await response.json();
       console.error(errorResponse);
-      throw new Error("Error al eliminar el producto");
+      throw new Error('Error al eliminar el producto');
     }
 
     return await response.json();

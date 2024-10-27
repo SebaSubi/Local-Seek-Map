@@ -47,10 +47,10 @@ export default function CreateProduct() {
     }
 
     const newProduct: Product = {
-      name,
-      brand,
-      mesurement,
-      description,
+      name: name.current,
+      brand: brand.current,
+      mesurement: mesurement.current,
+      description: description.current,
       productTypeId: selectedCategory,
       imgURL: image,
     };
@@ -133,6 +133,12 @@ export default function CreateProduct() {
       )}
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear Producto"
+          style="mt-3"
+          onPress={handleSubmit}
+        />
         <BasicButton
           logo={<CreateLogo />}
           text="Crear Producto"
