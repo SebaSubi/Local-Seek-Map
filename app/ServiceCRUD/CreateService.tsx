@@ -4,8 +4,20 @@ import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { CreateLogo } from "../../components/Logos";
 import BasicButton from "../../components/BasicButton";
+import { useRef } from "react";
 
 export default function CreateProduct() {
+  const ServiceName = useRef<string>("");
+  const ServiceDescription = useRef<string>("");
+  const ServiceURL = useRef<string>("");
+
+  function logData() {
+    console.log(ServiceName.current);
+    console.log(ServiceDescription.current);
+    console.log(ServiceURL.current);
+    console.log("--------------Data logged--------------");
+  }
+
   return (
     <View className="flex justify-center items-center bg-white h-full w-full">
       <Stack.Screen
@@ -19,6 +31,8 @@ export default function CreateProduct() {
         submitText={false}
         textStyle="mt-4"
         title="Nombre del Servicio: "
+        value={ServiceName.current}
+        ref={ServiceName}
       />
 
       <BasicTextInput
@@ -27,6 +41,8 @@ export default function CreateProduct() {
         submitText={false}
         textStyle="mt-4"
         title="Descripcion del Servicio: "
+        value={ServiceDescription.current}
+        ref={ServiceDescription}
       />
       <BasicTextInput
         inputType="text"
@@ -34,10 +50,17 @@ export default function CreateProduct() {
         submitText={false}
         textStyle="mt-4"
         title="URL Reservas o Numero: "
+        value={ServiceURL.current}
+        ref={ServiceURL}
       />
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton logo={<CreateLogo />} text="Crear Local" style="mt-3" />
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear Servicio"
+          style="mt-3"
+          // onPress={logData}
+        />
       </View>
     </View>
   );

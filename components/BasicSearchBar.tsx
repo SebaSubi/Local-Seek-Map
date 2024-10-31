@@ -14,15 +14,18 @@ export default function BasicSearchButton({
   placeholder,
   className,
   onSearch,
+  categories,
+  selectedCategory,
 }: {
   placeholder: string;
   className?: any;
+  categories?: string[];
+  selectedCategory: (type: string) => void;
   onSearch: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [text, setText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [searchType, setSearchType] = useState("Nombre");
-
   useEffect(() => {
     onSearch(text);
   }, [text]);
@@ -35,6 +38,7 @@ export default function BasicSearchButton({
     setSearchType(type);
     setModalVisible(false);
     console.log(`Tipo de búsqueda seleccionado: ${type}`);
+    selectedCategory(type);
   };
 
   return (
@@ -48,48 +52,46 @@ export default function BasicSearchButton({
         selectionColor="#324e64"
         underlineColorAndroid="transparent"
       />
-      <TouchableOpacity onPress={handleFilterPress} style={styles.filterButton}>
-        <Ionicons name="ellipsis-vertical" size={24} color="black" />
-      </TouchableOpacity>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Selecciona el tipo de búsqueda
-            </Text>
-            <Pressable
-              onPress={() => handleSelectSearchType("Nombre")}
-              style={styles.modalOption}
-            >
-              <Text style={styles.modalOptionText}>Nombre</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => handleSelectSearchType("Categoría")}
-              style={styles.modalOption}
-            >
-              <Text style={styles.modalOptionText}>Categoría</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => handleSelectSearchType("Marca")}
-              style={styles.modalOption}
-            >
-              <Text style={styles.modalOptionText}>Marca</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+      {categories && (
+        <>
+          <TouchableOpacity
+            onPress={handleFilterPress}
+            style={styles.filterButton}
+          >
+            <Ionicons name="ellipsis-vertical" size={24} color="black" />
+          </TouchableOpacity>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  Selecciona el tipo de búsqueda
+                </Text>
+                {categories.map((category, index) => (
+                  <Pressable
+                    onPress={() => handleSelectSearchType(category)}
+                    style={styles.modalOption}
+                    key={index}
+                  >
+                    <Text style={styles.modalOptionText}>{category}</Text>
+                  </Pressable>
+                ))}
+                <Pressable
+                  onPress={() => setModalVisible(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>Cerrar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+        </>
+      )}
     </View>
   );
 }
@@ -100,16 +102,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    marginTop: 10,
   },
   textInput: {
     backgroundColor: "#e1e8e8",
     textAlign: "center",
     color: "#000",
-    width: "75%",
+    width: "70%",
     height: 48,
     borderRadius: 24,
-    marginTop: 8,
-    marginRight: 8,
+    marginRight: 4,
+    marginLeft: 34,
   },
   filterButton: {
     height: 48,
@@ -118,6 +121,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#e1e8e8",
+    // marginRight: 1,
   },
   modalContainer: {
     flex: 1,

@@ -90,8 +90,8 @@ export interface LocalHours {
   id?: string;
   local?: Local;
   localId?: string;
-  dateFrom: Date,
-  dateTo?: Date,
+  dateFrom: Date;
+  dateTo?: Date;
   dayNumber: number;
   AMHourFrom: string;
   AMHourTo: string;
@@ -182,3 +182,13 @@ export interface Service {
   reservationURL: string;
   description: string;
 }
+
+export type DisplayService = {
+  serviceId: string;
+  localId: string;
+  serviceName: string;
+  serviceImage: string | null;
+  localServiceId: string;
+  localImage: string | null;
+  localName: string;
+} 

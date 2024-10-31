@@ -12,10 +12,10 @@ import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinary } from "../../libs/cloudinary";
 
 export default function CreateProduct() {
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [mesurement, setMesurement] = useState("");
-  const [description, setDescription] = useState("");
+  const name = useRef("");
+  const brand = useRef("");
+  const mesurement = useRef("");
+  const description = useRef("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
@@ -52,10 +52,10 @@ export default function CreateProduct() {
     if (!uploadedImageUrl) return;
 
     const newProduct: Product = {
-      name,
-      brand,
-      mesurement,
-      description,
+      name: name.current,
+      brand: brand.current,
+      mesurement: mesurement.current,
+      description: description.current,
       productTypeId: selectedCategory,
       imgURL: uploadedImageUrl, // Usar la URL de Cloudinary
     };
@@ -63,10 +63,10 @@ export default function CreateProduct() {
     try {
       await createProduct(newProduct);
       Alert.alert("Éxito", "Producto creado exitosamente");
-      setName("");
-      setBrand("");
-      setMesurement("");
-      setDescription("");
+      name.current = "";
+      brand.current = "";
+      mesurement.current = "";
+      description.current = "";
       setSelectedCategory(null);
       setImage(null);
     } catch (error) {
@@ -87,8 +87,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Nombre de Producto: "
         textStyle="mt-2"
-        value={name}
-        onChangeText={setName}
+        value={name.current}
+        ref={name}
       />
 
       <BasicTextInput
@@ -97,8 +97,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Marca del Producto: "
         textStyle="mt-4"
-        value={brand}
-        onChangeText={setBrand}
+        value={brand.current}
+        ref={brand}
       />
 
       <BasicTextInput
@@ -107,8 +107,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Cantidad del Producto: "
         textStyle="mt-4"
-        value={mesurement}
-        onChangeText={setMesurement}
+        value={mesurement.current}
+        ref={mesurement}
       />
 
       <CategorySelectButton
@@ -124,8 +124,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Descripcion de Producto: "
         textStyle="mt-4"
-        value={description}
-        onChangeText={setDescription}
+        value={description.current}
+        ref={description}
       />
 
       <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
@@ -138,6 +138,12 @@ export default function CreateProduct() {
       )}
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear Producto"
+          style="mt-3"
+          onPress={handleSubmit}
+        />
         <BasicButton
           logo={<CreateLogo />}
           text="Crear Producto"
