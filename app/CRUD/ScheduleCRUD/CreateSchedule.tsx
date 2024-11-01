@@ -1,21 +1,21 @@
 import { View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import { LocalHours } from "../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
+import { LocalHours } from "../../../schema/GeneralSchema";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import {
   createSchedule,
   getSchedule,
   updateSchedule,
-} from "../../libs/schedule";
-import BasicWarning from "../../components/BasicWarning";
-import TimeSelect from "../../components/TimeSelect";
-import { scheduleInputValidation } from "../../libs/libs";
-import { specificDate } from "../../constants/consts";
+} from "../../../libs/schedule";
+import BasicWarning from "../../../components/BasicWarning";
+import TimeSelect from "../../../components/TimeSelect";
+import { scheduleInputValidation } from "../../../libs/libs";
+import { specificDate } from "../../../constants/consts";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);

@@ -1,13 +1,13 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
-import BasicSelectable from "../../components/BasicSelectable";
-import { CreateLogo, ReadLogo, UpdateLogo } from "../../components/Logos";
+import BasicSelectable from "../../../components/BasicSelectable";
+import { CreateLogo, ReadLogo, UpdateLogo } from "../../../components/Logos";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
+import Header from "../../../components/Header";
 import { useEffect, useState } from "react";
-import { getLocals } from "../../libs/local";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
-import { Local } from "../../schema/GeneralSchema";
-import BasicWarning from "../../components/BasicWarning";
+import { getLocals } from "../../../libs/local";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import { Local } from "../../../schema/GeneralSchema";
+import BasicWarning from "../../../components/BasicWarning";
 
 export default function ProductCrud() {
   const [screen, setScreen] = useState(false);

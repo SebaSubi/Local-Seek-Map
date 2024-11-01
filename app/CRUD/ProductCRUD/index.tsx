@@ -1,13 +1,13 @@
 import { View } from "react-native";
-import BasicSelectable from "../../components/BasicSelectable";
+import BasicSelectable from "../../../components/BasicSelectable";
 import {
   CreateLogo,
   DeleteLogo,
   ReadLogo,
   UpdateLogo,
-} from "../../components/Logos";
+} from "../../../components/Logos";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
+import Header from "../../../components/Header";
 
 export default function ProductCrud() {
   return (
@@ -48,8 +48,8 @@ export default function ProductCrud() {
 const styles = {
   container: {
     flex: 1,
-    justifyContent: "center" as const,  
-    alignItems: "center" as const,      
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     backgroundColor: "#f8f9fa",
     padding: 20,
   },

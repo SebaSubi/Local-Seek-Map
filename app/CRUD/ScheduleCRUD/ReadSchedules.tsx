@@ -1,6 +1,6 @@
 import { FlatList, Text, View } from "react-native";
-import ScheduleBox from "../../components/ScheduleBox";
-import { shift } from "../../constants/consts";
+import ScheduleBox from "../../../components/ScheduleBox";
+import { shift } from "../../../constants/consts";
 
 type Shift = {
   shiftOpen: shift;

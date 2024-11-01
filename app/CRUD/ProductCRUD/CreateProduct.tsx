@@ -1,19 +1,19 @@
 import { View, Alert } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 import { useRef, useState } from "react";
-import { createProduct } from "../../libs/product";
-import { Product } from "../../schema/GeneralSchema";
-import CategorySelectButton from "../../components/CategorySelectButton";
+import { createProduct } from "../../../libs/product";
+import { Product } from "../../../schema/GeneralSchema";
+import CategorySelectButton from "../../../components/CategorySelectButton";
 
 export default function CreateProduct() {
-  const [name, setName] = useState('');
-  const [brand, setBrand] = useState('');
-  const [mesurement, setMesurement] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [mesurement, setMesurement] = useState("");
+  const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handleSubmit = async () => {
@@ -47,8 +47,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Nombre de Producto: "
         textStyle="mt-2"
-        value={name} 
-        onChangeText={setName} 
+        value={name}
+        onChangeText={setName}
       />
 
       <BasicTextInput
@@ -57,8 +57,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Marca del Producto: "
         textStyle="mt-4"
-        value={brand} 
-        onChangeText={setBrand} 
+        value={brand}
+        onChangeText={setBrand}
       />
 
       <BasicTextInput
@@ -67,8 +67,8 @@ export default function CreateProduct() {
         submitText={false}
         title="Cantidad del Producto: "
         textStyle="mt-4"
-        value={mesurement} 
-        onChangeText={setMesurement} 
+        value={mesurement}
+        onChangeText={setMesurement}
       />
 
       <CategorySelectButton
@@ -84,12 +84,17 @@ export default function CreateProduct() {
         submitText={false}
         title="Descripcion de Producto: "
         textStyle="mt-4"
-        value={description} 
-        onChangeText={setDescription} 
+        value={description}
+        onChangeText={setDescription}
       />
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton logo={<CreateLogo />} text="Crear Producto" style="mt-3" onPress={handleSubmit} />
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear Producto"
+          style="mt-3"
+          onPress={handleSubmit}
+        />
       </View>
     </View>
   );

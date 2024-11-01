@@ -1,10 +1,10 @@
 import { Pressable, Text, View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
-import BasicButton from "../../components/BasicButton";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
+import BasicTextInput from "../../../components/BasicTextInput";
+import BasicButton from "../../../components/BasicButton";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { useEffect, useRef, useState } from "react";
-import { createLocal, getLocal, getLocals } from "../../libs/local";
-import { Local } from "../../schema/GeneralSchema";
+import { createLocal, getLocal, getLocals } from "../../../libs/local";
+import { Local } from "../../../schema/GeneralSchema";
 
 export default function DeleteProduct() {
   const [locals, setLocals] = useState<Local[]>([]);
@@ -65,7 +65,6 @@ export default function DeleteProduct() {
         <>
           <BasicTextInput
             placeholder="Nombre del Local"
-            submitText={false}
             inputType="text"
             title="Nuevo Nombre: "
             textStyle="mt-4"
@@ -74,7 +73,6 @@ export default function DeleteProduct() {
           />
           <BasicTextInput
             placeholder="Ubicacion de Local"
-            submitText={false}
             inputType="text"
             title="Nueva Ubicacion del Local" //This we will have to change later, since the person most likely wont knoe the coordinates
             textStyle="mt-4"
@@ -83,7 +81,6 @@ export default function DeleteProduct() {
           />
           <BasicTextInput
             placeholder="Numero de WhatsApp"
-            submitText={false}
             inputType="number"
             title="Nuevo Numero: "
             textStyle="mt-4"
@@ -94,7 +91,6 @@ export default function DeleteProduct() {
           />
           <BasicTextInput
             placeholder="Instagram"
-            submitText={false}
             inputType="text"
             title="Nuevo @Instagram: "
             textStyle="mt-4"
@@ -103,7 +99,6 @@ export default function DeleteProduct() {
           />
           <BasicTextInput
             placeholder="Nuevo Facebook"
-            submitText={false}
             inputType="text"
             title="Nuevo @Facebook: "
             textStyle="mt-4"
@@ -112,7 +107,6 @@ export default function DeleteProduct() {
           />
           <BasicTextInput
             placeholder="Sitio Web"
-            submitText={false}
             inputType="text"
             title="Nuevo URL: "
             textStyle="mt-4"
@@ -121,7 +115,6 @@ export default function DeleteProduct() {
           />
           <BasicTextInput
             placeholder="Imagen"
-            submitText={false}
             inputType="text"
             title="Esto tenemos que definir" //We have to see hoe we are gonna do the logic for this.
             textStyle="mt-4"

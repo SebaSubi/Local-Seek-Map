@@ -1,9 +1,9 @@
 import { View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 
 export default function CreateProduct() {
   return (
@@ -16,7 +16,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="Nombre"
-        submitText={false}
         textStyle="mt-4"
         title="Nuevo Nombre del Servicio: "
       />
@@ -24,14 +23,12 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="Descripción"
-        submitText={false}
         textStyle="mt-4"
         title="Nueva Descripcion del Servicio: "
       />
       <BasicTextInput
         inputType="text"
         placeholder="URL o Numero"
-        submitText={false}
         textStyle="mt-4"
         title="Nuevo URL Reservas o Numero: "
       />

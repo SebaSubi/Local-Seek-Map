@@ -1,9 +1,9 @@
 import { View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 
 export default function CreateProduct() {
   return (

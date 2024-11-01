@@ -1,13 +1,16 @@
 import { Text, View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import { LocalHours } from "../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
-import { getScheduleByScheduleId, updateSchedule } from "../../libs/schedule";
+import { LocalHours } from "../../../schema/GeneralSchema";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import {
+  getScheduleByScheduleId,
+  updateSchedule,
+} from "../../../libs/schedule";
 
 export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalHours>();
