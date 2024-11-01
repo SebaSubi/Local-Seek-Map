@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
-import { getSchedule } from "../../libs/schedule";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import { getSchedule } from "../../../libs/schedule";
 import { useEffect, useState } from "react";
 
 export default function DeleteSchedule() {
