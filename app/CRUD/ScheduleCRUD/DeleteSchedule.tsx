@@ -1,11 +1,11 @@
 import { Pressable, Text, View } from "react-native";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
-import { deleteSchedule, getSchedule } from "../../libs/schedule";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import { deleteSchedule, getSchedule } from "../../../libs/schedule";
 import { useEffect, useState } from "react";
-import { DeleteLogo, ReloadIcon, UpdateLogo } from "../../components/Logos";
+import { DeleteLogo, ReloadIcon, UpdateLogo } from "../../../components/Logos";
 import { Link } from "expo-router";
-import BasicButton from "../../components/BasicButton";
-import { days } from "../../schema/generalConst";
+import BasicButton from "../../../components/BasicButton";
+import { days } from "../../../schema/generalConst";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState([]);

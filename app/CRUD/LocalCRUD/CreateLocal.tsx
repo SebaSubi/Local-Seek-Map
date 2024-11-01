@@ -1,12 +1,12 @@
 import { Alert, View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 import { useRef } from "react";
-import { createLocal } from "../../libs/local";
-import { Local } from "../../schema/GeneralSchema";
+import { createLocal } from "../../../libs/local";
+import { Local } from "../../../schema/GeneralSchema";
 
 export default function CreateProduct() {
   const nameRef = useRef(null);
@@ -53,7 +53,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="Nombre"
-        submitText={false}
         textStyle="mt-4"
         title="Nombre de Local: "
         ref={nameRef}
@@ -62,7 +61,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="Coordenadas"
-        submitText={false}
         textStyle="mt-4"
         title="Coordenadas del Local: "
         ref={locationRef}
@@ -71,7 +69,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="number"
         placeholder="Numero de Wpp"
-        submitText={false}
         textStyle="mt-4"
         title="Numero de WhatsApp: "
         ref={wppNumberRef}
@@ -80,7 +77,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="@Instagram"
-        submitText={false}
         textStyle="mt-4"
         title="Instagram: "
         ref={instagramRef}
@@ -89,7 +85,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="@Facebook"
-        submitText={false}
         textStyle="mt-4"
         title="Facebook: "
         ref={facebookRef}
@@ -98,7 +93,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="Pagina Web"
-        submitText={false}
         textStyle="mt-4"
         title="Pagina Web: "
         ref={paginaWebRef}
@@ -107,7 +101,6 @@ export default function CreateProduct() {
       <BasicTextInput
         inputType="text"
         placeholder="URL Imagen"
-        submitText={false}
         textStyle="mt-4"
         title="URL de la Imagen: "
         ref={imgURLRef}

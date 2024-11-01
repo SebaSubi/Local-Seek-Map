@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Text, View, Pressable, Modal, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { Local, LocalDisplay } from "../../schema/GeneralSchema";
+import Header from "../../../components/Header";
+import { LocalDisplay } from "../../../schema/GeneralSchema";
 import {
   getDisplayLocals,
   getLocalsByName,
   getOpenLocals,
   getStoresByCategory,
-} from "../../libs/local";
-import LocalContainer from "../../components/LocalContainer";
-import BasicSearchButton from "../../components/BasicSearchBar";
-import { store } from "expo-router/build/global-state/router-store";
+} from "../../../libs/local";
+import LocalContainer from "../../../components/LocalContainer";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+// import { store } from "expo-router/build/global-state/router-store";
 
 const localCategories = ["Apertura", "Ubicación", "Quitar", "Categoria"];
 const StoreCategories = ["Supermercado"];

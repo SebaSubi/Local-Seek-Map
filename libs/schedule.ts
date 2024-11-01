@@ -12,10 +12,6 @@ const API_URL =
     : "http://localhost:3000";
 
 export async function createSchedule(schedule: LocalHours) {
-  // const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/schedule" : "http://localhost:3000/schedule";
-  const API_URL =
-    Platform.OS === "android" ? "http://192.168.155.1:3000/schedule" : "";
-
   try {
     const response = await fetch(`${API_URL}/schedule`, {
       method: "POST",
@@ -46,7 +42,7 @@ export async function getScheduleByScheduleId(id: string) {
       const data = response.json();
       return data;
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export async function getSchedule(id: string) {
@@ -58,7 +54,7 @@ export async function getSchedule(id: string) {
       const json = response.json();
       return json;
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export async function deleteSchedule(id: string) {
@@ -77,7 +73,7 @@ export async function deleteSchedule(id: string) {
       const json = response.json();
       return json;
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export async function updateSchedule(id: string, schedule: LocalHours) {
@@ -97,5 +93,5 @@ export async function updateSchedule(id: string, schedule: LocalHours) {
       console.log("Updated Schedule");
       return json;
     }
-  } catch (error) {}
+  } catch (error) { }
 }
