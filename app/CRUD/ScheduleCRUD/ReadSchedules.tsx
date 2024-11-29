@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
-import { getSchedule } from "../../libs/schedule";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import { getSchedule } from "../../../libs/schedule";
 import { useEffect, useState } from "react";
 
 export default function DeleteSchedule() {
@@ -21,7 +21,7 @@ export default function DeleteSchedule() {
     const fetchData = async () => {
       const schedules = await getSchedule(localId);
       const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo, //This should be in the backend
+        (schedule) => !schedule.dateTo //This should be in the backend
       );
       setSchedule(filteredSchedules);
       setLoading(false);

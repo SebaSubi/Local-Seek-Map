@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { DisplayService } from "../../schema/GeneralSchema";
-import { getDisplayServices } from "../../libs/service";
-import ServiceContainer from "../../components/ServiceContainer";
+import { DisplayService } from "../../../schema/GeneralSchema";
+import { getDisplayServices } from "../../../libs/service";
+import ServiceContainer from "../../../components/ServiceContainer";
 
 export default function ReadService() {
   const [services, setServices] = useState<DisplayService[]>([]);

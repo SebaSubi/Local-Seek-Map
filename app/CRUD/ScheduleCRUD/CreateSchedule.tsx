@@ -1,20 +1,21 @@
 import { View } from "react-native";
-import BasicTextInput from "../../components/BasicTextInput";
+import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { CreateLogo } from "../../components/Logos";
-import BasicButton from "../../components/BasicButton";
+import Header from "../../../components/Header";
+import { CreateLogo } from "../../../components/Logos";
+import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import { LocalHours } from "../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../libs/scheduleZustang";
+import { LocalHours } from "../../../schema/GeneralSchema";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import {
   createSchedule,
   getSchedule,
   updateSchedule,
-} from "../../libs/schedule";
-import BasicWarning from "../../components/BasicWarning";
-import TimeSelect from "../../components/TimeSelect";
-import { scheduleInputValidation } from "../../libs/libs";
+} from "../../../libs/schedule";
+import BasicWarning from "../../../components/BasicWarning";
+import TimeSelect from "../../../components/TimeSelect";
+import { scheduleInputValidation } from "../../../libs/libs";
+import { specificDate } from "../../../constants/consts";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
@@ -35,7 +36,7 @@ export default function CreateProduct() {
   const EXHourFromRef = useRef<any>(null);
   const EXHourToRef = useRef<any>(null);
 
-  useEffect(() => {
+  function fetchSchedules() {
     const fetchData = async () => {
       const schedules = await getSchedule(localId);
       const filteredSchedules = schedules.filter(
@@ -44,8 +45,11 @@ export default function CreateProduct() {
       setSchedules(filteredSchedules);
     };
     fetchData();
-  }, [localId]);
+  }
 
+  useEffect(() => {
+    fetchSchedules();
+  }, []);
   const handleCreate = () => {
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
     let localWarning = false;
@@ -59,11 +63,13 @@ export default function CreateProduct() {
         }
       });
     }
+
     const localSchedule = createNewSchedule();
+
     if (localWarning) {
       return;
     }
-    console.log(scheduleInputValidation(localSchedule));
+
     if (scheduleInputValidation(localSchedule) !== "Correct") {
       setError(scheduleInputValidation(localSchedule) as string);
     } else {
@@ -71,28 +77,45 @@ export default function CreateProduct() {
     }
   };
 
+  function checkSchedule(hour: Date): string | null {
+    if (hour === specificDate) {
+      console.log("We are in");
+      return null;
+    }
+    return hour.toLocaleTimeString(undefined, {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
   function createNewSchedule() {
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
 
     // Use refs to access selected times from TimeSelect components
     const AMHourFrom = AMHourFromRef.current
       ?.getTime()
-      ?.toLocaleTimeString(undefined, { hour12: false });
+      ?.toLocaleTimeString(undefined, {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
     const AMHourTo = AMHourToRef.current
       ?.getTime()
-      ?.toLocaleTimeString(undefined, { hour12: false });
-    const PMHourFrom = PMHourFromRef.current
-      ?.getTime()
-      ?.toLocaleTimeString(undefined, { hour12: false });
-    const PMHourTo = PMHourToRef.current
-      ?.getTime()
-      ?.toLocaleTimeString(undefined, { hour12: false });
-    const EXHourFrom = EXHourFromRef.current
-      ?.getTime()
-      ?.toLocaleTimeString(undefined, { hour12: false });
-    const EXHourTo = EXHourToRef.current
-      ?.getTime()
-      ?.toLocaleTimeString(undefined, { hour12: false });
+      ?.toLocaleTimeString(undefined, {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+    const PMHourFrom = checkSchedule(PMHourFromRef.current?.getTime());
+
+    const PMHourTo = checkSchedule(PMHourToRef.current?.getTime());
+
+    const EXHourFrom = checkSchedule(EXHourFromRef.current?.getTime());
+
+    const EXHourTo = checkSchedule(EXHourToRef.current?.getTime());
 
     const newSchedule: LocalHours = {
       localId,
@@ -138,18 +161,24 @@ export default function CreateProduct() {
           textStyle="mt-4"
           ref={dayNumberRef}
         />
-        <TimeSelect text="Hora de Apertura Mañana:" ref={AMHourFromRef} />
-        <TimeSelect text="Hora de Cerrada Mañana:" ref={AMHourToRef} />
-        <TimeSelect text="Hora de Apertura Tarde:" ref={PMHourFromRef} />
-        <TimeSelect text="Hora de Cerrada Tarde:" ref={PMHourToRef} />
-        <TimeSelect text="Hora de Apertura Noche:" ref={EXHourFromRef} />
-        <TimeSelect text="Hora de Cerrada Noche:" ref={EXHourToRef} />
+        <TimeSelect text="Hora de Apertura Primer Turno:" ref={AMHourFromRef} />
+        <TimeSelect text="Hora de Cerrada Primer Turno:" ref={AMHourToRef} />
+        <TimeSelect
+          text="Hora de Apertura Segundo Turno:"
+          ref={PMHourFromRef}
+        />
+        <TimeSelect text="Hora de Cerrada Segundo Turno:" ref={PMHourToRef} />
+        <TimeSelect text="Hora de Apertura Tercer Turno:" ref={EXHourFromRef} />
+        <TimeSelect text="Hora de Cerrada Tercer Turno:" ref={EXHourToRef} />
         <View className="flex flex-col justify-center items-center w-3/4 mt-3">
           <BasicButton
             logo={<CreateLogo />}
             text="Crear Horario"
             style="mt-3"
-            onPress={() => handleCreate()}
+            onPress={() => {
+              handleCreate();
+              fetchSchedules();
+            }}
           />
         </View>
       </View>

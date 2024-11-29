@@ -8,16 +8,14 @@ import {
   Dimensions,
   Alert,
   Modal,
-  TextInput,
   Pressable,
 } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../components/Header";
-import { getProducts, updateProduct } from "../../libs/product";
-import { getProductTypes } from "../../libs/productType";
-import BasicSearchButton from "../../components/BasicSearchBar";
-import CategorySelectButton from "../../components/CategorySelectButton";
-import { Product } from "../../schema/GeneralSchema";
+import Header from "../../../components/Header";
+import { getProducts } from "../../../libs/product";
+import { getProductTypes } from "../../../libs/productType";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+import { Product } from "../../../schema/GeneralSchema";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,43 +23,43 @@ const ReadProductScreen = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchText, setSearchText] = useState<string>("");
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const data = await getProductTypes();
-        setCategories(data.allCategories);
-      } catch (err) {
-        console.error("Error fetching categories", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchCategories();
   }, []);
 
+  const fetchCategories = async () => {
+    try {
+      const data = await getProductTypes();
+      setCategories(data.allCategories);
+    } catch (err) {
+      console.error("Error fetching categories", err);
+      Alert.alert("Error", "Fallo al cargar las categorías");
+    }
+  };
+
   useEffect(() => {
     if (searchText.trim()) {
-      const results = products.filter((product) =>
-        product.name.toLowerCase().includes(searchText.toLowerCase())
-      );
+      const results = products.filter((product) => {
+        const category = categories.find(
+          (cat) => cat.id === product.productTypeId
+        );
+        const categoryName = category ? category.name : "";
+        return (
+          product.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          categoryName.toLowerCase().includes(searchText.toLowerCase())
+        );
+      });
       setFilteredProducts(results);
     } else {
       setFilteredProducts(products);
     }
-  }, [searchText, products]);
+  }, [searchText, products, categories]);
 
-  async function fetchProducts() {
+  const fetchProducts = async () => {
     try {
       const response = await getProducts();
       const fetchedProducts = response.activeProducts;
@@ -78,35 +76,11 @@ const ReadProductScreen = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleProductPress = (product: Product) => {
     setSelectedProduct(product);
-    setSelectedCategory(product.productTypeId ?? null);
     setIsModalVisible(true);
-  };
-
-  const handleSaveChanges = async () => {
-    if (!selectedProduct) return;
-
-    const { name, brand, mesurement, description } = selectedProduct;
-
-    const updatedProduct: Product = {
-      ...selectedProduct,
-      productTypeId: selectedCategory,
-    };
-
-    try {
-      const response = await updateProduct(updatedProduct);
-      if (response) {
-        Alert.alert("Éxito", "Producto actualizado exitosamente");
-        setIsModalVisible(false);
-        fetchProducts();
-      }
-    } catch (error) {
-      console.log("Error al actualizar producto", error);
-      Alert.alert("Error", "No se pudo actualizar el producto");
-    }
   };
 
   const ProductItem = ({
@@ -133,26 +107,11 @@ const ReadProductScreen = () => {
     );
   };
 
-  //   const ProductItem1 = ({ name, imgURL, category }) => {
-  //     const defaultImage = 'https://via.placeholder.com/150';
-
-  //     return (
-  //         <View style={styles.productContainer}>
-  //             <Image
-  //                 source={{ uri: imgURL || defaultImage }}
-  //                 style={styles.productImage}
-  //             />
-  //             <Text style={styles.productName}>{name}</Text>
-  //             <Text style={styles.productCategory}>{category}</Text>
-  //         </View>
-  //     );
-  // };
-
   return (
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          header: () => <Header title="Modificar Producto" />,
+          header: () => <Header title="Consultar Producto" />,
         }}
       />
       <View style={styles.searchButtonContainer}>
@@ -198,68 +157,31 @@ const ReadProductScreen = () => {
                 }}
                 style={styles.modalImage}
               />
-              <Text style={styles.modalTitle}>
-                Editar: {selectedProduct.name}
-              </Text>
+              <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
 
-              <TextInput
-                style={styles.input}
-                value={selectedProduct.name}
-                onChangeText={(text) =>
-                  setSelectedProduct({ ...selectedProduct, name: text })
-                }
-                placeholder="Nombre del Producto"
-              />
+              <View style={styles.modalInfoContainer}>
+                <Text style={styles.modalInfoLabel}>Descripción:</Text>
+                <Text style={styles.modalInfoText}>
+                  {selectedProduct.description || "No disponible"}
+                </Text>
 
-              <TextInput
-                style={styles.input}
-                value={selectedProduct.description || ""}
-                onChangeText={(text) =>
-                  setSelectedProduct({ ...selectedProduct, description: text })
-                }
-                placeholder="Descripción"
-              />
+                <Text style={styles.modalInfoLabel}>Marca:</Text>
+                <Text style={styles.modalInfoText}>
+                  {selectedProduct.brand || "No disponible"}
+                </Text>
 
-              <TextInput
-                style={styles.input}
-                value={selectedProduct.brand || ""}
-                onChangeText={(text) =>
-                  setSelectedProduct({ ...selectedProduct, brand: text })
-                }
-                placeholder="Marca"
-              />
-
-              <TextInput
-                style={styles.input}
-                value={selectedProduct.mesurement || ""}
-                onChangeText={(text) =>
-                  setSelectedProduct({ ...selectedProduct, mesurement: text })
-                }
-                placeholder="Medida"
-              />
-
-              <CategorySelectButton
-                placeholder="Seleccione una categoría"
-                onSelectCategory={(categoryId: string) =>
-                  setSelectedCategory(categoryId)
-                }
-                selectedCategory={selectedCategory}
-              />
-
-              <View style={styles.buttonContainer}>
-                <Pressable
-                  style={styles.customButton}
-                  onPress={handleSaveChanges}
-                >
-                  <Text style={styles.customButtonText}>Guardar Cambios</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.customButton}
-                  onPress={() => setIsModalVisible(false)}
-                >
-                  <Text style={styles.customButtonText}>Cerrar</Text>
-                </Pressable>
+                <Text style={styles.modalInfoLabel}>Medida:</Text>
+                <Text style={styles.modalInfoText}>
+                  {selectedProduct.mesurement || "No disponible"}
+                </Text>
               </View>
+
+              <Pressable
+                style={styles.customButton}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <Text style={styles.customButtonText}>Cerrar</Text>
+              </Pressable>
             </View>
           </View>
         </Modal>
@@ -312,16 +234,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
   },
-  buttonContainer: {
-    width: "100%",
-    borderRadius: 30,
-  },
   customButton: {
     backgroundColor: "#e1e8e8",
     padding: 10,
     borderRadius: 30,
     alignItems: "center",
-    marginBottom: 10,
+    marginTop: 10,
   },
   customButtonText: {
     color: "#324e64",
@@ -341,6 +259,23 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  modalInfoContainer: {
+    width: "100%",
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  modalInfoLabel: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  modalInfoText: {
+    marginBottom: 15,
+    lineHeight: 18,
+  },
   modalImage: {
     width: 150,
     height: 150,
@@ -349,15 +284,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
     marginBottom: 10,
-    borderRadius: 5,
   },
 });
 

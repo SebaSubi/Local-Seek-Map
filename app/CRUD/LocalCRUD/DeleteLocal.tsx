@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import BasicSearchButton from "../../components/BasicSearchBar";
-import BasicButton from "../../components/BasicButton";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+import BasicButton from "../../../components/BasicButton";
 
 export default function DeleteProduct() {
   return (

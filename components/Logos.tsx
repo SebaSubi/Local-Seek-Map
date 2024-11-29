@@ -4,6 +4,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Feather from "@expo/vector-icons/Feather";
 
 export const CreateLogo = () => {
   return <Entypo name="plus" size={24} color="black" />;
@@ -75,4 +76,12 @@ export const LocationIcon = ({ color = "black", size = 24 }) => {
 
 export const WarningIcon = () => {
   return <AntDesign name="warning" size={35} color="black" />;
+};
+
+export const HomeIcon = () => {
+  return <Entypo name="home" size={24} color="black" />;
+};
+
+export const SearchIcon = () => {
+  return <Feather name="search" size={24} color="black" />;
 };
