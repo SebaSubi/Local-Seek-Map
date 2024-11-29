@@ -2,14 +2,14 @@ import { Product } from "../schema/GeneralSchema";
 import { Alert } from "react-native";
 import { Platform } from "react-native";
 
-// const API_URL =
-//   Platform.OS === "android"
-//     ? "http://10.0.2.2:3000/product"
-//     : "http://localhost:3000/product";
-
 const API_URL =
-  Platform.OS === "android" ? "http://192.168.0.135:3000/product" : "";
-// Platform.OS === "android" ? "http://192.168.155.1:3000/product" : "";
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/product"
+    : "http://localhost:3000/product";
+
+// const API_URL =
+//   Platform.OS === "android" ? "http://192.168.0.135:3000/product" : "";
+// // Platform.OS === "android" ? "http://192.168.130.1:3000/product" : "";
 
 export async function getProducts() {
   try {
@@ -101,7 +101,7 @@ export async function createProduct(product: Product) {
       Alert.alert("Error", "Failed to create Product");
     } else {
       console.log("Product succesfully added to dataBase");
-      return response.ok
+      return response.ok;
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -116,12 +116,12 @@ export const searchProductsByName = async (searchInput: string) => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Error searching products');
+      throw new Error("Error searching products");
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error searching products:', error);
+    console.error("Error searching products:", error);
     throw error;
   }
 };
@@ -144,7 +144,7 @@ export async function deleteProduct(id: string) {
       console.error("Error deleting product");
       const errorResponse = await response.json();
       console.error(errorResponse);
-      throw new Error('Error al eliminar el producto');
+      throw new Error("Error al eliminar el producto");
     }
 
     return await response.json();

@@ -43,7 +43,7 @@ export interface Reservations {
 export interface Local {
   id?: string;
   name: string;
-  location: string; // Consider changing to number if needed
+  location?: string; // Consider changing to number if needed
   whatsapp?: number;
   instagram?: string;
   facebook?: string;
@@ -191,4 +191,4 @@ export type DisplayService = {
   localServiceId: string;
   localImage: string | null;
   localName: string;
-} 
+};

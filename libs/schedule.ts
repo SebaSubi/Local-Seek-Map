@@ -13,8 +13,8 @@ const API_URL =
 
 export async function createSchedule(schedule: LocalHours) {
   // const API_URL = Platform.OS === 'android' ? "http://10.0.2.2:3000/schedule" : "http://localhost:3000/schedule";
-  const API_URL =
-    Platform.OS === "android" ? "http://192.168.155.1:3000/schedule" : "";
+  // const API_URL =
+  //   Platform.OS === "android" ? "http://192.168.155.1:3000/schedule" : "";
 
   try {
     const response = await fetch(`${API_URL}/schedule`, {

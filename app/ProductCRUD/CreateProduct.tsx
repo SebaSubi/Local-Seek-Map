@@ -4,12 +4,12 @@ import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { CreateLogo } from "../../components/Logos";
 import BasicButton from "../../components/BasicButton";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createProduct } from "../../libs/product";
 import { Product } from "../../schema/GeneralSchema";
 import CategorySelectButton from "../../components/CategorySelectButton";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageToCloudinary } from "../../libs/cloudinary";
+// import { uploadImageToCloudinary } from "../../libs/cloudinary";
 
 export default function CreateProduct() {
   const name = useRef("");
@@ -48,8 +48,8 @@ export default function CreateProduct() {
     }
 
     // Subir imagen a Cloudinary
-    const uploadedImageUrl = await uploadImageToCloudinary(image);
-    if (!uploadedImageUrl) return;
+    // const uploadedImageUrl = await uploadImageToCloudinary(image);
+    // if (!uploadedImageUrl) return;
 
     const newProduct: Product = {
       name: name.current,
@@ -57,7 +57,7 @@ export default function CreateProduct() {
       mesurement: mesurement.current,
       description: description.current,
       productTypeId: selectedCategory,
-      imgURL: uploadedImageUrl, // Usar la URL de Cloudinary
+      // imgURL: uploadedImageUrl, // Usar la URL de Cloudinary
     };
 
     try {
@@ -69,6 +69,7 @@ export default function CreateProduct() {
       description.current = "";
       setSelectedCategory(null);
       setImage(null);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       Alert.alert("Error", "No se pudo crear el producto");
     }
@@ -144,12 +145,12 @@ export default function CreateProduct() {
           style="mt-3"
           onPress={handleSubmit}
         />
-        <BasicButton
+        {/* <BasicButton
           logo={<CreateLogo />}
           text="Crear Producto"
           style="mt-3"
           onPress={handleSubmit}
-        />
+        /> */}
       </View>
     </View>
   );
