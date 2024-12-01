@@ -1,6 +1,5 @@
 import { Pressable, Text, View } from "react-native";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
-import { deleteSchedule, getSchedule } from "../../../../libs/schedule";
+
 import { useEffect, useState } from "react";
 import {
   DeleteLogo,
@@ -11,7 +10,10 @@ import { Link, Stack } from "expo-router";
 import BasicButton from "../../../../components/BasicButton";
 import { days } from "../../../../schema/generalConst";
 import Header from "../../../../components/Header";
-import { getScheduleByLocalServiceId } from "../../../../libs/localService";
+import {
+  deleteServiceSchedule,
+  getScheduleByLocalServiceId,
+} from "../../../../libs/localService";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 
 export default function DeleteSchedule() {
@@ -36,7 +38,7 @@ export default function DeleteSchedule() {
   }, [localId, refresh]);
 
   function handlePress(id: string) {
-    deleteSchedule(id);
+    deleteServiceSchedule(id);
     setRefresh(!refresh);
   }
 

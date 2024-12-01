@@ -8,11 +8,13 @@ const BasicTextInput = forwardRef(
       inputType,
       title,
       textStyle,
+      defaultValue,
     }: {
       placeholder: string;
       inputType: "text" | "number";
       title?: string;
       textStyle?: string;
+      defaultValue: string;
     },
     ref,
   ) => {
@@ -38,6 +40,7 @@ const BasicTextInput = forwardRef(
       <View className="w-3/4">
         {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
         <TextInput
+          defaultValue={defaultValue}
           className="w-full bg-[#e1e8e8] h-12 rounded-2xl text-center"
           onChangeText={handleChange} // Set local state on change
           value={value} // Use the local value state

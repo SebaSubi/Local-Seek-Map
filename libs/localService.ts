@@ -71,6 +71,19 @@ export async function getScheduleByLocalServiceId(id: string) {
   }
 }
 
+export async function getServiceScheduleByScheduleId(id: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service-schedule/${id}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch schedule by scheduleId");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting schedule by scheduleId", error);
+  }
+}
+
 export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
   try {
     const response = await fetch(`${API_URL}/service-schedule`, {
@@ -98,7 +111,7 @@ export async function updateServiceSchedule(
   schedule: LocalServiceSchedule,
 ) {
   try {
-    const response = await fetch(`${API_URL}/service-schedule/${id}`, {
+    const response = await fetch(`${API_URL}/service-schedule/update/${id}`, {
       method: "PUT",
       headers: {
         "content-Type": "application/json",
@@ -113,12 +126,14 @@ export async function updateServiceSchedule(
       console.log("Updated service schedule");
       return json;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-export async function deleteSchedule(id: string) {
+export async function deleteServiceSchedule(id: string) {
   try {
-    const response = await fetch(`${API_URL}/schedule/${id}`, {
+    const response = await fetch(`${API_URL}/service-schedule/delete/${id}`, {
       method: "PATCH",
       headers: {
         "content-Type": "application/json",
@@ -127,10 +142,12 @@ export async function deleteSchedule(id: string) {
     });
 
     if (!response.ok) {
-      console.log("Error deletiong schedule");
+      console.log("Error deletiong service schedule");
     } else {
       const json = response.json();
       return json;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
