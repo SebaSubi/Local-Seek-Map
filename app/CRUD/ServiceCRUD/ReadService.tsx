@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { DisplayService } from "../../../schema/GeneralSchema";
-import { getDisplayServices } from "../../../libs/service";
+import { getDisplayServices } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
 
 export default function ReadService() {

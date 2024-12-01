@@ -18,25 +18,25 @@ export default function ProductCrud() {
         }}
       />
       <BasicSelectable
-        href="/ProductCRUD/CreateProduct"
+        href="/CRUD/ProductCRUD/CreateProduct"
         logo={<CreateLogo />}
         text="Crear Producto"
         style="mt-4 mb-4"
       />
       <BasicSelectable
-        href="/ProductCRUD/DeleteProduct"
+        href="/CRUD/ProductCRUD/DeleteProduct"
         logo={<DeleteLogo />}
         text="Borrar Producto"
         style="mt-4 mb-4"
       />
       <BasicSelectable
-        href="/ProductCRUD/UpdateProduct"
+        href="/CRUD/ProductCRUD/UpdateProduct"
         logo={<UpdateLogo />}
         text="Actualizar Producto"
         style="mt-4 mb-4"
       />
       <BasicSelectable
-        href="/ProductCRUD/ReadProduct"
+        href="/CRUD/ProductCRUD/ReadProduct"
         logo={<ReadLogo />}
         text="Leer Producto"
         style="mt-4 mb-4"

@@ -13,16 +13,16 @@ export default function DeleteSchedule() {
     // <ScheduleBox key={2} shiftOpen="PMHourFrom" shiftClose="PMHourTo" />,
     // <ScheduleBox key={2} shiftOpen="EXHourFrom" shiftClose="EXHourTo" />,
     {
-      shiftOpen: "AMHourFrom",
-      shiftClose: "AMHourTo",
+      shiftOpen: "FirstShiftStart",
+      shiftClose: "FirstShiftFinish",
     },
     {
-      shiftOpen: "PMHourFrom",
-      shiftClose: "PMHourTo",
+      shiftOpen: "SecondShiftStart",
+      shiftClose: "SecondShiftFinish",
     },
     {
-      shiftOpen: "EXHourFrom",
-      shiftClose: "EXHourTo",
+      shiftOpen: "ThirdShiftStart",
+      shiftClose: "ThirdShiftFinish",
     },
   ];
 

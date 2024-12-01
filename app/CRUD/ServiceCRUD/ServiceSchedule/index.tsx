@@ -1,62 +1,62 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
-import BasicSelectable from "../../../components/BasicSelectable";
-import { CreateLogo, ReadLogo, UpdateLogo } from "../../../components/Logos";
+import BasicSelectable from "../../../../components/BasicSelectable";
+import { CreateLogo, ReadLogo, UpdateLogo } from "../../../../components/Logos";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
+import Header from "../../../../components/Header";
 import { useEffect, useState } from "react";
-import { getLocals } from "../../../libs/local";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
-import { Local } from "../../../schema/GeneralSchema";
-import BasicWarning from "../../../components/BasicWarning";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
+import { Local } from "../../../../schema/GeneralSchema";
+import { getServicesByLocalId } from "../../../../libs/localService";
 
-export default function ProductCrud() {
+export default function ScheduleCrud() {
   const [screen, setScreen] = useState(false);
   const [locals, setlocals] = useState<Local[]>([]);
 
-  const setLocalId = useLocalIdStore((state) => state.setLocalId);
+  const localId = useLocalIdStore((state) => state.localId);
+  // const localServiceId = useLocalServiceIdStore(
+  //   (state) => state.localServiceId,
+  // );
+  const setLocalServiceId = useLocalServiceIdStore(
+    (state) => state.setLocalServiceId,
+  );
 
   useEffect(() => {
-    const fetchLocals = async () => {
-      const locals = await getLocals();
+    const fetchServicesByLocalId = async () => {
+      const locals = await getServicesByLocalId(localId);
       setlocals(locals);
     };
-    fetchLocals();
+    fetchServicesByLocalId();
   }, []);
 
   function handlePress(id: string) {
-    setLocalId(id);
+    setLocalServiceId(id);
     setScreen(true);
   }
 
   return (
     <View className="flex justify-center items-center bg-white h-full">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="ABM Horario" />,
+        }}
+      />
       {screen ? (
         <>
-          <Stack.Screen
-            options={{
-              header: () => <Header title="ABM Horario" />,
-            }}
-          />
           <BasicSelectable
-            href="/ScheduleCRUD/CreateSchedule"
+            href="/CRUD/ServiceCRUD/ServiceSchedule/CreateSchedule"
             logo={<CreateLogo />}
             text="Crear Horario"
             style="mt-3"
           />
-          {/* <BasicSelectable
-            href="/ScheduleCRUD/DeleteSchedule"
-            logo={<DeleteLogo />}
-            text="Borrar Horario"
-            style="mt-3"
-          /> */}
           <BasicSelectable
-            href="/ScheduleCRUD/DeleteSchedule"
+            href="/CRUD/ServiceCRUD/ServiceSchedule/DeleteSchedule"
             logo={<UpdateLogo />}
             text="Actualizar/Borrar Horiario"
             style="mt-3"
           />
           <BasicSelectable
-            href="/ScheduleCRUD/ReadSchedules"
+            href="/CRUD/ServiceCRUD/ServiceSchedule/ReadSchedules"
             logo={<ReadLogo />}
             text="Leer Horiarios"
             style="mt-3"
