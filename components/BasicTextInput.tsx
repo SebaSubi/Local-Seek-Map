@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, { useState, forwardRef } from "react";
 import { Text, TextInput, View } from "react-native";
 
 const BasicTextInput = forwardRef(
@@ -9,18 +9,19 @@ const BasicTextInput = forwardRef(
       inputType,
       title,
       textStyle,
-      defaultValue,
+      value,
     }: {
       placeholder: string;
       submitText: boolean;
       inputType: "text" | "number";
       title?: string;
       textStyle?: string;
-      defaultValue: string;
+      value: string;
     },
     ref: React.MutableRefObject<number | string>,
   ) => {
     const [text, setText] = useState(value);
+
     const handleChange = (input: string) => {
       if (inputType === "number") {
         if (/^\d*$/.test(input)) {
@@ -41,7 +42,7 @@ const BasicTextInput = forwardRef(
       <View className="w-3/4">
         {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
         <TextInput
-          defaultValue={defaultValue}
+          defaultValue={value}
           className="w-full bg-[#e1e8e8] h-12 rounded-2xl text-center"
           onChangeText={handleChange}
           value={text}
