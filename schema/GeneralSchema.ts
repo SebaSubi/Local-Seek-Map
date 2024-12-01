@@ -93,12 +93,12 @@ export interface LocalHours {
   dateFrom: Date;
   dateTo?: Date;
   dayNumber: number;
-  AMHourFrom: string;
-  AMHourTo: string;
-  PMHourFrom: string;
-  PMHourTo: string;
-  EXHourFrom: string;
-  EXHourTo: string;
+  FirstShiftStart: string;
+  FirstShiftFinish: string;
+  SecondShiftStart: string;
+  SecondShiftFinish: string;
+  ThirdShiftStart: string;
+  ThirdShiftFinish: string;
 }
 
 export interface LocalTypes {
@@ -177,10 +177,39 @@ export interface LocalService {
 }
 
 export interface Service {
-  id: string;
-  localService: LocalService[];
-  reservationURL: string;
+  id?: string;
+  local?: Local; // Assuming Local is another interface
+  localId: string;
+  name: string;
+  serviceType?: ServiceType;
+  serviceTypeId: string;
   description: string;
+  image?: string;
+  reservationURL?: string; // Using camelCase as per JavaScript/TypeScript convention
+  dateFrom: Date;
+  dateTo?: Date;
+  schedule?: LocalServiceSchedule[];
+}
+
+export interface LocalServiceSchedule {
+  id?: string;
+  localServiceId: string;
+  dateFrom: Date;
+  dateTo?: Date;
+  dayNumber: number;
+  FirstShiftStart: string;
+  FirstShiftFinish: string;
+  SecondShiftStart?: string;
+  SecondShiftFinish?: string;
+  ThirdShiftStart?: string;
+  ThirdShiftFinish?: string;
+  localService?: Service;
+}
+
+export interface ServiceType {
+  id: string;
+  localService?: Service[]; // Array of related services
+  name: string;
 }
 
 export type DisplayService = {
@@ -191,4 +220,4 @@ export type DisplayService = {
   localServiceId: string;
   localImage: string | null;
   localName: string;
-} 
+};

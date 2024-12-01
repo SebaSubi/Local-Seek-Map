@@ -29,7 +29,7 @@ export default function Main() {
         style="mt-2"
       />
       <BasicSelectable
-        href="/CRUD/ScheduleCRUD"
+        href="/CRUD/LocalScheduleCRUD"
         logo={<ScheduleIcon />}
         text="ABM Horario"
         style="mt-2"

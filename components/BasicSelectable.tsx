@@ -8,7 +8,7 @@ export default function BasicSelectable({
   style,
 }: {
   href: string;
-  logo: any;
+  logo?: any;
   text: string;
   style?: string;
 }) {
@@ -17,9 +17,12 @@ export default function BasicSelectable({
       <Pressable
         className={`flex flex-row justify-center items-center w-2/3 bg-[#e1e8e8] h-10 rounded-2xl ${style}`}
       >
-        <View className="absolute left-0 ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
-          {logo}
-        </View>
+        {logo ? (
+          <View className="absolute left-0 ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
+            {logo}
+          </View>
+        ) : null}
+
         <Text>{text}</Text>
       </Pressable>
     </Link>

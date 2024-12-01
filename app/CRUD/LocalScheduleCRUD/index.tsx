@@ -1,20 +1,15 @@
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import BasicSelectable from "../../../components/BasicSelectable";
-import {
-  CreateLogo,
-  DeleteLogo,
-  ReadLogo,
-  ScheduleIcon,
-  UpdateLogo,
-} from "../../../components/Logos";
+import { CreateLogo, ReadLogo, UpdateLogo } from "../../../components/Logos";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import { useEffect, useState } from "react";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { getLocals } from "../../../libs/local";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { Local } from "../../../schema/GeneralSchema";
+import BasicWarning from "../../../components/BasicWarning";
 
-export default function ProductCrud() {
+export default function ScheduleCrud() {
   const [screen, setScreen] = useState(false);
   const [locals, setlocals] = useState<Local[]>([]);
 
@@ -35,41 +30,35 @@ export default function ProductCrud() {
 
   return (
     <View className="flex justify-center items-center bg-white h-full">
-      <Stack.Screen
-        options={{
-          header: () => <Header title="ABM Producto" />,
-        }}
-      />
       {screen ? (
         <>
+          <Stack.Screen
+            options={{
+              header: () => <Header title="ABM Horario" />,
+            }}
+          />
           <BasicSelectable
-            href="/CRUD/ServiceCRUD/CreateService"
+            href="/CRUD/ScheduleCRUD/CreateSchedule"
             logo={<CreateLogo />}
-            text="Crear Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/DeleteService"
-            logo={<DeleteLogo />}
-            text="Borrar Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/UpdateService"
-            logo={<UpdateLogo />}
-            text="Actualizar Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/ReadService"
-            logo={<ReadLogo />}
-            text="Leer Servicios"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/ServiceSchedule"
-            logo={<ScheduleIcon />}
             text="Crear Horario"
+            style="mt-3"
+          />
+          {/* <BasicSelectable
+            href="/ScheduleCRUD/DeleteSchedule"
+            logo={<DeleteLogo />}
+            text="Borrar Horario"
+            style="mt-3"
+          /> */}
+          <BasicSelectable
+            href="/CRUD/ScheduleCRUD/DeleteSchedule"
+            logo={<UpdateLogo />}
+            text="Actualizar/Borrar Horiario"
+            style="mt-3"
+          />
+          <BasicSelectable
+            href="/CRUD/ScheduleCRUD/ReadSchedules"
+            logo={<ReadLogo />}
+            text="Leer Horiarios"
             style="mt-3"
           />
         </>

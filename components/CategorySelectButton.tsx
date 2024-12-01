@@ -28,7 +28,7 @@ const CategorySelectButton = forwardRef(
       selectedCategory: string | null;
       containerStyle?: object;
     },
-    ref
+    ref,
   ) => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -97,7 +97,7 @@ const CategorySelectButton = forwardRef(
         )}
       </View>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

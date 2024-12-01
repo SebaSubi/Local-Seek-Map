@@ -54,7 +54,9 @@ export async function getSchedule(id: string) {
       const json = response.json();
       return json;
     }
-  } catch (error) { }
+  } catch (error) {
+    console.group(error);
+  }
 }
 
 export async function deleteSchedule(id: string) {
@@ -73,7 +75,9 @@ export async function deleteSchedule(id: string) {
       const json = response.json();
       return json;
     }
-  } catch (error) { }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function updateSchedule(id: string, schedule: LocalHours) {
