@@ -5,6 +5,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export const CreateLogo = () => {
   return <Entypo name="plus" size={24} color="black" />;
@@ -84,4 +85,8 @@ export const HomeIcon = () => {
 
 export const SearchIcon = () => {
   return <Feather name="search" size={24} color="black" />;
+};
+
+export const PersonCircleIcon = ({ color = "black", size = 24 }) => {
+  return <Ionicons name="person-circle-sharp" size={size} color={color} />;
 };
