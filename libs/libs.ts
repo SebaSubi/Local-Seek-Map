@@ -1,7 +1,7 @@
 import { LocalHours, LocalServiceSchedule } from "../schema/GeneralSchema";
 
 export function scheduleInputValidation(
-  schedule: LocalHours | LocalServiceSchedule,
+  schedule: LocalHours | LocalServiceSchedule
 ): string | boolean {
   if (
     schedule.FirstShiftStart > schedule.FirstShiftFinish ||

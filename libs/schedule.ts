@@ -42,7 +42,7 @@ export async function getScheduleByScheduleId(id: string) {
       const data = response.json();
       return data;
     }
-  } catch (error) { }
+  } catch (error) {}
 }
 
 export async function getSchedule(id: string) {
@@ -97,5 +97,5 @@ export async function updateSchedule(id: string, schedule: LocalHours) {
       console.log("Updated Schedule");
       return json;
     }
-  } catch (error) { }
+  } catch (error) {}
 }

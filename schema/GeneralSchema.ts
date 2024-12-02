@@ -43,12 +43,12 @@ export interface Reservations {
 export interface Local {
   id?: string;
   name: string;
-  location: string; // Consider changing to number if needed
+  location?: string; // Consider changing to number if needed
   whatsapp?: number;
   instagram?: string;
   facebook?: string;
   webpage?: string;
-  image?: string;
+  imgURL?: string;
   dateFrom: Date;
   dateTo?: Date;
   users?: User[];

@@ -3,13 +3,15 @@ import { Local } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 
 // const API_URL =
-// Platform.OS === "android"
-//   ? "http://10.0.2.2:3000/store"
-//   : "http://192.168.155.114:3000/store";
+//   Platform.OS === "android"
+//     ? "http://10.0.2.2:3000/store"
+//     : "http://192.168.155.114:3000/store";
 const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/store"
     : "http://localhost:3000/store";
+//   Platform.OS === "android" ? "http://192.168.0.135:3000/store" : "";
+// // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
 export async function getLocals() {
   try {

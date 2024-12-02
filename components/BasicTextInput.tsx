@@ -18,7 +18,7 @@ const BasicTextInput = forwardRef(
       textStyle?: string;
       value: string;
     },
-    ref: React.MutableRefObject<number | string>,
+    ref: React.MutableRefObject<number | string>
   ) => {
     const [text, setText] = useState(value);
 
@@ -51,7 +51,7 @@ const BasicTextInput = forwardRef(
         />
       </View>
     );
-  },
+  }
 );
 
 export default BasicTextInput;
