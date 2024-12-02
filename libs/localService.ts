@@ -52,7 +52,6 @@ export async function createService(data: Service) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
   }
 }
 
@@ -102,7 +101,6 @@ export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
   }
 }
 

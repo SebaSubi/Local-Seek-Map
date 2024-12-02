@@ -1,6 +1,8 @@
 import { FlatList, Text, View } from "react-native";
 import ScheduleBox from "../../../components/ScheduleBox";
 import { shift } from "../../../constants/consts";
+import { Stack } from "expo-router";
+import Header from "../../../components/Header";
 
 type Shift = {
   shiftOpen: shift;
@@ -28,6 +30,11 @@ export default function DeleteSchedule() {
 
   return (
     <View className="flex flex-col  h-full w-full">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="Actualizar Horario" />,
+        }}
+      />
       <FlatList
         data={shifts}
         keyExtractor={(item, index) => index.toString()}

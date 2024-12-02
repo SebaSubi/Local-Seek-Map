@@ -37,7 +37,7 @@ export default function ProductCrud() {
     <View className="flex justify-center items-center bg-white h-full">
       <Stack.Screen
         options={{
-          header: () => <Header title="ABM Producto" />,
+          header: () => <Header title="ABM Servicio" />,
         }}
       />
       {screen ? (
@@ -69,7 +69,7 @@ export default function ProductCrud() {
           <BasicSelectable
             href="/CRUD/ServiceCRUD/ServiceSchedule"
             logo={<ScheduleIcon />}
-            text="Crear Horario"
+            text="AMB Horario"
             style="mt-3"
           />
         </>
