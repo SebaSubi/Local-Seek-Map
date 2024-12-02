@@ -20,6 +20,7 @@ const BasicTextInput = forwardRef(
       value: string;
       // onChangeText?: (text: string) => void;
     },
+    // eslint-disable-next-line prettier/prettier
     ref: React.MutableRefObject<number | string>
   ) => {
     const [text, setText] = useState(value);
@@ -51,6 +52,7 @@ const BasicTextInput = forwardRef(
         />
       </View>
     );
+    // eslint-disable-next-line prettier/prettier
   }
 );
 

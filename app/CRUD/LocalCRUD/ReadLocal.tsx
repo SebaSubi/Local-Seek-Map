@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Text, View, Pressable, Modal, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  Pressable,
+  Modal,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import { LocalDisplay } from "../../../schema/GeneralSchema";
@@ -11,7 +18,6 @@ import {
 } from "../../../libs/local";
 import LocalContainer from "../../../components/LocalContainer";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-// import { store } from "expo-router/build/global-state/router-store";
 
 const localCategories = ["Apertura", "Ubicación", "Quitar", "Categoria"];
 const StoreCategories = ["Supermercado"];
@@ -31,10 +37,9 @@ export default function ReadLocal() {
   useEffect(() => {
     const fetchLocals = async () => {
       await fetchAndSetLocals();
-      // console.log(locals);
     };
     fetchLocals();
-  }, []); //podriamos agregar un boton para recargar la lista de locales y agregarlo al array de; useEffect
+  }, []);
 
   useEffect(() => {
     if (search === "" || search === " ") {
@@ -72,69 +77,74 @@ export default function ReadLocal() {
     else if (category === "Categoria") setModalVisibility(true);
     else setSearchFilter(category);
     setSearch("");
-    console.log(category);
   };
 
   const handleStoreCateory = (category: string) => {
-    console.log(category);
     setStoreCategories(category);
     setModalVisibility(false);
     storeCategoryFilter(category);
   };
 
   return (
-    <View className="flex items-center">
-      <Stack.Screen
-        options={{
-          header: () => <Header title="Leer Local" />,
-        }}
-      />
-      <BasicSearchButton
-        placeholder="Buscar Local"
-        onSearch={setSearch}
-        categories={localCategories}
-        selectedCategory={handleCategorySelection}
-      />
-      {locals?.map((local) => <LocalContainer key={local.id} local={local} />)}
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View className="flex items-center">
+        <Stack.Screen
+          options={{
+            header: () => <Header title="Leer Local" />,
+          }}
+        />
+        <BasicSearchButton
+          placeholder="Buscar Local"
+          onSearch={setSearch}
+          categories={localCategories}
+          selectedCategory={handleCategorySelection}
+        />
+        {locals?.map((local) => (
+          <LocalContainer key={local.id} local={local} />
+        ))}
 
-      <Pressable
-        className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
-        onPress={async () => {
-          await fetchAndSetLocals();
-        }}
-      >
-        <Text className="text-white">Recargar</Text>
-      </Pressable>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisibility}
-        onRequestClose={() => setModalVisibility(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Selecciona el tipo de búsqueda
-            </Text>
-            {StoreCategories.map((category, index) => (
+        <Pressable
+          className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
+          onPress={async () => {
+            await fetchAndSetLocals();
+          }}
+        >
+          <Text className="text-white">Recargar</Text>
+        </Pressable>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisibility}
+          onRequestClose={() => setModalVisibility(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>
+                Selecciona el tipo de búsqueda
+              </Text>
+              {StoreCategories.map((category, index) => (
+                <Pressable
+                  onPress={() => handleStoreCateory(category)}
+                  style={styles.modalOption}
+                  key={index}
+                >
+                  <Text style={styles.modalOptionText}>{category}</Text>
+                </Pressable>
+              ))}
               <Pressable
-                onPress={() => handleStoreCateory(category)}
-                style={styles.modalOption}
-                key={index}
+                onPress={() => setModalVisibility(false)}
+                style={styles.closeButton}
               >
-                <Text style={styles.modalOptionText}>{category}</Text>
+                <Text style={styles.closeButtonText}>Cerrar</Text>
               </Pressable>
-            ))}
-            <Pressable
-              onPress={() => setModalVisibility(false)}
-              style={styles.closeButton}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </Pressable>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ScrollView>
   );
 }
 

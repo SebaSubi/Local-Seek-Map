@@ -48,7 +48,7 @@ export interface Local {
   instagram?: string;
   facebook?: string;
   webpage?: string;
-  image?: string;
+  imgURL?: string;
   dateFrom: Date;
   dateTo?: Date;
   users?: User[];

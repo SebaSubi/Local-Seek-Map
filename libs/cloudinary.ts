@@ -1,55 +1,89 @@
-// import { v2 as cloudinary } from "cloudinary";
-// // import * as dotenv from "react-native-dotenv";
-// import { Alert } from "react-native";
-// import * as FileSystem from "expo-file-system";
-// // import Constants from "expo-constants";
-// // import {
-// //     EXPO_PUBLIC_CLOUD_NAME,
-// //     EXPO_PUBLIC_API_KEY,
-// //     EXPO_PUBLIC_API_SECRET,
-// // } from "react-native-dotenv";
+import axios from "axios";
 
-// // dotenv.config();
+export const uploadImageToCloudinaryProducts = async (
+  // eslint-disable-next-line prettier/prettier
+  imageUri: string
+): Promise<string | null> => {
+  const cloudName = "local-seek-map";
+  const uploadPreset = "products_upload"; // Nombre del preset unsigned
 
-// // cloudinary.config({
-// //   cloud_name: CLOUDINARY_CLOUD_NAME,
-// //   api_key: CLOUDINARY_API_KEY,
-// //   api_secret: CLOUDINARY_API_SECRET,
-// //   secure: true,
-// // });
+  const fileExtension = imageUri.split(".").pop()?.toLowerCase(); // para saber la extensión de la imagen
+  const imageType =
+    fileExtension === "jpg" || fileExtension === "jpeg"
+      ? "image/jpeg"
+      : "image/png";
 
-// // const cloudinaryConfig = Constants.expoConfig?.extra;
+  const formData = new FormData();
+  formData.append("file", {
+    uri: imageUri,
+    type: imageType, // para que se pueda cargar jpg o png
+    name: `image.${fileExtension}`,
+  } as any);
+  formData.append("upload_preset", uploadPreset);
 
-// // cloudinary.config({
-// //   cloud_name: cloudinaryConfig.CLOUDINARY_CLOUD_NAME,
-// //   api_key: cloudinaryConfig.CLOUDINARY_API_KEY,
-// //   api_secret: cloudinaryConfig.CLOUDINARY_API_SECRET,
-// //   secure: true,
-// // });
+  try {
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        // eslint-disable-next-line prettier/prettier
+      }
+    );
 
-// cloudinary.config({
-//   cloud_name: process.env.EXPO_PUBLIC_CLOUD_NAME,
-//   api_key: process.env.EXPO_PUBLIC_API_KEY,
-//   api_secret: process.env.EXPO_PUBLIC_API_SECRET,
-//   secure: true,
-// });
+    return response.data.secure_url; // URL segura de la imagen
+  } catch (error: any) {
+    console.error(
+      "Error subiendo imagen a Cloudinary:",
+      // eslint-disable-next-line prettier/prettier
+      error.response?.data || error
+    );
+    return null;
+  }
+};
 
-// export const uploadImageToCloudinary = async (imageUri: string) => {
-//   try {
-//     const base64Img = await FileSystem.readAsStringAsync(imageUri, {
-//       encoding: FileSystem.EncodingType.Base64,
-//     });
+export const uploadImageToCloudinaryLocals = async (
+  // eslint-disable-next-line prettier/prettier
+  imageUri: string
+): Promise<string | null> => {
+  const cloudName = "local-seek-map";
+  const uploadPreset = "locals_upload"; // Nombre del preset unsigned
 
-//     const data = `data:image/jpg;base64,${base64Img}`;
+  const fileExtension = imageUri.split(".").pop()?.toLowerCase(); // para saber la extensión de la imagen
+  const imageType =
+    fileExtension === "jpg" || fileExtension === "jpeg"
+      ? "image/jpeg"
+      : "image/png";
 
-//     const result = await cloudinary.uploader.upload(data, {
-//       upload_preset: "products_upload",
-//     });
+  const formData = new FormData();
+  formData.append("file", {
+    uri: imageUri,
+    type: imageType, // para que se pueda cargar jpg o png
+    name: `image.${fileExtension}`,
+  } as any);
+  formData.append("upload_preset", uploadPreset);
 
-//     return result.secure_url;
-//   } catch (error) {
-//     Alert.alert("Error", "No se pudo subir la imagen a Cloudinary");
-//     console.error(error);
-//     return null;
-//   }
-// };
+  try {
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        // eslint-disable-next-line prettier/prettier
+      }
+    );
+
+    return response.data.secure_url; // URL segura de la imagen
+  } catch (error: any) {
+    console.error(
+      "Error subiendo imagen a Cloudinary:",
+      // eslint-disable-next-line prettier/prettier
+      error.response?.data || error
+    );
+    return null;
+  }
+};
