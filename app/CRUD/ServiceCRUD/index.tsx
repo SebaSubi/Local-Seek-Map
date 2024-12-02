@@ -50,14 +50,8 @@ export default function ProductCrud() {
           />
           <BasicSelectable
             href="/CRUD/ServiceCRUD/DeleteService"
-            logo={<DeleteLogo />}
-            text="Borrar Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/UpdateService"
             logo={<UpdateLogo />}
-            text="Actualizar Servicio"
+            text="Actualizar/Borrar Servicio"
             style="mt-3"
           />
           <BasicSelectable
@@ -80,11 +74,11 @@ export default function ProductCrud() {
           ) : locals.length === 0 ? (
             <Text>No hay locales disponibles</Text>
           ) : (
-            locals.map((local) => (
+            locals.map((local: Local) => (
               <Pressable
                 key={local.id}
                 className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-                onPress={() => handlePress(local.id)}
+                onPress={() => handlePress(local.id!)}
               >
                 <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
               </Pressable>

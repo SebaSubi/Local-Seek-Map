@@ -1,8 +1,9 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 import { colors } from "../constants/colors";
+import { Service } from "../schema/GeneralSchema";
 
-export default function ServiceContainer({ service }) {
+export default function ServiceContainer({ service }: { service: Service }) {
   return (
     <View className="flex flex-row items-center h-28 w-11/12 bg-slate-300 rounded-2xl border m-1">
       <View
@@ -16,12 +17,12 @@ export default function ServiceContainer({ service }) {
             resizeMode: "cover",
           }}
           source={{
-            uri: service.serviceImage ?? "https://via.placeholder.com/150",
+            uri: service.image ?? "https://via.placeholder.com/150",
           }}
         />
       </View>
       <View className="flex flex-col pl-2">
-        <Text className="text-lg font-bold mb-1">{service.serviceName}</Text>
+        <Text className="text-lg font-bold mb-1">{service.name}</Text>
         <View
           className={`flex flex-row items-center rounded-lg  border  bg-gray-300 w-fit p-1`}
         >
@@ -33,10 +34,10 @@ export default function ServiceContainer({ service }) {
               resizeMode: "cover",
             }}
             source={{
-              uri: service.localImage ?? "https://via.placeholder.com/150",
+              uri: service.local?.imgURL ?? "https://via.placeholder.com/150",
             }}
           />
-          <Text className="text-lg font-bold ml-2">{service.localName}</Text>
+          <Text className="text-lg font-bold ml-2">{service.local!.name}</Text>
         </View>
       </View>
     </View>

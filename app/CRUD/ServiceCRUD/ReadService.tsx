@@ -1,14 +1,20 @@
 import { View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { DisplayService } from "../../../schema/GeneralSchema";
-import { getDisplayServices } from "../../../libs/localService";
+import { DisplayService, Service } from "../../../schema/GeneralSchema";
+
 import ServiceContainer from "../../../components/ServiceContainer";
+import { Stack } from "expo-router";
+import Header from "../../../components/Header";
+import { getDisplayServiceByLocalId } from "../../../libs/localService";
+import { useLocalIdStore } from "../../../libs/scheduleZustang";
 
 export default function ReadService() {
-  const [services, setServices] = useState<DisplayService[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+
+  const localId = useLocalIdStore((state) => state.localId);
 
   async function fetchAndSetServices() {
-    const displaylocals = await getDisplayServices();
+    const displaylocals = await getDisplayServiceByLocalId(localId);
     setServices(displaylocals);
   }
 
@@ -22,8 +28,13 @@ export default function ReadService() {
 
   return (
     <View className="flex w-full items-center">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="ABM Servicio" />,
+        }}
+      />
       {services?.map((service) => (
-        <ServiceContainer key={service.localServiceId} service={service} />
+        <ServiceContainer key={service.id} service={service} />
       ))}
     </View>
   );

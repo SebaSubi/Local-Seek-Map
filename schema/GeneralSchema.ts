@@ -178,8 +178,8 @@ export interface LocalService {
 
 export interface Service {
   id?: string;
-  local?: Local; // Assuming Local is another interface
-  localId: string;
+  local?: Local;
+  localId?: string | null;
   name: string;
   serviceType?: ServiceType;
   serviceTypeId: string;
