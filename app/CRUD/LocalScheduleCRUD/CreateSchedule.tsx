@@ -79,7 +79,6 @@ export default function CreateProduct() {
 
   function checkSchedule(hour: Date): string | null {
     if (hour === specificDate) {
-      console.log("We are in");
       return null;
     }
     return hour.toLocaleTimeString(undefined, {

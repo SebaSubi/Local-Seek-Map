@@ -1,33 +1,37 @@
 import { FlatList, Text, View } from "react-native";
 import ScheduleBox from "../../../../components/ScheduleBox";
 import { shift } from "../../../../constants/consts";
+import { Stack } from "expo-router";
+import Header from "../../../../components/Header";
 
 type Shift = {
   shiftOpen: shift;
   shiftClose: shift;
 };
 
-export default function DeleteSchedule() {
+export default function ReadSchedule() {
   const shifts: Shift[] = [
-    // <ScheduleBox key={1} shiftOpen="AMHourFrom" shiftClose="AMHourTo" />,
-    // <ScheduleBox key={2} shiftOpen="PMHourFrom" shiftClose="PMHourTo" />,
-    // <ScheduleBox key={2} shiftOpen="EXHourFrom" shiftClose="EXHourTo" />,
     {
-      shiftOpen: "AMHourFrom",
-      shiftClose: "AMHourTo",
+      shiftOpen: "FirstShiftStart",
+      shiftClose: "FirstShiftFinish",
     },
     {
-      shiftOpen: "PMHourFrom",
-      shiftClose: "PMHourTo",
+      shiftOpen: "SecondShiftStart",
+      shiftClose: "SecondShiftFinish",
     },
     {
-      shiftOpen: "EXHourFrom",
-      shiftClose: "EXHourTo",
+      shiftOpen: "ThirdShiftStart",
+      shiftClose: "ThirdShiftFinish",
     },
   ];
 
   return (
     <View className="flex flex-col  h-full w-full">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="Actualizar Horario" />,
+        }}
+      />
       <FlatList
         data={shifts}
         keyExtractor={(item, index) => index.toString()}

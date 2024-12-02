@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocalIdStore } from "../libs/scheduleZustang";
-import { getSchedule } from "../libs/schedule";
 import { Text, View } from "react-native";
 import { shift } from "../constants/consts";
+import { LocalServiceSchedule } from "../schema/GeneralSchema";
+import { getScheduleByLocalServiceId } from "../libs/localService";
+import { useLocalServiceIdStore } from "../libs/localServiceZustang";
 
 export default function ScheduleBox({
   shiftOpen,
@@ -22,19 +24,21 @@ export default function ScheduleBox({
   ];
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
-  const localId = useLocalIdStore((state) => state.localId);
+  const localServiceId = useLocalServiceIdStore(
+    (state) => state.localServiceId,
+  );
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getSchedule(localId);
+      const schedules = await getScheduleByLocalServiceId(localServiceId);
       const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo, //This should be in the backend
+        (schedule: LocalServiceSchedule) => !schedule.dateTo, //This should be in the backend
       );
       setSchedule(filteredSchedules);
       setLoading(false);
     };
     fetchData();
-  }, [localId]);
+  }, [localServiceId]);
 
   if (shiftOpen === null || shiftClose === null) return;
   else
@@ -48,7 +52,7 @@ export default function ScheduleBox({
               style={{ height: schedule.length * 48 }}
               className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
             >
-              {schedule.map((schedule, index) => (
+              {schedule.map((schedule: LocalServiceSchedule, index) => (
                 <View key={schedule.id}>
                   {index === 0 ? null : (
                     <View
@@ -66,23 +70,23 @@ export default function ScheduleBox({
                       className="font-bold text-base ml-12 mt-2"
                       key={index}
                     >
-                      {days[schedule.dayNumber - 1]}
+                      {days[schedule.dayNumber! - 1]}
                     </Text>
                     <Text className="mr-12">
-                      {shiftOpen === "AMHourFrom"
-                        ? schedule.AMHourFrom
-                        : shiftOpen === "PMHourFrom"
-                          ? schedule.PMHourFrom
-                          : shiftOpen === "EXHourFrom"
-                            ? schedule.EXHourFrom
+                      {shiftOpen === "FirstShiftStart"
+                        ? schedule.FirstShiftStart
+                        : shiftOpen === "SecondShiftStart"
+                          ? schedule.SecondShiftStart
+                          : shiftOpen === "ThirdShiftStart"
+                            ? schedule.ThirdShiftStart
                             : null}
                       {" - "}
-                      {shiftClose === "AMHourTo"
-                        ? schedule.AMHourTo
-                        : shiftClose === "PMHourTo"
-                          ? schedule.PMHourTo
-                          : shiftClose === "EXHourFrom"
-                            ? schedule.EXHourTo
+                      {shiftClose === "FirstShiftFinish"
+                        ? schedule.FirstShiftFinish
+                        : shiftClose === "SecondShiftFinish"
+                          ? schedule.SecondShiftFinish
+                          : shiftClose === "ThirdShiftFinish"
+                            ? schedule.ThirdShiftFinish
                             : null}
                     </Text>
                   </View>

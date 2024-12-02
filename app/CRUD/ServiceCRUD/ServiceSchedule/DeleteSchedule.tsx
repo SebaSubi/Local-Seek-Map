@@ -15,6 +15,7 @@ import {
   getScheduleByLocalServiceId,
 } from "../../../../libs/localService";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
+import { LocalServiceSchedule } from "../../../../schema/GeneralSchema";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState([]);
@@ -29,7 +30,7 @@ export default function DeleteSchedule() {
     const fetchData = async () => {
       const schedules = await getScheduleByLocalServiceId(localId);
       const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo,
+        (schedule: LocalServiceSchedule) => !schedule.dateTo,
       );
       setSchedule(filteredSchedules);
       setLoading(false);
@@ -60,16 +61,16 @@ export default function DeleteSchedule() {
           style={{ height: schedule.length * 65 }}
           className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
         >
-          {schedule.map((schedule, index) => (
+          {schedule.map((schedule: LocalServiceSchedule, index) => (
             <View
               key={index}
               className="flex flex-col items-center justify-center"
             >
               <Text className="font-bold text-xl mt-3" key={index}>
-                {days[schedule.dayNumber - 1]}
+                {days[schedule.dayNumber! - 1]}
               </Text>
               <View className="absolute left-0 ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
-                <Pressable onPress={() => handlePress(schedule.id)}>
+                <Pressable onPress={() => handlePress(schedule.id!)}>
                   <DeleteLogo />
                 </Pressable>
               </View>
@@ -86,7 +87,7 @@ export default function DeleteSchedule() {
               >
                 <Pressable
                   onPress={() => {
-                    setScheduleId(schedule.id);
+                    setScheduleId(schedule.id!);
                   }}
                 >
                   <UpdateLogo />

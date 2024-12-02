@@ -10,7 +10,7 @@ export async function getServices() {
   // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
   try {
-    const rawData = await fetch(`${API_URL}/display`);
+    const rawData = await fetch(`${API_URL}/service`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Services");
     }
@@ -18,6 +18,34 @@ export async function getServices() {
     return json;
   } catch (error) {
     console.log("Error getting Services", error);
+  }
+}
+
+export async function getDisplayServices() {
+  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+
+  try {
+    const rawData = await fetch(`${API_URL}/service`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting Services", error);
+  }
+}
+
+export async function getServicesById(id: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service/id/${id}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Service");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting Service", error);
   }
 }
 
@@ -52,7 +80,60 @@ export async function createService(data: Service) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
+  }
+}
+
+export async function updateService(id: string, data: Service) {
+  console.log(`${API_URL}/service/update/${id}`);
+  try {
+    const response = await fetch(`${API_URL}/service/update/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(JSON.stringify(data));
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to update Service");
+    } else {
+      console.log("Service succesfully updated and added to dataBase");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
+export async function deleteService(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/service/delete/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to create Service");
+    } else {
+      console.log("Service succesfully added to dataBase");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
+export async function getDisplayServiceByLocalId(localServiceId: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service/display/${localServiceId}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch schedule by localServiceId");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting display Services", error);
   }
 }
 
@@ -102,7 +183,6 @@ export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
   }
 }
 

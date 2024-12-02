@@ -1,5 +1,4 @@
 import { Text, View } from "react-native";
-import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
@@ -12,20 +11,18 @@ import {
   updateServiceSchedule,
 } from "../../../../libs/localService";
 import TimeSelect from "../../../../components/TimeSelect";
+import { specificDate } from "../../../../constants/consts";
 
 export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
   const [loaded, setLoaded] = useState(false);
 
-  const FirstShiftStartRef = useRef<any>(null);
-  const FirstShiftFinishRef = useRef<any>(null);
-  const SecondShiftStartRef = useRef<any>(null);
-  const SecondShiftFinishRef = useRef<any>(null);
-  const ThirdShiftStartRef = useRef<any>(null);
-  const ThirdShiftFinishRef = useRef<any>(null);
-  const localServiceId = useLocalServiceIdStore(
-    (state) => state.localServiceId,
-  );
+  const FirstShiftStartRef = useRef<{ getTime: () => Date }>(null);
+  const FirstShiftFinishRef = useRef<{ getTime: () => Date }>(null);
+  const SecondShiftStartRef = useRef<{ getTime: () => Date }>(null);
+  const SecondShiftFinishRef = useRef<{ getTime: () => Date }>(null);
+  const ThirdShiftStartRef = useRef<{ getTime: () => Date }>(null);
+  const ThirdShiftFinishRef = useRef<{ getTime: () => Date }>(null);
   const serviceScheduleId = useLocalServiceIdStore(
     (state) => state.serviceScheduleId,
   );
@@ -42,19 +39,47 @@ export default function UpdateSchedule() {
     fetchData();
   }, [serviceScheduleId]);
 
-  const handleSubmit = async () => {
-    const dayNumber = schedule!.dayNumber;
-    const FirstShiftStart = FirstShiftStartRef.current.getValue();
-    const FirstShiftFinish = FirstShiftFinishRef.current.getValue();
-    const SecondShiftStart = SecondShiftStartRef.current.getValue();
-    const SecondShiftFinish = SecondShiftFinishRef.current.getValue();
-    const ThirdShiftStart = ThirdShiftStartRef.current.getValue();
-    const ThirdShiftFinish = ThirdShiftFinishRef.current.getValue();
-    const dateFrom = new Date();
+  function checkSchedule(hour: Date | undefined): string | null {
+    if (hour === specificDate || undefined) {
+      return null;
+    }
+    return hour!.toLocaleTimeString(undefined, {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
+  const handleSubmit = async () => {
+    const FirstShiftStart = FirstShiftStartRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    const FirstShiftFinish = FirstShiftFinishRef.current
+      ?.getTime()
+      ?.toLocaleTimeString(undefined, {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    const SecondShiftStart = checkSchedule(
+      SecondShiftStartRef.current?.getTime(),
+    );
+    const SecondShiftFinish = checkSchedule(
+      SecondShiftFinishRef.current?.getTime(),
+    );
+    const ThirdShiftStart = checkSchedule(
+      ThirdShiftStartRef.current?.getTime(),
+    );
+    const ThirdShiftFinish = checkSchedule(
+      ThirdShiftFinishRef.current?.getTime(),
+    );
+    const dateFrom = new Date();
+    console.log(FirstShiftStart);
     const newSchedule: LocalServiceSchedule = {
-      localServiceId,
-      dayNumber,
       FirstShiftStart,
       FirstShiftFinish,
       SecondShiftStart,
@@ -64,6 +89,7 @@ export default function UpdateSchedule() {
       dateFrom,
     };
     if (JSON.stringify(schedule) === JSON.stringify(newSchedule)) return;
+    console.log(newSchedule);
     updateServiceSchedule(serviceScheduleId, newSchedule);
   };
 

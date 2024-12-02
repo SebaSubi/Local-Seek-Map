@@ -37,7 +37,7 @@ export default function ProductCrud() {
     <View className="flex justify-center items-center bg-white h-full">
       <Stack.Screen
         options={{
-          header: () => <Header title="ABM Producto" />,
+          header: () => <Header title="ABM Servicio" />,
         }}
       />
       {screen ? (
@@ -50,14 +50,8 @@ export default function ProductCrud() {
           />
           <BasicSelectable
             href="/CRUD/ServiceCRUD/DeleteService"
-            logo={<DeleteLogo />}
-            text="Borrar Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/UpdateService"
             logo={<UpdateLogo />}
-            text="Actualizar Servicio"
+            text="Actualizar/Borrar Servicio"
             style="mt-3"
           />
           <BasicSelectable
@@ -69,7 +63,13 @@ export default function ProductCrud() {
           <BasicSelectable
             href="/CRUD/ServiceCRUD/ServiceSchedule"
             logo={<ScheduleIcon />}
-            text="Crear Horario"
+            text="AMB Horario"
+            style="mt-3"
+          />
+          <BasicSelectable
+            href="/CRUD/ServiceCRUD/ReadWS"
+            logo={<ScheduleIcon />}
+            text="Search"
             style="mt-3"
           />
         </>
@@ -80,11 +80,11 @@ export default function ProductCrud() {
           ) : locals.length === 0 ? (
             <Text>No hay locales disponibles</Text>
           ) : (
-            locals.map((local) => (
+            locals.map((local: Local) => (
               <Pressable
                 key={local.id}
                 className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-                onPress={() => handlePress(local.id)}
+                onPress={() => handlePress(local.id!)}
               >
                 <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
               </Pressable>

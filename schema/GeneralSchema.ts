@@ -178,8 +178,8 @@ export interface LocalService {
 
 export interface Service {
   id?: string;
-  local?: Local; // Assuming Local is another interface
-  localId: string;
+  local?: Local;
+  localId?: string | null;
   name: string;
   serviceType?: ServiceType;
   serviceTypeId: string;
@@ -193,16 +193,16 @@ export interface Service {
 
 export interface LocalServiceSchedule {
   id?: string;
-  localServiceId: string;
-  dateFrom: Date;
+  localServiceId?: string | null;
+  dateFrom?: Date | null;
   dateTo?: Date;
-  dayNumber: number;
-  FirstShiftStart: string;
-  FirstShiftFinish: string;
-  SecondShiftStart: string | null;
-  SecondShiftFinish: string | null;
-  ThirdShiftStart: string | null;
-  ThirdShiftFinish: string | null;
+  dayNumber?: number | null;
+  FirstShiftStart?: string | null;
+  FirstShiftFinish?: string | null;
+  SecondShiftStart?: string | null;
+  SecondShiftFinish?: string | null;
+  ThirdShiftStart?: string | null;
+  ThirdShiftFinish?: string | null;
   localService?: Service | null;
 }
 
