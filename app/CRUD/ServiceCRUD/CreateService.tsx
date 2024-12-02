@@ -6,13 +6,12 @@ import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
 import { getServiceTypes } from "../../../libs/serviceType";
-import BasicSelectable from "../../../components/BasicSelectable";
 import { createService } from "../../../libs/localService";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
 
 export default function CreateProduct() {
-  const [serviceTypes, setServiceTypes] = useState([]);
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [selectedType, setSelectedType] = useState<ServiceType>({
     id: "0000",
     name: "default",
@@ -21,9 +20,9 @@ export default function CreateProduct() {
 
   const localId = useLocalIdStore((state) => state.localId);
 
-  const nameRef = useRef(null);
-  const descriptionRef = useRef(null);
-  const URLRef = useRef(null);
+  const nameRef = useRef<any>(null);
+  const descriptionRef = useRef<any>(null);
+  const URLRef = useRef<any>(null);
 
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
@@ -68,6 +67,7 @@ export default function CreateProduct() {
       />
       <BasicTextInput
         inputType="text"
+        value=""
         placeholder="Nombre"
         textStyle="mt-4"
         title="Nombre del Servicio: "
@@ -76,6 +76,7 @@ export default function CreateProduct() {
 
       <BasicTextInput
         inputType="text"
+        value=""
         placeholder="Descripción"
         textStyle="mt-4"
         title="Descripcion del Servicio: "
@@ -83,6 +84,7 @@ export default function CreateProduct() {
       />
       <BasicTextInput
         inputType="text"
+        value=""
         placeholder="URL o Numero"
         textStyle="mt-4"
         title="URL Reservas o Numero: "

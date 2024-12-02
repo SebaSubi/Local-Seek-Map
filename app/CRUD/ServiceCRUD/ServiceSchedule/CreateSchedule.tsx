@@ -63,7 +63,7 @@ export default function CreateProduct() {
       schedules.forEach((schedule) => {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
-          setScheduleId(schedule.id);
+          setScheduleId(schedule.id!); //Idk why this throws an undefined error if i dont put the !
           localWarning = true;
         }
       });
@@ -168,6 +168,7 @@ export default function CreateProduct() {
       >
         <BasicTextInput
           inputType="text"
+          value=""
           placeholder="Numero de Dia"
           title="Dia de la semana (1 = Domingo):"
           textStyle="mt-4"

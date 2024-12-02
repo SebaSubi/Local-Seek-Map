@@ -199,11 +199,11 @@ export interface LocalServiceSchedule {
   dayNumber: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
-  SecondShiftStart?: string;
-  SecondShiftFinish?: string;
-  ThirdShiftStart?: string;
-  ThirdShiftFinish?: string;
-  localService?: Service;
+  SecondShiftStart: string | null;
+  SecondShiftFinish: string | null;
+  ThirdShiftStart: string | null;
+  ThirdShiftFinish: string | null;
+  localService?: Service | null;
 }
 
 export interface ServiceType {

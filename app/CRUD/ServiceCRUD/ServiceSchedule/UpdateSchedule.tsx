@@ -11,17 +11,18 @@ import {
   getServiceScheduleByScheduleId,
   updateServiceSchedule,
 } from "../../../../libs/localService";
+import TimeSelect from "../../../../components/TimeSelect";
 
 export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
   const [loaded, setLoaded] = useState(false);
 
-  const FirstShiftStartRef = useRef(null);
-  const FirstShiftFinishRef = useRef(null);
-  const SecondShiftStartRef = useRef(null);
-  const SecondShiftFinishRef = useRef(null);
-  const ThirdShiftStartRef = useRef(null);
-  const ThirdShiftFinishRef = useRef(null);
+  const FirstShiftStartRef = useRef<any>(null);
+  const FirstShiftFinishRef = useRef<any>(null);
+  const SecondShiftStartRef = useRef<any>(null);
+  const SecondShiftFinishRef = useRef<any>(null);
+  const ThirdShiftStartRef = useRef<any>(null);
+  const ThirdShiftFinishRef = useRef<any>(null);
   const localServiceId = useLocalServiceIdStore(
     (state) => state.localServiceId,
   );
@@ -33,7 +34,7 @@ export default function UpdateSchedule() {
     const fetchData = async () => {
       const schedules = await getServiceScheduleByScheduleId(serviceScheduleId); //Make sure this is set
       const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo,
+        (schedule: LocalServiceSchedule) => !schedule.dateTo,
       );
       setSchedule(filteredSchedules[0]);
       setLoaded(true);
@@ -42,7 +43,7 @@ export default function UpdateSchedule() {
   }, [serviceScheduleId]);
 
   const handleSubmit = async () => {
-    const dayNumber = schedule.dayNumber;
+    const dayNumber = schedule!.dayNumber;
     const FirstShiftStart = FirstShiftStartRef.current.getValue();
     const FirstShiftFinish = FirstShiftFinishRef.current.getValue();
     const SecondShiftStart = SecondShiftStartRef.current.getValue();
@@ -73,70 +74,29 @@ export default function UpdateSchedule() {
           header: () => <Header title="Actualizar Horario" />,
         }}
       />
-      <Text>Day number: {schedule.dayNumber}</Text>
-      <BasicTextInput
-        inputType="text"
-        placeholder="Apertura Mañana"
-        // submitText={false}
-        defaultValue={schedule.FirstShiftStart}
-        title="Horario de Apertura de Mañana:"
-        textStyle="mt-4"
+      <Text>Day number: {schedule!.dayNumber}</Text>
+      <TimeSelect
+        text="Hora de Apertura Primer Turno:"
         ref={FirstShiftStartRef}
       />
-
-      <BasicTextInput
-        inputType="text"
-        placeholder="Hora Cerrada Mañana"
-        // submitText={false}
-        defaultValue={schedule.FirstShiftFinish}
-        title="Horario de Cerrado Mañana:"
-        textStyle="mt-4"
+      <TimeSelect
+        text="Hora de Cerrada Primer Turno:"
         ref={FirstShiftFinishRef}
       />
-
-      <BasicTextInput
-        inputType="text"
-        placeholder="Apertura Tarde"
-        // submitText={false}
-        defaultValue={
-          schedule.SecondShiftStart ? schedule.SecondShiftStart : ""
-        }
-        title="Apertura Tarde:"
-        textStyle="mt-4"
+      <TimeSelect
+        text="Hora de Apertura Segundo Turno:"
         ref={SecondShiftStartRef}
       />
-
-      <BasicTextInput
-        inputType="text"
-        placeholder="Cerrada Tarde"
-        // submitText={false}
-        defaultValue={
-          schedule.SecondShiftFinish ? schedule.SecondShiftFinish : ""
-        }
-        title="Horario de Cerrada Tarde:"
-        textStyle="mt-4"
+      <TimeSelect
+        text="Hora de Cerrada Segundo Turno:"
         ref={SecondShiftFinishRef}
       />
-
-      <BasicTextInput
-        inputType="number"
-        placeholder="Apertura Noche"
-        // submitText={false}
-        defaultValue={schedule.ThirdShiftStart ? schedule.ThirdShiftStart : ""}
-        title="Horario Apertura Noche:"
-        textStyle="mt-4"
+      <TimeSelect
+        text="Hora de Apertura Tercer Turno:"
         ref={ThirdShiftStartRef}
       />
-
-      <BasicTextInput
-        inputType="text"
-        placeholder="Cerrada Noche"
-        // submitText={false}
-        defaultValue={
-          schedule.ThirdShiftFinish ? schedule.ThirdShiftFinish : ""
-        }
-        title="Horario de Cerrada Noche:"
-        textStyle="mt-4"
+      <TimeSelect
+        text="Hora de Cerrada Tercer Turno:"
         ref={ThirdShiftFinishRef}
       />
 
