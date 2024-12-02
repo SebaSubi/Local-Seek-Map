@@ -5,6 +5,7 @@ import BasicButton from "./BasicButton";
 import { CreateLogo, PersonCircleIcon } from "./Logos";
 import { z } from "zod";
 import { useAuth } from "../app/context/AuthContext";
+import { Redirect } from "expo-router";
 
 interface RegProps {
   setReg: Dispatch<SetStateAction<boolean>>;
@@ -31,10 +32,39 @@ const Register = ({ setReg }: RegProps) => {
   const secondPassword = useRef<{ getValue: () => string }>(null);
 
   const handleRegister = () => {
-    if (validateEmail(email.current?.getValue() ?? "")) {
-    }
+    // if (email.current?.getValue().length ?? 0 < 8) {
+    //   //handle no Email
+    // } else if (username.current?.getValue().length ?? 0 < 3) {
+    //   //hay que validar que no sean todos espacios o solo numeros
+    //   //handle no Username
+    // } else if (password.current?.getValue().length ?? 0 < 8) {
+    //   //handle no first Password
+    // } else if (secondPassword.current?.getValue().length ?? 0 < 8) {
+    //   //handle no second Password
+    // }
+
+    // // too much characters
+    // else if (email.current?.getValue().length ?? 0 >= 40) {
+    //   //handle
+    // } else if (username.current?.getValue().length ?? 0 >= 30) {
+    //   //handle
+    // } else if (password.current?.getValue().length ?? 0 >= 20) {
+    //   //handle
+    // } else if (secondPassword.current?.getValue().length ?? 0 >= 20) {
+    //   //handle
+    // } else if (!validateEmail(email.current?.getValue() ?? "")) {
+    //   //handle wrong email format
+    // } else {
+    console.log("registering");
+    onRegister!(
+      email.current!.getValue(),
+      password.current!.getValue(),
+      username.current!.getValue()
+    );
   };
-  return (
+  return authState?.authenticated === true ? (
+    <Redirect href="(tabs)/Home" />
+  ) : (
     <View className="flex items-center justify-center">
       <Text>Register</Text>
       <BasicTextInput

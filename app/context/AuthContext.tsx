@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 import axios from "axios";
-// import bcrypt from "bcryptjs";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
@@ -23,7 +22,11 @@ interface AuthProps {
     username: string | null;
     role: Role | null;
   };
-  onRegister?: (email: string, password: string) => Promise<any>;
+  onRegister?: (
+    email: string,
+    password: string,
+    username: string
+  ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
 }
@@ -43,11 +46,11 @@ export const useAuth = () => {
 };
 
 async function hashPassword(password: string): Promise<string> {
-  var bcrypt = require("bcryptjs");
-  const saltRounds = 10; // Número de rondas de salting (10 es seguro y razonablemente rápido)
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return hashedPassword;
-  // return password;
+  // var bcrypt = require("bcryptjs");
+  // const saltRounds = 10; // Número de rondas de salting (10 es seguro y razonablemente rápido)
+  // const hashedPassword = await bcrypt.hash(password, saltRounds);
+  // return hashedPassword;
+  return password;
 }
 
 export const AuthProvider = ({ children }: any) => {
@@ -82,10 +85,33 @@ export const AuthProvider = ({ children }: any) => {
     loadToken();
   }, []);
 
-  const register = async (email: string, password: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    username: string
+  ) => {
     try {
       const hashedPassword = await hashPassword(password);
-      return await axios.post(`${API_URL}/register`, { email, hashedPassword });
+      const result = await axios.post(`${API_URL}/register`, {
+        email,
+        password: hashedPassword,
+        username,
+      });
+
+      setAuthState({
+        token: result.data.accessToken,
+        authenticated: true,
+        username: result.data.userName,
+        role: result.data.role,
+      });
+
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${result.data.accessToken}`;
+      console.log(result.data.accessToken);
+      await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
+      await SecureStore.setItemAsync(USERNAME, result.data.userName);
+      await SecureStore.setItemAsync(ROLE, result.data.role);
+      return result;
     } catch (error) {
       return { error: true, msg: (error as any).response.data.msg };
     }
