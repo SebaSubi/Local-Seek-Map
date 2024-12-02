@@ -21,6 +21,21 @@ export async function getServices() {
   }
 }
 
+export async function getDisplayServices() {
+  // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
+
+  try {
+    const rawData = await fetch(`${API_URL}/service`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting Services", error);
+  }
+}
+
 export async function getServicesById(id: string) {
   try {
     const rawData = await fetch(`${API_URL}/service/id/${id}`);

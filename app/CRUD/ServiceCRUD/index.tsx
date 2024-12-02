@@ -66,6 +66,12 @@ export default function ProductCrud() {
             text="AMB Horario"
             style="mt-3"
           />
+          <BasicSelectable
+            href="/CRUD/ServiceCRUD/ReadWS"
+            logo={<ScheduleIcon />}
+            text="Search"
+            style="mt-3"
+          />
         </>
       ) : (
         <>
