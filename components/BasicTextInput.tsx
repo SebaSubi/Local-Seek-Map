@@ -16,7 +16,7 @@ const BasicTextInput = forwardRef(
       textStyle?: string;
       value: string;
     },
-    ref: React.ForwardedRef<{ getValue: () => string }>,
+    ref: React.ForwardedRef<{ getValue: () => string }>
   ) => {
     const [text, setText] = useState(value);
 
@@ -41,7 +41,7 @@ const BasicTextInput = forwardRef(
         />
       </View>
     );
-  },
+  }
 );
 
 export default BasicTextInput;
