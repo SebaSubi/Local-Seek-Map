@@ -80,7 +80,7 @@ export async function getProductById(productId: string) {
     return product;
   } catch (error) {
     console.error("Error fetching product:", error);
-    Alert.alert("Error", `Error al obtener el producto: ${error.message}`);
+    Alert.alert("Error", `Error al obtener el producto: ${(error as any).message.data.msg}`);
     return null;
   }
 }
@@ -105,7 +105,7 @@ export async function createProduct(product: Product) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
+    Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }
 

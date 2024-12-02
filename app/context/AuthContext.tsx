@@ -6,13 +6,14 @@ import {
   useState,
 } from "react";
 import axios from "axios";
+// import bcrypt from "bcryptjs";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 export enum Role {
-  ADMIN = "admin",
-  USER = "user",
-  STOREOWNER = "store_owner",
+  ADMIN = "ADMIN",
+  USER = "USER",
+  STOREOWNER = "STORE_OWNER",
 }
 
 interface AuthProps {
@@ -40,6 +41,14 @@ const AuthContext = createContext<AuthProps>({});
 export const useAuth = () => {
   return useContext(AuthContext);
 };
+
+async function hashPassword(password: string): Promise<string> {
+  var bcrypt = require("bcryptjs");
+  const saltRounds = 10; // Número de rondas de salting (10 es seguro y razonablemente rápido)
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  return hashedPassword;
+  // return password;
+}
 
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
@@ -75,7 +84,8 @@ export const AuthProvider = ({ children }: any) => {
 
   const register = async (email: string, password: string) => {
     try {
-      return await axios.post(`${API_URL}`, { email, password });
+      const hashedPassword = await hashPassword(password);
+      return await axios.post(`${API_URL}/register`, { email, hashedPassword });
     } catch (error) {
       return { error: true, msg: (error as any).response.data.msg };
     }
@@ -100,10 +110,11 @@ export const AuthProvider = ({ children }: any) => {
         });
       } else {
         try {
-          console.log("in");
+          // console.log("in");
+          const hashedPassword = await hashPassword(password);
           const result = await axios.post(`${API_URL}/login`, {
             email,
-            password,
+            hashedPassword,
           });
 
           setAuthState({
