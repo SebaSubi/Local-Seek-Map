@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 import { Local } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
+import axios from "axios";
 
 // const API_URL =
 //   Platform.OS === "android"
@@ -110,7 +111,7 @@ export async function createLocal(local: Local) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
+    Alert.alert("Error: ", error as any);
   }
 }
 
@@ -139,5 +140,14 @@ export async function getProductsOfALocal(id: string) {
     return json;
   } catch (error) {
     console.log("Error getting store products", error);
+  }
+}
+
+export async function checkLocalName(name: string) {
+  try {
+    const rawData = await axios.get(`${API_URL}/check-name/${name}`);
+    return rawData.request.response;
+  } catch (error) {
+    console.log(error);
   }
 }
