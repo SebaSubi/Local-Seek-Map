@@ -14,7 +14,7 @@ import {
 import { getProductTypes } from "../libs/productType";
 import { getLocalTypes } from "../libs/localType";
 
-const CategorySelectButtonProducts = forwardRef(
+export const CategorySelectButtonProducts = forwardRef(
   (
     {
       title,
@@ -32,10 +32,10 @@ const CategorySelectButtonProducts = forwardRef(
     // eslint-disable-next-line prettier/prettier
     ref
   ) => {
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [showCategories, setShowCategories] = useState(false);
+    const [categories, setCategories] = useState<string>("");
+    const [loading, setLoading] = useState<string>("");
+    const [error, setError] = useState<string>("");
+    const [showCategories, setShowCategories] = useState<string>("");
 
     useEffect(() => {
       async function fetchCategories() {
@@ -49,7 +49,6 @@ const CategorySelectButtonProducts = forwardRef(
           setLoading(false);
         }
       }
-
       fetchCategories();
     }, []);
 
@@ -68,7 +67,6 @@ const CategorySelectButtonProducts = forwardRef(
     return (
       <View style={[styles.container, containerStyle]}>
         {title && <Text style={styles.title}>{title}</Text>}
-
         <TouchableOpacity
           onPress={() => setShowCategories(!showCategories)}
           style={styles.selectButton}
@@ -103,7 +101,7 @@ const CategorySelectButtonProducts = forwardRef(
   }
 );
 
-const CategorySelectButtonLocals = forwardRef(
+export const CategorySelectButtonLocals = forwardRef(
   (
     {
       title,
@@ -121,10 +119,10 @@ const CategorySelectButtonLocals = forwardRef(
     // eslint-disable-next-line prettier/prettier
     ref
   ) => {
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [showCategories, setShowCategories] = useState(false);
+    const [categories, setCategories] = useState<string>("");
+    const [loading, setLoading] = useState<string>("");
+    const [error, setError] = useState<string>("");
+    const [showCategories, setShowCategories] = useState<string>("");
 
     useEffect(() => {
       async function fetchCategories() {
@@ -138,7 +136,6 @@ const CategorySelectButtonLocals = forwardRef(
           setLoading(false);
         }
       }
-
       fetchCategories();
     }, []);
 
@@ -157,7 +154,6 @@ const CategorySelectButtonLocals = forwardRef(
     return (
       <View style={[styles.container, containerStyle]}>
         {title && <Text style={styles.title}>{title}</Text>}
-
         <TouchableOpacity
           onPress={() => setShowCategories(!showCategories)}
           style={styles.selectButton}
@@ -188,15 +184,14 @@ const CategorySelectButtonLocals = forwardRef(
         )}
       </View>
     );
-    // eslint-disable-next-line prettier/prettier
   }
 );
 
+// Estilos compartidos
 const styles = StyleSheet.create({
   container: {
     width: "75%",
     marginTop: 12,
-    // border,
   },
   title: {
     fontSize: 14,
@@ -217,7 +212,6 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginTop: 10,
-    // maxHeight: 200, // Limita la altura máxima del ScrollView para que se haga scroll si hay muchas categorías
   },
   categoryButton: {
     padding: 15,
@@ -237,5 +231,3 @@ const styles = StyleSheet.create({
     color: "#333",
   },
 });
-
-export default CategorySelectButtonProducts && CategorySelectButtonLocals;

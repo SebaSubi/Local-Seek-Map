@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../../schema/GeneralSchema";
 import { colors } from "../../../../constants/colors";
-import { EmptyHeartIcon } from "../../../../components/Logos";
+// import { EmptyHeartIcon } from "../../../../components/Logos";
 import BasicLine from "../../../../components/BasicLine";
 import LocalInformation from "../../../../components/LocalInformation";
 import { getLocal } from "../../../../libs/local";
@@ -28,9 +28,9 @@ export default function LocalPage() {
     <View className="flex justify-center">
       <View className="flex flex-row justify-between items-center">
         <Text className="text-5xl font-bold p-2 pl-5">{name}</Text>
-        <View className="pr-6 p-2">
+        {/* <View className="pr-6 p-2">
           <EmptyHeartIcon color={colors.primary.orange} size={36} />
-        </View>
+        </View> */}
       </View>
       <View className="flex items-center object-cover">
         <View

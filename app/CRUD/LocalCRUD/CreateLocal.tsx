@@ -1,25 +1,40 @@
-import { Alert, View, Button, Image, ScrollView } from "react-native";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  Alert,
+  View,
+  Button,
+  Image,
+  ScrollView,
+  Pressable,
+  Modal,
+  StyleSheet,
+  Text,
+} from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { createLocal } from "../../../libs/local";
-import CategorySelectButtonProducts from "../../../components/CategorySelectButton";
-import { Local } from "../../../schema/GeneralSchema";
+// import { CategorySelectButtonLocals } from "../../../components/CategorySelectButton";
+import { getLocalTypes } from "../../../libs/localType";
+import { Local, LocalTypes } from "../../../schema/GeneralSchema";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 
 export default function CreateLocal() {
-  const name = useRef("");
-  const location = useRef("");
-  const whatsapp = useRef("");
-  const instagram = useRef("");
-  const facebook = useRef("");
-  const webpage = useRef("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const nameRef = useRef<any>(null);
+  const locationRef = useRef<any>(null);
+  const whatsappRef = useRef<any>(null);
+  const instagramRef = useRef<any>(null);
+  const facebookRef = useRef<any>(null);
+  const webpageRef = useRef<any>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
+  const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+  const [localTypes, setLocalTypes] = useState<LocalTypes[]>([]);
+  const [selectedType, setSelectedType] = useState<LocalTypes | null>(null);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -43,7 +58,15 @@ export default function CreateLocal() {
   };
 
   const handleSubmit = async () => {
-    if (!name.current || !location.current || !image) {
+    const name = nameRef.current?.getValue();
+    const location = locationRef.current?.getValue();
+    const whatsapp = whatsappRef.current?.getValue();
+    const instagram = instagramRef.current?.getValue();
+    const facebook = facebookRef.current?.getValue();
+    const webpage = webpageRef.current?.getValue();
+    const localTypeID = selectedType?.id;
+
+    if (!name || !location || !image) {
       Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
       return;
     }
@@ -56,33 +79,49 @@ export default function CreateLocal() {
       }
 
       const newLocal: Local = {
-        name: name.current,
-        location: location.current,
-        whatsapp: Number(whatsapp.current),
-        instagram: instagram.current,
-        facebook: facebook.current,
-        webpage: webpage.current,
+        name,
+        location,
+        whatsapp,
+        instagram,
+        facebook,
+        webpage,
+        localTypeID,
         imgURL: uploadedImageUrl,
         dateFrom: new Date(),
-        localTypeID: selectedCategory,
       };
 
       await createLocal(newLocal);
       Alert.alert("Éxito", "Local creado exitosamente");
-
-      // Limpiar los campos
-      name.current = "";
-      location.current = "";
-      whatsapp.current = "";
-      instagram.current = "";
-      facebook.current = "";
-      webpage.current = "";
+      nameRef.current.setValue("");
+      locationRef.current.setValue("");
+      whatsappRef.current.setValue("");
+      instagramRef.current.setValue("");
+      facebookRef.current.setValue("");
+      webpageRef.current.setValue("");
       setImage(null);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       Alert.alert("Error", "No se pudo crear el local.");
     }
   };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getLocalTypes();
+      if (data.allCategories) {
+        setLocalTypes(data.allCategories);
+      } else {
+        console.warn("No se encontró 'allCategories' en la respuesta");
+        setLocalTypes([]);
+      }
+    } catch (err) {
+      console.error("Error fetching categories", err);
+      Alert.alert("Error", "Fallo al cargar las categorías");
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <ScrollView
@@ -103,61 +142,104 @@ export default function CreateLocal() {
         placeholder="Nombre"
         textStyle="mt-4"
         title="Nombre de Local: "
-        ref={name}
-        submitText={false}
-        value={name.current}
+        ref={nameRef}
+        value=""
       />
-      <CategorySelectButtonProducts
-        title="Categoria del Producto:"
+      {/* <CategorySelectButtonLocals
+        title="Categoría del Local:"
         placeholder="Seleccione una categoría"
         onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
         selectedCategory={selectedCategory}
-      />
+      /> */}
       <BasicTextInput
         inputType="text"
         placeholder="Coordenadas"
         textStyle="mt-4"
         title="Coordenadas del Local: "
-        ref={location}
-        submitText={false}
-        value={location.current}
+        ref={locationRef}
+        value=""
       />
       <BasicTextInput
         inputType="number"
         placeholder="Número de WhatsApp"
         textStyle="mt-4"
         title="Número de WhatsApp: "
-        ref={whatsapp}
-        submitText={false}
-        value={whatsapp.current}
+        ref={whatsappRef}
+        value=""
       />
       <BasicTextInput
         inputType="text"
         placeholder="@Instagram"
         textStyle="mt-4"
         title="Instagram: "
-        ref={instagram}
-        submitText={false}
-        value={instagram.current}
+        ref={instagramRef}
+        value=""
       />
       <BasicTextInput
         inputType="text"
         placeholder="@Facebook"
         textStyle="mt-4"
         title="Facebook: "
-        ref={facebook}
-        submitText={false}
-        value={facebook.current}
+        ref={facebookRef}
+        value=""
       />
       <BasicTextInput
         inputType="text"
         placeholder="Página Web"
         textStyle="mt-4"
         title="Página Web: "
-        ref={webpage}
-        submitText={false}
-        value={webpage.current}
+        ref={webpageRef}
+        value=""
       />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={typeModalVisibility}
+        onRequestClose={() => setTypeModalVisibility(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Selecciona el tipo de producto
+            </Text>
+            <ScrollView style={styles.scrollView}>
+              {localTypes.length === 0 ? (
+                <Text>No hay tipos disponibles</Text>
+              ) : (
+                localTypes.map((category, index) => (
+                  <Pressable
+                    key={index}
+                    onPress={() => {
+                      setSelectedType(category);
+                      setTypeModalVisibility(false);
+                    }}
+                    style={styles.modalOption}
+                  >
+                    <Text style={styles.modalOptionText}>{category.name}</Text>
+                  </Pressable>
+                ))
+              )}
+            </ScrollView>
+            <Pressable
+              onPress={() => setTypeModalVisibility(false)}
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeButtonText}>Cerrar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Pressable
+        onPress={() => setTypeModalVisibility(true)}
+        style={styles.typeButton}
+      >
+        <Text style={styles.typeButtonText}>
+          {selectedType ? selectedType.name : "Seleccionar Tipo de Producto"}
+        </Text>
+      </Pressable>
+
       <View style={{ marginTop: 20 }}>
         <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
       </View>
@@ -178,3 +260,64 @@ export default function CreateLocal() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    maxHeight: 400,
+  },
+  scrollView: {
+    width: "100%",
+    maxHeight: 300,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  modalOption: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    width: "100%",
+  },
+  modalOptionText: {
+    textAlign: "center",
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: "#e1e8e8",
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "#000",
+    fontWeight: "bold",
+  },
+  typeButton: {
+    marginTop: 20,
+    paddingVertical: 15, // Aumenta el padding vertical
+    paddingHorizontal: 20, // Aumenta el padding horizontal
+    backgroundColor: "#e1e8e8",
+    borderRadius: 5,
+    minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  typeButtonText: {
+    fontSize: 16, // Aumenta el tamaño de la fuente
+    // fontWeight: "bold",
+    textAlign: "center",
+  },
+});

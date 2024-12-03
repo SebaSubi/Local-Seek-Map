@@ -23,8 +23,13 @@ const BasicTextInput = forwardRef(
     const handleChange = (input: string) => {
       if (inputType === "number" && !/^\d*$/.test(input)) return;
       setText(input);
+      if (inputType === "number" && !/^\d*$/.test(input)) return;
+      setText(input);
     };
 
+    useImperativeHandle(ref, () => ({
+      getValue: () => text,
+    }));
     useImperativeHandle(ref, () => ({
       getValue: () => text,
     }));
@@ -41,6 +46,7 @@ const BasicTextInput = forwardRef(
         />
       </View>
     );
+    // eslint-disable-next-line prettier/prettier
   }
 );
 
