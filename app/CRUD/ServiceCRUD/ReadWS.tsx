@@ -9,46 +9,49 @@ import {
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
-import { LocalDisplay } from "../../../schema/GeneralSchema";
-import {
-  getDisplayLocals,
-  getLocalsByName,
-  getOpenLocals,
-  getStoresByCategory,
-} from "../../../libs/local";
-import LocalContainer from "../../../components/LocalContainer";
+import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-import { getDisplayServices } from "../../../libs/localService";
+import {
+  getDisplayServices,
+  getDisplayServicesByName,
+  getOpenServices,
+  getServicesByCategory,
+} from "../../../libs/localService";
+import ServiceContainer from "../../../components/ServiceContainer";
+import { getServiceTypes } from "../../../libs/serviceType";
 
 const localCategories = ["Apertura", "Ubicación", "Quitar", "Categoria"];
-const StoreCategories = ["Supermercado"];
 
 export default function ReadLocal() {
-  const [services, setServices] = useState<LocalDisplay[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [search, setSearch] = useState("");
-  const [searchFilter, setSearchFilter] = useState("");
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [selectedServiceCategory, setServiceCategories] = useState("");
 
-  async function fetchAndSetLocals() {
-    const locals = await getDisplayServices();
-    setServices(locals);
+  async function fetchAndSetServices() {
+    const services = await getDisplayServices();
+    setServices(services);
   }
 
   useEffect(() => {
-    const fetchLocals = async () => {
-      await fetchAndSetLocals();
+    const fetchServices = async () => {
+      await fetchAndSetServices();
     };
-    fetchLocals();
+    const fetchServiceTypes = async () => {
+      const types = await getServiceTypes();
+      setServiceTypes(types);
+    };
+    fetchServices();
+    fetchServiceTypes();
   }, []);
 
   useEffect(() => {
     if (search === "" || search === " ") {
-      fetchAndSetLocals();
+      fetchAndSetServices();
     } else {
       const fetchData = async () => {
-        const locals = await getLocalsByName(search);
-        setLocals(locals);
+        const locals = await getDisplayServicesByName(search);
+        setServices(locals);
       };
       fetchData();
     }
@@ -56,32 +59,29 @@ export default function ReadLocal() {
 
   function hourFilter() {
     const fetchData = async () => {
-      const locals = await getOpenLocals();
-      setLocals(locals);
+      const locals = await getOpenServices();
+      setServices(locals);
     };
     fetchData();
   }
 
   function storeCategoryFilter(category: string) {
     const fetchData = async () => {
-      const locals = await getStoresByCategory(category);
-      setLocals(locals);
+      const locals = await getServicesByCategory(category);
+      setServices(locals);
     };
     fetchData();
   }
 
   const handleCategorySelection = (category: string) => {
     if (category === "Quitar") {
-      setSearchFilter("");
-      fetchAndSetLocals();
+      fetchAndSetServices();
     } else if (category === "Apertura") hourFilter();
     else if (category === "Categoria") setModalVisibility(true);
-    else setSearchFilter(category);
     setSearch("");
   };
 
   const handleStoreCateory = (category: string) => {
-    setStoreCategories(category);
     setModalVisibility(false);
     storeCategoryFilter(category);
   };
@@ -103,14 +103,15 @@ export default function ReadLocal() {
           categories={localCategories}
           selectedCategory={handleCategorySelection}
         />
-        {locals?.map((local) => (
-          <LocalContainer key={local.id} local={local} />
-        ))}
+        {services.length > 0 &&
+          services.map((service) => (
+            <ServiceContainer key={service.id} service={service} />
+          ))}
 
         <Pressable
           className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
           onPress={async () => {
-            await fetchAndSetLocals();
+            await fetchAndSetServices();
           }}
         >
           <Text className="text-white">Recargar</Text>
@@ -126,13 +127,13 @@ export default function ReadLocal() {
               <Text style={styles.modalTitle}>
                 Selecciona el tipo de búsqueda
               </Text>
-              {StoreCategories.map((category, index) => (
+              {serviceTypes.map((category, index) => (
                 <Pressable
-                  onPress={() => handleStoreCateory(category)}
+                  onPress={() => handleStoreCateory(category.name)}
                   style={styles.modalOption}
                   key={index}
                 >
-                  <Text style={styles.modalOptionText}>{category}</Text>
+                  <Text style={styles.modalOptionText}>{category.name}</Text>
                 </Pressable>
               ))}
               <Pressable

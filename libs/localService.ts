@@ -25,7 +25,7 @@ export async function getDisplayServices() {
   // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
   try {
-    const rawData = await fetch(`${API_URL}/service`);
+    const rawData = await fetch(`${API_URL}/service/display`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Services");
     }
@@ -33,6 +33,19 @@ export async function getDisplayServices() {
     return json;
   } catch (error) {
     console.log("Error getting Services", error);
+  }
+}
+
+export async function getDisplayServicesByName(name: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service/name-search/${name}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Services by name");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting Services by name", error);
   }
 }
 
@@ -59,6 +72,34 @@ export async function getServicesByLocalId(id: string) {
     return json;
   } catch (error) {
     console.log("Error getting ServicesById", error);
+  }
+}
+
+export async function getOpenServices() {
+  try {
+    const rawData = await fetch(`${API_URL}/service/open-services`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch open services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting open services", error);
+  }
+}
+
+export async function getServicesByCategory(category: string) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/category-search/${category}`,
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch services by category");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting services by category", error);
   }
 }
 

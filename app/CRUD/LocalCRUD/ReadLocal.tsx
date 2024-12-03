@@ -29,6 +29,8 @@ export default function ReadLocal() {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [selected, setStoreCategories] = useState("");
 
+  console.log(locals);
+
   async function fetchAndSetLocals() {
     const locals = await getDisplayLocals();
     setLocals(locals);
