@@ -16,7 +16,7 @@ function AuthBasedLayout() {
     } else if (authState?.authenticated) {
       router.replace("/(tabs)/Home");
     }
-    console.log(authState);
+    // console.log(authState);
   }, [authState]);
   return (
     <Stack>

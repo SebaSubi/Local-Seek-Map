@@ -16,7 +16,7 @@ import Header from "../../../components/Header";
 import { getProducts, updateProduct } from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-import CategorySelectButton from "../../../components/CategorySelectButton";
+import { CategorySelectButtonProducts } from "../../../components/CategorySelectButton";
 import { Product } from "../../../schema/GeneralSchema";
 
 const ReadProductScreen = () => {
@@ -238,7 +238,7 @@ const ReadProductScreen = () => {
                 placeholder="Medida"
               />
 
-              <CategorySelectButton
+              <CategorySelectButtonProducts
                 placeholder="Seleccione una categoría"
                 onSelectCategory={(categoryId: string) =>
                   setSelectedCategory(categoryId)
