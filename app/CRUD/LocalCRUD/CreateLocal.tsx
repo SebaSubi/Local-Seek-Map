@@ -16,13 +16,23 @@ import Header from "../../../components/Header";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useRef, useState, useEffect } from "react";
-import { createLocal } from "../../../libs/local";
+import { checkLocalName, createLocal } from "../../../libs/local";
 // import { CategorySelectButtonLocals } from "../../../components/CategorySelectButton";
 import { getLocalTypes } from "../../../libs/localType";
 import { Local, LocalTypes } from "../../../schema/GeneralSchema";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 import { z } from "zod";
+
+export const verifyUrl = (url: string): boolean => {
+  const urlSchema = z.string().url();
+  try {
+    urlSchema.parse(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 export default function CreateLocal() {
   const nameRef = useRef<any>(null);
@@ -66,16 +76,6 @@ export default function CreateLocal() {
     }
   };
 
-  const verifyUrl = (url: string): boolean => {
-    const urlSchema = z.string().url();
-    try {
-      urlSchema.parse(url);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
     const location = locationRef.current?.getValue();
@@ -100,6 +100,15 @@ export default function CreateLocal() {
     }
     if (name.length >= 40) {
       setNameError("El nombre del Local es demasiado largo");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if ((await checkLocalName(name)) === "true") {
+      setNameError("El nombre del Local ya esta en uso");
       setLocationError("");
       setWhatsappError("");
       setInstagramError("");
