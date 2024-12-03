@@ -16,6 +16,7 @@ export default function Login() {
   const emailRef = useRef<{ getValue: () => string }>(null);
   const passwordRef = useRef<{ getValue: () => string }>(null);
   const [login, setLogin] = useState(true);
+  const [loginError, setLoginError] = useState("");
 
   const { onLogin, authState } = useAuth();
 
@@ -38,6 +39,9 @@ export default function Login() {
     if (validateEmail(email)) {
       const result = await onLogin!(email, password);
       console.log("Login result:", result);
+      if (result.status !== 200) {
+        setLoginError("Email o Contraseña incorrecta");
+      }
     }
   };
 
@@ -55,6 +59,11 @@ export default function Login() {
           textStyle="mt-2"
           value="admin@gmail.com"
         />
+        {loginError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{loginError}</Text>
+          </View>
+        )}
         <BasicTextInput
           ref={passwordRef}
           inputType="text"

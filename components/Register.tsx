@@ -6,6 +6,7 @@ import { CreateLogo, PersonCircleIcon } from "./Logos";
 import { z } from "zod";
 import { useAuth } from "../app/context/AuthContext";
 import { Redirect } from "expo-router";
+import { checkEmail, checkUsername } from "../libs/user";
 
 interface RegProps {
   setReg: Dispatch<SetStateAction<boolean>>;
@@ -35,16 +36,28 @@ const Register = ({ setReg }: RegProps) => {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const handleRegister = () => {
-    if ((email.current?.getValue().length ?? 0) < 8) {
-      //handle no Email
-      console.log(email.current?.getValue().length ?? 0);
-      setEmailError("La direccion de email es muy corta");
+  const handleRegister = async () => {
+    const validEmail = email.current?.getValue()
+      ? await checkEmail(email.current?.getValue() ?? "")
+      : true;
+    const validUsername = username.current?.getValue()
+      ? await checkUsername(username.current?.getValue() ?? "")
+      : true;
+    if (!validateEmail(email.current?.getValue() ?? "")) {
+      //handle wrong email format
+      setEmailError("La direccion de email no es valida");
       setPasswordError("");
       setUsernameError("");
-    } else if ((username.current?.getValue().length ?? 0) < 3) {
-      //hay que validar que no sean todos espacios o solo numeros
+    } else if ((username.current?.getValue().length ?? 0) < 2) {
       //handle no Username
+      setPasswordError("");
+      setEmailError("");
+      setUsernameError("El nombre de usuario debe tener al menos 2 caracteres");
+    } else if ((username.current?.getValue() ?? "").includes(" ")) {
+      //handle Username without spaces
+      setPasswordError("");
+      setEmailError("");
+      setUsernameError("El nombre de usuario no puede tener espacios");
     } else if ((password.current?.getValue().length ?? 0) < 8) {
       //handle no first Password
       setPasswordError("La contraseña debe tener al menos 8 caracteres");
@@ -61,6 +74,21 @@ const Register = ({ setReg }: RegProps) => {
       setPasswordError("Las contraseñas no coinciden");
       setEmailError("");
       setUsernameError("");
+    } else if (validEmail === true || validEmail.request.response === "true") {
+      //handle email already in use
+      setPasswordError("");
+      setEmailError("Este Email ya tiene una cuenta asociada");
+      //   setEmailError("hoy me levante re loco");
+      setUsernameError("");
+    } else if (
+      validUsername === true ||
+      validUsername.request.response === "true"
+    ) {
+      //handle username already in use
+      console.log("dasdas");
+      setPasswordError("");
+      setEmailError("");
+      setUsernameError("Este Nombre de Usuario no esta disponible");
     }
 
     // too much characters
@@ -78,11 +106,6 @@ const Register = ({ setReg }: RegProps) => {
       //handle
       setPasswordError("La contraseña es demasiado larga");
       setEmailError("");
-      setUsernameError("");
-    } else if (!validateEmail(email.current?.getValue() ?? "")) {
-      //handle wrong email format
-      setEmailError("La direccion de email no es valida");
-      setPasswordError("");
       setUsernameError("");
     } else {
       console.log("registering");
@@ -149,7 +172,7 @@ const Register = ({ setReg }: RegProps) => {
         logo={<CreateLogo />}
         text="Registrarse"
         style="mt-3"
-        onPress={handleRegister}
+        onPress={async () => await handleRegister()}
       />
       <Text className="mt-4">¿Ya tienes cuenta?</Text>
       <BasicButton
