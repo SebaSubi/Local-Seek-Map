@@ -34,13 +34,7 @@ export default function Login() {
     if (!password) {
       console.log("The password is missing");
       return;
-    if (!password) {
-      console.log("The password is missing");
-      return;
     }
-    if (validateEmail(email)) {
-      const result = await onLogin!(email, password);
-      console.log("Login result:", result);
     if (validateEmail(email)) {
       const result = await onLogin!(email, password);
       console.log("Login result:", result);
