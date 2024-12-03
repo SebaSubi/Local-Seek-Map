@@ -33,7 +33,7 @@ interface AuthProps {
 
 const TOKEN_KEY = "token";
 const USERNAME = "username";
-const ROLE = "role";
+const ROLE_KEY = "role";
 export const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/auth-v2"
@@ -70,7 +70,10 @@ export const AuthProvider = ({ children }: any) => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       const userName = await SecureStore.getItemAsync(USERNAME);
-      const role = (await SecureStore.getItemAsync(ROLE)) as Role | null; //checkear eso en el debug
+      const role = (await SecureStore.getItemAsync(ROLE_KEY)) as Role | null; //checkear eso en el debug
+      // console.log("token: ", token);
+      // console.log("username: ", userName);
+      // console.log("role: ", role);
 
       if (token) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -78,7 +81,12 @@ export const AuthProvider = ({ children }: any) => {
           token: token,
           authenticated: true,
           username: userName,
-          role: role,
+          role:
+            role === "STORE_OWNER"
+              ? Role.STOREOWNER
+              : role === "ADMIN"
+                ? Role.ADMIN
+                : Role.USER,
         });
       }
     };
@@ -101,19 +109,31 @@ export const AuthProvider = ({ children }: any) => {
       setAuthState({
         token: result.data.accessToken,
         authenticated: true,
-        username: result.data.userName,
-        role: result.data.role,
+        username: result.data.userId,
+        role:
+          result.data.role === "STORE_OWNER"
+            ? Role.STOREOWNER
+            : result.data.role === "ADMIN"
+              ? Role.ADMIN
+              : Role.USER,
       });
 
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${result.data.accessToken}`;
-      console.log(result.data.accessToken);
+      // console.log(result.data.accessToken);
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
-      await SecureStore.setItemAsync(USERNAME, result.data.userName);
-      await SecureStore.setItemAsync(ROLE, result.data.role);
+      await SecureStore.setItemAsync(USERNAME, result.data.userID);
+      await SecureStore.setItemAsync(
+        ROLE_KEY,
+        result.data.role === "STORE_OWNER"
+          ? Role.STOREOWNER
+          : result.data.role === "ADMIN"
+            ? Role.ADMIN
+            : Role.USER
+      );
       return result;
     } catch (error) {
-      return { error: true, msg: (error as any).response.data.msg };
+      return { error: true, msg: error as any };
     }
   };
 
@@ -126,6 +146,13 @@ export const AuthProvider = ({ children }: any) => {
         username: "admin",
         role: Role.ADMIN,
       });
+
+      await SecureStore.setItemAsync(
+        TOKEN_KEY,
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTJtNzRia28wMDAwa2dlcHNlYWl4NXkwIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzMzMDY0MjYxLCJleHAiOjE3MzU2NTYyNjF9.lhQa-66NAlpRXIQCYCObQMNRu5rpEyaoBI_4HvQuHcQ"
+      );
+      await SecureStore.setItemAsync(USERNAME, "admin");
+      await SecureStore.setItemAsync(ROLE_KEY, Role.ADMIN);
     } else {
       if (email === "guest@gmail.com" && password === "guest") {
         setAuthState({
@@ -136,35 +163,51 @@ export const AuthProvider = ({ children }: any) => {
         });
       } else {
         try {
-          // console.log("in");
           const hashedPassword = await hashPassword(password);
           const result = await axios.post(`${API_URL}/login`, {
             email,
-            hashedPassword,
+            password: hashedPassword,
           });
 
+          // console.log("token: ", result.data.token);
+          // console.log("username: ", result.data.userId);
+          // console.log("role: ", result.data.role);
           setAuthState({
             token: result.data.accessToken,
             authenticated: true,
-            username: result.data.userName,
-            role: result.data.role,
+            username: result.data.userId,
+            role:
+              result.data.role === "STORE_OWNER"
+                ? Role.STOREOWNER
+                : result.data.role === "ADMIN"
+                  ? Role.ADMIN
+                  : Role.USER,
           });
 
           axios.defaults.headers.common["Authorization"] =
             `Bearer ${result.data.accessToken}`;
-          console.log(result.data.accessToken);
+          // console.log(result.data.accessToken);
           await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
-          await SecureStore.setItemAsync(USERNAME, result.data.userName);
-          await SecureStore.setItemAsync(ROLE, result.data.role);
+          await SecureStore.setItemAsync(USERNAME, result.data.userId);
+          await SecureStore.setItemAsync(
+            ROLE_KEY,
+            result.data.role === "STORE_OWNER"
+              ? Role.STOREOWNER
+              : result.data.role === "ADMIN"
+                ? Role.ADMIN
+                : Role.USER
+          );
           return result;
         } catch (error) {
-          return { error: true, msg: (error as any).response.data.msg };
+          return { error: true, msg: error as any };
         }
       }
     }
   };
   const logout = async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await SecureStore.deleteItemAsync(USERNAME);
+    await SecureStore.deleteItemAsync(ROLE_KEY);
     axios.defaults.headers.common["Authorization"] = "";
 
     setAuthState({

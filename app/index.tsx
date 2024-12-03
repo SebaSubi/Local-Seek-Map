@@ -16,6 +16,7 @@ export default function Login() {
   const emailRef = useRef<{ getValue: () => string }>(null);
   const passwordRef = useRef<{ getValue: () => string }>(null);
   const [login, setLogin] = useState(true);
+  const [loginError, setLoginError] = useState("");
 
   const { onLogin, authState } = useAuth();
 
@@ -38,6 +39,9 @@ export default function Login() {
     if (validateEmail(email)) {
       const result = await onLogin!(email, password);
       console.log("Login result:", result);
+      if (result.status !== 200) {
+        setLoginError("Email o Contraseña incorrecta");
+      }
     }
   };
 
@@ -55,6 +59,11 @@ export default function Login() {
           textStyle="mt-2"
           value="admin@gmail.com"
         />
+        {loginError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{loginError}</Text>
+          </View>
+        )}
         <BasicTextInput
           ref={passwordRef}
           inputType="text"
@@ -70,18 +79,19 @@ export default function Login() {
           style="mt-3"
           onPress={handleLogin}
         />
-        <BasicButton
-          logo={<PersonCircleIcon />}
-          text="Continue as Guest"
-          style="mt-3"
-          onPress={onGuestInPress}
-        />
-        <Text className="mt-4">Quieres registrar tu negocio? </Text>
+        <Text className="mt-4">¿Todavia no tienes cuenta?</Text>
         <BasicButton
           logo={<PersonCircleIcon />}
           text="Crear Cuenta"
           style="mt-3"
           onPress={() => setLogin(false)}
+        />
+        <Text className="mt-8">¿No quieres inciar sesion?</Text>
+        <BasicButton
+          logo={<PersonCircleIcon />}
+          text="Continuar como invitado"
+          style="mt-3"
+          onPress={onGuestInPress}
         />
       </View>
     );
