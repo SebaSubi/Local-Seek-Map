@@ -13,7 +13,7 @@ export default function ServiceContainer({ service }: { service: Service }) {
         params: {
           id: service.id,
           name: service.name,
-          image: service.image ?? "https://via.placeholder.com/150",
+          imgURL: service.imgURL ?? "https://via.placeholder.com/150",
         },
       }}
       asChild
@@ -34,7 +34,7 @@ export default function ServiceContainer({ service }: { service: Service }) {
                 resizeMode: "cover",
               }}
               source={{
-                uri: service.image ?? "https://via.placeholder.com/150",
+                uri: service.imgURL ?? "https://via.placeholder.com/150",
               }}
             />
           </View>

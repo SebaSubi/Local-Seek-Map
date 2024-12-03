@@ -184,7 +184,7 @@ export interface Service {
   serviceType?: ServiceType;
   serviceTypeId: string;
   description: string;
-  image?: string;
+  imgURL?: string;
   reservationURL?: string; // Using camelCase as per JavaScript/TypeScript convention
   dateFrom: Date;
   dateTo?: Date;
