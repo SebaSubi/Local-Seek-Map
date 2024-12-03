@@ -11,7 +11,7 @@ import { getServicesById } from "../../../../libs/localService";
 import Header from "../../../../components/Header";
 
 export default function ServicePage() {
-  const { id, name, image } = useLocalSearchParams();
+  const { id, name, imgURL } = useLocalSearchParams();
 
   const [service, setServices] = useState<Service>();
 
@@ -58,7 +58,7 @@ export default function ServicePage() {
                 margin: 10,
               }}
               source={{
-                uri: image as string,
+                uri: imgURL as string,
               }}
             />
           </View>
