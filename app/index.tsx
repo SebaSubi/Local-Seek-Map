@@ -70,18 +70,19 @@ export default function Login() {
           style="mt-3"
           onPress={handleLogin}
         />
-        <BasicButton
-          logo={<PersonCircleIcon />}
-          text="Continue as Guest"
-          style="mt-3"
-          onPress={onGuestInPress}
-        />
-        <Text className="mt-4">Quieres registrar tu negocio? </Text>
+        <Text className="mt-4">¿Todavia no tienes cuenta?</Text>
         <BasicButton
           logo={<PersonCircleIcon />}
           text="Crear Cuenta"
           style="mt-3"
           onPress={() => setLogin(false)}
+        />
+        <Text className="mt-8">¿No quieres inciar sesion?</Text>
+        <BasicButton
+          logo={<PersonCircleIcon />}
+          text="Continuar como invitado"
+          style="mt-3"
+          onPress={onGuestInPress}
         />
       </View>
     );
