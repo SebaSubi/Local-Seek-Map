@@ -108,7 +108,7 @@ export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
 
 export async function updateServiceSchedule(
   id: string,
-  schedule: LocalServiceSchedule,
+  schedule: LocalServiceSchedule
 ) {
   try {
     const response = await fetch(`${API_URL}/service-schedule/update/${id}`, {

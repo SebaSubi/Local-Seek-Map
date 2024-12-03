@@ -6,12 +6,19 @@ import {
   ReadLogo,
   UpdateLogo,
 } from "../../../components/Logos";
+import { Stack } from "expo-router";
+import Header from "../../../components/Header";
 // import { Stack } from "expo-router";
 // import Header from "../../../../components/Header";
 
 export default function ProductCrud() {
   return (
-    <>
+    <View className="flex justify-center items-center bg-white h-full">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="ABM Producto" />,
+        }}
+      />
       <BasicSelectable
         href="/CRUD/LocalCRUD/CreateLocal"
         logo={<CreateLogo />}
@@ -36,7 +43,7 @@ export default function ProductCrud() {
         text="Leer Locales"
         style="mt-3"
       />
-    </>
+    </View>
   );
 }
 

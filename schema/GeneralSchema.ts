@@ -44,7 +44,7 @@ export interface Local {
   id?: string;
   name: string;
   location?: string; // Consider changing to number if needed
-  whatsapp?: number;
+  whatsapp?: string;
   instagram?: string;
   facebook?: string;
   webpage?: string;
@@ -70,7 +70,7 @@ export interface LocalDisplay {
   instagram: string | null;
   facebook: string | null;
   webpage: string | null;
-  image: string | null;
+  imgURL?: string | null;
   dateFrom: Date;
   dateTo: Date | null;
   localType: string;

@@ -2,6 +2,8 @@ import { View } from "react-native";
 import React from "react";
 import InformationSlot from "./InformationSlot";
 import { InstagramIcon, FacebookIcon, WebIcon, LocationIcon } from "./Logos";
+import { Stack } from "expo-router";
+import Header from "./Header";
 
 export default function LocalInformation({
   whatsapp,
@@ -10,7 +12,7 @@ export default function LocalInformation({
   webpage,
   location,
 }: {
-  whatsapp?: number | null;
+  whatsapp?: string | null;
   instagram?: string | null;
   facebook?: string | null;
   webpage?: string | null;
@@ -18,6 +20,11 @@ export default function LocalInformation({
 }) {
   return (
     <View className="flex flex-col justify-center items-center w-full">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="Leer Local" />,
+        }}
+      />
       {location ? (
         <View className="flex w-full items-center m-[5px]">
           <InformationSlot
