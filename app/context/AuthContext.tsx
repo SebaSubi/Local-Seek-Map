@@ -153,6 +153,7 @@ export const AuthProvider = ({ children }: any) => {
       );
       await SecureStore.setItemAsync(USERNAME, "admin");
       await SecureStore.setItemAsync(ROLE_KEY, Role.ADMIN);
+      return { status: 200 };
     } else {
       if (email === "guest@gmail.com" && password === "guest") {
         setAuthState({
@@ -161,6 +162,7 @@ export const AuthProvider = ({ children }: any) => {
           username: "guest",
           role: Role.USER,
         });
+        return { status: 200 };
       } else {
         try {
           const hashedPassword = await hashPassword(password);
