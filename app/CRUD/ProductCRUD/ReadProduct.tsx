@@ -12,10 +12,10 @@ import {
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
-import { getProducts } from "../../../libs/product";
+import { getProducts, getProductsByCategory } from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-import { Product } from "../../../schema/GeneralSchema";
+import { Product, ProductType } from "../../../schema/GeneralSchema";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,7 +24,15 @@ const ReadProductScreen = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState<string>("");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<ProductType[]>([]);
+
+  function categorieNames() {
+    const categoryArray: string[] = [];
+    categories.map((categorie) => {
+      categoryArray.push(categorie.name);
+    });
+    return categoryArray;
+  }
 
   useEffect(() => {
     fetchProducts();
@@ -44,8 +52,8 @@ const ReadProductScreen = () => {
   useEffect(() => {
     if (searchText.trim()) {
       const results = products.filter((product) => {
-        const category = categories.find(
-          (cat) => cat.id === product.productTypeId
+        const category: any = categories.find(
+          (cat: any) => cat.id === product.productTypeId,
         );
         const categoryName = category ? category.name : "";
         return (
@@ -106,6 +114,19 @@ const ReadProductScreen = () => {
       </Pressable>
     );
   };
+  function getProductsC(c: string) {
+    const fetchData = async () => {
+      const locals = await getProductsByCategory(c);
+      setProducts(locals);
+    };
+    fetchData();
+  }
+
+  const selectedCategory = (c: string) => {
+    getProductsC(c);
+  };
+
+  console.log(products);
 
   return (
     <View style={styles.container}>
@@ -115,7 +136,12 @@ const ReadProductScreen = () => {
         }}
       />
       <View style={styles.searchButtonContainer}>
-        <BasicSearchButton placeholder="Buscar" onSearch={setSearchText} />
+        <BasicSearchButton
+          placeholder="Buscar"
+          onSearch={setSearchText}
+          selectedCategory={selectedCategory}
+          categories={categorieNames()}
+        />
       </View>
       {loading ? (
         <Text style={styles.loadingText}>Cargando productos...</Text>
@@ -124,7 +150,7 @@ const ReadProductScreen = () => {
           data={filteredProducts}
           renderItem={({ item }) => {
             const category = categories.find(
-              (cat) => cat.id === item.productTypeId
+              (cat) => cat.id === item.productTypeId,
             );
             return (
               <ProductItem

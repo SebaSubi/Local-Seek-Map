@@ -21,7 +21,6 @@ export default function ReadService() {
   useEffect(() => {
     const fetchServices = async () => {
       await fetchAndSetServices();
-      // console.log(locals);
     };
     fetchServices();
   }, []); //podriamos agregar un boton para recargar la lista de locales y agregarlo al array de; useEffect

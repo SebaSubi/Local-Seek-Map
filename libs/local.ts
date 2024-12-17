@@ -26,6 +26,19 @@ export async function getLocals() {
   }
 }
 
+export async function getLocalsByCategory(category: string) {
+  try {
+    const rawData = await fetch(`${API_URL}categoryName/${category}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Stores by category");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting stores by category", error);
+  }
+}
+
 export async function getIfLocalOpen(id: string) {
   try {
     const rawData = await fetch(`${API_URL}/openStore/${id}`);
@@ -110,7 +123,6 @@ export async function createLocal(local: Local) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
   }
 }
 

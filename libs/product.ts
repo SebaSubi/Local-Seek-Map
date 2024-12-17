@@ -24,6 +24,19 @@ export async function getProducts() {
   }
 }
 
+export async function getProductsByCategory(category: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/category-search/${category}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Products");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting products", error);
+  }
+}
+
 export async function getActiveProducts() {
   try {
     const rawData = await fetch(API_URL);
@@ -80,7 +93,10 @@ export async function getProductById(productId: string) {
     return product;
   } catch (error) {
     console.error("Error fetching product:", error);
-    Alert.alert("Error", `Error al obtener el producto: ${(error as any).message.data.msg}`);
+    Alert.alert(
+      "Error",
+      `Error al obtener el producto: ${(error as any).message.data.msg}`,
+    );
     return null;
   }
 }
