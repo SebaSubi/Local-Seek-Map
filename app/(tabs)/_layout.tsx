@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { ReadLogo, SearchIcon } from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
+import Header from "../../components/Header";
 
 export default function TabLayout() {
   const { authState } = useAuth();
@@ -11,6 +12,7 @@ export default function TabLayout() {
         name="Home"
         options={{
           title: "Home",
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="home" color={color} />
           ),
@@ -20,6 +22,7 @@ export default function TabLayout() {
         name="Search"
         options={{
           title: "Search",
+          headerShown: true,
           tabBarIcon: ({ color }) => <SearchIcon />,
         }}
       />

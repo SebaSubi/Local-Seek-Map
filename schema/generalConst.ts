@@ -7,3 +7,5 @@ export const days = [
   "Viernes",
   "Sabado",
 ];
+
+export const categories = ["Apertura", "Ubicación", "Categoria", "Quitar"];
