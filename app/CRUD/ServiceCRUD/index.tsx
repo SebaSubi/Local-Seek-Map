@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { getLocals } from "../../../libs/local";
 import { Local } from "../../../schema/GeneralSchema";
+import React from "react";
 
 export default function ProductCrud() {
   const [screen, setScreen] = useState(false);

@@ -8,20 +8,20 @@ export default function Tab() {
   const { onLogout } = useAuth();
 
   return (
-    <View className="h-full">
+    <View className="h-full flex">
       <Stack.Screen
         options={{
-          header: () => <Header title="Principal" />,
+          header: () => <Header title="Home" />,
         }}
       />
-      <View className="h-4/6">
+      <View className="flex-1">
         <SearchComponent searchType={undefined} />
       </View>
       <Pressable
-        className="flex items-center justify-center"
+        className="h-10 bg-red-500 flex items-center justify-center"
         onPress={onLogout}
       >
-        <Text className="text-xl">Log Out</Text>
+        <Text className="text-xl text-white">Log Out</Text>
       </Pressable>
     </View>
   );
