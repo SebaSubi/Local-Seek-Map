@@ -18,13 +18,10 @@ export default function ServicePage() {
   const setLocalServiceId = useLocalServiceIdStore(
     (state) => state.setLocalServiceId
   );
-  const setLocalCoordinates = useLocalServiceIdStore(
-    (state) => state.setLocalCoordinates
-  );
+
   const setLocalId = useLocalIdStore((state) => state.setLocalId);
 
   setLocalServiceId(id as string);
-  setLocalCoordinates(localCoordinates as string);
   setLocalId(localId as string);
 
   const [service, setServices] = useState<Service>();
@@ -62,7 +59,7 @@ export default function ServicePage() {
               backgroundColor: colors.primary.lightGray,
             }}
           >
-            <LocalMap />
+            <LocalMap localCoordinates={localCoordinates as string} />
           </View>
           <View className="flex flex-row justify-evenly w-full m-1 mt-2">
             <Link href="../ServiceSchedule/ReadSchedules" asChild>
