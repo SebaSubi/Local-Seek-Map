@@ -7,12 +7,15 @@ import { Link } from "expo-router";
 export default function ServiceContainer({ service }: { service: Service }) {
   if (!service || !service.name) return;
   // console.log("In the serviceContainer: " + service);
+
   return (
     <Link
       href={{
         pathname: "/CRUD/ServiceCRUD/ServicePage/[id]",
         params: {
           id: service.id,
+          localId: service.localId,
+          localCoordinates: service.local?.location,
           name: service.name,
           image: service.image ?? "https://via.placeholder.com/150",
         },
