@@ -17,7 +17,7 @@ import { getProducts, updateProduct } from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { CategorySelectButtonProducts } from "../../../components/CategorySelectButton";
-import { Product } from "../../../schema/GeneralSchema";
+import { Product, ProductType } from "../../../schema/GeneralSchema";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -165,7 +165,7 @@ const ReadProductScreen = () => {
           data={filteredProducts}
           renderItem={({ item }) => {
             const category = categories.find(
-              (cat) => cat.id === item.productTypeId
+              (cat: ProductType) => cat.id === item.productTypeId
             );
             return (
               <ProductItem

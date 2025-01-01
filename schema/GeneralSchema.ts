@@ -45,7 +45,7 @@ export interface Local {
   name: string;
   location?: string; // Consider changing to number if needed
   address?: string;
-  whatsapp?: number;
+  whatsapp?: string | null;
   instagram?: string;
   facebook?: string;
   webpage?: string;
@@ -139,7 +139,7 @@ export interface Product {
   local?: LocalProduct[];
   type?: ProductType;
   productDiscountDeal?: ProductDiscountDeal[];
-  productTypeId?: string;
+  productTypeId?: string | null;
 }
 
 export interface ProductType {

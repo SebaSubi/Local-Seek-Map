@@ -3,7 +3,7 @@ import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../../schema/GeneralSchema";
 import { colors } from "../../../../constants/colors";
-// import { EmptyHeartIcon } from "../../../../components/Logos";
+import { EmptyHeartIcon } from "../../../../components/Logos";
 import BasicLine from "../../../../components/BasicLine";
 import LocalInformation from "../../../../components/LocalInformation";
 import { getLocal } from "../../../../libs/local";
