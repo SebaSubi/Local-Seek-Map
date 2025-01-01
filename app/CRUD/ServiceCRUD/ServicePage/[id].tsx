@@ -27,8 +27,8 @@ export default function ServicePage() {
   const [service, setServices] = useState<Service>();
 
   async function fetchAndSetServices() {
-    const searchLocal = await getServicesById(id as string);
-    setServices(searchLocal);
+    const service = await getServicesById(id as string);
+    setServices(service);
   }
 
   useEffect(() => {
@@ -37,6 +37,9 @@ export default function ServicePage() {
     };
     fetchLocals();
   }, []);
+
+  console.log(service?.local);
+
   return (
     <>
       <Stack.Screen
@@ -62,10 +65,10 @@ export default function ServicePage() {
             <LocalMap localCoordinates={localCoordinates as string} />
           </View>
           <View className="flex flex-row justify-evenly w-full m-1 mt-2">
-            <Link href="../ServiceSchedule/ReadSchedules" asChild>
+            <Link href="./ServiceSchedule" asChild>
               <Text className="text-xl font-bold">Horarios</Text>
             </Link>
-            <Link href="../ServiceInfo">
+            <Link href="./ServiceInfo">
               <Text className="text-xl font-bold">Información</Text>
             </Link>
           </View>
@@ -74,14 +77,14 @@ export default function ServicePage() {
             service.local?.instagram ||
             service.local?.webpage ||
             service.local?.whatsapp ||
-            service.local?.location) ? (
+            service.local?.address) ? (
             <>
               <BasicLine color={colors.primary.blue} width={350} />
               <LocalInformation
                 instagram={service.local.instagram}
                 whatsapp={service.local.whatsapp}
                 facebook={service.local.facebook}
-                location={service.local.location}
+                location={service.local.address}
                 webpage={service.local.webpage} // traete esto del localservice
               />
             </>

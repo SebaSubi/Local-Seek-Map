@@ -1,19 +1,17 @@
 import { FlatList, Text, View } from "react-native";
-import ScheduleBox from "../../../components/ScheduleBox";
-import { shift } from "../../../constants/consts";
+import ScheduleBox from "./ScheduleBox";
+import { shift } from "../constants/consts";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
+import Header from "./Header";
+import { LocalHours } from "../schema/GeneralSchema";
 
 type Shift = {
   shiftOpen: shift;
   shiftClose: shift;
 };
 
-export default function DeleteSchedule() {
+export default function Schedule({ schedule }: { schedule: LocalHours[] }) {
   const shifts: Shift[] = [
-    // <ScheduleBox key={1} shiftOpen="AMHourFrom" shiftClose="AMHourTo" />,
-    // <ScheduleBox key={2} shiftOpen="PMHourFrom" shiftClose="PMHourTo" />,
-    // <ScheduleBox key={2} shiftOpen="EXHourFrom" shiftClose="EXHourTo" />,
     {
       shiftOpen: "FirstShiftStart",
       shiftClose: "FirstShiftFinish",
@@ -29,37 +27,58 @@ export default function DeleteSchedule() {
   ];
 
   return (
-    <View className="flex flex-col  h-full w-full">
-      <Stack.Screen
-        options={{
-          header: () => <Header title="Actualizar Horario" />,
-        }}
-      />
-      <FlatList
-        data={shifts}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{ paddingHorizontal: 0 }}
-        renderItem={({ item, index }) => (
-          <View className="flex flex-col w-full items-center">
-            <Text className="text-xl mt-10">
-              {index === 0
-                ? "Primer Turno"
-                : index === 1
-                  ? "Segundo Turno"
-                  : index === 2
-                    ? "Tercer Turno"
-                    : null}
-            </Text>
-            <ScheduleBox
-              shiftOpen={item.shiftOpen}
-              shiftClose={item.shiftClose}
-            />
-          </View>
-        )}
-      />
-    </View>
+    <FlatList
+      data={shifts}
+      keyExtractor={(item, index) => index.toString()}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
+      renderItem={({ item, index }) => (
+        <View className="flex flex-col w-full items-center">
+          <Text className="text-xl mt-10">
+            {index === 0
+              ? "Primer Turno"
+              : index === 1
+                ? "Segundo Turno"
+                : index === 2
+                  ? "Tercer Turno"
+                  : null}
+          </Text>
+          <ScheduleBox //Here pas the local or schedule
+            schedules={schedule}
+            shiftOpen={item.shiftOpen}
+            shiftClose={item.shiftClose}
+          />
+        </View>
+      )}
+    />
   );
 }
+
+// <View className="flex flex-col  h-full w-full">
+//   <Stack.Screen
+//     options={{
+//       header: () => <Header title="Actualizar Horario" />,
+//     }}
+//   />
+//   <FlatList
+//     data={shifts}
+//     keyExtractor={(item, index) => index.toString()}
+//     contentContainerStyle={{ paddingHorizontal: 0 }}
+//     renderItem={({ item, index }) => (
+//       <View className="flex flex-col w-full items-center">
+//         <Text className="text-xl mt-10">
+//           {index === 0
+//             ? "Primer Turno"
+//             : index === 1
+//               ? "Segundo Turno"
+//               : index === 2
+//                 ? "Tercer Turno"
+//                 : null}
+//         </Text>
+//         <ScheduleBox shiftOpen={item.shiftOpen} shiftClose={item.shiftClose} />
+//       </View>
+//     )}
+//   />
+// </View>;
 
 // {loading ? (
 //         <Text>Loading...</Text>

@@ -44,6 +44,7 @@ export interface Local {
   id?: string;
   name: string;
   location?: string; // Consider changing to number if needed
+  address?: string;
   whatsapp?: number;
   instagram?: string;
   facebook?: string;
@@ -95,10 +96,10 @@ export interface LocalHours {
   dayNumber: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
-  SecondShiftStart: string;
-  SecondShiftFinish: string;
-  ThirdShiftStart: string;
-  ThirdShiftFinish: string;
+  SecondShiftStart?: string | null;
+  SecondShiftFinish?: string | null;
+  ThirdShiftStart?: string | null;
+  ThirdShiftFinish?: string | null;
 }
 
 export interface LocalTypes {

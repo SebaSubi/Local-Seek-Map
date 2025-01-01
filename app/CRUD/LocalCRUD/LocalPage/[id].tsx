@@ -1,5 +1,5 @@
 import { View, Text, Image } from "react-native";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../../schema/GeneralSchema";
 import { colors } from "../../../../constants/colors";
@@ -9,10 +9,14 @@ import LocalInformation from "../../../../components/LocalInformation";
 import { getLocal } from "../../../../libs/local";
 import Header from "../../../../components/Header";
 import LocalMap from "../../../../components/LocalMap";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 
 export default function LocalPage() {
   const { id, name, localCoordinates, image } = useLocalSearchParams();
   const [local, setLocals] = useState<Local>();
+
+  const setLocalId = useLocalIdStore((state) => state.setLocalId);
+  setLocalId(id as string);
 
   async function fetchAndSetLocals() {
     const searchLocal = await getLocal(id as string);
@@ -52,23 +56,26 @@ export default function LocalPage() {
             <LocalMap localCoordinates={localCoordinates as string} />
           </View>
           <View className="flex flex-row justify-evenly w-full m-1 mt-2">
-            <Text className="text-xl font-bold">Productos</Text>
-            <Text className="text-xl font-bold">Horarios</Text>
-            <Text className="text-xl font-bold">Información</Text>
+            <Link href="./LocalSchedulePage" asChild>
+              <Text className="text-xl font-bold">Horarios</Text>
+            </Link>
+            <Link href="../ServiceInfo">
+              <Text className="text-xl font-bold">Información</Text>
+            </Link>
           </View>
           {local &&
           (local.facebook ||
             local.instagram ||
             local.webpage ||
             local.whatsapp ||
-            local.location) ? (
+            local.address) ? (
             <>
               <BasicLine color={colors.primary.blue} width={350} />
               <LocalInformation
                 instagram={local.instagram}
                 whatsapp={local.whatsapp}
                 facebook={local.facebook}
-                location={local.location}
+                location={local.address}
                 webpage={local.webpage}
               />
             </>

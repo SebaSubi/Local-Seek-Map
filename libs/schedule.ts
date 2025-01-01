@@ -29,7 +29,7 @@ export async function createSchedule(schedule: LocalHours) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
+    //Alert.alert("Error: ", error);
   }
 }
 

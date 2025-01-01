@@ -44,6 +44,12 @@ export default function ProductCrud() {
           text="Leer Locales"
           style="mt-3"
         />
+        <BasicSelectable
+          href="/CRUD/LocalCRUD/LocalSchedule/"
+          logo={<ReadLogo />}
+          text="Horario Local"
+          style="mt-3"
+        />
       </View>
     </>
   );

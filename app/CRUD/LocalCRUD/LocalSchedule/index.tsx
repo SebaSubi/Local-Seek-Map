@@ -1,17 +1,17 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
-import BasicSelectable from "../../../components/BasicSelectable";
-import { CreateLogo, ReadLogo, UpdateLogo } from "../../../components/Logos";
+import BasicSelectable from "../../../../components/BasicSelectable";
+import { CreateLogo, ReadLogo, UpdateLogo } from "../../../../components/Logos";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
+import Header from "../../../../components/Header";
 import { useEffect, useState } from "react";
-import { getLocals } from "../../../libs/local";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
-import { Local } from "../../../schema/GeneralSchema";
-import BasicWarning from "../../../components/BasicWarning";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import { Local } from "../../../../schema/GeneralSchema";
+import { getLocals } from "../../../../libs/local";
 
-export default function ScheduleCrud() {
+export default function LocalSchedule() {
   const [screen, setScreen] = useState(false);
   const [locals, setlocals] = useState<Local[]>([]);
+  //All this should later not exist, only the locasls assigned to the user should appear
 
   const setLocalId = useLocalIdStore((state) => state.setLocalId);
 
@@ -30,33 +30,27 @@ export default function ScheduleCrud() {
 
   return (
     <View className="flex justify-center items-center bg-white h-full">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="ABM Horario" />,
+        }}
+      />
       {screen ? (
         <>
-          <Stack.Screen
-            options={{
-              header: () => <Header title="ABM Horario" />,
-            }}
-          />
           <BasicSelectable
-            href="/CRUD/LocalScheduleCRUD/CreateSchedule"
+            href="/CRUD/LocalCRUD/LocalSchedule/CreateSchedule"
             logo={<CreateLogo />}
             text="Crear Horario"
             style="mt-3"
           />
-          {/* <BasicSelectable
-            href="/ScheduleCRUD/DeleteSchedule"
-            logo={<DeleteLogo />}
-            text="Borrar Horario"
-            style="mt-3"
-          /> */}
           <BasicSelectable
-            href="/CRUD/LocalScheduleCRUD/DeleteSchedule"
+            href="/CRUD/LocalCRUD/LocalSchedule/DeleteSchedule"
             logo={<UpdateLogo />}
             text="Actualizar/Borrar Horiario"
             style="mt-3"
           />
           <BasicSelectable
-            href="/CRUD/LocalScheduleCRUD/ReadSchedules"
+            href="/CRUD/LocalCRUD/LocalSchedule/ReadSchedules"
             logo={<ReadLogo />}
             text="Leer Horiarios"
             style="mt-3"
@@ -73,7 +67,7 @@ export default function ScheduleCrud() {
               <Pressable
                 key={local.id}
                 className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-                onPress={() => handlePress(local.id)}
+                onPress={() => handlePress(local.id!)}
               >
                 <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
               </Pressable>
