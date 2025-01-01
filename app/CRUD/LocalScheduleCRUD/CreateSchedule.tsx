@@ -29,20 +29,17 @@ export default function CreateProduct() {
   const dayNumberRef = useRef<any>(null);
 
   // Create refs for each TimeSelect component
-  const AMHourFromRef = useRef<any>(null);
-  const AMHourToRef = useRef<any>(null);
-  const PMHourFromRef = useRef<any>(null);
-  const PMHourToRef = useRef<any>(null);
-  const EXHourFromRef = useRef<any>(null);
-  const EXHourToRef = useRef<any>(null);
+  const FirstShiftStartRef = useRef<any>(null);
+  const FirstShiftFinishRef = useRef<any>(null);
+  const SecondShiftStartRef = useRef<any>(null);
+  const SecondShiftFinishRef = useRef<any>(null);
+  const ThirdShiftStartRef = useRef<any>(null);
+  const ThirdShiftFinishRef = useRef<any>(null);
 
   function fetchSchedules() {
     const fetchData = async () => {
       const schedules = await getSchedule(localId);
-      const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo,
-      );
-      setSchedules(filteredSchedules);
+      setSchedules(schedules);
     };
     fetchData();
   }
@@ -55,10 +52,10 @@ export default function CreateProduct() {
     let localWarning = false;
 
     if (schedules.length > 0) {
-      schedules.forEach((schedule) => {
+      schedules.forEach((schedule: LocalHours) => {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
-          setScheduleId(schedule.id);
+          setScheduleId(schedule.id!);
           localWarning = true;
         }
       });
@@ -92,7 +89,7 @@ export default function CreateProduct() {
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
 
     // Use refs to access selected times from TimeSelect components
-    const AMHourFrom = AMHourFromRef.current
+    const FirstShiftStart = FirstShiftStartRef.current
       ?.getTime()
       ?.toLocaleTimeString(undefined, {
         hour12: false,
@@ -100,7 +97,7 @@ export default function CreateProduct() {
         minute: "2-digit",
       });
 
-    const AMHourTo = AMHourToRef.current
+    const FirstShiftFinish = FirstShiftFinishRef.current
       ?.getTime()
       ?.toLocaleTimeString(undefined, {
         hour12: false,
@@ -108,23 +105,31 @@ export default function CreateProduct() {
         minute: "2-digit",
       });
 
-    const PMHourFrom = checkSchedule(PMHourFromRef.current?.getTime());
+    const SecondShiftStart = checkSchedule(
+      SecondShiftStartRef.current?.getTime()
+    );
 
-    const PMHourTo = checkSchedule(PMHourToRef.current?.getTime());
+    const SecondShiftFinish = checkSchedule(
+      SecondShiftFinishRef.current?.getTime()
+    );
 
-    const EXHourFrom = checkSchedule(EXHourFromRef.current?.getTime());
+    const ThirdShiftStart = checkSchedule(
+      ThirdShiftStartRef.current?.getTime()
+    );
 
-    const EXHourTo = checkSchedule(EXHourToRef.current?.getTime());
+    const ThirdShiftFinish = checkSchedule(
+      ThirdShiftFinishRef.current?.getTime()
+    );
 
     const newSchedule: LocalHours = {
       localId,
       dayNumber,
-      AMHourFrom,
-      AMHourTo,
-      PMHourFrom,
-      PMHourTo,
-      EXHourFrom,
-      EXHourTo,
+      FirstShiftStart,
+      FirstShiftFinish,
+      SecondShiftStart,
+      SecondShiftFinish,
+      ThirdShiftStart,
+      ThirdShiftFinish,
       dateFrom: new Date(),
     };
     console.log(newSchedule);
@@ -159,16 +164,32 @@ export default function CreateProduct() {
           title="Dia de la semana (1 = Domingo):"
           textStyle="mt-4"
           ref={dayNumberRef}
+          value=""
         />
-        <TimeSelect text="Hora de Apertura Primer Turno:" ref={AMHourFromRef} />
-        <TimeSelect text="Hora de Cerrada Primer Turno:" ref={AMHourToRef} />
+        <TimeSelect
+          text="Hora de Apertura Primer Turno:"
+          ref={FirstShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Primer Turno:"
+          ref={FirstShiftFinishRef}
+        />
         <TimeSelect
           text="Hora de Apertura Segundo Turno:"
-          ref={PMHourFromRef}
+          ref={SecondShiftStartRef}
         />
-        <TimeSelect text="Hora de Cerrada Segundo Turno:" ref={PMHourToRef} />
-        <TimeSelect text="Hora de Apertura Tercer Turno:" ref={EXHourFromRef} />
-        <TimeSelect text="Hora de Cerrada Tercer Turno:" ref={EXHourToRef} />
+        <TimeSelect
+          text="Hora de Cerrada Segundo Turno:"
+          ref={SecondShiftFinishRef}
+        />
+        <TimeSelect
+          text="Hora de Apertura Tercer Turno:"
+          ref={ThirdShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Tercer Turno:"
+          ref={ThirdShiftFinishRef}
+        />
         <View className="flex flex-col justify-center items-center w-3/4 mt-3">
           <BasicButton
             logo={<CreateLogo />}

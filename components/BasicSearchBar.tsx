@@ -7,6 +7,7 @@ import {
   Modal,
   Text,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -72,15 +73,22 @@ export default function BasicSearchButton({
                 <Text style={styles.modalTitle}>
                   Selecciona el tipo de búsqueda
                 </Text>
-                {categories.map((category, index) => (
-                  <Pressable
-                    onPress={() => handleSelectSearchType(category)}
-                    style={styles.modalOption}
-                    key={index}
-                  >
-                    <Text style={styles.modalOptionText}>{category}</Text>
-                  </Pressable>
-                ))}
+                <ScrollView
+                  contentContainerStyle={{ flexGrow: 1 }}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  {categories.length > 0 &&
+                    categories.map((category, index) => (
+                      <Pressable
+                        onPress={() => handleSelectSearchType(category)}
+                        style={styles.modalOption}
+                        key={index}
+                      >
+                        <Text style={styles.modalOptionText}>{category}</Text>
+                      </Pressable>
+                    ))}
+                </ScrollView>
+
                 <Pressable
                   onPress={() => setModalVisible(false)}
                   style={styles.closeButton}

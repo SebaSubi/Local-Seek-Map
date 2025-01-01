@@ -23,11 +23,12 @@ export default function LocalContainer({ local }: LocalContainerProps) {
   return (
     <Link
       href={{
-        pathname: "/CRUD/LocalCRUD/LocalPage/[id]",
+        pathname: "CRUD/LocalCRUD/LocalPage/[id]",
         params: {
           id: local.id,
           name: local.name,
-          image: local.imgURL ?? "https://via.placeholder.com/150",
+          localCoordinates: local.location,
+          image: local.image ?? "https://via.placeholder.com/150",
         },
       }}
       asChild

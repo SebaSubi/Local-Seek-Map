@@ -30,8 +30,7 @@ function AuthBasedLayout() {
       <Stack.Screen
         name="(tabs)"
         options={{
-          header: () => <Header title="Main" />,
-          headerStyle: { backgroundColor: "#fff" },
+          headerShown: false,
         }}
       />
     </Stack>

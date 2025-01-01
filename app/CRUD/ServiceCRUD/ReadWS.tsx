@@ -20,9 +20,9 @@ import {
 import ServiceContainer from "../../../components/ServiceContainer";
 import { getServiceTypes } from "../../../libs/serviceType";
 
-const localCategories = ["Apertura", "Ubicación", "Quitar", "Categoria"];
+const localCategories = ["Apertura", "Ubicación", "Categoria", "Quitar"];
 
-export default function ReadLocal() {
+export default function ReadWS() {
   const [services, setServices] = useState<Service[]>([]);
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [search, setSearch] = useState("");
@@ -98,7 +98,7 @@ export default function ReadLocal() {
           }}
         />
         <BasicSearchButton
-          placeholder="Buscar Local"
+          placeholder="Buscar Servicio"
           onSearch={setSearch}
           categories={localCategories}
           selectedCategory={handleCategorySelection}

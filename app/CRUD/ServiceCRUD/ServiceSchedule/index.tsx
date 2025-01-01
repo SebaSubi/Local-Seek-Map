@@ -18,7 +18,7 @@ export default function ScheduleCrud() {
   //   (state) => state.localServiceId,
   // );
   const setLocalServiceId = useLocalServiceIdStore(
-    (state) => state.setLocalServiceId,
+    (state) => state.setLocalServiceId
   );
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function ScheduleCrud() {
               <Pressable
                 key={local.id}
                 className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-                onPress={() => handlePress(local.id)}
+                onPress={() => handlePress(local.id!)}
               >
                 <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
               </Pressable>

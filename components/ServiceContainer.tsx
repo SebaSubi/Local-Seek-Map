@@ -1,17 +1,21 @@
 import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { colors } from "../constants/colors";
-import { Service } from "../schema/GeneralSchema";
+import { Local, Product, Service } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
 
 export default function ServiceContainer({ service }: { service: Service }) {
   if (!service || !service.name) return;
+  // console.log("In the serviceContainer: " + service);
+
   return (
     <Link
       href={{
         pathname: "/CRUD/ServiceCRUD/ServicePage/[id]",
         params: {
           id: service.id,
+          localId: service.localId,
+          localCoordinates: service.local?.location,
           name: service.name,
           imgURL: service.imgURL ?? "https://via.placeholder.com/150",
         },
@@ -33,9 +37,11 @@ export default function ServiceContainer({ service }: { service: Service }) {
                 borderRadius: 4,
                 resizeMode: "cover",
               }}
-              source={{
-                uri: service.imgURL ?? "https://via.placeholder.com/150",
-              }}
+              source={
+                service.image
+                  ? { uri: service.image }
+                  : require("../assets/ServicePlaceholder.png")
+              }
             />
           </View>
           <View className="flex flex-col pl-2">
@@ -50,10 +56,11 @@ export default function ServiceContainer({ service }: { service: Service }) {
                   borderRadius: 6,
                   resizeMode: "cover",
                 }}
-                source={{
-                  uri:
-                    service.local?.imgURL ?? "https://via.placeholder.com/150",
-                }}
+                source={
+                  service.local?.imgURL
+                    ? { uri: "https://via.placeholder.com/150" }
+                    : require("../assets/LocalServicePlaceholder.png")
+                }
               />
               <Text className="text-lg font-bold ml-2">
                 {service.local!.name}
