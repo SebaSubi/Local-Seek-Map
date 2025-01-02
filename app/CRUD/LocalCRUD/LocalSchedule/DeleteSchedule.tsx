@@ -1,26 +1,36 @@
 import { Pressable, Text, View } from "react-native";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
-import { deleteSchedule, getSchedule } from "../../../libs/localSchedule";
 import { useEffect, useState } from "react";
-import { DeleteLogo, ReloadIcon, UpdateLogo } from "../../../components/Logos";
-import { Link } from "expo-router";
-import BasicButton from "../../../components/BasicButton";
-import { days } from "../../../schema/generalConst";
+import {
+  DeleteLogo,
+  ReloadIcon,
+  UpdateLogo,
+} from "../../../../components/Logos";
+import { Link, Stack } from "expo-router";
+import BasicButton from "../../../../components/BasicButton";
+import { days } from "../../../../schema/generalConst";
+import Header from "../../../../components/Header";
+import { deleteServiceSchedule } from "../../../../libs/localService";
+import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
+import { LocalServiceSchedule } from "../../../../schema/GeneralSchema";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import {
+  deleteSchedule,
+  getSchedulesByLocalId,
+} from "../../../../libs/localSchedule";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const localId = useLocalIdStore((state) => state.localId);
-  const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
+  const setScheduleId = useLocalServiceIdStore(
+    (state) => state.setServiceScheduleId
+  );
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getSchedule(localId);
-      const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo
-      );
-      setSchedule(filteredSchedules);
+      const schedules = await getSchedulesByLocalId(localId);
+      setSchedule(schedules);
       setLoading(false);
     };
     fetchData();
@@ -37,6 +47,11 @@ export default function DeleteSchedule() {
 
   return (
     <View className="flex flex-col items-center justify-center">
+      <Stack.Screen
+        options={{
+          header: () => <Header title="Editar/Borrar Horarios" />,
+        }}
+      />
       {loading ? (
         <Text>Loading...</Text>
       ) : schedule.length ? (
@@ -44,33 +59,33 @@ export default function DeleteSchedule() {
           style={{ height: schedule.length * 65 }}
           className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
         >
-          {schedule.map((schedule, index) => (
+          {schedule.map((schedule: LocalServiceSchedule, index) => (
             <View
               key={index}
               className="flex flex-col items-center justify-center"
             >
               <Text className="font-bold text-xl mt-3" key={index}>
-                {days[schedule.dayNumber - 1]}
+                {days[schedule.dayNumber! - 1]}
               </Text>
               <View className="absolute left-0 ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
-                <Pressable onPress={() => handlePress(schedule.id)}>
+                <Pressable onPress={() => handlePress(schedule.id!)}>
                   <DeleteLogo />
                 </Pressable>
               </View>
               <View className="flex flex-row items-center justify-center">
                 <Text>
-                  {schedule.AMHourFrom} - {schedule.AMHourTo}{" "}
-                  {schedule.PMHourFrom} - {schedule.PMHourTo}
+                  {schedule.FirstShiftStart} - {schedule.FirstShiftFinish}
+                  {"..."}
                 </Text>
               </View>
               <Link
                 asChild
-                href="/ScheduleCRUD/UpdateSchedule"
+                href="/CRUD/ServiceCRUD/ServiceSchedule/UpdateSchedule"
                 className="absolute right-3 top-5 bg-white"
               >
                 <Pressable
                   onPress={() => {
-                    setScheduleId(schedule.id);
+                    setScheduleId(schedule.id!);
                   }}
                 >
                   <UpdateLogo />

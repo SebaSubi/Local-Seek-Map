@@ -1,29 +1,33 @@
 import { View } from "react-native";
-import BasicTextInput from "../../../components/BasicTextInput";
+import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
-import { CreateLogo } from "../../../components/Logos";
-import BasicButton from "../../../components/BasicButton";
+import Header from "../../../../components/Header";
+import { CreateLogo } from "../../../../components/Logos";
+import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import { LocalHours } from "../../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import {
+  LocalHours,
+  LocalServiceSchedule,
+} from "../../../../schema/GeneralSchema";
+import BasicWarning from "../../../../components/BasicWarning";
+import TimeSelect from "../../../../components/TimeSelect";
+import { scheduleInputValidation } from "../../../../libs/libs";
+import { specificDate } from "../../../../constants/consts";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import {
   createSchedule,
-  getSchedule,
+  getSchedulesByLocalId,
   updateSchedule,
-} from "../../../libs/localSchedule";
-import BasicWarning from "../../../components/BasicWarning";
-import TimeSelect from "../../../components/TimeSelect";
-import { scheduleInputValidation } from "../../../libs/libs";
-import { specificDate } from "../../../constants/consts";
+} from "../../../../libs/localSchedule";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
-  const [schedules, setSchedules] = useState<LocalHours[]>([]);
+  const [schedules, setSchedules] = useState<LocalServiceSchedule[]>([]);
   const [error, setError] = useState("");
 
   const localId = useLocalIdStore((state) => state.localId);
   const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
+
   const scheduleId = useLocalIdStore((state) => state.scheduleId);
 
   const dayNumberRef = useRef<any>(null);
@@ -38,7 +42,7 @@ export default function CreateProduct() {
 
   function fetchSchedules() {
     const fetchData = async () => {
-      const schedules = await getSchedule(localId);
+      const schedules = await getSchedulesByLocalId(localId);
       setSchedules(schedules);
     };
     fetchData();
@@ -47,15 +51,18 @@ export default function CreateProduct() {
   useEffect(() => {
     fetchSchedules();
   }, []);
-  const handleCreate = () => {
+
+  console.log(scheduleId);
+
+  const handleCreate = async () => {
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
     let localWarning = false;
 
     if (schedules.length > 0) {
-      schedules.forEach((schedule: LocalHours) => {
+      schedules.forEach((schedule) => {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
-          setScheduleId(schedule.id!);
+          setScheduleId(schedule.id!); //Idk why this throws an undefined error if i dont put the !
           localWarning = true;
         }
       });
@@ -132,7 +139,6 @@ export default function CreateProduct() {
       ThirdShiftFinish,
       dateFrom: new Date(),
     };
-    console.log(newSchedule);
 
     return newSchedule;
   }
@@ -144,6 +150,7 @@ export default function CreateProduct() {
 
   async function handleUpdate() {
     const newSchedule = createNewSchedule();
+    console.log(JSON.stringify(newSchedule));
     updateSchedule(scheduleId, newSchedule);
     setWarning(false);
   }
@@ -160,11 +167,11 @@ export default function CreateProduct() {
       >
         <BasicTextInput
           inputType="text"
+          value=""
           placeholder="Numero de Dia"
           title="Dia de la semana (1 = Domingo):"
           textStyle="mt-4"
           ref={dayNumberRef}
-          value=""
         />
         <TimeSelect
           text="Hora de Apertura Primer Turno:"

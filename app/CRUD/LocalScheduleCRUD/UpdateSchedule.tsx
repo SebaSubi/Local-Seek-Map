@@ -10,7 +10,7 @@ import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import {
   getScheduleByScheduleId,
   updateSchedule,
-} from "../../../libs/schedule";
+} from "../../../libs/localSchedule";
 
 export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalHours>();
@@ -29,7 +29,7 @@ export default function UpdateSchedule() {
     const fetchData = async () => {
       const schedules = await getScheduleByScheduleId(scheduleId);
       const filteredSchedules = schedules.filter(
-        (schedule) => !schedule.dateTo,
+        (schedule) => !schedule.dateTo
       );
       setSchedule(filteredSchedules[0]);
       setLoaded(true);

@@ -50,7 +50,7 @@ export default function LocalSchedule() {
             style="mt-3"
           />
           <BasicSelectable
-            href="/CRUD/LocalCRUD/LocalSchedule/ReadSchedules"
+            href="/CRUD/LocalCRUD/LocalSchedule/ReadSchedule"
             logo={<ReadLogo />}
             text="Leer Horiarios"
             style="mt-3"

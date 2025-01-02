@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
-import { getSchedule } from "../../../../libs/localSchedule";
 import { Text, View } from "react-native";
 import Schedule from "../../../../components/Schedule";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 
-export default function LocalSchedulePage() {
+export default function ReadSchedule() {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState([]);
 
   const localId = useLocalIdStore((state) => state.localId);
-  console.log(localId);
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getSchedule(localId);
+      const schedules = await getSchedulesByLocalId(localId);
       setSchedule(schedules);
       setLoading(false);
     };
     fetchData();
   }, [localId]);
-
-  console.log(schedule);
 
   return (
     <>
