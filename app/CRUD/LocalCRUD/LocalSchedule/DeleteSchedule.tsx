@@ -23,9 +23,7 @@ export default function DeleteSchedule() {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const localId = useLocalIdStore((state) => state.localId);
-  const setScheduleId = useLocalServiceIdStore(
-    (state) => state.setServiceScheduleId
-  );
+  const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,7 +78,7 @@ export default function DeleteSchedule() {
               </View>
               <Link
                 asChild
-                href="/CRUD/ServiceCRUD/ServiceSchedule/UpdateSchedule"
+                href="/CRUD/LocalCRUD/LocalSchedule/UpdateSchedule"
                 className="absolute right-3 top-5 bg-white"
               >
                 <Pressable

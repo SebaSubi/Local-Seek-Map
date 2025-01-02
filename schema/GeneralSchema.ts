@@ -93,7 +93,7 @@ export interface LocalHours {
   localId?: string;
   dateFrom: Date;
   dateTo?: Date;
-  dayNumber: number;
+  dayNumber?: number | null;
   FirstShiftStart: string;
   FirstShiftFinish: string;
   SecondShiftStart?: string | null;
