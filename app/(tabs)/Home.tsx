@@ -3,10 +3,9 @@ import { useAuth } from "../context/AuthContext";
 import SearchComponent from "../../components/SearchComponent";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
+import { LogOutIcon } from "../../components/Logos";
 
 export default function Tab() {
-  const { onLogout } = useAuth();
-
   return (
     <View className="h-full">
       <Stack.Screen
@@ -14,15 +13,11 @@ export default function Tab() {
           header: () => <Header title="Principal" />,
         }}
       />
-      <View className="h-4/6">
-        <SearchComponent searchType={undefined} />
+      <View className="h-full w-full">
+        <SearchComponent />
       </View>
-      <Pressable
-        className="flex items-center justify-center"
-        onPress={onLogout}
-      >
-        <Text className="text-xl">Log Out</Text>
-      </Pressable>
     </View>
   );
 }
+
+// bg-[#324e64] rounded-bl-3xl rounded-br-3xl h-24 p-2

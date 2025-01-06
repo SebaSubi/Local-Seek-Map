@@ -90,3 +90,11 @@ export const SearchIcon = () => {
 export const PersonCircleIcon = ({ color = "black", size = 24 }) => {
   return <Ionicons name="person-circle-sharp" size={size} color={color} />;
 };
+
+export const LogOutIcon = ({ color = "white" }) => {
+  return <MaterialCommunityIcons name="logout" size={24} color={color} />;
+};
+
+export const InfoIcon = ({ color = "white" }) => {
+  return <AntDesign name="question" size={24} color={color} />;
+};

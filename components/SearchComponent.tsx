@@ -25,8 +25,9 @@ const SearchComponent = () => {
         getProducts(),
       ]);
 
-      setLocals(localsData || []);
-      setProducts(productsData.activeProducts || []);
+      setLocals(localsData);
+      setProducts(productsData);
+      console.log(products);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -79,12 +80,16 @@ const SearchComponent = () => {
           data={locals}
           renderItem={({ item }) => <LocalContainer local={item} />}
           keyExtractor={(item) => item.id.toString()}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
         />
       ) : (
         <FlatList
           data={products}
           renderItem={({ item }) => <ProductContainer product={item} />}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
         />
       )}
     </View>
