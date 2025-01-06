@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
@@ -26,10 +26,10 @@ export default function CreateProduct() {
   const [error, setError] = useState("");
 
   const localServiceId = useLocalServiceIdStore(
-    (state) => state.localServiceId,
+    (state) => state.localServiceId
   );
   const setScheduleId = useLocalServiceIdStore(
-    (state) => state.setServiceScheduleId,
+    (state) => state.setServiceScheduleId
   );
   const scheduleId = useLocalServiceIdStore((state) => state.serviceScheduleId);
 
@@ -114,19 +114,19 @@ export default function CreateProduct() {
       });
 
     const SecondShiftStart = checkSchedule(
-      SecondShiftStartRef.current?.getTime(),
+      SecondShiftStartRef.current?.getTime()
     );
 
     const SecondShiftFinish = checkSchedule(
-      SecondShiftFinishRef.current?.getTime(),
+      SecondShiftFinishRef.current?.getTime()
     );
 
     const ThirdShiftStart = checkSchedule(
-      ThirdShiftStartRef.current?.getTime(),
+      ThirdShiftStartRef.current?.getTime()
     );
 
     const ThirdShiftFinish = checkSchedule(
-      ThirdShiftFinishRef.current?.getTime(),
+      ThirdShiftFinishRef.current?.getTime()
     );
 
     const newSchedule: LocalServiceSchedule = {
@@ -163,53 +163,55 @@ export default function CreateProduct() {
           header: () => <Header title="Crear Horario" />,
         }}
       />
-      <View
-        className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
-      >
-        <BasicTextInput
-          inputType="text"
-          value=""
-          placeholder="Numero de Dia"
-          title="Dia de la semana (1 = Domingo):"
-          textStyle="mt-4"
-          ref={dayNumberRef}
-        />
-        <TimeSelect
-          text="Hora de Apertura Primer Turno:"
-          ref={FirstShiftStartRef}
-        />
-        <TimeSelect
-          text="Hora de Cerrada Primer Turno:"
-          ref={FirstShiftFinishRef}
-        />
-        <TimeSelect
-          text="Hora de Apertura Segundo Turno:"
-          ref={SecondShiftStartRef}
-        />
-        <TimeSelect
-          text="Hora de Cerrada Segundo Turno:"
-          ref={SecondShiftFinishRef}
-        />
-        <TimeSelect
-          text="Hora de Apertura Tercer Turno:"
-          ref={ThirdShiftStartRef}
-        />
-        <TimeSelect
-          text="Hora de Cerrada Tercer Turno:"
-          ref={ThirdShiftFinishRef}
-        />
-        <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-          <BasicButton
-            logo={<CreateLogo />}
-            text="Crear Horario"
-            style="mt-3"
-            onPress={() => {
-              handleCreate();
-              fetchSchedules();
-            }}
+      <ScrollView keyboardShouldPersistTaps="handled" className="w-full h-full">
+        <View
+          className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
+        >
+          <BasicTextInput
+            inputType="text"
+            value=""
+            placeholder="Numero de Dia"
+            title="Dia de la semana (1 = Domingo):"
+            textStyle="mt-4"
+            ref={dayNumberRef}
           />
+          <TimeSelect
+            text="Hora de Apertura Primer Turno:"
+            ref={FirstShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Primer Turno:"
+            ref={FirstShiftFinishRef}
+          />
+          <TimeSelect
+            text="Hora de Apertura Segundo Turno:"
+            ref={SecondShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Segundo Turno:"
+            ref={SecondShiftFinishRef}
+          />
+          <TimeSelect
+            text="Hora de Apertura Tercer Turno:"
+            ref={ThirdShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Tercer Turno:"
+            ref={ThirdShiftFinishRef}
+          />
+          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            <BasicButton
+              logo={<CreateLogo />}
+              text="Crear Horario"
+              style="mt-3"
+              onPress={() => {
+                handleCreate();
+                fetchSchedules();
+              }}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       {warning && (
         <BasicWarning

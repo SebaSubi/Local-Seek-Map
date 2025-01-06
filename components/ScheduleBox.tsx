@@ -30,7 +30,7 @@ export default function ScheduleBox({
       <>
         <View
           style={{ height: schedules.length * 48 }}
-          className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-10"
+          className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-5"
         >
           {schedules.map((schedule: LocalServiceSchedule, index) => (
             <View key={schedule.id}>

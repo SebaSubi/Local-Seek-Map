@@ -20,11 +20,6 @@ export default function LocalInformation({
 }) {
   return (
     <View className="flex flex-col justify-center items-center w-full">
-      <Stack.Screen
-        options={{
-          header: () => <Header title="Leer Local" />,
-        }}
-      />
       {location ? (
         <View className="flex w-full items-center m-[5px]">
           <InformationSlot

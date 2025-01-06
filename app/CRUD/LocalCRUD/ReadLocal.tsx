@@ -86,65 +86,67 @@ export default function ReadLocal() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View className="flex items-center">
-        <Stack.Screen
-          options={{
-            header: () => <Header title="Leer Local" />,
-          }}
-        />
-        <BasicSearchButton
-          placeholder="Buscar Local"
-          onSearch={setSearch}
-          categories={localCategories}
-          selectedCategory={handleCategorySelection}
-        />
-        {locals?.map((local) => (
-          <LocalContainer key={local.id} local={local} />
-        ))}
+    <>
+      <Stack.Screen
+        options={{
+          header: () => <Header title={"Buscar Locales"} />,
+        }}
+      />
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex items-center">
+          <BasicSearchButton
+            placeholder="Buscar Local"
+            onSearch={setSearch}
+            categories={localCategories}
+            selectedCategory={handleCategorySelection}
+          />
+          {locals?.map((local) => (
+            <LocalContainer key={local.id} local={local} />
+          ))}
 
-        <Pressable
-          className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
-          onPress={async () => {
-            await fetchAndSetLocals();
-          }}
-        >
-          <Text className="text-white">Recargar</Text>
-        </Pressable>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisibility}
-          onRequestClose={() => setModalVisibility(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                Selecciona el tipo de búsqueda
-              </Text>
-              {StoreCategories.map((category, index) => (
+          <Pressable
+            className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
+            onPress={async () => {
+              await fetchAndSetLocals();
+            }}
+          >
+            <Text className="text-white">Recargar</Text>
+          </Pressable>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisibility}
+            onRequestClose={() => setModalVisibility(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  Selecciona el tipo de búsqueda
+                </Text>
+                {StoreCategories.map((category, index) => (
+                  <Pressable
+                    onPress={() => handleStoreCateory(category)}
+                    style={styles.modalOption}
+                    key={index}
+                  >
+                    <Text style={styles.modalOptionText}>{category}</Text>
+                  </Pressable>
+                ))}
                 <Pressable
-                  onPress={() => handleStoreCateory(category)}
-                  style={styles.modalOption}
-                  key={index}
+                  onPress={() => setModalVisibility(false)}
+                  style={styles.closeButton}
                 >
-                  <Text style={styles.modalOptionText}>{category}</Text>
+                  <Text style={styles.closeButtonText}>Cerrar</Text>
                 </Pressable>
-              ))}
-              <Pressable
-                onPress={() => setModalVisibility(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-              </Pressable>
+              </View>
             </View>
-          </View>
-        </Modal>
-      </View>
-    </ScrollView>
+          </Modal>
+        </View>
+      </ScrollView>
+    </>
   );
 }
 

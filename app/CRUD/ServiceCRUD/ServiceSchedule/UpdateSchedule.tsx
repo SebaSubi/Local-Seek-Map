@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
@@ -24,14 +24,14 @@ export default function UpdateSchedule() {
   const ThirdShiftStartRef = useRef<{ getTime: () => Date }>(null);
   const ThirdShiftFinishRef = useRef<{ getTime: () => Date }>(null);
   const serviceScheduleId = useLocalServiceIdStore(
-    (state) => state.serviceScheduleId,
+    (state) => state.serviceScheduleId
   );
 
   useEffect(() => {
     const fetchData = async () => {
       const schedules = await getServiceScheduleByScheduleId(serviceScheduleId); //Make sure this is set
       const filteredSchedules = schedules.filter(
-        (schedule: LocalServiceSchedule) => !schedule.dateTo,
+        (schedule: LocalServiceSchedule) => !schedule.dateTo
       );
       setSchedule(filteredSchedules[0]);
       setLoaded(true);
@@ -66,16 +66,16 @@ export default function UpdateSchedule() {
         minute: "2-digit",
       });
     const SecondShiftStart = checkSchedule(
-      SecondShiftStartRef.current?.getTime(),
+      SecondShiftStartRef.current?.getTime()
     );
     const SecondShiftFinish = checkSchedule(
-      SecondShiftFinishRef.current?.getTime(),
+      SecondShiftFinishRef.current?.getTime()
     );
     const ThirdShiftStart = checkSchedule(
-      ThirdShiftStartRef.current?.getTime(),
+      ThirdShiftStartRef.current?.getTime()
     );
     const ThirdShiftFinish = checkSchedule(
-      ThirdShiftFinishRef.current?.getTime(),
+      ThirdShiftFinishRef.current?.getTime()
     );
     const dateFrom = new Date();
     console.log(FirstShiftStart);
@@ -94,51 +94,62 @@ export default function UpdateSchedule() {
   };
 
   return loaded ? (
-    <View className="flex justify-center items-center bg-white h-full w-full">
+    <>
       <Stack.Screen
         options={{
           header: () => <Header title="Actualizar Horario" />,
         }}
       />
-      <Text>Day number: {schedule!.dayNumber}</Text>
-      <TimeSelect
-        text="Hora de Apertura Primer Turno:"
-        ref={FirstShiftStartRef}
-      />
-      <TimeSelect
-        text="Hora de Cerrada Primer Turno:"
-        ref={FirstShiftFinishRef}
-      />
-      <TimeSelect
-        text="Hora de Apertura Segundo Turno:"
-        ref={SecondShiftStartRef}
-      />
-      <TimeSelect
-        text="Hora de Cerrada Segundo Turno:"
-        ref={SecondShiftFinishRef}
-      />
-      <TimeSelect
-        text="Hora de Apertura Tercer Turno:"
-        ref={ThirdShiftStartRef}
-      />
-      <TimeSelect
-        text="Hora de Cerrada Tercer Turno:"
-        ref={ThirdShiftFinishRef}
-      />
+      <ScrollView keyboardShouldPersistTaps="handled" className="w-full h-full">
+        <View className="flex justify-center items-center bg-white h-full w-full">
+          <Text>Day number: {schedule!.dayNumber}</Text>
+          <TimeSelect
+            text="Hora de Apertura Primer Turno:"
+            ref={FirstShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Primer Turno:"
+            ref={FirstShiftFinishRef}
+          />
+          <TimeSelect
+            text="Hora de Apertura Segundo Turno:"
+            ref={SecondShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Segundo Turno:"
+            ref={SecondShiftFinishRef}
+          />
+          <TimeSelect
+            text="Hora de Apertura Tercer Turno:"
+            ref={ThirdShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Tercer Turno:"
+            ref={ThirdShiftFinishRef}
+          />
 
-      <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton
-          logo={<CreateLogo />}
-          text="Actualizar Horario"
-          style="mt-3"
-          onPress={handleSubmit}
-        />
-      </View>
-    </View>
+          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            <BasicButton
+              logo={<CreateLogo />}
+              text="Actualizar Horario"
+              style="mt-3"
+              onPress={handleSubmit}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </>
   ) : (
-    <View className="flex justify-center items-center bg-white h-full w-full">
-      <Text>Loading...</Text>
-    </View>
+    <>
+      <Stack.Screen
+        options={{
+          header: () => <Header title="Actualizar Horario" />,
+        }}
+      />
+      <View className="flex justify-center items-center bg-white h-full w-full">
+        <Text>Loading...</Text>
+      </View>
+    </>
   );
 } //For the Brand and for the Tupe, we will have to make them select from ones we give them, or else the database will get filled with garbage. We might have to make a new component for that.
 // Also add that you can change the imput type to number for the price. And it only accepts numbers

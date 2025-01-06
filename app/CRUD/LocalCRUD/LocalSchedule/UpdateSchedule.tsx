@@ -97,51 +97,60 @@ export default function UpdateSchedule() {
   };
 
   return loaded ? (
-    <View className="flex justify-center items-center bg-white h-full w-full">
+    <>
       <Stack.Screen
         options={{
           header: () => <Header title="Actualizar Horario" />,
         }}
       />
-      <Text>Day number: {schedule!.dayNumber}</Text>
-      <TimeSelect
-        text="Hora de Apertura Primer Turno:"
-        ref={FirstShiftStartRef}
-      />
-      <TimeSelect
-        text="Hora de Cerrada Primer Turno:"
-        ref={FirstShiftFinishRef}
-      />
-      <TimeSelect
-        text="Hora de Apertura Segundo Turno:"
-        ref={SecondShiftStartRef}
-      />
-      <TimeSelect
-        text="Hora de Cerrada Segundo Turno:"
-        ref={SecondShiftFinishRef}
-      />
-      <TimeSelect
-        text="Hora de Apertura Tercer Turno:"
-        ref={ThirdShiftStartRef}
-      />
-      <TimeSelect
-        text="Hora de Cerrada Tercer Turno:"
-        ref={ThirdShiftFinishRef}
-      />
-
-      <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton
-          logo={<CreateLogo />}
-          text="Actualizar Horario"
-          style="mt-3"
-          onPress={handleSubmit}
+      <View className="flex justify-center items-center bg-white h-full w-full">
+        <Text>Day number: {schedule!.dayNumber}</Text>
+        <TimeSelect
+          text="Hora de Apertura Primer Turno:"
+          ref={FirstShiftStartRef}
         />
+        <TimeSelect
+          text="Hora de Cerrada Primer Turno:"
+          ref={FirstShiftFinishRef}
+        />
+        <TimeSelect
+          text="Hora de Apertura Segundo Turno:"
+          ref={SecondShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Segundo Turno:"
+          ref={SecondShiftFinishRef}
+        />
+        <TimeSelect
+          text="Hora de Apertura Tercer Turno:"
+          ref={ThirdShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Tercer Turno:"
+          ref={ThirdShiftFinishRef}
+        />
+
+        <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+          <BasicButton
+            logo={<CreateLogo />}
+            text="Actualizar Horario"
+            style="mt-3"
+            onPress={handleSubmit}
+          />
+        </View>
       </View>
-    </View>
+    </>
   ) : (
-    <View className="flex justify-center items-center bg-white h-full w-full">
-      <Text>Loading...</Text>
-    </View>
+    <>
+      <Stack.Screen
+        options={{
+          header: () => <Header title="Actualizar Horario" />,
+        }}
+      />
+      <View className="flex justify-center items-center bg-white h-full w-full">
+        <Text>Loading...</Text>
+      </View>
+    </>
   );
 } //For the Brand and for the Tupe, we will have to make them select from ones we give them, or else the database will get filled with garbage. We might have to make a new component for that.
 // Also add that you can change the imput type to number for the price. And it only accepts numbers

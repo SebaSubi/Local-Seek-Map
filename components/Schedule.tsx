@@ -27,31 +27,34 @@ export default function Schedule({ schedule }: { schedule: LocalHours[] }) {
   ];
 
   return (
-    <FlatList
-      data={shifts}
-      keyExtractor={(item, index) => index.toString()}
-      contentContainerStyle={{ paddingHorizontal: 0 }}
-      renderItem={({ item, index }) => (
-        <View className="flex flex-col w-full items-center">
-          <Text className="text-xl mt-10">
-            {index === 0
-              ? "Primer Turno"
-              : index === 1
-                ? "Segundo Turno"
-                : index === 2
-                  ? "Tercer Turno"
-                  : null}
-          </Text>
-          <ScheduleBox //Here pas the local or schedule
-            schedules={schedule}
-            shiftOpen={item.shiftOpen}
-            shiftClose={item.shiftClose}
-          />
-        </View>
-      )}
-    />
+    <>
+      <FlatList
+        data={shifts}
+        keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={{ paddingHorizontal: 0 }}
+        renderItem={({ item, index }) => (
+          <View className="flex flex-col w-full items-center">
+            <Text className="text-xl mt-5">
+              {index === 0
+                ? "Primer Turno"
+                : index === 1
+                  ? "Segundo Turno"
+                  : index === 2
+                    ? "Tercer Turno"
+                    : null}
+            </Text>
+            <ScheduleBox //Here pas the local or schedule
+              schedules={schedule}
+              shiftOpen={item.shiftOpen}
+              shiftClose={item.shiftClose}
+            />
+          </View>
+        )}
+      />
+      <View className="h-16 w-full"></View>
+    </>
   );
-}
+} //The view in the end of the component is to ensure the hole schedule will always be visible since Flatlist can not show the hole thing if the parent component isnt big enough
 
 // <View className="flex flex-col  h-full w-full">
 //   <Stack.Screen
