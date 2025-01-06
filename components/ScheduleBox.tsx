@@ -12,7 +12,7 @@ export default function ScheduleBox({
 }: {
   shiftOpen: shift;
   shiftClose: shift;
-  schedules: LocalHours[];
+  schedules: LocalHours[] | LocalServiceSchedule[];
 }) {
   const days = [
     "Domingo",
