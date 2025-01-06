@@ -4,11 +4,14 @@ import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
 import { getProducts } from "../libs/product";
-import { LocalDisplay, Product } from "../schema/GeneralSchema";
+import { LocalDisplay, Product, Service } from "../schema/GeneralSchema";
+import { getDisplayServices } from "../libs/localService";
+import ServiceContainer from "./ServiceContainer";
 
 const SearchComponent = () => {
   const [locals, setLocals] = useState<LocalDisplay[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<
     "locales" | "productos" | "servicios"
@@ -20,14 +23,15 @@ const SearchComponent = () => {
 
   const fetchData = async () => {
     try {
-      const [localsData, productsData] = await Promise.all([
+      const [localsData, productsData, serviceData] = await Promise.all([
         getLocals(),
         getProducts(),
+        getDisplayServices(),
       ]);
 
       setLocals(localsData);
       setProducts(productsData);
-      console.log(products);
+      setServices(serviceData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -83,10 +87,18 @@ const SearchComponent = () => {
           onRefresh={() => fetchData()}
           refreshing={loading}
         />
-      ) : (
+      ) : viewType === "productos" ? (
         <FlatList
           data={products}
           renderItem={({ item }) => <ProductContainer product={item} />}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
+        />
+      ) : (
+        <FlatList
+          data={services}
+          renderItem={({ item }) => <ServiceContainer service={item} />}
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchData()}
           refreshing={loading}

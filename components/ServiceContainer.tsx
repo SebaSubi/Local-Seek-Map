@@ -17,13 +17,13 @@ export default function ServiceContainer({ service }: { service: Service }) {
           localId: service.localId,
           localCoordinates: service.local?.location,
           name: service.name,
-          imgURL: service.imgURL ?? "https://via.placeholder.com/150",
+          imgURL: service.image ?? "https://via.placeholder.com/150",
         },
       }}
       asChild
     >
       <Pressable
-        className="flex flex-col items-center justify-center mt-2 w-11/12"
+        className="flex flex-col items-center justify-center mt-2 w-full"
         key={service.id}
       >
         <View className="flex flex-row items-center h-28 w-11/12 bg-slate-300 rounded-2xl border m-1">

@@ -3,7 +3,7 @@ import ScheduleBox from "./ScheduleBox";
 import { shift } from "../constants/consts";
 import { Stack } from "expo-router";
 import Header from "./Header";
-import { LocalHours, LocalServiceSchedule } from "../schema/GeneralSchema";
+import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 
 type Shift = {
   shiftOpen: shift;
@@ -13,7 +13,7 @@ type Shift = {
 export default function Schedule({
   schedule,
 }: {
-  schedule: LocalHours[] | LocalServiceSchedule[];
+  schedule: LocalSchedule[] | LocalServiceSchedule[];
 }) {
   const shifts: Shift[] = [
     {

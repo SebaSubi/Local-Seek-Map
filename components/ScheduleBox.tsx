@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { shift } from "../constants/consts";
-import { LocalHours, LocalServiceSchedule } from "../schema/GeneralSchema";
+import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 import { getScheduleByLocalServiceId } from "../libs/localService";
 import { useLocalServiceIdStore } from "../libs/localServiceZustang";
 
@@ -12,7 +12,7 @@ export default function ScheduleBox({
 }: {
   shiftOpen: shift;
   shiftClose: shift;
-  schedules: LocalHours[] | LocalServiceSchedule[];
+  schedules: LocalSchedule[] | LocalServiceSchedule[];
 }) {
   const days = [
     "Domingo",
@@ -32,7 +32,7 @@ export default function ScheduleBox({
           style={{ height: schedules.length * 48 }}
           className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-5"
         >
-          {schedules.map((schedule: LocalServiceSchedule, index) => (
+          {schedules.map((schedule, index) => (
             <View key={schedule.id}>
               {index === 0 ? null : (
                 <View

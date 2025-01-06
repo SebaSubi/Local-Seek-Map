@@ -4,63 +4,125 @@ export interface User {
   name: string;
   password: string;
   role: string;
+  dateFrom: string;
+  dateTo: string | null;
   locals: Local[];
-  localFavorites: LocalFavorites[];
-  productFavorites: ProductFavorites[];
-  reservations?: Reservations;
-}
-
-export interface LocalFavorites {
-  id: string;
-  user: User;
-  userId: string;
-  local: Local;
-  localId: string;
-  dateFrom: Date;
-  dateTo: Date;
-}
-
-export interface ProductFavorites {
-  id: string;
-  user: User;
-  userId: string;
-  product: Product;
-  productId: string;
-  dateFrom: Date;
-  dateTo: Date;
-}
-
-export interface Reservations {
-  id: string;
-  user: User;
-  userId: string;
-  service: LocalService;
-  serviceId: string;
-  dateTime: Date;
-  comment: string;
 }
 
 export interface Local {
-  id?: string;
+  id: string;
   name: string;
-  location?: string; // Consider changing to number if needed
-  address?: string;
-  whatsapp?: string | null;
-  instagram?: string;
-  facebook?: string;
-  webpage?: string;
-  imgURL?: string;
+  location: string; // Consider changing to a more specific type, e.g., { lat: number; lng: number }
+  address: string;
+  whatsapp: number | null;
+  instagram: string | null;
+  facebook: string | null;
+  webpage: string | null;
+  imgURL: string | null;
   dateFrom: Date;
-  dateTo?: Date;
-  users?: User[];
-  hours?: LocalHours;
-  localFavorites?: LocalFavorites[];
-  services?: LocalService[];
-  localTypes?: LocalTypes;
-  localTypeID?: string;
-  product?: LocalProduct[];
-  localDiscountDeal?: LocalDiscountDeal[];
-  viewLocal?: ViewLocal[];
+  dateTo: Date | null;
+  users: User[];
+  schedule: LocalSchedule[];
+  services: Service[];
+  localTypes: LocalTypes | null;
+  localTypeID: string | null;
+  product: LocalProduct[];
+  viewLocal: ViewLocal[];
+}
+
+export interface LocalProduct {
+  id: string;
+  local: Local;
+  localId: string;
+  product: Product;
+  productId: string;
+  dateFrom: Date;
+  dateTo: Date | null;
+}
+
+export interface LocalSchedule {
+  id: string;
+  local: Local;
+  localId: string;
+  dateFrom: Date;
+  dateTo: Date | null;
+  dayNumber: number;
+  FirstShiftStart: string;
+  FirstShiftFinish: string;
+  SecondShiftStart: string | null;
+  SecondShiftFinish: string | null;
+  ThirdShiftStart: string | null;
+  ThirdShiftFinish: string | null;
+}
+
+export interface LocalTypes {
+  id: string;
+  name: string;
+  locals: Local[];
+}
+
+export interface ViewLocal {
+  id: string;
+  local: Local;
+  localId: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  updatedAt: Date;
+  brand: string;
+  mesurement: string;
+  imgURL: string | null;
+  price: number | null;
+  description: string;
+  dateFrom: Date;
+  dateTo: Date | null;
+  local: LocalProduct[];
+  type: ProductType;
+  productTypeId: string;
+}
+
+export interface ProductType {
+  id: string;
+  name: string;
+  product: Product[];
+}
+
+export interface Service {
+  id: string;
+  local: Local;
+  localId: string;
+  name: string;
+  serviceType: ServiceType;
+  serviceTypeId: string;
+  description: string;
+  image: string | null;
+  reservationURL: string | null;
+  dateFrom: Date;
+  dateTo: Date | null;
+  schedule: LocalServiceSchedule[];
+}
+
+export interface LocalServiceSchedule {
+  id: string;
+  localServiceId: string;
+  dateFrom: Date;
+  dateTo: Date | null;
+  dayNumber: number;
+  FirstShiftStart: string;
+  FirstShiftFinish: string;
+  SecondShiftStart: string | null;
+  SecondShiftFinish: string | null;
+  ThirdShiftStart: string | null;
+  ThirdShiftFinish: string | null;
+  localService: Service;
+}
+
+export interface ServiceType {
+  id: string;
+  localService: Service[];
+  name: string;
 }
 
 export interface LocalDisplay {
@@ -76,149 +138,3 @@ export interface LocalDisplay {
   dateTo: Date | null;
   localType: string;
 }
-
-export interface LocalProduct {
-  id: string;
-  local: Local;
-  localId: string;
-  product: Product;
-  productId: string;
-  dateFrom: Date;
-  dateTo: Date;
-}
-
-export interface LocalHours {
-  id?: string;
-  local?: Local;
-  localId?: string;
-  dateFrom: Date;
-  dateTo?: Date;
-  dayNumber?: number | null;
-  FirstShiftStart: string;
-  FirstShiftFinish: string;
-  SecondShiftStart?: string | null;
-  SecondShiftFinish?: string | null;
-  ThirdShiftStart?: string | null;
-  ThirdShiftFinish?: string | null;
-}
-
-export interface LocalTypes {
-  id: string;
-  name: string;
-  locals: Local[];
-}
-
-export interface LocalDiscountDeal {
-  id: string;
-  local: Local;
-  localId: string;
-  dealDiscount: string;
-  dateFrom: Date;
-  dateTo: Date;
-  active: boolean;
-}
-
-export interface ViewLocal {
-  id: string;
-  local: Local;
-  localId: string;
-}
-
-export interface Product {
-  id?: string;
-  name: string;
-  updatedAt?: Date;
-  brand: string;
-  mesurement: string;
-  imgURL?: string;
-  price?: number;
-  description: string;
-  dateFrom?: Date;
-  dateTo?: Date;
-  productFavorites?: ProductFavorites[];
-  local?: LocalProduct[];
-  type?: ProductType;
-  productDiscountDeal?: ProductDiscountDeal[];
-  productTypeId?: string | null;
-}
-
-export interface ProductType {
-  id: string;
-  name: string;
-  product: Product[];
-  dateTo?: Date;
-}
-
-export interface ProductDiscountDeal {
-  id: string;
-  product: Product;
-  productId: string;
-  dealDiscount: string;
-  dateFrom: Date;
-  dateTo: Date;
-  active: boolean;
-}
-
-export interface LocalService {
-  id: string;
-  name: string;
-  local: Local;
-  localId: string;
-  service: Service;
-  serviceId: string;
-  dateFrom: Date;
-  dateTo: Date;
-  AMHourFrom: string;
-  AMHourTo: string;
-  PMHourFrom: string;
-  PMHourTo: string;
-  EXHourFrom: string;
-  EXHourTo: string;
-  reservations: Reservations[];
-}
-
-export interface Service {
-  id?: string;
-  local?: Local;
-  localId?: string | null;
-  name: string;
-  serviceType?: ServiceType;
-  serviceTypeId: string;
-  description: string;
-  imgURL?: string;
-  reservationURL?: string; // Using camelCase as per JavaScript/TypeScript convention
-  dateFrom: Date;
-  dateTo?: Date;
-  schedule?: LocalServiceSchedule[];
-}
-
-export interface LocalServiceSchedule {
-  id?: string;
-  localServiceId?: string | null;
-  dateFrom?: Date | null;
-  dateTo?: Date;
-  dayNumber?: number | null;
-  FirstShiftStart?: string | null;
-  FirstShiftFinish?: string | null;
-  SecondShiftStart?: string | null;
-  SecondShiftFinish?: string | null;
-  ThirdShiftStart?: string | null;
-  ThirdShiftFinish?: string | null;
-  localService?: Service | null;
-}
-
-export interface ServiceType {
-  id: string;
-  localService?: Service[]; // Array of related services
-  name: string;
-}
-
-export type DisplayService = {
-  serviceId: string;
-  localId: string;
-  serviceName: string;
-  serviceImage: string | null;
-  localServiceId: string;
-  localImage: string | null;
-  localName: string;
-};
