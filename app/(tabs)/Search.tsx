@@ -29,6 +29,7 @@ import ServiceContainer from "../../components/ServiceContainer";
 import LocalContainer from "../../components/LocalContainer";
 import ReadWS from "../CRUD/ServiceCRUD/ReadWS";
 import ReadLocal from "../CRUD/LocalCRUD/ReadLocal";
+import React from "react";
 
 const avaliableItems = ["Locales", "Servicios", "Productos"];
 
