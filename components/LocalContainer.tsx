@@ -1,6 +1,6 @@
 import { View, Text, Image, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
-import { LocalDisplay } from "../schema/GeneralSchema";
+import { Local, LocalDisplay } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
 import { colors } from "../constants/colors";
 import { getIfLocalOpen } from "../libs/local";
@@ -9,7 +9,7 @@ type LocalContainerProps = {
   local: LocalDisplay;
 };
 
-export default function LocalContainer({ local }: LocalContainerProps) {
+export default function LocalContainer({ local }: { local: Local }) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function LocalContainer({ local }: LocalContainerProps) {
           id: local.id,
           name: local.name,
           localCoordinates: local.location,
-          image: local.image ?? "https://via.placeholder.com/150",
+          image: local.imgURL ?? "https://via.placeholder.com/150",
         },
       }}
       asChild
@@ -59,7 +59,9 @@ export default function LocalContainer({ local }: LocalContainerProps) {
             <Text className="mt-1 font-bold text-xl">{local.name}</Text>
             <Text className="text-lg">
               Categoria:{" "}
-              {local.localType ? local.localType : "CategoryPlaceHolder"}
+              {local.localTypes
+                ? local.localTypes.toString()
+                : "CategoryPlaceHolder"}
             </Text>
             <Text
               className={`${isOpen ? "text-green-700 " : "text-red-500 "}font-bold text-lg`}

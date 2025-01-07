@@ -109,10 +109,11 @@ export default function LocalPage() {
                 </View>
                 <LocalInformation
                   instagram={local!.instagram}
-                  whatsapp={local!.whatsapp}
+                  whatsapp={local!.whatsapp?.toString()}
                   facebook={local!.facebook}
                   location={local!.address}
                   webpage={local!.webpage}
+                  coordinates={local!.location}
                 />
               </>
             ) : null)}

@@ -102,7 +102,7 @@ export default function ServicePage() {
                 </View>
                 <LocalInformation
                   instagram={service.local.instagram}
-                  whatsapp={service.local.whatsapp}
+                  whatsapp={service.local.whatsapp?.toString()}
                   facebook={service.local.facebook}
                   location={service.local.address}
                   webpage={service.local.webpage} // traete esto del localservice
