@@ -24,7 +24,9 @@ const SearchComponent = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewType, setViewType] = useState<"locales" | "productos" | "servicios">("locales");
+  const [viewType, setViewType] = useState<
+    "locales" | "productos" | "servicios"
+  >("locales");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -110,14 +112,6 @@ const SearchComponent = () => {
       ) : viewType === "productos" ? (
         <FlatList
           data={products}
-<<<<<<< HEAD
-          renderItem={({ item }) => (
-            <Pressable onPress={() => handlePress(item)}>
-              <ProductContainer product={item} />
-            </Pressable>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-=======
           renderItem={({ item }) => <ProductContainer product={item} />}
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchData()}
@@ -130,7 +124,6 @@ const SearchComponent = () => {
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchData()}
           refreshing={loading}
->>>>>>> 02af035d481f0d8842458990f919fed2a145f2de
         />
       )}
 
@@ -145,7 +138,8 @@ const SearchComponent = () => {
             <View style={styles.modalContent}>
               <Image
                 source={{
-                  uri: selectedProduct.imgURL || "https://via.placeholder.com/150",
+                  uri:
+                    selectedProduct.imgURL || "https://via.placeholder.com/150",
                 }}
                 style={styles.modalImage}
               />

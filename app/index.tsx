@@ -51,7 +51,6 @@ export default function Login() {
     return authState?.authenticated ? (
       <Redirect href="(tabs)/Home" />
     ) : (
-      
       <View className="flex items-center justify-center">
         <Text>Login</Text>
         <BasicTextInput

@@ -25,7 +25,7 @@ interface AuthProps {
   onRegister?: (
     email: string,
     password: string,
-    username: string
+    username: string,
   ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }: any) => {
   const register = async (
     email: string,
     password: string,
-    username: string
+    username: string,
   ) => {
     try {
       const hashedPassword = await hashPassword(password);
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }: any) => {
           ? Role.STOREOWNER
           : result.data.role === "ADMIN"
             ? Role.ADMIN
-            : Role.USER
+            : Role.USER,
       );
       return result;
     } catch (error) {
@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }: any) => {
 
       await SecureStore.setItemAsync(
         TOKEN_KEY,
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTJtNzRia28wMDAwa2dlcHNlYWl4NXkwIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzMzMDY0MjYxLCJleHAiOjE3MzU2NTYyNjF9.lhQa-66NAlpRXIQCYCObQMNRu5rpEyaoBI_4HvQuHcQ"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTJtNzRia28wMDAwa2dlcHNlYWl4NXkwIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzMzMDY0MjYxLCJleHAiOjE3MzU2NTYyNjF9.lhQa-66NAlpRXIQCYCObQMNRu5rpEyaoBI_4HvQuHcQ",
       );
       await SecureStore.setItemAsync(USERNAME, "admin");
       await SecureStore.setItemAsync(ROLE_KEY, Role.ADMIN);
@@ -197,7 +197,7 @@ export const AuthProvider = ({ children }: any) => {
               ? Role.STOREOWNER
               : result.data.role === "ADMIN"
                 ? Role.ADMIN
-                : Role.USER
+                : Role.USER,
           );
           return result;
         } catch (error) {
