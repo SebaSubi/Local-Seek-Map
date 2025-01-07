@@ -29,7 +29,7 @@ export async function createSchedule(schedule: LocalHours) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
+    //Alert.alert("Error: ", error);
   }
 }
 
@@ -45,7 +45,7 @@ export async function getScheduleByScheduleId(id: string) {
   } catch (error) {}
 }
 
-export async function getSchedule(id: string) {
+export async function getSchedulesByLocalId(id: string) {
   try {
     const response = await fetch(`${API_URL}/schedule/local/${id}`);
     if (!response.ok) {
@@ -61,7 +61,7 @@ export async function getSchedule(id: string) {
 
 export async function deleteSchedule(id: string) {
   try {
-    const response = await fetch(`${API_URL}/schedule/${id}`, {
+    const response = await fetch(`${API_URL}/schedule/delete/${id}`, {
       method: "PATCH",
       headers: {
         "content-Type": "application/json",
@@ -70,7 +70,7 @@ export async function deleteSchedule(id: string) {
     });
 
     if (!response.ok) {
-      console.log("Error deletiong schedule");
+      console.log(response);
     } else {
       const json = response.json();
       return json;
@@ -82,7 +82,7 @@ export async function deleteSchedule(id: string) {
 
 export async function updateSchedule(id: string, schedule: LocalHours) {
   try {
-    const response = await fetch(`${API_URL}/schedule/${id}`, {
+    const response = await fetch(`${API_URL}/schedule/update/${id}`, {
       method: "PUT",
       headers: {
         "content-Type": "application/json",

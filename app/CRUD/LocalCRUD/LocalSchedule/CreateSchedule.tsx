@@ -9,29 +9,26 @@ import {
   LocalHours,
   LocalServiceSchedule,
 } from "../../../../schema/GeneralSchema";
-import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 import BasicWarning from "../../../../components/BasicWarning";
 import TimeSelect from "../../../../components/TimeSelect";
 import { scheduleInputValidation } from "../../../../libs/libs";
 import { specificDate } from "../../../../constants/consts";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import {
-  createlocalServiceSchedule,
-  getScheduleByLocalServiceId,
-  updateServiceSchedule,
-} from "../../../../libs/localService";
+  createSchedule,
+  getSchedulesByLocalId,
+  updateSchedule,
+} from "../../../../libs/localSchedule";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [schedules, setSchedules] = useState<LocalServiceSchedule[]>([]);
   const [error, setError] = useState("");
 
-  const localServiceId = useLocalServiceIdStore(
-    (state) => state.localServiceId
-  );
-  const setScheduleId = useLocalServiceIdStore(
-    (state) => state.setServiceScheduleId
-  );
-  const scheduleId = useLocalServiceIdStore((state) => state.serviceScheduleId);
+  const localId = useLocalIdStore((state) => state.localId);
+  const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
+
+  const scheduleId = useLocalIdStore((state) => state.scheduleId);
 
   const dayNumberRef = useRef<any>(null);
 
@@ -43,24 +40,13 @@ export default function CreateProduct() {
   const ThirdShiftStartRef = useRef<any>(null);
   const ThirdShiftFinishRef = useRef<any>(null);
 
-  function fetchSchedules() {
-    const fetchData = async () => {
-      const schedules = await getScheduleByLocalServiceId(localServiceId);
-      setSchedules(schedules);
-    };
-    fetchData();
-  }
-
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
-
-  const handleCreate = () => {
+  const handleCreate = async () => {
+    const schedulest = await getSchedulesByLocalId(localId);
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
     let localWarning = false;
 
-    if (schedules.length > 0) {
-      schedules.forEach((schedule) => {
+    if (schedulest.length > 0) {
+      schedulest.forEach((schedule: LocalHours) => {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
           setScheduleId(schedule.id!); //Idk why this throws an undefined error if i dont put the !
@@ -129,8 +115,8 @@ export default function CreateProduct() {
       ThirdShiftFinishRef.current?.getTime()
     );
 
-    const newSchedule: LocalServiceSchedule = {
-      localServiceId,
+    const newSchedule: LocalHours = {
+      localId,
       dayNumber,
       FirstShiftStart,
       FirstShiftFinish,
@@ -140,19 +126,19 @@ export default function CreateProduct() {
       ThirdShiftFinish,
       dateFrom: new Date(),
     };
-    console.log(newSchedule);
 
     return newSchedule;
   }
 
   async function handleSubmit() {
     const newSchedule = createNewSchedule();
-    createlocalServiceSchedule(newSchedule);
+    createSchedule(newSchedule);
   }
 
   async function handleUpdate() {
     const newSchedule = createNewSchedule();
-    updateServiceSchedule(scheduleId, newSchedule);
+    console.log(JSON.stringify(newSchedule));
+    updateSchedule(scheduleId, newSchedule);
     setWarning(false);
   }
 
@@ -206,7 +192,6 @@ export default function CreateProduct() {
               style="mt-3"
               onPress={() => {
                 handleCreate();
-                fetchSchedules();
               }}
             />
           </View>

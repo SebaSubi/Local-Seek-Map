@@ -30,15 +30,17 @@ export default function Login() {
 
     if (!email) {
       console.log("The email is missing");
+      setLoginError("El email esta incompleto");
       return;
     }
     if (!password) {
       console.log("The password is missing");
+      setLoginError("La contraseña esta vacia");
       return;
     }
     if (validateEmail(email)) {
       const result = await onLogin!(email, password);
-      console.log("Login result:", result);
+      // console.log("Login result:", result);
       if (result.status !== 200) {
         setLoginError("Email o Contraseña incorrecta");
       }

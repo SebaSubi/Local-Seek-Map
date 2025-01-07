@@ -4,11 +4,15 @@ import { useAuth } from "../context/AuthContext";
 import SearchComponent from "../../components/SearchComponent";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
+import { LogOutIcon } from "../../components/Logos";
 
 export default function Tab() {
+<<<<<<< HEAD
   const { onLogout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
+=======
+>>>>>>> 02af035d481f0d8842458990f919fed2a145f2de
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -28,6 +32,7 @@ export default function Tab() {
           ),
         }}
       />
+<<<<<<< HEAD
       {menuOpen && (
         <View style={styles.menuContainer}>
           <Pressable style={styles.logoutButton} onPress={onLogout}>
@@ -36,12 +41,16 @@ export default function Tab() {
         </View>
       )}
       <View style={styles.searchContainer}>
+=======
+      <View className="h-full w-full">
+>>>>>>> 02af035d481f0d8842458990f919fed2a145f2de
         <SearchComponent />
       </View>
     </View>
   );
 }
 
+<<<<<<< HEAD
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -100,3 +109,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+=======
+// bg-[#324e64] rounded-bl-3xl rounded-br-3xl h-24 p-2
+>>>>>>> 02af035d481f0d8842458990f919fed2a145f2de

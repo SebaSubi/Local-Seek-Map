@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, ViewBase } from "react-native";
 import BasicSelectable from "../../../components/BasicSelectable";
 import {
   CreateLogo,
@@ -13,37 +13,45 @@ import Header from "../../../components/Header";
 
 export default function ProductCrud() {
   return (
-    <View className="flex justify-center items-center bg-white h-full">
+    <>
       <Stack.Screen
         options={{
-          header: () => <Header title="ABM Producto" />,
+          header: () => <Header title="ABM Local" />,
         }}
       />
-      <BasicSelectable
-        href="/CRUD/LocalCRUD/CreateLocal"
-        logo={<CreateLogo />}
-        text="Crear Local"
-        style="mt-3"
-      />
-      <BasicSelectable
-        href="/CRUD/LocalCRUD/DeleteLocal"
-        logo={<DeleteLogo />}
-        text="Borrar Local"
-        style="mt-3"
-      />
-      <BasicSelectable
-        href="/CRUD/LocalCRUD/UpdateLocal"
-        logo={<UpdateLogo />}
-        text="Actualizar Local"
-        style="mt-3"
-      />
-      <BasicSelectable
-        href="/CRUD/LocalCRUD/ReadLocal"
-        logo={<ReadLogo />}
-        text="Leer Locales"
-        style="mt-3"
-      />
-    </View>
+      <View className="flex w-full h-full bg-white flex-col items-center ">
+        <BasicSelectable
+          href="/CRUD/LocalCRUD/CreateLocal"
+          logo={<CreateLogo />}
+          text="Crear Local"
+          style="mt-3"
+        />
+        <BasicSelectable
+          href="/CRUD/LocalCRUD/DeleteLocal"
+          logo={<DeleteLogo />}
+          text="Borrar Local"
+          style="mt-3"
+        />
+        <BasicSelectable
+          href="/CRUD/LocalCRUD/UpdateLocal"
+          logo={<UpdateLogo />}
+          text="Actualizar Local"
+          style="mt-3"
+        />
+        <BasicSelectable
+          href="/CRUD/LocalCRUD/ReadLocal"
+          logo={<ReadLogo />}
+          text="Leer Locales"
+          style="mt-3"
+        />
+        <BasicSelectable
+          href="/CRUD/LocalCRUD/LocalSchedule/"
+          logo={<ReadLogo />}
+          text="Horario Local"
+          style="mt-3"
+        />
+      </View>
+    </>
   );
 }
 

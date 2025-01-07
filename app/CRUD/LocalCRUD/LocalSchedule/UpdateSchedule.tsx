@@ -1,10 +1,13 @@
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import { LocalServiceSchedule } from "../../../../schema/GeneralSchema";
+import {
+  LocalHours,
+  LocalServiceSchedule,
+} from "../../../../schema/GeneralSchema";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 import {
   getServiceScheduleByScheduleId,
@@ -12,32 +15,32 @@ import {
 } from "../../../../libs/localService";
 import TimeSelect from "../../../../components/TimeSelect";
 import { specificDate } from "../../../../constants/consts";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import {
+  getScheduleByScheduleId,
+  updateSchedule,
+} from "../../../../libs/localSchedule";
 
 export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
   const [loaded, setLoaded] = useState(false);
 
-  const FirstShiftStartRef = useRef<{ getTime: () => Date }>(null);
-  const FirstShiftFinishRef = useRef<{ getTime: () => Date }>(null);
-  const SecondShiftStartRef = useRef<{ getTime: () => Date }>(null);
-  const SecondShiftFinishRef = useRef<{ getTime: () => Date }>(null);
-  const ThirdShiftStartRef = useRef<{ getTime: () => Date }>(null);
-  const ThirdShiftFinishRef = useRef<{ getTime: () => Date }>(null);
-  const serviceScheduleId = useLocalServiceIdStore(
-    (state) => state.serviceScheduleId
-  );
+  const FirstShiftStartRef = useRef<any>(null);
+  const FirstShiftFinishRef = useRef<any>(null);
+  const SecondShiftStartRef = useRef<any>(null);
+  const SecondShiftFinishRef = useRef<any>(null);
+  const ThirdShiftStartRef = useRef<any>(null);
+  const ThirdShiftFinishRef = useRef<any>(null);
+  const localScheduleId = useLocalIdStore((state) => state.scheduleId);
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getServiceScheduleByScheduleId(serviceScheduleId); //Make sure this is set
-      const filteredSchedules = schedules.filter(
-        (schedule: LocalServiceSchedule) => !schedule.dateTo
-      );
-      setSchedule(filteredSchedules[0]);
+      const schedule = await getScheduleByScheduleId(localScheduleId); //Make sure this is set
+      setSchedule(schedule[0]);
       setLoaded(true);
     };
     fetchData();
-  }, [serviceScheduleId]);
+  }, [localScheduleId]);
 
   function checkSchedule(hour: Date | undefined): string | null {
     if (hour === specificDate || undefined) {
@@ -79,18 +82,18 @@ export default function UpdateSchedule() {
     );
     const dateFrom = new Date();
     console.log(FirstShiftStart);
-    const newSchedule: LocalServiceSchedule = {
+    const newSchedule: LocalHours = {
       FirstShiftStart,
       FirstShiftFinish,
       SecondShiftStart,
       SecondShiftFinish,
       ThirdShiftStart,
       ThirdShiftFinish,
-      dateFrom,
+      dateFrom: new Date(),
     };
     if (JSON.stringify(schedule) === JSON.stringify(newSchedule)) return;
     console.log(newSchedule);
-    updateServiceSchedule(serviceScheduleId, newSchedule);
+    updateSchedule(localScheduleId, newSchedule);
   };
 
   return loaded ? (
@@ -100,44 +103,42 @@ export default function UpdateSchedule() {
           header: () => <Header title="Actualizar Horario" />,
         }}
       />
-      <ScrollView keyboardShouldPersistTaps="handled" className="w-full h-full">
-        <View className="flex justify-center items-center bg-white h-full w-full">
-          <Text>Day number: {schedule!.dayNumber}</Text>
-          <TimeSelect
-            text="Hora de Apertura Primer Turno:"
-            ref={FirstShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Primer Turno:"
-            ref={FirstShiftFinishRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Segundo Turno:"
-            ref={SecondShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Segundo Turno:"
-            ref={SecondShiftFinishRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Tercer Turno:"
-            ref={ThirdShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Tercer Turno:"
-            ref={ThirdShiftFinishRef}
-          />
+      <View className="flex justify-center items-center bg-white h-full w-full">
+        <Text>Day number: {schedule!.dayNumber}</Text>
+        <TimeSelect
+          text="Hora de Apertura Primer Turno:"
+          ref={FirstShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Primer Turno:"
+          ref={FirstShiftFinishRef}
+        />
+        <TimeSelect
+          text="Hora de Apertura Segundo Turno:"
+          ref={SecondShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Segundo Turno:"
+          ref={SecondShiftFinishRef}
+        />
+        <TimeSelect
+          text="Hora de Apertura Tercer Turno:"
+          ref={ThirdShiftStartRef}
+        />
+        <TimeSelect
+          text="Hora de Cerrada Tercer Turno:"
+          ref={ThirdShiftFinishRef}
+        />
 
-          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-            <BasicButton
-              logo={<CreateLogo />}
-              text="Actualizar Horario"
-              style="mt-3"
-              onPress={handleSubmit}
-            />
-          </View>
+        <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+          <BasicButton
+            logo={<CreateLogo />}
+            text="Actualizar Horario"
+            style="mt-3"
+            onPress={handleSubmit}
+          />
         </View>
-      </ScrollView>
+      </View>
     </>
   ) : (
     <>

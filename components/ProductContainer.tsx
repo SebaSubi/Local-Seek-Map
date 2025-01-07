@@ -1,22 +1,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { Product } from "../schema/GeneralSchema";
 
-interface ProductContainerProps {
-  product: {
-    id?: string;
-    name: string;
-    updatedAt?: Date;
-    brand: string;
-    mesurement: string;
-    imgURL?: string;
-    // price: number;
-    description: string;
-    type: string;
-    productTypeId?: string;
-  };
-}
-
-export default function ProductContainer({ product }: ProductContainerProps) {
+export default function ProductContainer({ product }: { product: Product }) {
   return (
     <View style={styles.container}>
       <Image
@@ -27,9 +13,7 @@ export default function ProductContainer({ product }: ProductContainerProps) {
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.text}>Marca: {product.brand}</Text>
         <Text style={styles.text}>Cantidad: {product.mesurement}</Text>
-        <Text style={styles.text}>
-          Tipo: {product.type || product.productTypeId}
-        </Text>
+        <Text style={styles.text}>Tipo: {product.type?.toString()}</Text>
         {/* <Text style={styles.text}>Precio: ${product.price !== undefined ? product.price.toFixed(2) : 'N/A'}</Text> */}
         <Text style={styles.text}>Descripción: {product.description}</Text>
       </View>

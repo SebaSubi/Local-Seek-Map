@@ -27,6 +27,18 @@ export async function createSchedule(schedule: LocalServiceSchedule) {
     }
   } catch (error) {
     console.log("Error: ", error);
-    Alert.alert("Error: ", error);
+    // Alert.alert("Error: ", error);
   }
+}
+
+export async function getScheduleByServiceId(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/service-schedule/service/${id}`);
+    if (!response.ok) {
+      console.log("Error fetching the Schedules");
+    } else {
+      const data = response.json();
+      return data;
+    }
+  } catch (error) {}
 }

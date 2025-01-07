@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Alert,
+  Button,
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  Image,
 } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
@@ -19,6 +22,8 @@ import BasicSelectable from "../../../components/BasicSelectable";
 import { createService } from "../../../libs/localService";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
 
 export default function CreateProduct() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -30,9 +35,32 @@ export default function CreateProduct() {
 
   const localId = useLocalIdStore((state) => state.localId);
 
+  const [image, setImage] = useState<string | null>(null);
+
   const nameRef = useRef<any>(null);
   const descriptionRef = useRef<any>(null);
   const URLRef = useRef<any>(null);
+
+  const handleImagePicker = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert("Error", "Se necesitan permisos para acceder a la galería.");
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!pickerResult.canceled) {
+      setImage(pickerResult.assets[0].uri);
+    }
+  };
 
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
@@ -40,20 +68,43 @@ export default function CreateProduct() {
     const reservationURL = URLRef.current.getValue();
     const serviceTypeId = selectedType.id;
 
-    if (!name || !description || !reservationURL || serviceTypeId === "0000") {
+    if (
+      !name ||
+      !description ||
+      !reservationURL ||
+      !image ||
+      serviceTypeId === "0000"
+    ) {
       Alert.alert("Por favor rellenar los campos obligatorios");
       return;
     }
 
-    const newService: Service = {
-      name,
-      localId,
-      description,
-      reservationURL,
-      serviceTypeId,
-      dateFrom: new Date(),
-    };
-    console.log(createService(newService));
+    try {
+      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen.");
+        return;
+      }
+
+      const newService: Service = {
+        name,
+        localId,
+        description,
+        reservationURL,
+        imgURL: uploadedImageUrl,
+        serviceTypeId,
+        dateFrom: new Date(),
+      };
+
+      // console.log(createService(newService));
+      await createService(newService);
+      Alert.alert("Éxito", "Local creado exitosamente");
+      nameRef.current.setValue("");
+      descriptionRef.current.setValue("");
+      setImage(null);
+    } catch (error) {
+      Alert.alert("Error", "No se pudo crear el local.");
+    }
   };
 
   function fetchServiceTypes() {
@@ -89,7 +140,6 @@ export default function CreateProduct() {
         textStyle="mt-4"
         title="Nombre del Servicio: "
         ref={nameRef}
-        value=""
       />
 
       <BasicTextInput
@@ -99,7 +149,6 @@ export default function CreateProduct() {
         textStyle="mt-4"
         title="Descripcion del Servicio: "
         ref={descriptionRef}
-        value=""
       />
       <BasicTextInput
         inputType="text"
@@ -108,7 +157,6 @@ export default function CreateProduct() {
         textStyle="mt-4"
         title="URL Reservas o Numero: "
         ref={URLRef}
-        value=""
       />
       {/* <BasicButton
         style="mt-5"
@@ -201,6 +249,16 @@ export default function CreateProduct() {
             : "Seleccionar Tipo de Local"}
         </Text>
       </Pressable>
+
+      <View style={{ marginTop: 20 }}>
+        <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+      </View>
+      {image && (
+        <Image
+          source={{ uri: image }}
+          style={{ width: 100, height: 100, marginTop: 10 }}
+        />
+      )}
 
       <View className="flex flex-col justify-center items-center w-3/4 mt-3">
         <BasicButton

@@ -21,6 +21,7 @@ import { getProductTypes } from "../../../libs/productType";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryProducts } from "../../../libs/cloudinary";
 import { createProduct } from "../../../libs/product";
+import BigTextInput from "../../../components/BigTextInput";
 
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
@@ -31,6 +32,11 @@ export default function CreateProduct() {
   const [selectedType, setSelectedType] = useState<ProductType | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+
+  //errorHandlers
+  const [nameError, setNameError] = useState("");
+  const [brandError, setbrandError] = useState("");
+  const [measurementError, setMeasurementError] = useState("");
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -70,6 +76,44 @@ export default function CreateProduct() {
       !productTypeId
     ) {
       Alert.alert("Error", "Por favor complete todos los campos");
+      return;
+    }
+    if (name.length < 2) {
+      setNameError("El nombre del produto es demasiado corto");
+      setbrandError("");
+      setMeasurementError("");
+      return;
+    } else if (name.includes(",") || name.includes(".")) {
+      setNameError(
+        "El nombre del produto no debe tener ni puntos '.' ni comas ','"
+      );
+      setbrandError("");
+      setMeasurementError("");
+      return;
+    } else if (name.length >= 50) {
+      setNameError("El nombre del produto es demasiado largo");
+      setbrandError("");
+      setMeasurementError("");
+      return;
+    } else if (brand.length < 2) {
+      setNameError("");
+      setbrandError("La marca del produto es demasiado corta");
+      setMeasurementError("");
+      return;
+    } else if (brand.length >= 50) {
+      setNameError("");
+      setbrandError("La marca del produto es demasiado larga");
+      setMeasurementError("");
+      return;
+    } else if (mesurement.length < 2) {
+      setNameError("");
+      setbrandError("");
+      setMeasurementError("La medida del produto es demasiado corta");
+      return;
+    } else if (mesurement.length >= 50) {
+      setNameError("");
+      setbrandError("");
+      setMeasurementError("La medida del produto es demasiado larga");
       return;
     }
 
@@ -140,6 +184,11 @@ export default function CreateProduct() {
             header: () => <Header title="Crear Producto" />,
           }}
         />
+        {nameError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{nameError}</Text>
+          </View>
+        )}
         <BasicTextInput
           inputType="text"
           placeholder="Nombre"
@@ -147,6 +196,11 @@ export default function CreateProduct() {
           value=""
           ref={nameRef}
         />
+        {brandError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{brandError}</Text>
+          </View>
+        )}
         <BasicTextInput
           inputType="text"
           placeholder="Marca"
@@ -154,6 +208,11 @@ export default function CreateProduct() {
           value=""
           ref={brandRef}
         />
+        {measurementError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{measurementError}</Text>
+          </View>
+        )}
         <BasicTextInput
           inputType="text"
           placeholder="Medida"
@@ -161,7 +220,7 @@ export default function CreateProduct() {
           value=""
           ref={measurementRef}
         />
-        <BasicTextInput
+        <BigTextInput
           inputType="text"
           placeholder="Descripción"
           title="Descripción: "

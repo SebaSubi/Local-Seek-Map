@@ -16,12 +16,23 @@ import Header from "../../../components/Header";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useRef, useState, useEffect } from "react";
-import { createLocal } from "../../../libs/local";
+import { checkLocalName, createLocal } from "../../../libs/local";
 // import { CategorySelectButtonLocals } from "../../../components/CategorySelectButton";
 import { getLocalTypes } from "../../../libs/localType";
 import { Local, LocalTypes } from "../../../schema/GeneralSchema";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
+import { z } from "zod";
+
+export const verifyUrl = (url: string): boolean => {
+  const urlSchema = z.string().url();
+  try {
+    urlSchema.parse(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 export default function CreateLocal() {
   const nameRef = useRef<any>(null);
@@ -35,6 +46,14 @@ export default function CreateLocal() {
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [localTypes, setLocalTypes] = useState<LocalTypes[]>([]);
   const [selectedType, setSelectedType] = useState<LocalTypes | null>(null);
+
+  //errorHandlers
+  const [nameError, setNameError] = useState("");
+  const [locationError, setLocationError] = useState("");
+  const [whatsappError, setWhatsappError] = useState("");
+  const [instagramError, setInstagramError] = useState("");
+  const [facebookError, setFacebookError] = useState("");
+  const [webpageError, setWebpageError] = useState("");
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -70,7 +89,172 @@ export default function CreateLocal() {
       Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
       return;
     }
+    if (name.length < 2) {
+      setNameError("El nombre del Local requiere minimamente 2 caracteres");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (name.length >= 40) {
+      setNameError("El nombre del Local es demasiado largo");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if ((await checkLocalName(name)) === "true") {
+      setNameError("El nombre del Local ya esta en uso");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
 
+    if (location.length < 5) {
+      setNameError("");
+      setLocationError(
+        "La ubicacion del Local requiere minimamente 5 caracteres"
+      );
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (location.length >= 50) {
+      setNameError("");
+      setLocationError("La ubicacion del Local tiene demasiados caracteres");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (whatsapp && whatsapp.length < 8) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError(
+        "La longitud minima de un numero de Whatsapp es de 8 numeros"
+      );
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (whatsapp && whatsapp.length > 18) {
+      //checkear esto y agregar que wpp no pueda ser negativo.
+      setNameError("");
+      setLocationError("");
+      setWhatsappError(
+        "La longitud maxima de un numero de Whatsapp es de 18 numeros"
+      );
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (instagram && instagram.length < 1) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError(
+        "La longitud minima de un usuario de instagram es de 1 caracter"
+      );
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (instagram && instagram.length >= 30) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError(
+        "La longitud maxima de un usuario de instagram es de 30 caracteres"
+      );
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (instagram && instagram.includes(",")) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("un usuario de instagram no puede tener comas ','");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (instagram && instagram.includes(" ")) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("un usuario de instagram no puede tener espacios");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (instagram && (instagram.includes("__") || instagram.includes(".."))) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("un usuario de instagram no puede tener este caracter");
+      setFacebookError("");
+      setWebpageError("");
+      return;
+    }
+    if (facebook && facebook.length < 5) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError(
+        "un usuario de Facebook debe tener como minimo 5 caracteres"
+      );
+      setWebpageError("");
+      return;
+    }
+    if (facebook && facebook.length > 50) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError(
+        "un usuario de Facebook debe tener como maximo 50 caracteres"
+      );
+      setWebpageError("");
+      return;
+    }
+    if (
+      facebook &&
+      (facebook.includes("-") ||
+        facebook.includes("@") ||
+        facebook.includes("#") ||
+        facebook.includes("$"))
+    ) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("Un usuario de Facebook no permite estos caracteres");
+      setWebpageError("");
+      return;
+    }
+    if (webpage && !verifyUrl(webpage)) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("URL no valida");
+      return;
+    }
     try {
       const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
       if (!uploadedImageUrl) {
@@ -137,6 +321,11 @@ export default function CreateLocal() {
           header: () => <Header title="Crear Local" />,
         }}
       />
+      {nameError === "" ? null : (
+        <View className="w-full flex items-start ml-28">
+          <Text className="text-red-800">{nameError}</Text>
+        </View>
+      )}
       <BasicTextInput
         inputType="text"
         placeholder="Nombre"
@@ -151,14 +340,24 @@ export default function CreateLocal() {
         onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
         selectedCategory={selectedCategory}
       /> */}
+      {locationError === "" ? null : (
+        <View className="w-full flex items-start ml-28">
+          <Text className="text-red-800">{locationError}</Text>
+        </View>
+      )}
       <BasicTextInput
         inputType="text"
-        placeholder="Coordenadas"
+        placeholder="Direccion"
         textStyle="mt-4"
-        title="Coordenadas del Local: "
+        title="Direccion del Local: "
         ref={locationRef}
         value=""
       />
+      {whatsappError === "" ? null : (
+        <View className="w-full flex items-start ml-28">
+          <Text className="text-red-800">{whatsappError}</Text>
+        </View>
+      )}
       <BasicTextInput
         inputType="number"
         placeholder="Número de WhatsApp"
@@ -167,6 +366,11 @@ export default function CreateLocal() {
         ref={whatsappRef}
         value=""
       />
+      {instagramError === "" ? null : (
+        <View className="w-full flex items-start ml-28">
+          <Text className="text-red-800">{instagramError}</Text>
+        </View>
+      )}
       <BasicTextInput
         inputType="text"
         placeholder="@Instagram"
@@ -175,6 +379,11 @@ export default function CreateLocal() {
         ref={instagramRef}
         value=""
       />
+      {facebookError === "" ? null : (
+        <View className="w-full flex items-start ml-28">
+          <Text className="text-red-800">{facebookError}</Text>
+        </View>
+      )}
       <BasicTextInput
         inputType="text"
         placeholder="@Facebook"
@@ -183,6 +392,11 @@ export default function CreateLocal() {
         ref={facebookRef}
         value=""
       />
+      {webpageError === "" ? null : (
+        <View className="w-full flex items-start ml-28">
+          <Text className="text-red-800">{webpageError}</Text>
+        </View>
+      )}
       <BasicTextInput
         inputType="text"
         placeholder="Página Web"

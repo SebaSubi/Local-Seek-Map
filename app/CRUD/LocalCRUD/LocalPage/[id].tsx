@@ -1,17 +1,34 @@
-import { View, Text, Image } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  Alert,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Local } from "../../../../schema/GeneralSchema";
+import { Local, LocalHours } from "../../../../schema/GeneralSchema";
 import { colors } from "../../../../constants/colors";
-// import { EmptyHeartIcon } from "../../../../components/Logos";
+import { EmptyHeartIcon } from "../../../../components/Logos";
 import BasicLine from "../../../../components/BasicLine";
 import LocalInformation from "../../../../components/LocalInformation";
 import { getLocal } from "../../../../libs/local";
+import Header from "../../../../components/Header";
+import LocalMap from "../../../../components/LocalMap";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
+import Schedule from "../../../../components/Schedule";
 
 export default function LocalPage() {
-  const { id, name, image } = useLocalSearchParams();
-
+  const { id, name, localCoordinates, image } = useLocalSearchParams();
   const [local, setLocals] = useState<Local>();
+  const [schedules, setSchedules] = useState<LocalHours[]>([]);
+  const [info, setInfo] = useState(false); //This will be a state that sets weather the info is showing or the schedule. False = info, true = schedule.
+
+  // const setLocalId = useLocalIdStore((state) => state.setLocalId);
+  // setLocalId(id as string);
 
   async function fetchAndSetLocals() {
     const searchLocal = await getLocal(id as string);
@@ -24,57 +41,84 @@ export default function LocalPage() {
     };
     fetchLocals();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const schedules = await getSchedulesByLocalId(id as string);
+      setSchedules(schedules);
+    };
+    fetchData();
+  }, [id]);
+  // console.log(info);
+  //hacete un boton e horarios con una flechita
+  // console.log(name as string);
   return (
-    <View className="flex justify-center">
-      <View className="flex flex-row justify-between items-center">
-        <Text className="text-5xl font-bold p-2 pl-5">{name}</Text>
-        {/* <View className="pr-6 p-2">
-          <EmptyHeartIcon color={colors.primary.orange} size={36} />
+    <>
+      <Stack.Screen
+        options={{
+          header: () => <Header title={name as string} />,
+        }}
+      />
+      <View
+        className="flex h-full w-full justify-center mt-6"
+        style={{ flex: 1 }}
+      >
+        {/* <View className="flex flex-row justify-between items-center">
+          <Text className="text-5xl font-bold p-2 pl-5">{name}</Text>
+          <View className="pr-6 p-2">
+            <EmptyHeartIcon color={colors.primary.orange} size={36} />
+          </View>
         </View> */}
-      </View>
-      <View className="flex items-center object-cover">
-        <View
-          style={{
-            borderRadius: 20,
-            backgroundColor: colors.primary.lightGray,
-          }}
-        >
-          <Image
-            style={{
-              height: 300,
-              width: 300,
-              borderRadius: 20,
-              resizeMode: "contain",
-              margin: 10,
-            }}
-            source={{
-              uri: image as string,
-            }}
-          />
-        </View>
         <View className="flex flex-row justify-evenly w-full m-1 mt-2">
-          <Text className="text-xl font-bold">Productos</Text>
-          <Text className="text-xl font-bold">Horarios</Text>
-          <Text className="text-xl font-bold">Información</Text>
+          <Pressable
+            style={info ? { borderBottomWidth: 2 } : {}} //Consider later putting an animation to this
+            className="mb-2"
+            onPress={() => setInfo(true)}
+          >
+            <Text className="text-xl font-bold">Horarios</Text>
+          </Pressable>
+          <Pressable
+            className="mb-2"
+            style={info ? {} : { borderBottomWidth: 2 }}
+            onPress={() => setInfo(false)}
+          >
+            <Text className="text-xl font-bold">Información</Text>
+          </Pressable>
         </View>
-        {local &&
-        (local.facebook ||
-          local.instagram ||
-          local.webpage ||
-          local.whatsapp ||
-          local.location) ? (
-          <>
-            <BasicLine color={colors.primary.blue} width={350} />
-            <LocalInformation
-              instagram={local.instagram}
-              whatsapp={local.whatsapp}
-              facebook={local.facebook}
-              location={local.location}
-              webpage={local.webpage}
-            />
-          </>
-        ) : null}
+        <View className="flex items-center w-full h-full">
+          {local &&
+            (info ? (
+              <View className="w-full h-full">
+                <Schedule schedule={schedules} />
+              </View>
+            ) : local!.facebook ||
+              local!.instagram ||
+              local!.webpage ||
+              local!.whatsapp ||
+              local!.address ? (
+              <>
+                {/* <BasicLine color={colors.primary.blue} width={100} /> */}
+                <View
+                  className="w-3/4 h-1/3 overflow-hidden"
+                  style={{
+                    borderRadius: 20,
+                    backgroundColor: colors.primary.lightGray,
+                  }}
+                >
+                  <LocalMap localCoordinates={localCoordinates as string} />
+                </View>
+                <LocalInformation
+                  instagram={local!.instagram}
+                  whatsapp={local!.whatsapp?.toString()}
+                  facebook={local!.facebook}
+                  location={local!.address}
+                  webpage={local!.webpage}
+                  coordinates={local!.location}
+                />
+              </>
+            ) : null)}
+        </View>
       </View>
-    </View>
+    </>
   );
 }

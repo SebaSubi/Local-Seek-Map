@@ -13,13 +13,16 @@ import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
 import { getProducts } from "../libs/product";
-import { LocalDisplay, Product } from "../schema/GeneralSchema";
+import { LocalDisplay, Product, Service } from "../schema/GeneralSchema";
+import { getDisplayServices } from "../libs/localService";
+import ServiceContainer from "./ServiceContainer";
 
 const defaultImage = "https://via.placeholder.com/50";
 
 const SearchComponent = () => {
   const [locals, setLocals] = useState<LocalDisplay[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locales" | "productos" | "servicios">("locales");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -31,13 +34,15 @@ const SearchComponent = () => {
 
   const fetchData = async () => {
     try {
-      const [localsData, productsData] = await Promise.all([
+      const [localsData, productsData, serviceData] = await Promise.all([
         getLocals(),
         getProducts(),
+        getDisplayServices(),
       ]);
 
-      setLocals(localsData || []);
-      setProducts(productsData.activeProducts || []);
+      setLocals(localsData);
+      setProducts(productsData);
+      setServices(serviceData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -99,16 +104,33 @@ const SearchComponent = () => {
           data={locals}
           renderItem={({ item }) => <LocalContainer local={item} />}
           keyExtractor={(item) => item.id.toString()}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
         />
-      ) : (
+      ) : viewType === "productos" ? (
         <FlatList
           data={products}
+<<<<<<< HEAD
           renderItem={({ item }) => (
             <Pressable onPress={() => handlePress(item)}>
               <ProductContainer product={item} />
             </Pressable>
           )}
           keyExtractor={(item) => item.id.toString()}
+=======
+          renderItem={({ item }) => <ProductContainer product={item} />}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
+        />
+      ) : (
+        <FlatList
+          data={services}
+          renderItem={({ item }) => <ServiceContainer service={item} />}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchData()}
+          refreshing={loading}
+>>>>>>> 02af035d481f0d8842458990f919fed2a145f2de
         />
       )}
 
