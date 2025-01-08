@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Local, LocalHours } from "../../../../schema/GeneralSchema";
+import { Local, LocalSchedule } from "../../../../schema/GeneralSchema";
 import { colors } from "../../../../constants/colors";
 import { EmptyHeartIcon } from "../../../../components/Logos";
 import BasicLine from "../../../../components/BasicLine";
@@ -24,7 +24,7 @@ import Schedule from "../../../../components/Schedule";
 export default function LocalPage() {
   const { id, name, localCoordinates, image } = useLocalSearchParams();
   const [local, setLocals] = useState<Local>();
-  const [schedules, setSchedules] = useState<LocalHours[]>([]);
+  const [schedules, setSchedules] = useState<LocalSchedule[]>([]);
   const [info, setInfo] = useState(false); //This will be a state that sets weather the info is showing or the schedule. False = info, true = schedule.
 
   // const setLocalId = useLocalIdStore((state) => state.setLocalId);
@@ -96,26 +96,14 @@ export default function LocalPage() {
               local!.webpage ||
               local!.whatsapp ||
               local!.address ? (
-              <>
-                {/* <BasicLine color={colors.primary.blue} width={100} /> */}
-                <View
-                  className="w-3/4 h-1/3 overflow-hidden"
-                  style={{
-                    borderRadius: 20,
-                    backgroundColor: colors.primary.lightGray,
-                  }}
-                >
-                  <LocalMap localCoordinates={localCoordinates as string} />
-                </View>
-                <LocalInformation
-                  instagram={local!.instagram}
-                  whatsapp={local!.whatsapp?.toString()}
-                  facebook={local!.facebook}
-                  location={local!.address}
-                  webpage={local!.webpage}
-                  coordinates={local!.location}
-                />
-              </>
+              <LocalInformation
+                instagram={local!.instagram}
+                whatsapp={local!.whatsapp?.toString()}
+                facebook={local!.facebook}
+                location={local!.address}
+                webpage={local!.webpage}
+                coordinates={local!.location}
+              />
             ) : null)}
         </View>
       </View>
