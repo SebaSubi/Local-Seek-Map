@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createFactory, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -12,26 +12,47 @@ import Header from "../../../components/Header";
 import { LocalDisplay } from "../../../schema/GeneralSchema";
 import {
   getDisplayLocals,
+  getLocalsByCategory,
+  getLocalsByCategoryAndName,
   getLocalsByName,
   getOpenLocals,
-  getStoresByCategory,
+  getOpenLocalsByName,
 } from "../../../libs/local";
 import LocalContainer from "../../../components/LocalContainer";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 
-const localCategories = ["Apertura", "Ubicación", "Quitar", "Categoria"];
+const localFilters = ["Ubicación", "Quitar", "Categoria", "Apertura"];
 const StoreCategories = ["Supermercado"];
 
 export default function ReadLocal() {
   const [locals, setLocals] = useState<LocalDisplay[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [selected, setStoreCategories] = useState("");
+  const [selectedCategory, setStoreCategories] = useState("Deportes");
 
   async function fetchAndSetLocals() {
-    const locals = await getDisplayLocals();
-    setLocals(locals);
+    if (searchFilter === "Categoria") {
+      const locals =
+        search.trim() === ""
+          ? await getLocalsByCategory(selectedCategory)
+          : await getLocalsByCategoryAndName(selectedCategory, search);
+      setLocals(locals);
+    } else if (searchFilter === "Apertura") {
+      const locals =
+        search.trim() === ""
+          ? await getOpenLocals()
+          : await getOpenLocalsByName(search);
+      setLocals(locals);
+    } else if (searchFilter === "Quitar" || searchFilter === "") {
+      const locals =
+        search.trim() === ""
+          ? await getDisplayLocals()
+          : await getLocalsByName(search);
+      setLocals(locals);
+    } else {
+      setLocals(await getDisplayLocals());
+    }
   }
 
   useEffect(() => {
@@ -39,50 +60,14 @@ export default function ReadLocal() {
       await fetchAndSetLocals();
     };
     fetchLocals();
-  }, []);
+  }, [search, searchFilter, selectedCategory]);
 
-  useEffect(() => {
-    if (search === "" || search === " ") {
-      fetchAndSetLocals();
-    } else {
-      const fetchData = async () => {
-        const locals = await getLocalsByName(search);
-        setLocals(locals);
-      };
-      fetchData();
-    }
-  }, [search]);
-
-  function hourFilter() {
-    const fetchData = async () => {
-      const locals = await getOpenLocals();
-      setLocals(locals);
-    };
-    fetchData();
-  }
-
-  function storeCategoryFilter(category: string) {
-    const fetchData = async () => {
-      const locals = await getStoresByCategory(category);
-      setLocals(locals);
-    };
-    fetchData();
-  }
-
-  const handleCategorySelection = (category: string) => {
-    if (category === "Quitar") {
-      setSearchFilter("");
-      fetchAndSetLocals();
-    } else if (category === "Apertura") hourFilter();
-    else if (category === "Categoria") setModalVisibility(true);
-    else setSearchFilter(category);
-    setSearch("");
+  const handleSearchFilter = (filter: string) => {
+    setSearchFilter(filter);
   };
 
-  const handleStoreCateory = (category: string) => {
+  const handleCategorySelection = (category: string) => {
     setStoreCategories(category);
-    setModalVisibility(false);
-    storeCategoryFilter(category);
   };
 
   return (
@@ -100,7 +85,9 @@ export default function ReadLocal() {
           <BasicSearchButton
             placeholder="Buscar Local"
             onSearch={setSearch}
-            categories={localCategories}
+            categories={StoreCategories}
+            selectedFilters={handleSearchFilter}
+            filters={localFilters}
             selectedCategory={handleCategorySelection}
           />
           {locals?.map((local) => (
@@ -115,35 +102,6 @@ export default function ReadLocal() {
           >
             <Text className="text-white">Recargar</Text>
           </Pressable>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisibility}
-            onRequestClose={() => setModalVisibility(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  Selecciona el tipo de búsqueda
-                </Text>
-                {StoreCategories.map((category, index) => (
-                  <Pressable
-                    onPress={() => handleStoreCateory(category)}
-                    style={styles.modalOption}
-                    key={index}
-                  >
-                    <Text style={styles.modalOptionText}>{category}</Text>
-                  </Pressable>
-                ))}
-                <Pressable
-                  onPress={() => setModalVisibility(false)}
-                  style={styles.closeButton}
-                >
-                  <Text style={styles.closeButtonText}>Cerrar</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
         </View>
       </ScrollView>
     </>

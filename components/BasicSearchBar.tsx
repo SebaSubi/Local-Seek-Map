@@ -15,17 +15,22 @@ export default function BasicSearchButton({
   placeholder,
   className,
   onSearch,
+  filters,
+  selectedFilters,
   categories,
   selectedCategory,
 }: {
   placeholder: string;
   className?: any;
-  categories?: string[];
-  selectedCategory: (type: string) => void;
+  filters?: string[];
+  selectedFilters: (type: string) => void;
+  categories: string[];
+  selectedCategory: (category: string) => void;
   onSearch: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [text, setText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  // const [category, setCategory] = useState("Supermercado");
   const [searchType, setSearchType] = useState("Nombre");
   useEffect(() => {
     onSearch(text);
@@ -37,9 +42,14 @@ export default function BasicSearchButton({
 
   const handleSelectSearchType = (type: string) => {
     setSearchType(type);
-    setModalVisible(false);
+    type !== "Categoria" ? setModalVisible(false) : null;
     console.log(`Tipo de búsqueda seleccionado: ${type}`);
-    selectedCategory(type);
+    selectedFilters(type);
+  };
+
+  const handleCategorySelection = (category: string) => {
+    selectedCategory(category);
+    setModalVisible(false);
   };
 
   return (
@@ -54,7 +64,7 @@ export default function BasicSearchButton({
         underlineColorAndroid="transparent"
       />
 
-      {categories && (
+      {filters && (
         <>
           <TouchableOpacity
             onPress={handleFilterPress}
@@ -77,12 +87,25 @@ export default function BasicSearchButton({
                   contentContainerStyle={{ flexGrow: 1 }}
                   keyboardShouldPersistTaps="handled"
                 >
-                  {categories.length > 0 &&
-                    categories.map((category, index) => (
+                  {filters.length > 0 &&
+                    searchType !== "Categoria" &&
+                    filters.map((filter, index) => (
                       <Pressable
-                        onPress={() => handleSelectSearchType(category)}
+                        onPress={() => handleSelectSearchType(filter)}
                         style={styles.modalOption}
                         key={index}
+                      >
+                        <Text style={styles.modalOptionText}>{filter}</Text>
+                      </Pressable>
+                    ))}
+                  {categories.length > 0 &&
+                    searchType === "Categoria" &&
+                    categories.map((category, index) => (
+                      <Pressable
+                        onPress={() => handleCategorySelection(category)}
+                        style={styles.modalOption}
+                        key={index}
+                        className="mt-10"
                       >
                         <Text style={styles.modalOptionText}>{category}</Text>
                       </Pressable>

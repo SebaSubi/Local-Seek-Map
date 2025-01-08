@@ -27,9 +27,9 @@ export async function getLocals() {
   }
 }
 
-export async function getLocalsByCategory(category: string) {
+export async function getLocalsByCategory(category = "Supermercado") {
   try {
-    const rawData = await fetch(`${API_URL}categoryName/${category}`);
+    const rawData = await fetch(`${API_URL}/category/${category}`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Stores by category");
     }
@@ -40,11 +40,40 @@ export async function getLocalsByCategory(category: string) {
   }
 }
 
+export async function getLocalsByCategoryAndName(
+  category: string,
+  name: string
+) {
+  try {
+    const rawData = await fetch(`${API_URL}/category/${category}/name/${name}`);
+    if (!rawData.ok) {
+      throw new Error("Error fetching stores by name and category");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function getIfLocalOpen(id: string) {
   try {
     const rawData = await fetch(`${API_URL}/openStore/${id}`);
     if (!rawData.ok) {
       throw new Error("Error fetching if store is open");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getOpenLocalsByName(name: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/open-name/${name}`);
+    if (!rawData.ok) {
+      throw new Error("Error fetching open stores by name");
     }
     const json = rawData.json();
     return json;
@@ -78,20 +107,6 @@ export async function getOpenLocals() {
     console.log(error);
   }
 }
-
-export async function getStoresByCategory(category: string) {
-  try {
-    const rawData = await fetch(`${API_URL}/categoryName/${category}`);
-    if (!rawData.ok) {
-      throw new Error("Error getting open stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function getDisplayLocals() {
   try {
     const rawData = await fetch(`${API_URL}/display`);
