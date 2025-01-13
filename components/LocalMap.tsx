@@ -7,7 +7,9 @@ export default function LocalMap({
 }: {
   localCoordinates: string;
 }) {
-  const coordinates = localCoordinates.split(",");
+  const coordinates = localCoordinates
+    ? localCoordinates.split(",")
+    : ["-32.07610421122643", "-60.463953793765896"];
 
   return (
     <MapView
@@ -19,14 +21,16 @@ export default function LocalMap({
         longitudeDelta: 0.01,
       }}
     >
-      <Marker
-        coordinate={{
-          latitude: Number(coordinates[0]),
-          longitude: Number(coordinates[1]),
-        }}
-        title="Location of Service" //change to name
-        description="Description of Service" //idk what to put here
-      />
+      {localCoordinates && (
+        <Marker
+          coordinate={{
+            latitude: Number(coordinates[0]),
+            longitude: Number(coordinates[1]),
+          }}
+          title="Location of Service" //change to name
+          description="Description of Service" //idk what to put here
+        />
+      )}
     </MapView>
   );
 }

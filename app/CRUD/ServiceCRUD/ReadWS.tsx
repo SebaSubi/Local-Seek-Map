@@ -19,8 +19,9 @@ import {
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
 import { getServiceTypes } from "../../../libs/serviceType";
+import { Picker } from "@react-native-picker/picker";
 
-const localCategories = ["Apertura", "Ubicación", "Categoria", "Quitar"];
+const localFilters = ["Apertura", "Ubicación", "Categoria", "Quitar"];
 
 export default function ReadWS() {
   const [services, setServices] = useState<Service[]>([]);
@@ -28,6 +29,29 @@ export default function ReadWS() {
   const [search, setSearch] = useState("");
   const [modalVisibility, setModalVisibility] = useState(false);
 
+  // async function fetchAndSetLocals() {
+  //   if (searchFilter === "Categoria") {
+  //     const locals =
+  //       search.trim() === ""
+  //         ? await getLocalsByCategory(selectedCategory)
+  //         : await getLocalsByCategoryAndName(selectedCategory, search);
+  //     setLocals(locals);
+  //   } else if (searchFilter === "Apertura") {
+  //     const locals =
+  //       search.trim() === ""
+  //         ? await getOpenLocals()
+  //         : await getOpenLocalsByName(search);
+  //     setLocals(locals);
+  //   } else if (searchFilter === "Quitar" || searchFilter === "") {
+  //     const locals =
+  //       search.trim() === ""
+  //         ? await getDisplayLocals()
+  //         : await getLocalsByName(search);
+  //     setLocals(locals);
+  //   } else {
+  //     setLocals(await getDisplayLocals());
+  //   }
+  // }
   async function fetchAndSetServices() {
     const services = await getDisplayServices();
     setServices(services);

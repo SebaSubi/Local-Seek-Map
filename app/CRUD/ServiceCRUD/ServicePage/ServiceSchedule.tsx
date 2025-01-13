@@ -37,9 +37,9 @@ export default function ServiceSchedulePage() {
       />
       {loading ? (
         <Text>Loading...</Text>
-      ) : schedule.length ? (
+      ) : schedule.length !== 0 ? (
         <View className="w-full h-full bg-white">
-          <Schedule schedule={schedule} />
+          {/* <Schedule schedule={schedule} /> */}
         </View>
       ) : null}
     </>

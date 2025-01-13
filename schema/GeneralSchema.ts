@@ -90,18 +90,18 @@ export interface ProductType {
 }
 
 export interface Service {
-  id: string;
-  local: Local;
+  id?: string | null;
+  local?: Local | null;
   localId: string;
   name: string;
-  serviceType: ServiceType;
+  serviceType?: ServiceType | null;
   serviceTypeId: string;
   description: string;
-  image: string | null;
+  image?: string | null;
   reservationURL: string | null;
   dateFrom: Date;
-  dateTo: Date | null;
-  schedule: LocalServiceSchedule[];
+  dateTo?: Date | null;
+  schedule?: LocalServiceSchedule[] | null;
 }
 
 export interface LocalServiceSchedule {
@@ -121,7 +121,7 @@ export interface LocalServiceSchedule {
 
 export interface ServiceType {
   id: string;
-  localService: Service[];
+  localService?: Service[];
   name: string;
 }
 

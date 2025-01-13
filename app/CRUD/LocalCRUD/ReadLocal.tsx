@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
-import { LocalDisplay } from "../../../schema/GeneralSchema";
+import { Local, LocalDisplay } from "../../../schema/GeneralSchema";
 import {
   getDisplayLocals,
   getLocalsByCategory,
@@ -25,10 +25,9 @@ const localFilters = ["Ubicación", "Quitar", "Categoria", "Apertura"];
 const StoreCategories = ["Supermercado"];
 
 export default function ReadLocal() {
-  const [locals, setLocals] = useState<LocalDisplay[]>([]);
+  const [locals, setLocals] = useState<Local[]>([]);
   const [search, setSearch] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
-  const [modalVisibility, setModalVisibility] = useState(false);
   const [selectedCategory, setStoreCategories] = useState("Deportes");
 
   async function fetchAndSetLocals() {

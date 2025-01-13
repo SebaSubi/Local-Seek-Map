@@ -88,6 +88,7 @@ export default function ServicePage() {
                 whatsapp={service.local.whatsapp?.toString()}
                 facebook={service.local.facebook}
                 location={service.local.address}
+                coordinates={service.local.location}
                 webpage={service.local.webpage} // traete esto del localservice
               />
             ) : null)}

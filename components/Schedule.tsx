@@ -4,17 +4,40 @@ import { shift } from "../constants/consts";
 import { Stack } from "expo-router";
 import Header from "./Header";
 import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
+import { useEffect, useState } from "react";
+import { useLocalServiceIdStore } from "../libs/localServiceZustang";
+import { getScheduleByServiceId } from "../libs/serviceSchedule";
 
 type Shift = {
   shiftOpen: shift;
   shiftClose: shift;
 };
 
-export default function Schedule({
-  schedule,
-}: {
-  schedule: LocalSchedule[] | LocalServiceSchedule[];
-}) {
+export default function Schedule(
+  {
+    // schedule,
+  }: {
+    // schedule: LocalSchedule[] | LocalServiceSchedule[];
+  }
+) {
+  const [loading, setLoading] = useState(true);
+  const [schedule, setSchedule] = useState([]);
+
+  const localServiceId = useLocalServiceIdStore(
+    (state) => state.localServiceId
+  );
+
+  console.log(localServiceId);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const schedules = await getScheduleByServiceId(localServiceId);
+      setSchedule(schedules);
+      setLoading(false);
+    };
+    fetchData();
+  }, [localServiceId]);
+
   const shifts: Shift[] = [
     {
       shiftOpen: "FirstShiftStart",
@@ -32,30 +55,36 @@ export default function Schedule({
 
   return (
     <>
-      <FlatList
-        data={shifts}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{ paddingHorizontal: 0 }}
-        renderItem={({ item, index }) => (
-          <View className="flex flex-col w-full items-center">
-            <Text className="text-xl mt-5">
-              {index === 0
-                ? "Primer Turno"
-                : index === 1
-                  ? "Segundo Turno"
-                  : index === 2
-                    ? "Tercer Turno"
-                    : null}
-            </Text>
-            <ScheduleBox //Here pas the local or schedule
-              schedules={schedule}
-              shiftOpen={item.shiftOpen}
-              shiftClose={item.shiftClose}
-            />
-          </View>
-        )}
-      />
-      <View className="h-16 w-full"></View>
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : schedule.length !== 0 ? (
+        <>
+          <FlatList
+            data={shifts}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={{ paddingHorizontal: 0 }}
+            renderItem={({ item, index }) => (
+              <View className="flex flex-col w-full items-center">
+                <Text className="text-xl mt-5">
+                  {index === 0
+                    ? "Primer Turno"
+                    : index === 1
+                      ? "Segundo Turno"
+                      : index === 2
+                        ? "Tercer Turno"
+                        : null}
+                </Text>
+                <ScheduleBox //Here pas the local or schedule
+                  schedules={schedule}
+                  shiftOpen={item.shiftOpen}
+                  shiftClose={item.shiftClose}
+                />
+              </View>
+            )}
+          />
+          <View className="h-16 w-full"></View>
+        </>
+      ) : null}
     </>
   );
 } //The view in the end of the component is to ensure the hole schedule will always be visible since Flatlist can not show the hole thing if the parent component isnt big enough
