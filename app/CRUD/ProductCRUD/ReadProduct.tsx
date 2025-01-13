@@ -53,7 +53,7 @@ const ReadProductScreen = () => {
     if (searchText.trim()) {
       const results = products.filter((product) => {
         const category: any = categories.find(
-          (cat: any) => cat.id === product.productTypeId,
+          (cat: any) => cat.id === product.productTypeId
         );
         const categoryName = category ? category.name : "";
         return (
@@ -69,12 +69,11 @@ const ReadProductScreen = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await getProducts();
-      const fetchedProducts = response.activeProducts;
+      const response: [] = await getProducts();
 
-      if (fetchedProducts && fetchedProducts.length > 0) {
-        setProducts(fetchedProducts);
-        setFilteredProducts(fetchedProducts);
+      if (response && response.length > 0) {
+        setProducts(response);
+        setFilteredProducts(response);
       } else {
         Alert.alert("Error", "No se encontraron productos");
       }
@@ -115,8 +114,11 @@ const ReadProductScreen = () => {
     );
   };
   function getProductsC(c: string) {
+    console.log(c);
     const fetchData = async () => {
       const locals = await getProductsByCategory(c);
+      console.log(locals);
+      // setFilteredProducts(locals);
       setProducts(locals);
     };
     fetchData();
@@ -125,8 +127,6 @@ const ReadProductScreen = () => {
   const selectedCategory = (c: string) => {
     getProductsC(c);
   };
-
-  console.log(products);
 
   return (
     <View style={styles.container}>
@@ -150,12 +150,12 @@ const ReadProductScreen = () => {
           data={filteredProducts}
           renderItem={({ item }) => {
             const category = categories.find(
-              (cat) => cat.id === item.productTypeId,
+              (cat) => cat.id === item.productTypeId
             );
             return (
               <ProductItem
                 name={item.name}
-                imgURL={item.imgURL}
+                imgURL={item.imgURL ?? "https://via.placeholder.com/150"}
                 category={category ? category.name : "Sin categoría"}
                 onPress={() => handleProductPress(item)}
               />
