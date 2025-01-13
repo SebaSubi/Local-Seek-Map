@@ -105,10 +105,9 @@ export default function CreateProduct() {
       // console.log(createService(newService));
       await createService(newService);
       // Alert.alert("Éxito", "Local creado exitosamente");
-      nameRef.current.setValue("");
-      descriptionRef.current.setValue("");
       setImage(null);
     } catch (error) {
+      console.log(error);
       Alert.alert("Error", "No se pudo crear el local.");
     }
   };
