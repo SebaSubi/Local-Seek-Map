@@ -3,11 +3,11 @@ import { Platform } from "react-native";
 const API_URL =
   Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
-export async function getServiceTypes() {
+export async function getServiceTypeNames() {
   // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
   try {
-    const rawData = await fetch(`${API_URL}/service-type`);
+    const rawData = await fetch(`${API_URL}/service-type/names`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch ServiceTypes");
     }

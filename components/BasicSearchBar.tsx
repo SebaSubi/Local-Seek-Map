@@ -48,6 +48,7 @@ export default function BasicSearchButton({
   };
 
   const handleCategorySelection = (category: string) => {
+    setSearchType("Nombre");
     selectedCategory(category);
     setModalVisible(false);
   };
