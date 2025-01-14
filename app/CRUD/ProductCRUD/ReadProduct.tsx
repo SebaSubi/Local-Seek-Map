@@ -16,22 +16,18 @@ import { getProducts, getProductsByCategory } from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { Product, ProductType } from "../../../schema/GeneralSchema";
+import SmallProductCard from "../../../components/SmallProductCard";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState<string>("");
   const [categories, setCategories] = useState<ProductType[]>([]);
 
-  function categorieNames() {
-    const categoryArray: string[] = [];
-    categories.map((categorie) => {
-      categoryArray.push(categorie.name);
-    });
-    return categoryArray;
+  function categorieNames(): string[] {
+    return categories.flatMap((cat) => cat.name);
   }
 
   useEffect(() => {
@@ -42,7 +38,7 @@ const ReadProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      setCategories(data.allCategories);
+      setCategories(data.allCategories); //this is alright idk why the object retuned uis something like this {allCategories:{...}}
     } catch (err) {
       console.error("Error fetching categories", err);
       Alert.alert("Error", "Fallo al cargar las categorías");
@@ -53,7 +49,7 @@ const ReadProductScreen = () => {
     if (searchText.trim()) {
       const results = products.filter((product) => {
         const category: any = categories.find(
-          (cat: any) => cat.id === product.productTypeId,
+          (cat: any) => cat.id === product.productTypeId
         );
         const categoryName = category ? category.name : "";
         return (
@@ -61,20 +57,18 @@ const ReadProductScreen = () => {
           categoryName.toLowerCase().includes(searchText.toLowerCase())
         );
       });
-      setFilteredProducts(results);
+      setProducts(results);
     } else {
-      setFilteredProducts(products);
+      setProducts(products);
     }
   }, [searchText, products, categories]);
 
   const fetchProducts = async () => {
     try {
-      const response = await getProducts();
-      const fetchedProducts = response.activeProducts;
+      const response: [] = await getProducts();
 
-      if (fetchedProducts && fetchedProducts.length > 0) {
-        setProducts(fetchedProducts);
-        setFilteredProducts(fetchedProducts);
+      if (response && response.length > 0) {
+        setProducts(response);
       } else {
         Alert.alert("Error", "No se encontraron productos");
       }
@@ -91,33 +85,16 @@ const ReadProductScreen = () => {
     setIsModalVisible(true);
   };
 
-  const ProductItem = ({
-    name,
-    imgURL,
-    category,
-    onPress,
-  }: {
-    name: string;
-    imgURL: string;
-    category: string;
-    onPress: () => void;
-  }) => {
-    const defaultImage = "https://via.placeholder.com/150";
-    return (
-      <Pressable onPress={onPress} style={styles.productContainer}>
-        <Image
-          source={{ uri: imgURL || defaultImage }}
-          style={styles.productImage}
-        />
-        <Text style={styles.productName}>{name}</Text>
-        <Text style={styles.productCategory}>{category}</Text>
-      </Pressable>
-    );
-  };
   function getProductsC(c: string) {
     const fetchData = async () => {
       const locals = await getProductsByCategory(c);
-      setProducts(locals);
+      const result = locals[0].product.flat(); //FIXME: hay que hacer que el back devuelva algo decente y no esto.
+      // console.log(locals[0].product.flat());
+      if (result && result.length > 0) {
+        setProducts(result);
+      } else {
+        Alert.alert("Error", "No se encontraron productos");
+      }
     };
     fetchData();
   }
@@ -125,8 +102,6 @@ const ReadProductScreen = () => {
   const selectedCategory = (c: string) => {
     getProductsC(c);
   };
-
-  console.log(products);
 
   return (
     <View style={styles.container}>
@@ -147,15 +122,15 @@ const ReadProductScreen = () => {
         <Text style={styles.loadingText}>Cargando productos...</Text>
       ) : (
         <FlatList
-          data={filteredProducts}
+          data={products}
           renderItem={({ item }) => {
             const category = categories.find(
-              (cat) => cat.id === item.productTypeId,
+              (cat) => cat.id === item.productTypeId
             );
             return (
-              <ProductItem
+              <SmallProductCard
                 name={item.name}
-                imgURL={item.imgURL}
+                imgURL={item.imgURL ?? "https://via.placeholder.com/150"}
                 category={category ? category.name : "Sin categoría"}
                 onPress={() => handleProductPress(item)}
               />
@@ -182,6 +157,7 @@ const ReadProductScreen = () => {
                     selectedProduct.imgURL || "https://via.placeholder.com/150",
                 }}
                 style={styles.modalImage}
+                resizeMode="center"
               />
               <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
 
@@ -222,38 +198,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 20,
     backgroundColor: "#f8f8f8",
+    justifyContent: "center",
   },
   searchButtonContainer: {
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
   },
-  productCategory: {
-    textAlign: "center",
-    color: "#324e64",
-  },
   listContent: {
     justifyContent: "center",
-  },
-  productContainer: {
-    flex: 1 / 3,
-    margin: 10,
-    alignItems: "center",
-    backgroundColor: "#e1e8e8",
-    borderRadius: 10,
-    padding: 10,
-    borderColor: "#324e64",
-    borderWidth: 2,
-    maxWidth: Dimensions.get("window").width / 3 - 26,
-  },
-  productImage: {
-    width: 70,
-    height: 70,
-    marginBottom: 10,
-  },
-  productName: {
-    textAlign: "center",
-    fontWeight: "bold",
   },
   loadingText: {
     textAlign: "center",
