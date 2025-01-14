@@ -34,10 +34,64 @@ export default function LocalContainer({ local }: { local: Local }) {
       asChild
     >
       <Pressable
+        className="flex flex-col items-center justify-center mt-2 w-13/15"
+        key={local.id}
+      >
+        <View
+          className="flex flex-row items-center h-32 w-full bg-slate-300 rounded-2xl border"
+          style={{
+            height: 120,
+            width: "100%",
+            marginBottom: 6,
+          }}
+        >
+          {/* Imagen del local */}
+          <View
+            className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
+          >
+            <View className="h-[90%] w-[90%]">
+              <Image
+                style={{
+                  height: "100%",
+                  width: "auto",
+                  borderRadius: 4,
+                  resizeMode: "contain",
+                }}
+                source={{
+                  uri: local.imgURL ?? "https://via.placeholder.com/150",
+                }}
+              ></Image>
+            </View>
+          </View>
+          {/* Contenido del texto */}
+          <View className="flex flex-col ml-2 w-2/3">
+            <Text
+              className="mt-1 font-bold text-xl"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {local.name}
+            </Text>
+            <Text className="text-lg" numberOfLines={1} ellipsizeMode="tail">
+              Categoria:{" "}
+              {local.localTypes ? local.localTypes.toString() : "Category..."}
+            </Text>
+            <Text
+              className={`${
+                isOpen ? "text-green-700 " : "text-red-500 "
+              }font-bold text-lg`}
+            >
+              {isOpen ? "Abierto" : "Cerrado"}
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+
+      {/* <Pressable
         className="flex flex-col items-center justify-center mt-2 w-11/12"
         key={local.id}
       >
-        <View className="flex flex-row items-center h-28 w-full bg-slate-300 rounded-2xl border">
+        <View className="flex flex-row items-center h-32 w-full bg-slate-300 rounded-2xl border">
           <View
             className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
           >
@@ -59,9 +113,7 @@ export default function LocalContainer({ local }: { local: Local }) {
             <Text className="mt-1 font-bold text-xl">{local.name}</Text>
             <Text className="text-lg">
               Categoria:{" "}
-              {local.localTypes
-                ? local.localTypes.toString()
-                : "CategoryPlaceHolder"}
+              {local.localTypes ? local.localTypes.toString() : "Category"}
             </Text>
             <Text
               className={`${isOpen ? "text-green-700 " : "text-red-500 "}font-bold text-lg`}
@@ -70,7 +122,7 @@ export default function LocalContainer({ local }: { local: Local }) {
             </Text>
           </View>
         </View>
-      </Pressable>
+      </Pressable> */}
     </Link>
   );
 }

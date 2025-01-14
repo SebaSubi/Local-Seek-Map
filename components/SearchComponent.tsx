@@ -84,6 +84,9 @@ const SearchComponent = () => {
           data={locals}
           renderItem={({ item }) => <LocalContainer local={item} />}
           keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{
+            alignItems: "center",
+          }}
           onRefresh={() => fetchData()}
           refreshing={loading}
         />
@@ -111,6 +114,8 @@ const SearchComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    // alignItems: "center",
     paddingHorizontal: 10,
     paddingTop: 20,
     backgroundColor: "#f8f8f8",
