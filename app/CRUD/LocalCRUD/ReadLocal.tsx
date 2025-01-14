@@ -32,22 +32,13 @@ export default function ReadLocal() {
 
   async function fetchAndSetLocals() {
     if (searchFilter === "Categoria") {
-      const locals =
-        search.trim() === ""
-          ? await getLocalsByCategory(selectedCategory)
-          : await getLocalsByCategoryAndName(selectedCategory, search);
+      const locals = await getLocalsByCategoryAndName(selectedCategory, search);
       setLocals(locals);
     } else if (searchFilter === "Apertura") {
-      const locals =
-        search.trim() === ""
-          ? await getOpenLocals()
-          : await getOpenLocalsByName(search);
+      const locals = await getOpenLocalsByName(search);
       setLocals(locals);
     } else if (searchFilter === "Quitar" || searchFilter === "") {
-      const locals =
-        search.trim() === ""
-          ? await getDisplayLocals()
-          : await getLocalsByName(search);
+      const locals = await getLocalsByName(search);
       setLocals(locals);
     } else {
       setLocals(await getDisplayLocals());

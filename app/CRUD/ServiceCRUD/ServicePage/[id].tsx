@@ -76,7 +76,7 @@ export default function ServicePage() {
           {service &&
             (info ? (
               <View className="w-full h-full">
-                <Schedule schedule={schedule} />
+                <Schedule />
               </View>
             ) : service.local?.facebook ||
               service.local?.instagram ||

@@ -2,6 +2,7 @@ import { Alert } from "react-native";
 import { Local } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 import axios from "axios";
+import { validateEmail } from "../components/Register";
 
 // const API_URL =
 //   Platform.OS === "android"
@@ -45,7 +46,9 @@ export async function getLocalsByCategoryAndName(
   name: string
 ) {
   try {
-    const rawData = await fetch(`${API_URL}/category/${category}/name/${name}`);
+    const rawData = await fetch(
+      `${API_URL}/category-name?category=${category}&name=${name}`
+    );
     if (!rawData.ok) {
       throw new Error("Error fetching stores by name and category");
     }
@@ -71,7 +74,7 @@ export async function getIfLocalOpen(id: string) {
 
 export async function getOpenLocalsByName(name: string) {
   try {
-    const rawData = await fetch(`${API_URL}/open-name/${name}`);
+    const rawData = await fetch(`${API_URL}/open-name?name=${name}`);
     if (!rawData.ok) {
       throw new Error("Error fetching open stores by name");
     }
@@ -84,7 +87,7 @@ export async function getOpenLocalsByName(name: string) {
 
 export async function getLocalsByName(name: string) {
   try {
-    const rawData = await fetch(`${API_URL}/searchName/${name}`);
+    const rawData = await fetch(`${API_URL}/search-name?name=${name}`);
     if (!rawData.ok) {
       throw new Error("Error fetching locals by name");
     }

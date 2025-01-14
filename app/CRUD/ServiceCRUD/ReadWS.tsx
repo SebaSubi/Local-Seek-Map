@@ -15,99 +15,96 @@ import {
   getDisplayServices,
   getDisplayServicesByName,
   getOpenServices,
+  getOpenServicesByName,
   getServicesByCategory,
+  getServicesByCategoryAndName,
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
-import { getServiceTypes } from "../../../libs/serviceType";
+import { getServiceTypeNames } from "../../../libs/serviceType";
 import { Picker } from "@react-native-picker/picker";
 
-const localFilters = ["Apertura", "Ubicación", "Categoria", "Quitar"];
+const filters = ["Ubicación", "Apertura", "Categoria", "Quitar"];
 
 export default function ReadWS() {
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Cancha de Paddle"); //this need to change later to Deportes
+  const [serviceCateogries, setServiceCategories] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const [modalVisibility, setModalVisibility] = useState(false);
 
-  // async function fetchAndSetLocals() {
-  //   if (searchFilter === "Categoria") {
-  //     const locals =
-  //       search.trim() === ""
-  //         ? await getLocalsByCategory(selectedCategory)
-  //         : await getLocalsByCategoryAndName(selectedCategory, search);
-  //     setLocals(locals);
-  //   } else if (searchFilter === "Apertura") {
-  //     const locals =
-  //       search.trim() === ""
-  //         ? await getOpenLocals()
-  //         : await getOpenLocalsByName(search);
-  //     setLocals(locals);
-  //   } else if (searchFilter === "Quitar" || searchFilter === "") {
-  //     const locals =
-  //       search.trim() === ""
-  //         ? await getDisplayLocals()
-  //         : await getLocalsByName(search);
-  //     setLocals(locals);
-  //   } else {
-  //     setLocals(await getDisplayLocals());
-  //   }
-  // }
   async function fetchAndSetServices() {
-    const services = await getDisplayServices();
-    setServices(services);
+    if (searchFilter === "Categoria") {
+      const locals = await getServicesByCategoryAndName(
+        selectedCategory,
+        search
+      );
+      setServices(locals);
+    } else if (searchFilter === "Apertura") {
+      const locals = await getOpenServicesByName(search);
+      setServices(locals);
+    } else {
+      const services = await getDisplayServicesByName(search);
+      setServices(services);
+    }
   }
+  // async function fetchAndSetServices() {
+  //   const services = await getDisplayServices();
+  //   setServices(services);
+  // }
 
   useEffect(() => {
     const fetchServices = async () => {
       await fetchAndSetServices();
     };
     const fetchServiceTypes = async () => {
-      const types = await getServiceTypes();
-      setServiceTypes(types);
+      const types = await getServiceTypeNames();
+      setServiceCategories(types);
     };
     fetchServices();
     fetchServiceTypes();
-  }, []);
+  }, [search, searchFilter, selectedCategory]);
 
-  useEffect(() => {
-    if (search === "" || search === " ") {
-      fetchAndSetServices();
-    } else {
-      const fetchData = async () => {
-        const locals = await getDisplayServicesByName(search);
-        setServices(locals);
-      };
-      fetchData();
-    }
-  }, [search]);
+  // useEffect(() => {
+  //   if (search === "" || search === " ") {
+  //     fetchAndSetServices();
+  //   } else {
+  //     const fetchData = async () => {
+  //       const locals = await getDisplayServicesByName(search);
+  //       setServices(locals);
+  //     };
+  //     fetchData();
+  //   }
+  // }, [search]);
 
-  function hourFilter() {
-    const fetchData = async () => {
-      const locals = await getOpenServices();
-      setServices(locals);
-    };
-    fetchData();
-  }
+  // function hourFilter() {
+  //   const fetchData = async () => {
+  //     const locals = await getOpenServices();
+  //     setServices(locals);
+  //   };
+  //   fetchData();
+  // }
 
-  function storeCategoryFilter(category: string) {
-    const fetchData = async () => {
-      const locals = await getServicesByCategory(category);
-      setServices(locals);
-    };
-    fetchData();
-  }
+  // function storeCategoryFilter(category: string) {
+  //   const fetchData = async () => {
+  //     const locals = await getServicesByCategory(category);
+  //     setServices(locals);
+  //   };
+  //   fetchData();
+  // }
 
-  const handleCategorySelection = (category: string) => {
-    if (category === "Quitar") {
-      fetchAndSetServices();
-    } else if (category === "Apertura") hourFilter();
-    else if (category === "Categoria") setModalVisibility(true);
-    setSearch("");
+  // const handleCategorySelection = (category: string) => {
+  //   if (category === "Quitar") {
+  //     fetchAndSetServices();
+  //   } else if (category === "Apertura") hourFilter();
+  //   else if (category === "Categoria") setModalVisibility(true);
+  //   setSearch("");
+  // };
+  const handleSearchFilter = (filter: string) => {
+    setSearchFilter(filter);
   };
 
   const handleStoreCateory = (category: string) => {
-    setModalVisibility(false);
-    storeCategoryFilter(category);
+    setSelectedCategory(category);
   };
 
   return (
@@ -124,8 +121,10 @@ export default function ReadWS() {
         <BasicSearchButton
           placeholder="Buscar Servicio"
           onSearch={setSearch}
-          categories={localCategories}
-          selectedCategory={handleCategorySelection}
+          categories={serviceCateogries}
+          selectedCategory={handleStoreCateory}
+          filters={filters}
+          selectedFilters={handleSearchFilter}
         />
         {services.length > 0 &&
           services.map((service) => (
@@ -140,7 +139,7 @@ export default function ReadWS() {
         >
           <Text className="text-white">Recargar</Text>
         </Pressable>
-        <Modal
+        {/* <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisibility}
@@ -168,7 +167,7 @@ export default function ReadWS() {
               </Pressable>
             </View>
           </View>
-        </Modal>
+        </Modal> */}
       </View>
     </ScrollView>
   );
