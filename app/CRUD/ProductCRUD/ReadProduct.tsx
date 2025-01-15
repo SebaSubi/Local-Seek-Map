@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -12,21 +12,29 @@ import {
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
-import { getProducts, getProductsByCategory } from "../../../libs/product";
+import {
+  getProducts,
+  getProductsByCategoryAndName,
+  searchProductsByName,
+} from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { Product, ProductType } from "../../../schema/GeneralSchema";
 import SmallProductCard from "../../../components/SmallProductCard";
+import Search from "../../(tabs)/Search";
 
 const ReadProductScreen = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchText, setSearchText] = useState<string>("");
-  const [categories, setCategories] = useState<ProductType[]>([]);
+  const [products, setProducts] = useState<Product[]>([]); //this are the products in display
+  const [loading, setLoading] = useState(true); //idk what this does but im not touching it
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); //the selected Product is the product that the modal is going to show
+  const [isModalVisible, setIsModalVisible] = useState(false); //boolean variable, we use it to show the modal or to not show it at all
+  const [searchText, setSearchText] = useState<string>(""); //this is the text that is inputed in the search bar
+  const [categories, setCategories] = useState<ProductType[]>([]); //this are all the categories that we get from all the products
+  const [filter, setSelectedFilter] = useState<string>(""); //this is the filter that is going to be used to filter the products, its either Quitar (wich filters without a categoria and by name) or Categoria (Filters by category)
+  const fileringCategory = useRef<string>("");
 
   function categorieNames(): string[] {
+    //this functions return the name of the categories of all the products
     return categories.flatMap((cat) => cat.name);
   }
 
@@ -46,22 +54,27 @@ const ReadProductScreen = () => {
   };
 
   useEffect(() => {
-    if (searchText.trim()) {
-      const results = products.filter((product) => {
-        const category: any = categories.find(
-          (cat: any) => cat.id === product.productTypeId
-        );
-        const categoryName = category ? category.name : "";
-        return (
-          product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          categoryName.toLowerCase().includes(searchText.toLowerCase())
-        );
-      });
-      setProducts(results);
+    // console.log(searchText);
+    // console.log(filter);
+    if (filter === "" || filter === "Quitar Filtro") {
+      //TODO: filter just by name
+      getProductsByName();
     } else {
-      setProducts(products);
+      if (filter !== "Categoria") {
+        getProductsByCategoryAndSearch(fileringCategory.current);
+      }
     }
-  }, [searchText, products, categories]);
+  }, [searchText, categories, filter]);
+
+  function getProductsByName() {
+    const searchProducts = async () => {
+      try {
+        const result = await searchProductsByName(searchText);
+        setProducts(result);
+      } catch (error) {}
+    };
+    searchProducts();
+  }
 
   const fetchProducts = async () => {
     try {
@@ -85,22 +98,25 @@ const ReadProductScreen = () => {
     setIsModalVisible(true);
   };
 
-  function getProductsC(c: string) {
+  function getProductsByCategoryAndSearch(categoryName: string) {
     const fetchData = async () => {
-      const locals = await getProductsByCategory(c);
-      const result = locals[0].product.flat(); //FIXME: hay que hacer que el back devuelva algo decente y no esto.
-      // console.log(locals[0].product.flat());
-      if (result && result.length > 0) {
-        setProducts(result);
+      const locals = await getProductsByCategoryAndName(
+        categoryName,
+        searchText
+      );
+      if (locals && locals.length > 0) {
+        setProducts(locals);
       } else {
-        Alert.alert("Error", "No se encontraron productos");
+        // Alert.alert("Error", "No se encontraron productos");   FIXME: we may have tp figure out of making this work
+        setProducts([]);
       }
     };
     fetchData();
   }
 
-  const selectedCategory = (c: string) => {
-    getProductsC(c);
+  const selectedCategory = (cat: string) => {
+    getProductsByCategoryAndSearch(cat);
+    fileringCategory.current = cat;
   };
 
   return (
@@ -116,6 +132,8 @@ const ReadProductScreen = () => {
           onSearch={setSearchText}
           selectedCategory={selectedCategory}
           categories={categorieNames()}
+          selectedFilters={setSelectedFilter}
+          filters={["Categoria", "Quitar Filtro"]}
         />
       </View>
       {loading ? (
