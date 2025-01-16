@@ -20,6 +20,7 @@ import {
 } from "../../../libs/local";
 import LocalContainer from "../../../components/LocalContainer";
 import BasicSearchButton from "../../../components/BasicSearchBar";
+import { FlashList } from "@shopify/flash-list";
 
 const localFilters = ["Ubicación", "Quitar", "Categoria", "Apertura"];
 const StoreCategories = ["Supermercado"];
@@ -29,19 +30,25 @@ export default function ReadLocal() {
   const [search, setSearch] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedCategory, setStoreCategories] = useState("Deportes");
+  const [loading, setLoading] = useState(true);
 
   async function fetchAndSetLocals() {
+    setLoading(true);
     if (searchFilter === "Categoria") {
       const locals = await getLocalsByCategoryAndName(selectedCategory, search);
       setLocals(locals);
+      setLoading(false);
     } else if (searchFilter === "Apertura") {
       const locals = await getOpenLocalsByName(search);
       setLocals(locals);
+      setLoading(false);
     } else if (searchFilter === "Quitar" || searchFilter === "") {
       const locals = await getLocalsByName(search);
       setLocals(locals);
+      setLoading(false);
     } else {
       setLocals(await getDisplayLocals());
+      setLoading(false);
     }
   }
 
@@ -67,33 +74,23 @@ export default function ReadLocal() {
           header: () => <Header title={"Buscar Locales"} />,
         }}
       />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="flex items-center">
-          <BasicSearchButton
-            placeholder="Buscar Local"
-            onSearch={setSearch}
-            categories={StoreCategories}
-            selectedFilters={handleSearchFilter}
-            filters={localFilters}
-            selectedCategory={handleCategorySelection}
-          />
-          {locals?.map((local) => (
-            <LocalContainer key={local.id} local={local} />
-          ))}
 
-          <Pressable
-            className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
-            onPress={async () => {
-              await fetchAndSetLocals();
-            }}
-          >
-            <Text className="text-white">Recargar</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
+      <BasicSearchButton
+        placeholder="Buscar Local"
+        onSearch={setSearch}
+        categories={StoreCategories}
+        selectedFilters={handleSearchFilter}
+        filters={localFilters}
+        selectedCategory={handleCategorySelection}
+        style="mb-2"
+      />
+      <FlashList
+        data={locals}
+        renderItem={({ item }) => <LocalContainer local={item} />}
+        keyExtractor={(item) => item.id!.toString()}
+        onRefresh={() => fetchAndSetLocals()}
+        refreshing={loading}
+      />
     </>
   );
 }

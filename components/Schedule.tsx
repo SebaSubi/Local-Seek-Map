@@ -13,15 +13,13 @@ type Shift = {
   shiftClose: shift;
 };
 
-export default function Schedule(
-  {
-    // schedule,
-  }: {
-    // schedule: LocalSchedule[] | LocalServiceSchedule[];
-  }
-) {
+export default function Schedule({
+  schedule,
+}: {
+  schedule: LocalSchedule[] | LocalServiceSchedule[];
+}) {
   const [loading, setLoading] = useState(true);
-  const [schedule, setSchedule] = useState([]);
+  // const [schedule, setSchedule] = useState([]);
 
   const localServiceId = useLocalServiceIdStore(
     (state) => state.localServiceId
@@ -32,7 +30,7 @@ export default function Schedule(
   useEffect(() => {
     const fetchData = async () => {
       const schedules = await getScheduleByServiceId(localServiceId);
-      setSchedule(schedules);
+      // setSchedule(schedules);
       setLoading(false);
     };
     fetchData();
@@ -84,7 +82,11 @@ export default function Schedule(
           />
           <View className="h-16 w-full"></View>
         </>
-      ) : null}
+      ) : (
+        <View className="flex items-center justify-center w-full h-full">
+          <Text>No hay horarios disponibles para este servicio</Text>
+        </View>
+      )}
     </>
   );
 } //The view in the end of the component is to ensure the hole schedule will always be visible since Flatlist can not show the hole thing if the parent component isnt big enough

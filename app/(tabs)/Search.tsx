@@ -29,140 +29,146 @@ import ServiceContainer from "../../components/ServiceContainer";
 import LocalContainer from "../../components/LocalContainer";
 import ReadWS from "../CRUD/ServiceCRUD/ReadWS";
 import ReadLocal from "../CRUD/LocalCRUD/ReadLocal";
+import BasicButton from "../../components/BasicButton";
+import { LocalIcon, ProductIcon, ServiceIcon } from "../../components/Logos";
+import ReadProductScreen from "../CRUD/ProductCRUD/ReadProduct";
 
 const avaliableItems = ["Locales", "Servicios", "Productos"];
 
 export default function Search() {
-  const [items, setItems] = useState<any[]>([]);
-  const [selectedItem, setSelectedItem] = useState("Locales");
-  const [itemModal, setItemModal] = useState(false);
-  const [types, setTypes] = useState<any[]>([]);
-  const [search, setSearch] = useState("");
-  const [modalVisibility, setModalVisibility] = useState(false);
+  const [viewType, setViewType] = useState<"locals" | "products" | "services">(
+    "locals"
+  );
+  // const [items, setItems] = useState<any[]>([]);
+  // const [selectedItem, setSelectedItem] = useState("Locales");
+  // const [itemModal, setItemModal] = useState(false);
+  // const [types, setTypes] = useState<any[]>([]);
+  // const [search, setSearch] = useState("");
+  // const [modalVisibility, setModalVisibility] = useState(false);
 
-  console.log(selectedItem);
+  // console.log(selectedItem);
 
-  async function fetchAndSetItems() {
-    if (selectedItem === "" || selectedItem === "Locales") {
-      const items = await getDisplayLocals();
-      setItems(items);
-    }
-    if (selectedItem === "Servicios") {
-      const items = await getDisplayServices();
-      console.log(items);
-      setItems(items);
-    }
-    // if (selectedItem === "Product") {
-    //   const items = await getDisplayProducts();
-    //   setItems(items);
-    // }
-  }
+  // async function fetchAndSetItems() {
+  //   if (selectedItem === "" || selectedItem === "Locales") {
+  //     const items = await getDisplayLocals();
+  //     setItems(items);
+  //   }
+  //   if (selectedItem === "Servicios") {
+  //     const items = await getDisplayServices();
+  //     console.log(items);
+  //     setItems(items);
+  //   }
+  //   // if (selectedItem === "Product") {
+  //   //   const items = await getDisplayProducts();
+  //   //   setItems(items);
+  //   // }
+  // }
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      fetchAndSetItems();
-    };
-    fetchServices();
-  }, [selectedItem]);
+  // useEffect(() => {
+  //   const fetchServices = async () => {
+  //     fetchAndSetItems();
+  //   };
+  //   fetchServices();
+  // }, [selectedItem]);
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      await fetchAndSetItems();
-    };
-    const fetchTypes = async () => {
-      if (selectedItem === "" || selectedItem === "Locales") {
-        const types = await getLocalTypes();
-        setTypes(types);
-      }
-      if (selectedItem === "Servicios") {
-        const types = await getServiceTypes();
-        setTypes(types);
-      }
-      // if (selectedItem === "Product") {
-      //   const items = await getDisplayProducts();
-      //   setItems(items);
-      // }
-    };
-    fetchServices();
-    fetchTypes();
-  }, []);
+  // useEffect(() => {
+  //   const fetchServices = async () => {
+  //     await fetchAndSetItems();
+  //   };
+  //   const fetchTypes = async () => {
+  //     if (selectedItem === "" || selectedItem === "Locales") {
+  //       const types = await getLocalTypes();
+  //       setTypes(types);
+  //     }
+  //     if (selectedItem === "Servicios") {
+  //       const types = await getServiceTypes();
+  //       setTypes(types);
+  //     }
+  //     // if (selectedItem === "Product") {
+  //     //   const items = await getDisplayProducts();
+  //     //   setItems(items);
+  //     // }
+  //   };
+  //   fetchServices();
+  //   fetchTypes();
+  // }, []);
 
-  useEffect(() => {
-    if (search === "" || search === " ") {
-      fetchAndSetItems();
-    } else {
-      const fetchData = async () => {
-        if (selectedItem === "" || selectedItem === "Locales") {
-          const items = await getLocalsByName(search);
-          setItems(items);
-        }
-        if (selectedItem === "Servicios") {
-          const items = await getDisplayServicesByName(search);
-          setItems(items);
-        }
-        // if (selectedItem === "Product") {
-        //   const items = await getDisplayProducts();
-        //   setItems(items);
-        // }
-      };
-      fetchData();
-    }
-  }, [search]);
+  // useEffect(() => {
+  //   if (search === "" || search === " ") {
+  //     fetchAndSetItems();
+  //   } else {
+  //     const fetchData = async () => {
+  //       if (selectedItem === "" || selectedItem === "Locales") {
+  //         const items = await getLocalsByName(search);
+  //         setItems(items);
+  //       }
+  //       if (selectedItem === "Servicios") {
+  //         const items = await getDisplayServicesByName(search);
+  //         setItems(items);
+  //       }
+  //       // if (selectedItem === "Product") {
+  //       //   const items = await getDisplayProducts();
+  //       //   setItems(items);
+  //       // }
+  //     };
+  //     fetchData();
+  //   }
+  // }, [search]);
 
-  function hourFilter() {
-    const fetchData = async () => {
-      if (selectedItem === "" || selectedItem === "Locales") {
-        const items = await getOpenLocals();
-        setItems(items);
-      }
-      if (selectedItem === "Servicios") {
-        const items = await getOpenServices();
-        setItems(items);
-      } else {
-        //here we need to put just a getProductByName
-      }
-    };
-    fetchData();
-  }
+  // function hourFilter() {
+  //   const fetchData = async () => {
+  //     if (selectedItem === "" || selectedItem === "Locales") {
+  //       const items = await getOpenLocals();
+  //       setItems(items);
+  //     }
+  //     if (selectedItem === "Servicios") {
+  //       const items = await getOpenServices();
+  //       setItems(items);
+  //     } else {
+  //       //here we need to put just a getProductByName
+  //     }
+  //   };
+  //   fetchData();
+  // }
 
-  function itemCategoryFilter(category: string) {
-    const fetchData = async () => {
-      if (selectedItem === "" || selectedItem === "Locales") {
-        const items = await getLocalsByCategory(category);
-        setItems(items);
-      }
-      if (selectedItem === "Servicios") {
-        const items = await getServicesByCategory(search);
-        setItems(items);
-      }
-      // if (selectedItem === "Product") {
-      //   const items = await getDisplayProducts();
-      //   setItems(items);
-      // }
-    };
-    fetchData();
-  }
+  // function itemCategoryFilter(category: string) {
+  //   const fetchData = async () => {
+  //     if (selectedItem === "" || selectedItem === "Locales") {
+  //       const items = await getLocalsByCategory(category);
+  //       setItems(items);
+  //     }
+  //     if (selectedItem === "Servicios") {
+  //       const items = await getServicesByCategory(search);
+  //       setItems(items);
+  //     }
+  //     // if (selectedItem === "Product") {
+  //     //   const items = await getDisplayProducts();
+  //     //   setItems(items);
+  //     // }
+  //   };
+  //   fetchData();
+  // }
 
-  const handleCategorySelection = (category: string) => {
-    if (category === "Quitar") {
-      fetchAndSetItems();
-    } else if (category === "Apertura") hourFilter();
-    else if (category === "Categoria") setModalVisibility(true);
-    setSearch("");
-  };
+  // const handleCategorySelection = (category: string) => {
+  //   if (category === "Quitar") {
+  //     fetchAndSetItems();
+  //   } else if (category === "Apertura") hourFilter();
+  //   else if (category === "Categoria") setModalVisibility(true);
+  //   setSearch("");
+  // };
 
-  const handleStoreCateory = (category: string) => {
-    setModalVisibility(false);
-    itemCategoryFilter(category);
-  };
+  // const handleStoreCateory = (category: string) => {
+  //   setModalVisibility(false);
+  //   itemCategoryFilter(category);
+  // };
 
-  const handleItemSelectPress = () => {
-    setItemModal(true);
-  };
+  // const handleItemSelectPress = () => {
+  //   setItemModal(true);
+  // };
 
-  function handleSelectedItemSerach(name: string) {
-    setSelectedItem(name);
-  }
+  // function handleSelectedItemSerach(name: string) {
+  //   setSelectedItem(name);
+  // }
 
   return (
     <>
@@ -172,6 +178,48 @@ export default function Search() {
         }}
       />
       <View className="flex flex-row items-center justify-center mt-2">
+        <BasicButton
+          text="Locales"
+          style=" w-28 mr-2"
+          logo={<LocalIcon />}
+          onPress={() => setViewType("locals")}
+          background={viewType === "locals" ? "#ff7034" : undefined}
+        />
+        <BasicButton
+          text="Servicios"
+          style="w-28 mr-2"
+          logo={<ServiceIcon />}
+          onPress={() => setViewType("services")}
+          background={viewType === "services" ? "#ff7034" : undefined}
+        />
+        <BasicButton
+          text="Productos"
+          style="w-28"
+          logo={<ProductIcon />}
+          onPress={() => setViewType("products")}
+          background={viewType === "products" ? "#ff7034" : undefined}
+        />
+      </View>
+      <View
+        className="w-full h-full"
+        style={{ display: viewType === "locals" ? "flex" : "none" }}
+      >
+        <ReadLocal />
+      </View>
+      <View
+        className="w-full h-full"
+        style={{ display: viewType === "services" ? "flex" : "none" }}
+      >
+        <ReadWS />
+      </View>
+      <View
+        className="w-full h-full"
+        style={{ display: viewType === "products" ? "flex" : "none" }}
+      >
+        <ReadProductScreen />
+      </View>
+
+      {/* <View className="flex flex-row items-center justify-center mt-2">
         <Text>Estas buscando: </Text>
         <TouchableOpacity
           onPress={handleItemSelectPress}
@@ -215,7 +263,7 @@ export default function Search() {
         ) : selectedItem === "Servicios" ? (
           <ReadWS />
         ) : null}
-      </View>
+      </View> */}
     </>
   );
 }

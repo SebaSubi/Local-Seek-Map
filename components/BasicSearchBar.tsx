@@ -19,10 +19,12 @@ export default function BasicSearchButton({
   selectedFilters,
   categories,
   selectedCategory,
+  style,
 }: {
   placeholder: string;
   className?: any;
-  filters?: string[];
+  filters: string[];
+  style?: string;
   selectedFilters: (type: string) => void;
   categories: string[];
   selectedCategory: (category: string) => void;
@@ -54,7 +56,7 @@ export default function BasicSearchButton({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className={style}>
       <TextInput
         style={StyleSheet.flatten([styles.textInput, className])}
         onChangeText={(text) => setText(text)}

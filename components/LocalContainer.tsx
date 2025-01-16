@@ -34,18 +34,18 @@ export default function LocalContainer({ local }: { local: Local }) {
       asChild
     >
       <Pressable
-        className="flex flex-col items-center justify-center mt-2 w-11/12"
+        className="flex flex-col items-center justify-center mt-2 w-full"
         key={local.id}
       >
-        <View className="flex flex-row items-center h-28 w-full bg-slate-300 rounded-2xl border">
+        <View className="flex flex-row items-center h-28 w-11/12 bg-slate-300 rounded-2xl border">
           <View
-            className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
+            className={`h-24 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center overflow-hidden`}
           >
-            <View className="h-[90%] w-[90%]">
+            <View className="h-full w-full">
               <Image
                 style={{
                   height: "100%",
-                  width: "auto",
+                  width: "100%",
                   borderRadius: 4,
                   resizeMode: "contain",
                 }}
