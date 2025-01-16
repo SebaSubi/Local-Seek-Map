@@ -4,18 +4,21 @@ import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
 import { getProducts } from "../libs/product";
-import { LocalDisplay, Product, Service } from "../schema/GeneralSchema";
+import { Local, Product, Service } from "../schema/GeneralSchema";
 import { getDisplayServices } from "../libs/localService";
 import ServiceContainer from "./ServiceContainer";
+import BasicButton from "./BasicButton";
+import { LocalIcon, ProductIcon, ServiceIcon } from "./Logos";
+import BasicSearchButton from "./BasicSearchBar";
 
 const SearchComponent = () => {
-  const [locals, setLocals] = useState<LocalDisplay[]>([]);
+  const [locals, setLocals] = useState<Local[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewType, setViewType] = useState<
-    "locales" | "productos" | "servicios"
-  >("locales");
+  const [viewType, setViewType] = useState<"locals" | "products" | "services">(
+    "locals"
+  );
 
   useEffect(() => {
     fetchData();
@@ -41,45 +44,33 @@ const SearchComponent = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={[
-            styles.button,
-            viewType === "locales"
-              ? styles.buttonActive
-              : styles.buttonInactive,
-          ]}
-          onPress={() => setViewType("locales")}
-        >
-          <Text style={styles.buttonText}>Locales</Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.button,
-            viewType === "productos"
-              ? styles.buttonActive
-              : styles.buttonInactive,
-          ]}
-          onPress={() => setViewType("productos")}
-        >
-          <Text style={styles.buttonText}>Productos</Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.button,
-            viewType === "servicios"
-              ? styles.buttonActive
-              : styles.buttonInactive,
-          ]}
-          onPress={() => setViewType("servicios")}
-        >
-          <Text style={styles.buttonText}>Servicios</Text>
-        </Pressable>
+      {/* <BasicSearchButton /> */}
+      <View className="flex flex-row items-center justify-center ">
+        <BasicButton
+          text="Locales"
+          style=" w-28 mr-2"
+          logo={<LocalIcon />}
+          onPress={() => setViewType("locals")}
+          background={viewType === "locals" ? "#ff7034" : undefined}
+        />
+        <BasicButton
+          text="Servicios"
+          style="w-28 mr-2"
+          logo={<ServiceIcon />}
+          onPress={() => setViewType("services")}
+          background={viewType === "services" ? "#ff7034" : undefined}
+        />
+        <BasicButton
+          text="Productos"
+          style="w-28"
+          logo={<ProductIcon />}
+          onPress={() => setViewType("products")}
+          background={viewType === "products" ? "#ff7034" : undefined}
+        />
       </View>
-
       {loading ? (
         <Text style={styles.loadingText}>Cargando datos...</Text>
-      ) : viewType === "locales" ? (
+      ) : viewType === "locals" ? (
         <FlatList
           data={locals}
           renderItem={({ item }) => <LocalContainer local={item} />}
@@ -87,7 +78,7 @@ const SearchComponent = () => {
           onRefresh={() => fetchData()}
           refreshing={loading}
         />
-      ) : viewType === "productos" ? (
+      ) : viewType === "products" ? (
         <FlatList
           data={products}
           renderItem={({ item }) => <ProductContainer product={item} />}
@@ -107,6 +98,36 @@ const SearchComponent = () => {
     </View>
   );
 };
+
+// <View style={styles.buttonContainer}>
+//   <Pressable
+//     style={[
+//       styles.button,
+//       viewType === "locales" ? styles.buttonActive : styles.buttonInactive,
+//     ]}
+//     onPress={() => setViewType("locales")}
+//   >
+//     <Text style={styles.buttonText}>Locales</Text>
+//   </Pressable>
+//   <Pressable
+//     style={[
+//       styles.button,
+//       viewType === "productos" ? styles.buttonActive : styles.buttonInactive,
+//     ]}
+//     onPress={() => setViewType("productos")}
+//   >
+//     <Text style={styles.buttonText}>Productos</Text>
+//   </Pressable>
+//   <Pressable
+//     style={[
+//       styles.button,
+//       viewType === "servicios" ? styles.buttonActive : styles.buttonInactive,
+//     ]}
+//     onPress={() => setViewType("servicios")}
+//   >
+//     <Text style={styles.buttonText}>Servicios</Text>
+//   </Pressable>
+// </View>;
 
 const styles = StyleSheet.create({
   container: {

@@ -6,6 +6,7 @@ import {
   Modal,
   StyleSheet,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
@@ -31,20 +32,25 @@ export default function ReadWS() {
   const [selectedCategory, setSelectedCategory] = useState("Cancha de Paddle"); //this need to change later to Deportes
   const [serviceCateogries, setServiceCategories] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   async function fetchAndSetServices() {
+    setLoading(true);
     if (searchFilter === "Categoria") {
       const locals = await getServicesByCategoryAndName(
         selectedCategory,
         search
       );
       setServices(locals);
+      setLoading(false);
     } else if (searchFilter === "Apertura") {
       const locals = await getOpenServicesByName(search);
       setServices(locals);
+      setLoading(false);
     } else {
       const services = await getDisplayServicesByName(search);
       setServices(services);
+      setLoading(false);
     }
   }
   // async function fetchAndSetServices() {
@@ -64,41 +70,6 @@ export default function ReadWS() {
     fetchServiceTypes();
   }, [search, searchFilter, selectedCategory]);
 
-  // useEffect(() => {
-  //   if (search === "" || search === " ") {
-  //     fetchAndSetServices();
-  //   } else {
-  //     const fetchData = async () => {
-  //       const locals = await getDisplayServicesByName(search);
-  //       setServices(locals);
-  //     };
-  //     fetchData();
-  //   }
-  // }, [search]);
-
-  // function hourFilter() {
-  //   const fetchData = async () => {
-  //     const locals = await getOpenServices();
-  //     setServices(locals);
-  //   };
-  //   fetchData();
-  // }
-
-  // function storeCategoryFilter(category: string) {
-  //   const fetchData = async () => {
-  //     const locals = await getServicesByCategory(category);
-  //     setServices(locals);
-  //   };
-  //   fetchData();
-  // }
-
-  // const handleCategorySelection = (category: string) => {
-  //   if (category === "Quitar") {
-  //     fetchAndSetServices();
-  //   } else if (category === "Apertura") hourFilter();
-  //   else if (category === "Categoria") setModalVisibility(true);
-  //   setSearch("");
-  // };
   const handleSearchFilter = (filter: string) => {
     setSearchFilter(filter);
   };
@@ -108,68 +79,24 @@ export default function ReadWS() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View className="flex items-center">
-        <Stack.Screen
-          options={{
-            header: () => <Header title="Leer Local" />,
-          }}
-        />
-        <BasicSearchButton
-          placeholder="Buscar Servicio"
-          onSearch={setSearch}
-          categories={serviceCateogries}
-          selectedCategory={handleStoreCateory}
-          filters={filters}
-          selectedFilters={handleSearchFilter}
-        />
-        {services.length > 0 &&
-          services.map((service) => (
-            <ServiceContainer key={service.id} service={service} />
-          ))}
-
-        <Pressable
-          className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
-          onPress={async () => {
-            await fetchAndSetServices();
-          }}
-        >
-          <Text className="text-white">Recargar</Text>
-        </Pressable>
-        {/* <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisibility}
-          onRequestClose={() => setModalVisibility(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                Selecciona el tipo de búsqueda
-              </Text>
-              {serviceTypes.map((category, index) => (
-                <Pressable
-                  onPress={() => handleStoreCateory(category.name)}
-                  style={styles.modalOption}
-                  key={index}
-                >
-                  <Text style={styles.modalOptionText}>{category.name}</Text>
-                </Pressable>
-              ))}
-              <Pressable
-                onPress={() => setModalVisibility(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal> */}
-      </View>
-    </ScrollView>
+    <>
+      <BasicSearchButton
+        placeholder="Buscar Servicio"
+        onSearch={setSearch}
+        categories={serviceCateogries}
+        selectedCategory={handleStoreCateory}
+        filters={filters}
+        selectedFilters={handleSearchFilter}
+        style="mb-2"
+      />
+      <FlatList
+        data={services}
+        renderItem={({ item }) => <ServiceContainer service={item} />}
+        keyExtractor={(item) => item.id!.toString()}
+        onRefresh={() => fetchAndSetServices()}
+        refreshing={loading}
+      />
+    </>
   );
 }
 

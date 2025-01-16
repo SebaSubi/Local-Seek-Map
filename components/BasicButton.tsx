@@ -4,6 +4,7 @@ interface BasicSelectableProps {
   logo?: any;
   text: string;
   style?: string;
+  background?: string;
   onPress?: () => void;
 }
 
@@ -12,10 +13,12 @@ export default function BasicButton({
   text,
   style,
   onPress,
+  background,
 }: BasicSelectableProps) {
   return (
     <Pressable
-      className={`flex flex-row justify-center items-center w-2/3 bg-[#e1e8e8] h-10 rounded-2xl ${style}`}
+      className={`flex flex-row justify-center items-center w-2/3 h-10 rounded-2xl ${style}`}
+      style={{ backgroundColor: background ? background : "#e1e8e8" }}
       onPress={onPress}
     >
       {logo && (
@@ -24,7 +27,7 @@ export default function BasicButton({
         </View>
       )}
 
-      <Text>{text}</Text>
+      <Text style={{ marginLeft: logo ? 23 : 0 }}>{text}</Text>
     </Pressable>
   );
 }

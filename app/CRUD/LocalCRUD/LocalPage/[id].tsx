@@ -36,9 +36,6 @@ export default function LocalPage() {
       await fetchAndSetLocals();
     };
     fetchLocals();
-  }, []);
-
-  useEffect(() => {
     const fetchData = async () => {
       const schedules = await getSchedulesByLocalId(id as string);
       setSchedules(schedules);
