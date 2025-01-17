@@ -4,17 +4,30 @@ import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
 import { getProducts } from "../libs/product";
-import { Local, Product, Service } from "../schema/GeneralSchema";
+import {
+  Local,
+  LocalTypes,
+  Product,
+  ProductType,
+  Service,
+  ServiceType,
+} from "../schema/GeneralSchema";
 import { getDisplayServices } from "../libs/localService";
 import ServiceContainer from "./ServiceContainer";
 import BasicButton from "./BasicButton";
 import { LocalIcon, ProductIcon, ServiceIcon } from "./Logos";
 import BasicSearchButton from "./BasicSearchBar";
+import { Stack } from "expo-router";
+import { getLocalTypes } from "../libs/localType";
+import { getServiceTypes } from "../libs/serviceType";
 
 const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [localCategories, setLocalCategories] = useState<LocalTypes[]>([]);
+  const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([]);
+  const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
     "locals"
@@ -26,15 +39,21 @@ const SearchComponent = () => {
 
   const fetchData = async () => {
     try {
-      const [localsData, productsData, serviceData] = await Promise.all([
-        getLocals(),
-        getProducts(),
-        getDisplayServices(),
-      ]);
+      const [localsData, productsData, serviceData, localTypes, serviceTypes] =
+        await Promise.all([
+          getLocals(),
+          getProducts(),
+          getDisplayServices(),
+          getLocalTypes(),
+          getServiceTypes(),
+          //Missing Product Types
+        ]);
 
       setLocals(localsData);
       setProducts(productsData);
       setServices(serviceData);
+      setLocalCategories(localTypes);
+      setServiceCategories(serviceTypes);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -43,59 +62,94 @@ const SearchComponent = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* <BasicSearchButton /> */}
-      <View className="flex flex-row items-center justify-center ">
-        <BasicButton
-          text="Locales"
-          style=" w-28 mr-2"
-          logo={<LocalIcon />}
-          onPress={() => setViewType("locals")}
-          background={viewType === "locals" ? "#ff7034" : undefined}
-        />
-        <BasicButton
-          text="Servicios"
-          style="w-28 mr-2"
-          logo={<ServiceIcon />}
-          onPress={() => setViewType("services")}
-          background={viewType === "services" ? "#ff7034" : undefined}
-        />
-        <BasicButton
-          text="Productos"
-          style="w-28"
-          logo={<ProductIcon />}
-          onPress={() => setViewType("products")}
-          background={viewType === "products" ? "#ff7034" : undefined}
-        />
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <View className="flex flex-col items-center justify-center bg-[#1a253d] pt-[23%] z-10">
+        {/* <BasicSearchButton /> */}
+        <View className="flex flex-row items-center justify-center ">
+          <BasicButton
+            text="Locales"
+            style=" w-28 mr-2"
+            logo={<LocalIcon />}
+            onPress={() => setViewType("locals")}
+            background={viewType === "locals" ? "#ff6c3d" : "#ffffff"}
+          />
+          <BasicButton
+            text="Servicios"
+            style="w-28 mr-2"
+            logo={<ServiceIcon />}
+            onPress={() => setViewType("services")}
+            background={viewType === "services" ? "#ff6c3d" : "#ffffff"}
+          />
+          <BasicButton
+            text="Productos"
+            style="w-28"
+            logo={<ProductIcon />}
+            onPress={() => setViewType("products")}
+            background={viewType === "products" ? "#ff6c3d" : "#ffffff"}
+          />
+        </View>
+        {loading ? (
+          <Text style={styles.loadingText}>Cargando datos...</Text>
+        ) : (
+          <View className="w-full h-full bg-white rounded-t-3xl mt-4">
+            <View
+              className="w-full h-full"
+              style={{ display: viewType === "locals" ? "flex" : "none" }}
+            >
+              <FlatList
+                data={locals}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => (
+                  <LocalContainer local={item} categories={localCategories} />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+              />
+            </View>
+            <View
+              className="w-full h-full mt-[-13%]"
+              style={{ display: viewType === "products" ? "flex" : "none" }}
+            >
+              <FlatList
+                data={products}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => <ProductContainer product={item} />}
+                keyExtractor={(item) => item.id!.toString()}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+              />
+            </View>
+            <View
+              className="w-full h-full"
+              style={{ display: viewType === "services" ? "flex" : "none" }}
+            >
+              <FlatList
+                data={services}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => (
+                  <ServiceContainer
+                    service={item}
+                    categories={serviceCategories}
+                  />
+                )}
+                keyExtractor={(item) => item.id!.toString()}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+              />
+            </View>
+          </View>
+        )}
       </View>
-      {loading ? (
-        <Text style={styles.loadingText}>Cargando datos...</Text>
-      ) : viewType === "locals" ? (
-        <FlatList
-          data={locals}
-          renderItem={({ item }) => <LocalContainer local={item} />}
-          keyExtractor={(item) => item.id.toString()}
-          onRefresh={() => fetchData()}
-          refreshing={loading}
-        />
-      ) : viewType === "products" ? (
-        <FlatList
-          data={products}
-          renderItem={({ item }) => <ProductContainer product={item} />}
-          keyExtractor={(item) => item.id!.toString()}
-          onRefresh={() => fetchData()}
-          refreshing={loading}
-        />
-      ) : (
-        <FlatList
-          data={services}
-          renderItem={({ item }) => <ServiceContainer service={item} />}
-          keyExtractor={(item) => item.id!.toString()}
-          onRefresh={() => fetchData()}
-          refreshing={loading}
-        />
-      )}
-    </View>
+    </>
   );
 };
 

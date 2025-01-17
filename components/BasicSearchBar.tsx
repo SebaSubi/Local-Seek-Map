@@ -132,7 +132,7 @@ export default function BasicSearchButton({
         )}
       </View>
       {categories.length !== 0 && categories ? (
-        <ScrollView className="mt-4 w-full" horizontal={true}>
+        <ScrollView className="mt-3 w-full" horizontal={true}>
           {categories.map((category, index) => (
             <BasicButton
               text={category.name}
