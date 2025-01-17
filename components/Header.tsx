@@ -10,7 +10,7 @@ interface HeaderProps {
 export default function Header({ title, props }: HeaderProps) {
   const { onLogout } = useAuth();
   return (
-    <View className="flex flex-row items-end justify-between bg-[#324e64] rounded-bl-3xl rounded-br-3xl h-24 p-2">
+    <View className="flex flex-row items-end justify-between  bg-[#1a253d] rounded-b-3xl h-24 p-2">
       <Pressable className="ml-2" onPress={onLogout}>
         <LogOutIcon />
       </Pressable>
@@ -23,3 +23,5 @@ export default function Header({ title, props }: HeaderProps) {
     </View>
   );
 }
+
+//bg-[#324e64]

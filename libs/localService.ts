@@ -88,6 +88,19 @@ export async function getOpenServices() {
   }
 }
 
+export async function getIfServiceOpen(id: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service/open-service/${id}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch open if service open");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting open if service open", error);
+  }
+}
+
 export async function getOpenServicesByName(name: string) {
   try {
     const rawData = await fetch(

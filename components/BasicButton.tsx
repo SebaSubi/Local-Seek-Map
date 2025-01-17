@@ -17,7 +17,7 @@ export default function BasicButton({
 }: BasicSelectableProps) {
   return (
     <Pressable
-      className={`flex flex-row justify-center items-center w-fit h-10 rounded-2xl ${style}`}
+      className={`flex flex-row justify-center items-center w-fit h-9 rounded-3xl ${style}`}
       style={{ backgroundColor: background ? background : "#e1e8e8" }}
       onPress={onPress}
     >
@@ -27,7 +27,7 @@ export default function BasicButton({
         </View>
       )}
 
-      <Text className="ml-2 mr-2">{text}</Text>
+      <Text className="ml-3 mr-3">{text}</Text>
     </Pressable>
   );
 }

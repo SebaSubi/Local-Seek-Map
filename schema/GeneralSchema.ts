@@ -41,11 +41,11 @@ export interface LocalProduct {
 }
 
 export interface LocalSchedule {
-  id: string;
-  local: Local;
+  id?: string;
+  local?: Local;
   localId: string;
   dateFrom: Date;
-  dateTo: Date | null;
+  dateTo?: Date | null;
   dayNumber: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
@@ -105,10 +105,10 @@ export interface Service {
 }
 
 export interface LocalServiceSchedule {
-  id: string;
+  id?: string;
   localServiceId: string;
   dateFrom: Date;
-  dateTo: Date | null;
+  dateTo?: Date | null;
   dayNumber: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
@@ -116,7 +116,7 @@ export interface LocalServiceSchedule {
   SecondShiftFinish: string | null;
   ThirdShiftStart: string | null;
   ThirdShiftFinish: string | null;
-  localService: Service;
+  localService?: Service;
 }
 
 export interface ServiceType {

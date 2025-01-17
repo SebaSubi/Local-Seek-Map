@@ -71,7 +71,7 @@ export default function BasicSearchButton({
   };
 
   return (
-    <View style={styles.container} className={`${style} h-[15%]`}>
+    <View style={styles.container} className={`${style} h-[14%]`}>
       <View className="flex flex-row ">
         <TextInput
           style={StyleSheet.flatten([styles.textInput, className])}
@@ -87,6 +87,7 @@ export default function BasicSearchButton({
             <TouchableOpacity
               onPress={handleFilterPress}
               style={styles.filterButton}
+              className="ml-2"
             >
               <Ionicons name="ellipsis-vertical" size={24} color="black" />
             </TouchableOpacity>
@@ -131,14 +132,14 @@ export default function BasicSearchButton({
         )}
       </View>
       {categories.length !== 0 && categories ? (
-        <ScrollView className="mt-2 w-full" horizontal={true}>
+        <ScrollView className="mt-4 w-full" horizontal={true}>
           {categories.map((category, index) => (
             <BasicButton
               text={category.name}
               key={index}
               style="ml-2"
               background={
-                categorySelected === category.name ? "#ff7034" : undefined
+                categorySelected === category.name ? "#ff6c3d" : "#ffffff"
               }
               onPress={() => handleCategorySelection(category.name)}
             />
@@ -155,10 +156,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    marginTop: 10,
+    // marginTop: 10,
   },
   textInput: {
-    backgroundColor: "#e1e8e8",
+    backgroundColor: "#ffffff",
     textAlign: "center",
     color: "#000",
     width: "70%",
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#e1e8e8",
+    backgroundColor: "#ffffff",
     // marginRight: 1,
   },
   modalContainer: {

@@ -1,12 +1,5 @@
-import { createFactory, useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  Modal,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { View, FlatList, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import { Local, LocalDisplay, LocalTypes } from "../../../schema/GeneralSchema";
@@ -21,7 +14,6 @@ import {
 } from "../../../libs/local";
 import LocalContainer from "../../../components/LocalContainer";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-import { FlashList } from "@shopify/flash-list";
 import { getLocalTypes } from "../../../libs/localType";
 
 const localFilters = ["Ubicación", "Quitar", "Apertura"];
@@ -84,10 +76,10 @@ export default function ReadLocal() {
   };
 
   return (
-    <>
+    <View className="bg-[#1a253d] w-full h-full flex flex-col">
       <Stack.Screen
         options={{
-          header: () => <Header title={"Buscar Locales"} />,
+          headerShown: false,
         }}
       />
 
@@ -98,15 +90,21 @@ export default function ReadLocal() {
         selectedFilters={handleSearchFilter}
         filters={localFilters}
         selectedCategory={handleCategorySelection}
-        style="mb-2"
+        style="mt-16"
       />
-      <FlashList
-        data={locals}
-        renderItem={({ item }) => <LocalContainer local={item} />}
-        keyExtractor={(item) => item.id!.toString()}
-        onRefresh={() => fetchAndSetLocals()}
-        refreshing={loading}
-      />
-    </>
+      <View className="w-full h-full bg-white rounded-t-3xl">
+        <FlatList
+          data={locals}
+          horizontal={false}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <LocalContainer local={item} categories={categories} />
+          )}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchAndSetLocals()}
+          refreshing={loading}
+        />
+      </View>
+    </View>
   );
 }

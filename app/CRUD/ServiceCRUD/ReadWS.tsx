@@ -13,6 +13,7 @@ import Header from "../../../components/Header";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import {
+  createService,
   getDisplayServices,
   getDisplayServicesByName,
   getOpenServices,
@@ -27,6 +28,7 @@ import {
   getServiceTypes,
 } from "../../../libs/serviceType";
 import { Picker } from "@react-native-picker/picker";
+import { getReactNavigationScreensConfig } from "expo-router/build/getReactNavigationConfig";
 
 const filters = ["Apertura", "Quitar"];
 
@@ -93,7 +95,12 @@ export default function ReadWS() {
   };
 
   return (
-    <>
+    <View className="bg-[#1a253d] w-full h-full flex flex-col">
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
       <BasicSearchButton
         placeholder="Buscar Servicio"
         onSearch={setSearch}
@@ -101,16 +108,22 @@ export default function ReadWS() {
         selectedCategory={handleStoreCateory}
         filters={filters}
         selectedFilters={handleSearchFilter}
-        style="mb-2"
+        style="mt-16"
       />
-      <FlatList
-        data={services}
-        renderItem={({ item }) => <ServiceContainer service={item} />}
-        keyExtractor={(item) => item.id!.toString()}
-        onRefresh={() => fetchAndSetServices()}
-        refreshing={loading}
-      />
-    </>
+      <View className="w-full h-full bg-white rounded-t-3xl pb-60">
+        <FlatList
+          data={services}
+          horizontal={false}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <ServiceContainer service={item} categories={serviceCateogries} />
+          )}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchAndSetServices()}
+          refreshing={loading}
+        />
+      </View>
+    </View>
   );
 }
 

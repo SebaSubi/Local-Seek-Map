@@ -6,7 +6,7 @@ import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
 import {
-  LocalHours,
+  LocalSchedule,
   LocalServiceSchedule,
 } from "../../../../schema/GeneralSchema";
 import BasicWarning from "../../../../components/BasicWarning";
@@ -46,7 +46,7 @@ export default function CreateProduct() {
     let localWarning = false;
 
     if (schedulest.length > 0) {
-      schedulest.forEach((schedule: LocalHours) => {
+      schedulest.forEach((schedule: LocalSchedule) => {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
           setScheduleId(schedule.id!); //Idk why this throws an undefined error if i dont put the !
@@ -115,7 +115,7 @@ export default function CreateProduct() {
       ThirdShiftFinishRef.current?.getTime()
     );
 
-    const newSchedule: LocalHours = {
+    const newSchedule: LocalSchedule = {
       localId,
       dayNumber,
       FirstShiftStart,
@@ -149,7 +149,10 @@ export default function CreateProduct() {
           header: () => <Header title="Crear Horario" />,
         }}
       />
-      <ScrollView keyboardShouldPersistTaps="handled" className="w-full h-full">
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        className="w-full h-full mb-32"
+      >
         <View
           className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
         >
