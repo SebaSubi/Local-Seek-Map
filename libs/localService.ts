@@ -103,6 +103,24 @@ export async function getOpenServicesByName(name: string) {
   }
 }
 
+export async function getOpenServicesByNameAndCategory(
+  name: string,
+  category: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/category-open?category=${category}&name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch open services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting open services", error);
+  }
+}
+
 export async function getServicesByCategory(category: string) {
   try {
     const rawData = await fetch(

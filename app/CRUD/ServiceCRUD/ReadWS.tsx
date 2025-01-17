@@ -17,6 +17,7 @@ import {
   getDisplayServicesByName,
   getOpenServices,
   getOpenServicesByName,
+  getOpenServicesByNameAndCategory,
   getServicesByCategory,
   getServicesByCategoryAndName,
 } from "../../../libs/localService";
@@ -27,24 +28,34 @@ import {
 } from "../../../libs/serviceType";
 import { Picker } from "@react-native-picker/picker";
 
-const filters = ["Ubicación", "Apertura", "Categoria", "Quitar"];
+const filters = ["Apertura", "Quitar"];
 
 export default function ReadWS() {
   const [services, setServices] = useState<Service[]>([]);
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Cancha de Paddle"); //this need to change later to Deportes
-  const [serviceCateogries, setServiceCategories] = useState<string[]>([]);
+  const [serviceCateogries, setServiceCategories] = useState<ServiceType[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   async function fetchAndSetServices() {
     setLoading(true);
-    if (searchFilter === "Categoria") {
-      const locals = await getServicesByCategoryAndName(
+    if (
+      selectedCategory !== "" &&
+      (searchFilter === "" || searchFilter === "Quitar")
+    ) {
+      const services = await getServicesByCategoryAndName(
         selectedCategory,
         search
       );
-      setServices(locals);
+      setServices(services);
+      setLoading(false);
+    } else if (selectedCategory !== "" && searchFilter === "Apertura") {
+      const services = await getOpenServicesByNameAndCategory(
+        search,
+        selectedCategory
+      );
+      setServices(services);
       setLoading(false);
     } else if (searchFilter === "Apertura") {
       const locals = await getOpenServicesByName(search);

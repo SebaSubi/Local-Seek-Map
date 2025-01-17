@@ -34,9 +34,6 @@ export default function ReadLocal() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<LocalTypes[]>([]);
 
-  console.log(selectedCategory);
-  console.log(searchFilter);
-
   async function fetchAndSetLocals() {
     setLoading(true);
     if (
