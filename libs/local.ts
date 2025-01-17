@@ -59,6 +59,24 @@ export async function getLocalsByCategoryAndName(
   }
 }
 
+export async function getOpenLocalsByCategoryAndName(
+  category: string,
+  name: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/category-open?category=${category}&name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Error fetching open stores by name and category");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function getIfLocalOpen(id: string) {
   try {
     const rawData = await fetch(`${API_URL}/openStore/${id}`);

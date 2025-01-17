@@ -21,7 +21,10 @@ import {
   getServicesByCategoryAndName,
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
-import { getServiceTypeNames } from "../../../libs/serviceType";
+import {
+  getServiceTypeNames,
+  getServiceTypes,
+} from "../../../libs/serviceType";
 import { Picker } from "@react-native-picker/picker";
 
 const filters = ["Ubicación", "Apertura", "Categoria", "Quitar"];
@@ -63,7 +66,7 @@ export default function ReadWS() {
       await fetchAndSetServices();
     };
     const fetchServiceTypes = async () => {
-      const types = await getServiceTypeNames();
+      const types = await getServiceTypes();
       setServiceCategories(types);
     };
     fetchServices();

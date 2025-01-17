@@ -10,6 +10,12 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import BasicButton from "./BasicButton";
+import { localCategryIcons } from "../schema/generalConst";
+import { ProductIcon } from "./Logos";
+import { LocalTypes, ProductType, ServiceType } from "../schema/GeneralSchema";
+
+// type CategoryKey = keyof typeof localCategryIcons;
 
 export default function BasicSearchButton({
   placeholder,
@@ -20,19 +26,21 @@ export default function BasicSearchButton({
   categories,
   selectedCategory,
   style,
+  // typeOfSearch,
 }: {
   placeholder: string;
   className?: any;
   filters: string[];
   style?: string;
+  // typeOfSearch: "Locals" | "Services" | "Products" | "All";
   selectedFilters: (type: string) => void;
-  categories: string[];
+  categories: LocalTypes[] | ProductType[] | ServiceType[];
   selectedCategory: (category: string) => void;
   onSearch: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [text, setText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  // const [category, setCategory] = useState("Supermercado");
+  const [categorySelected, setCategory] = useState("");
   const [searchType, setSearchType] = useState("Nombre");
   useEffect(() => {
     onSearch(text);
@@ -50,89 +58,100 @@ export default function BasicSearchButton({
   };
 
   const handleCategorySelection = (category: string) => {
-    setSearchType("Nombre");
-    selectedCategory(category);
-    setModalVisible(false);
+    if (category === categorySelected) {
+      setCategory("");
+
+      setSearchType("Nombre");
+      selectedCategory("");
+    } else {
+      setCategory(category);
+      setSearchType("Nombre");
+      selectedCategory(category);
+    }
   };
 
   return (
-    <View style={styles.container} className={style}>
-      <TextInput
-        style={StyleSheet.flatten([styles.textInput, className])}
-        onChangeText={(text) => setText(text)}
-        value={text}
-        placeholder={placeholder}
-        placeholderTextColor="#999"
-        selectionColor="#324e64"
-        underlineColorAndroid="transparent"
-      />
+    <View style={styles.container} className={`${style} h-[15%]`}>
+      <View className="flex flex-row ">
+        <TextInput
+          style={StyleSheet.flatten([styles.textInput, className])}
+          onChangeText={(text) => setText(text)}
+          value={text}
+          placeholder={placeholder}
+          placeholderTextColor="#999"
+          selectionColor="#324e64"
+          underlineColorAndroid="transparent"
+        />
+        {filters && (
+          <>
+            <TouchableOpacity
+              onPress={handleFilterPress}
+              style={styles.filterButton}
+            >
+              <Ionicons name="ellipsis-vertical" size={24} color="black" />
+            </TouchableOpacity>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    Selecciona el tipo de búsqueda
+                  </Text>
+                  <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                  >
+                    {filters.length > 0 &&
+                      searchType !== "Categoria" &&
+                      filters.map((filter, index) => (
+                        <Pressable
+                          onPress={() => handleSelectSearchType(filter)}
+                          style={styles.modalOption}
+                          key={index}
+                        >
+                          <Text style={styles.modalOptionText}>{filter}</Text>
+                        </Pressable>
+                      ))}
+                  </ScrollView>
 
-      {filters && (
-        <>
-          <TouchableOpacity
-            onPress={handleFilterPress}
-            style={styles.filterButton}
-          >
-            <Ionicons name="ellipsis-vertical" size={24} color="black" />
-          </TouchableOpacity>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  Selecciona el tipo de búsqueda
-                </Text>
-                <ScrollView
-                  contentContainerStyle={{ flexGrow: 1 }}
-                  keyboardShouldPersistTaps="handled"
-                >
-                  {filters.length > 0 &&
-                    searchType !== "Categoria" &&
-                    filters.map((filter, index) => (
-                      <Pressable
-                        onPress={() => handleSelectSearchType(filter)}
-                        style={styles.modalOption}
-                        key={index}
-                      >
-                        <Text style={styles.modalOptionText}>{filter}</Text>
-                      </Pressable>
-                    ))}
-                  {categories.length > 0 &&
-                    searchType === "Categoria" &&
-                    categories.map((category, index) => (
-                      <Pressable
-                        onPress={() => handleCategorySelection(category)}
-                        style={styles.modalOption}
-                        key={index}
-                        className="mt-10"
-                      >
-                        <Text style={styles.modalOptionText}>{category}</Text>
-                      </Pressable>
-                    ))}
-                </ScrollView>
-
-                <Pressable
-                  onPress={() => setModalVisible(false)}
-                  style={styles.closeButton}
-                >
-                  <Text style={styles.closeButtonText}>Cerrar</Text>
-                </Pressable>
+                  <Pressable
+                    onPress={() => setModalVisible(false)}
+                    style={styles.closeButton}
+                  >
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          </Modal>
-        </>
-      )}
+            </Modal>
+          </>
+        )}
+      </View>
+      {categories.length !== 0 && categories ? (
+        <ScrollView className="mt-2 w-full" horizontal={true}>
+          {categories.map((category, index) => (
+            <BasicButton
+              text={category.name}
+              key={index}
+              style="ml-2"
+              background={
+                categorySelected === category.name ? "#ff7034" : undefined
+              }
+              onPress={() => handleCategorySelection(category.name)}
+            />
+          ))}
+        </ScrollView>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
