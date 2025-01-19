@@ -38,7 +38,7 @@ const avaliableItems = ["Locales", "Servicios", "Productos"];
 
 export default function Search() {
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
-    "locals"
+    "locals",
   );
 
   return (
