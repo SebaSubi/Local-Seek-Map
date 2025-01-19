@@ -20,6 +20,7 @@ import BasicSearchButton from "./BasicSearchBar";
 import { Stack } from "expo-router";
 import { getLocalTypes } from "../libs/localType";
 import { getServiceTypes } from "../libs/serviceType";
+import { getProductTypes } from "../libs/productType";
 
 const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
@@ -53,7 +54,7 @@ const SearchComponent = () => {
       setLocals(localsData);
       setProducts(productsData);
       setServices(serviceData);
-      setLocalCategories(localTypes);
+      setLocalCategories(localTypes.allCategories);
       setServiceCategories(serviceTypes);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -65,7 +66,7 @@ const SearchComponent = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      setProductCategories(data.allCategories); //this is alright idk why the object retuned uis something like this {allCategories:{...}}
+      setProductCategories(data.allCategories); //this is alright idk why the object retuned is something like this {allCategories:{...}}
     } catch (err) {
       // console.error("Error fetching categories", err);
       // Alert.alert("Error", "Fallo al cargar las categorías");
@@ -125,14 +126,24 @@ const SearchComponent = () => {
               />
             </View>
             <View
-              className="w-full h-full mt-[-13%]"
+              className="w-full h-full "
               style={{ display: viewType === "products" ? "flex" : "none" }}
             >
               <FlatList
                 data={products}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => <ProductContainer product={item} />}
+                renderItem={({ item }) => {
+                  const category = productCategories.find(
+                    (category) => category.id === item.productTypeId
+                  );
+                  return (
+                    <ProductContainer
+                      product={item}
+                      productCategory={category ? category.name : ""}
+                    />
+                  );
+                }}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
