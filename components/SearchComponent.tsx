@@ -35,6 +35,7 @@ const SearchComponent = () => {
 
   useEffect(() => {
     fetchData();
+    fetchCategories();
   }, []);
 
   const fetchData = async () => {
@@ -58,6 +59,16 @@ const SearchComponent = () => {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getProductTypes();
+      setProductCategories(data.allCategories); //this is alright idk why the object retuned uis something like this {allCategories:{...}}
+    } catch (err) {
+      // console.error("Error fetching categories", err);
+      // Alert.alert("Error", "Fallo al cargar las categorías");
     }
   };
 

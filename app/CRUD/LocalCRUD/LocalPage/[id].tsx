@@ -49,7 +49,7 @@ export default function LocalPage() {
     <>
       <Stack.Screen
         options={{
-          header: () => <Header title={name as string} />,
+          header: () => <Header title={(name as string) ?? "local"} />,
         }}
       />
       <View
