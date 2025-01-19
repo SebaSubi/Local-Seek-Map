@@ -5,10 +5,6 @@ import { Link } from "expo-router";
 import { colors } from "../constants/colors";
 import { getIfLocalOpen } from "../libs/local";
 
-type LocalContainerProps = {
-  local: LocalDisplay;
-};
-
 export default function LocalContainer({ local }: { local: Local }) {
   const [isOpen, setIsOpen] = useState(false);
 
