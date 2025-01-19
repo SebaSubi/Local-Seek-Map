@@ -38,7 +38,7 @@ export async function getDisplayServices() {
 
 export async function getDisplayServicesByName(name: string) {
   try {
-    const rawData = await fetch(`${API_URL}/service/name-search/${name}`);
+    const rawData = await fetch(`${API_URL}/service/name-search?name=${name}`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Services by name");
     }
@@ -88,10 +88,56 @@ export async function getOpenServices() {
   }
 }
 
+export async function getIfServiceOpen(id: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service/open-service/${id}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch open if service open");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting open if service open", error);
+  }
+}
+
+export async function getOpenServicesByName(name: string) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/open-services-name?name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch open services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting open services", error);
+  }
+}
+
+export async function getOpenServicesByNameAndCategory(
+  name: string,
+  category: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/category-open?category=${category}&name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch open services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting open services", error);
+  }
+}
+
 export async function getServicesByCategory(category: string) {
   try {
     const rawData = await fetch(
-      `${API_URL}/service/category-search/${category}`,
+      `${API_URL}/service/category-search/${category}`
     );
     if (!rawData.ok) {
       throw new Error("Failed to fetch services by category");
@@ -100,6 +146,26 @@ export async function getServicesByCategory(category: string) {
     return json;
   } catch (error) {
     console.log("Error getting services by category", error);
+  }
+}
+
+export async function getServicesByCategoryAndName(
+  category: string,
+  name: string
+) {
+  // category.replaceAll('%20', ' ');
+  //nestJS automatically changes the spaces to %20 so this isnt necessary in the end
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/category-name?category=${category}&name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch services by category and name");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting services by category and name", error);
   }
 }
 

@@ -5,10 +5,7 @@ import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import {
-  LocalHours,
-  LocalServiceSchedule,
-} from "../../../../schema/GeneralSchema";
+import { LocalServiceSchedule } from "../../../../schema/GeneralSchema";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 import BasicWarning from "../../../../components/BasicWarning";
 import TimeSelect from "../../../../components/TimeSelect";
@@ -163,7 +160,10 @@ export default function CreateProduct() {
           header: () => <Header title="Crear Horario" />,
         }}
       />
-      <ScrollView keyboardShouldPersistTaps="handled" className="w-full h-full">
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        className="w-full h-full mb-32"
+      >
         <View
           className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
         >

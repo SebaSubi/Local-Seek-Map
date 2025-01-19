@@ -41,11 +41,11 @@ export interface LocalProduct {
 }
 
 export interface LocalSchedule {
-  id: string;
-  local: Local;
+  id?: string;
+  local?: Local;
   localId: string;
   dateFrom: Date;
-  dateTo: Date | null;
+  dateTo?: Date | null;
   dayNumber: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
@@ -90,25 +90,25 @@ export interface ProductType {
 }
 
 export interface Service {
-  id: string;
-  local: Local;
+  id?: string | null;
+  local?: Local | null;
   localId: string;
   name: string;
-  serviceType: ServiceType;
+  serviceType?: ServiceType | null;
   serviceTypeId: string;
   description: string;
-  image: string | null;
+  image?: string | null;
   reservationURL: string | null;
   dateFrom: Date;
-  dateTo: Date | null;
-  schedule: LocalServiceSchedule[];
+  dateTo?: Date | null;
+  schedule?: LocalServiceSchedule[] | null;
 }
 
 export interface LocalServiceSchedule {
-  id: string;
+  id?: string;
   localServiceId: string;
   dateFrom: Date;
-  dateTo: Date | null;
+  dateTo?: Date | null;
   dayNumber: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
@@ -116,12 +116,12 @@ export interface LocalServiceSchedule {
   SecondShiftFinish: string | null;
   ThirdShiftStart: string | null;
   ThirdShiftFinish: string | null;
-  localService: Service;
+  localService?: Service;
 }
 
 export interface ServiceType {
   id: string;
-  localService: Service[];
+  localService?: Service[];
   name: string;
 }
 

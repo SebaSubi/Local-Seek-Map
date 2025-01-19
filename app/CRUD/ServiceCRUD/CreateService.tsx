@@ -24,6 +24,7 @@ import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
+import { Picker } from "@react-native-picker/picker";
 
 export default function CreateProduct() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -32,14 +33,25 @@ export default function CreateProduct() {
     name: "default",
   });
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
 
   const localId = useLocalIdStore((state) => state.localId);
-
-  const [image, setImage] = useState<string | null>(null);
 
   const nameRef = useRef<any>(null);
   const descriptionRef = useRef<any>(null);
   const URLRef = useRef<any>(null);
+
+  function fetchServiceTypes() {
+    const fetchData = async () => {
+      const serviceTypes = await getServiceTypes();
+      setServiceTypes(serviceTypes);
+    };
+    fetchData();
+  }
+
+  useEffect(() => {
+    fetchServiceTypes();
+  }, []);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -68,56 +80,37 @@ export default function CreateProduct() {
     const reservationURL = URLRef.current.getValue();
     const serviceTypeId = selectedType.id;
 
-    if (
-      !name ||
-      !description ||
-      !reservationURL ||
-      !image ||
-      serviceTypeId === "0000"
-    ) {
+    if (!name || !description || !reservationURL || serviceTypeId === "0000") {
       Alert.alert("Por favor rellenar los campos obligatorios");
       return;
     }
 
     try {
-      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen.");
-        return;
-      }
+      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen.");
+      //   return;
+      // }
 
       const newService: Service = {
         name,
         localId,
         description,
         reservationURL,
-        imgURL: uploadedImageUrl,
+        // image: uploadedImageUrl,
         serviceTypeId,
         dateFrom: new Date(),
       };
 
       // console.log(createService(newService));
       await createService(newService);
-      Alert.alert("Éxito", "Local creado exitosamente");
-      nameRef.current.setValue("");
-      descriptionRef.current.setValue("");
+      // Alert.alert("Éxito", "Local creado exitosamente");
       setImage(null);
     } catch (error) {
+      console.log(error);
       Alert.alert("Error", "No se pudo crear el local.");
     }
   };
-
-  function fetchServiceTypes() {
-    const fetchData = async () => {
-      const serviceTypes = await getServiceTypes();
-      setServiceTypes(serviceTypes);
-    };
-    fetchData();
-  }
-
-  useEffect(() => {
-    fetchServiceTypes();
-  }, []);
 
   return (
     <ScrollView
@@ -150,6 +143,7 @@ export default function CreateProduct() {
         title="Descripcion del Servicio: "
         ref={descriptionRef}
       />
+
       <BasicTextInput
         inputType="text"
         value=""
@@ -158,47 +152,6 @@ export default function CreateProduct() {
         title="URL Reservas o Numero: "
         ref={URLRef}
       />
-      {/* <BasicButton
-        style="mt-5"
-        text="Categoria"
-        onPress={() => setTypeModalVisibility(true)}
-      /> */}
-      {/* <Modal
-        animationType="slide"
-        transparent={true}
-        visible={typeModalVisibility}
-        onRequestClose={() => setTypeModalVisibility(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Selecciona el tipo de búsqueda
-            </Text>
-            {serviceTypes.length === 0 ? (
-              <Text> No hay tipos disponibles</Text>
-            ) : (
-              serviceTypes.map((category, index) => (
-                <Pressable
-                  onPress={() => {
-                    setSelectedType(category);
-                    setTypeModalVisibility(false);
-                  }}
-                  style={styles.modalOption}
-                  key={index}
-                >
-                  <Text style={styles.modalOptionText}>{category.name}</Text>
-                </Pressable>
-              ))
-            )}
-            <Pressable
-              onPress={() => setTypeModalVisibility(false)}
-              style={styles.closeButton}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal> */}
 
       <Modal
         animationType="slide"

@@ -2,6 +2,7 @@ import { Alert } from "react-native";
 import { Local } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 import axios from "axios";
+import { validateEmail } from "../components/Register";
 
 // const API_URL =
 //   Platform.OS === "android"
@@ -27,9 +28,9 @@ export async function getLocals() {
   }
 }
 
-export async function getLocalsByCategory(category: string) {
+export async function getLocalsByCategory(category = "Supermercado") {
   try {
-    const rawData = await fetch(`${API_URL}categoryName/${category}`);
+    const rawData = await fetch(`${API_URL}/category/${category}`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Stores by category");
     }
@@ -37,6 +38,42 @@ export async function getLocalsByCategory(category: string) {
     return json;
   } catch (error) {
     console.log("Error getting stores by category", error);
+  }
+}
+
+export async function getLocalsByCategoryAndName(
+  category: string,
+  name: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/category-name?category=${category}&name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Error fetching stores by name and category");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getOpenLocalsByCategoryAndName(
+  category: string,
+  name: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/category-open?category=${category}&name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Error fetching open stores by name and category");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -53,9 +90,22 @@ export async function getIfLocalOpen(id: string) {
   }
 }
 
+export async function getOpenLocalsByName(name: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/open-name?name=${name}`);
+    if (!rawData.ok) {
+      throw new Error("Error fetching open stores by name");
+    }
+    const json = rawData.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function getLocalsByName(name: string) {
   try {
-    const rawData = await fetch(`${API_URL}/searchName/${name}`);
+    const rawData = await fetch(`${API_URL}/search-name?name=${name}`);
     if (!rawData.ok) {
       throw new Error("Error fetching locals by name");
     }
@@ -78,20 +128,6 @@ export async function getOpenLocals() {
     console.log(error);
   }
 }
-
-export async function getStoresByCategory(category: string) {
-  try {
-    const rawData = await fetch(`${API_URL}/categoryName/${category}`);
-    if (!rawData.ok) {
-      throw new Error("Error getting open stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function getDisplayLocals() {
   try {
     const rawData = await fetch(`${API_URL}/display`);

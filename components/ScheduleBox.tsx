@@ -29,7 +29,7 @@ export default function ScheduleBox({
     return (
       <>
         <View
-          style={{ height: schedules.length * 48 }}
+          style={{ height: schedules?.length * 48 }}
           className="flex flex-col w-4/5 bg-[#e1e8e8] rounded-2xl mt-5"
         >
           {schedules.map((schedule, index) => (
