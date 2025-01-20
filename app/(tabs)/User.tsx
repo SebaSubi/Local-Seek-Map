@@ -16,6 +16,7 @@ export default function User() {
       <View className="flex items-center mt-28">
         <UserComponent />
       </View>
+      <Text>Mi local</Text>
     </View>
   );
 }

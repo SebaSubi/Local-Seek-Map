@@ -6,6 +6,7 @@ interface BasicSelectableProps {
   style?: string;
   background?: string;
   onPress?: () => void;
+  textStyle?: string;
 }
 
 export default function BasicButton({
@@ -14,6 +15,7 @@ export default function BasicButton({
   style,
   onPress,
   background,
+  textStyle,
 }: BasicSelectableProps) {
   return (
     <Pressable
@@ -27,7 +29,7 @@ export default function BasicButton({
         </View>
       )}
 
-      <Text className="ml-3 mr-3">{text}</Text>
+      <Text className={`ml-3 mr-3 ${textStyle}`}>{text}</Text>
     </Pressable>
   );
 }

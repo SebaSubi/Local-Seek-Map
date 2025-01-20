@@ -5,26 +5,44 @@ import { PersonCircleIcon, UpdateLogo } from "./Logos";
 import BasicButton from "./BasicButton";
 
 export default function UserComponent() {
+  const testEmail = "user.very.longgggggggg@gmail.com";
   return (
     <View
-      className={`w-[80%] rounded-full h-24 flex flex-row items-center`}
+      className={`rounded-full h-24 flex flex-row items-center`}
       style={{ backgroundColor: colors.primary.lightGray }}
     >
       <PersonCircleIcon color={colors.primary.blue} size={90} />
-      <View className="flex flex-col ml-1 ">
-        <Text className="text-xl font-bold">User name</Text>
-        <Text className="text-base ml-[1px]">user@gmail.com</Text>
-      </View>
-      <Pressable
-        className={`flex flex-row justify-center items-center w-fit h-9 rounded-3xl bg-[${colors.primary.blue}] ml-4`}
-        // onPress={onPress}
-      >
-        <View className="ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
-          <UpdateLogo />
+      <View className="flex flex-col">
+        <View className="flex flex-row items-center ">
+          <Text className="text-xl font-bold">User name very long</Text>
+          <View className="ml-2 mr-6 mt-2">
+            <BasicButton
+              text="Editar"
+              background={colors.primary.blue}
+              logo={<UpdateLogo />}
+              textStyle="text-white"
+            />
+          </View>
         </View>
-
-        <Text className="ml-3 mr-3 text-white">Editar</Text>
-      </Pressable>
+        <Text className="text-base ml-[1px]">
+          {testEmail.length > 32 ? testEmail.slice(0, 32) + "..." : testEmail}
+        </Text>
+      </View>
     </View>
   );
+}
+
+{
+  /* <View className="flex flex-col ">
+        <Text className="text-xl font-bold">User name</Text>
+        <Text className="text-base ml-[1px]">user.verylargo@gmail.com</Text>
+      </View>
+      <View className="ml-2 mr-4">
+        <BasicButton
+          text="Editar"
+          background={colors.primary.blue}
+          logo={<UpdateLogo />}
+          textStyle="text-white"
+        />
+      </View> */
 }
