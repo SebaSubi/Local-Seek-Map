@@ -33,7 +33,7 @@ export default function ProductContainer({
         {/* <View className="mt-3">
           <Text style={styles.categoryText}>{productCategory}</Text>
         </View> */}
-        <View className="w-[70%] h-[47%] flex items-center justify-center rounded-3xl overflow-hidden mt-6">
+        <View className="w-[70%] h-[48%] flex items-center justify-center rounded-3xl overflow-hidden mt-6 bg-white">
           <Image
             source={{
               uri: product.imgURL || "https://via.placeholder.com/150",
@@ -51,7 +51,11 @@ export default function ProductContainer({
           {/* <Text className="text-sm font-thin ml-2">
             Categoría: {productCategory}
           </Text> */}
-          <Text className="text-sm font-thin ml-2">Marca: {product.brand}</Text>
+          <Text
+            className={`text-sm ml-2 ${product.brand ? "font-thin" : "font-black"}`}
+          >
+            Marca: {product.brand ? product.brand : "No tiene"}
+          </Text>
           <Text className="text-sm font-thin ml-2">
             Cantidad: {product.mesurement}
           </Text>
