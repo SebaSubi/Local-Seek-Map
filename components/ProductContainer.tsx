@@ -19,18 +19,20 @@ export default function ProductContainer({
           name: product.name,
           description: product.description,
           image: product.imgURL ?? "https://via.placeholder.com/150",
+          mesurement: product.mesurement,
+          brand: product.brand,
         },
       }}
       asChild
     >
       <Pressable
-        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-64 rounded-3xl ml-3"
+        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3"
         key={product.id}
       >
-        <View className="mt-3">
+        <View className="mt-1">
           <Text style={styles.categoryText}>{productCategory}</Text>
         </View>
-        <View className="w-[70%] h-[47%] flex items-center justify-center rounded-3xl overflow-hidden mt-1">
+        <View className="w-[70%] h-[48%] flex items-center justify-center rounded-3xl overflow-hidden mt-1 bg-white">
           <Image
             source={{
               uri: product.imgURL || "https://via.placeholder.com/150",
@@ -38,14 +40,16 @@ export default function ProductContainer({
             style={{
               height: "100%",
               width: "100%",
-              borderRadius: 4,
+              // borderRadius: 20,
               resizeMode: "contain",
             }}
           />
         </View>
         <Text style={styles.title}>{product.name}</Text>
         <View>
-          <Text style={styles.text}>Marca: {product.brand}</Text>
+          <Text style={styles.text}>
+            Marca: {product.brand ? product.brand : "No tiene"}
+          </Text>
           <Text style={styles.text}>Cantidad: {product.mesurement}</Text>
           {/* <Text style={styles.text}>Precio: ${product.price !== undefined ? product.price.toFixed(2) : 'N/A'}</Text> */}
           {/* <Text style={styles.text}>Descripción: {product.description}</Text> */}

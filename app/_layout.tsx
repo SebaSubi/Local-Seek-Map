@@ -23,7 +23,7 @@ function AuthBasedLayout() {
       <Stack.Screen
         name="index"
         options={{
-          header: () => <Header title="Main" />,
+          header: () => <Header title="Iniciar Sesion" />, //TODO: we have to make this so it can change if you have to log in or to register
           headerStyle: { backgroundColor: "#fff" },
         }}
       />
