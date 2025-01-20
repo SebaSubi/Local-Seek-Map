@@ -41,17 +41,9 @@ const SearchComponent = () => {
   const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([]);
   const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
-  const [viewType, setViewType] = useState<
-    "locales" | "productos" | "servicios"
-  >("locales");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-=======
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
-    "locals"
+    "locals",
   );
->>>>>>> 5449186a011f4e7a243c09927f321e7bac4b4429
 
   useEffect(() => {
     fetchData();
@@ -82,129 +74,6 @@ const SearchComponent = () => {
     }
   };
 
-<<<<<<< HEAD
-  const handlePress = (item: LocalDisplay | Product) => {
-    if (viewType === "productos") {
-      setSelectedProduct(item as Product);
-      setIsModalVisible(true);
-    } else {
-      Alert.alert("Item Pressed", `You pressed: ${item.name}`);
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={[
-            styles.button,
-            viewType === "locales"
-              ? styles.buttonActive
-              : styles.buttonInactive,
-          ]}
-          onPress={() => setViewType("locales")}
-        >
-          <Text style={styles.buttonText}>Locales</Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.button,
-            viewType === "productos"
-              ? styles.buttonActive
-              : styles.buttonInactive,
-          ]}
-          onPress={() => setViewType("productos")}
-        >
-          <Text style={styles.buttonText}>Productos</Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.button,
-            viewType === "servicios"
-              ? styles.buttonActive
-              : styles.buttonInactive,
-          ]}
-          onPress={() => setViewType("servicios")}
-        >
-          <Text style={styles.buttonText}>Servicios</Text>
-        </Pressable>
-      </View>
-
-      {loading ? (
-        <Text style={styles.loadingText}>Cargando datos...</Text>
-      ) : viewType === "locales" ? (
-        <FlatList
-          data={locals}
-          renderItem={({ item }) => <LocalContainer local={item} />}
-          keyExtractor={(item) => item.id.toString()}
-          onRefresh={() => fetchData()}
-          refreshing={loading}
-        />
-      ) : viewType === "productos" ? (
-        <FlatList
-          data={products}
-          renderItem={({ item }) => <ProductContainer product={item} />}
-          keyExtractor={(item) => item.id!.toString()}
-          onRefresh={() => fetchData()}
-          refreshing={loading}
-        />
-      ) : (
-        <FlatList
-          data={services}
-          renderItem={({ item }) => <ServiceContainer service={item} />}
-          keyExtractor={(item) => item.id!.toString()}
-          onRefresh={() => fetchData()}
-          refreshing={loading}
-        />
-      )}
-
-      {selectedProduct && (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => setIsModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Image
-                source={{
-                  uri:
-                    selectedProduct.imgURL || "https://via.placeholder.com/150",
-                }}
-                style={styles.modalImage}
-              />
-              <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
-
-              <View style={styles.modalInfoContainer}>
-                <Text style={styles.modalInfoLabel}>Descripción:</Text>
-                <Text style={styles.modalInfoText}>
-                  {selectedProduct.description || "No disponible"}
-                </Text>
-
-                <Text style={styles.modalInfoLabel}>Marca:</Text>
-                <Text style={styles.modalInfoText}>
-                  {selectedProduct.brand || "No disponible"}
-                </Text>
-
-                <Text style={styles.modalInfoLabel}>Medida:</Text>
-                <Text style={styles.modalInfoText}>
-                  {selectedProduct.mesurement || "No disponible"}
-                </Text>
-              </View>
-
-              <Pressable
-                style={styles.customButton}
-                onPress={() => setIsModalVisible(false)}
-              >
-                <Text style={styles.customButtonText}>Cerrar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      )}
-    </View>
-=======
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
@@ -277,7 +146,7 @@ const SearchComponent = () => {
                 numColumns={2}
                 renderItem={({ item }) => {
                   const category = productCategories.find(
-                    (category) => category.id === item.productTypeId
+                    (category) => category.id === item.productTypeId,
                   );
                   return (
                     <ProductContainer
@@ -314,7 +183,6 @@ const SearchComponent = () => {
         )}
       </View>
     </>
->>>>>>> 5449186a011f4e7a243c09927f321e7bac4b4429
   );
 };
 
