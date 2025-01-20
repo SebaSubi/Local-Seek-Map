@@ -80,9 +80,9 @@ const SearchComponent = () => {
           headerShown: false,
         }}
       />
-      <View className="flex flex-col items-center justify-center bg-[#1a253d] pt-[23%] z-10">
+      <View className="flex flex-col items-center justify-center bg-[#1a253d] pt-[23%] z-10 ">
         {/* <BasicSearchButton /> */}
-        <View className="flex flex-row items-center justify-center ">
+        <View className="flex flex-row items-center justify-center overflow-hidden ">
           <BasicButton
             text="Locales"
             style=" w-28 mr-2"
@@ -108,7 +108,7 @@ const SearchComponent = () => {
         {loading ? (
           <Text style={styles.loadingText}>Cargando datos...</Text>
         ) : (
-          <View className="w-full h-full bg-white rounded-t-3xl mt-4">
+          <View className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
             <View
               className="w-full h-full"
               style={{ display: viewType === "locals" ? "flex" : "none" }}

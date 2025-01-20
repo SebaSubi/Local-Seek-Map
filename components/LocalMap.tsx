@@ -1,7 +1,5 @@
 import MapView, { Marker } from "react-native-maps";
 
-import { useLocalServiceIdStore } from "../libs/localServiceZustang";
-
 export default function LocalMap({
   localCoordinates,
 }: {

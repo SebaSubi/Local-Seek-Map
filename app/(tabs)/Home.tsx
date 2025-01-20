@@ -7,7 +7,8 @@ import { LogOutIcon } from "../../components/Logos";
 
 export default function Tab() {
   return (
-    <View className="h-full">
+    // <View className="h-full">
+    <>
       <Stack.Screen
         options={{
           header: () => <Header title="Principal" />,
@@ -16,7 +17,8 @@ export default function Tab() {
       <View className="h-full w-full">
         <SearchComponent />
       </View>
-    </View>
+    </>
+    // {/* </View> */}
   );
 }
 
