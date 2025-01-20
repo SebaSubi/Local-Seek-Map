@@ -27,7 +27,7 @@ export default function ProductContainer({
       asChild
     >
       <Pressable
-        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-64 rounded-3xl ml-3"
+        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3"
         key={product.id}
       >
         {/* <View className="mt-3">
@@ -41,7 +41,7 @@ export default function ProductContainer({
             style={{
               height: "100%",
               width: "100%",
-              borderRadius: 4,
+              // borderRadius: 20,
               resizeMode: "contain",
             }}
           />
