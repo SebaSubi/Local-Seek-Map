@@ -1,15 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
-  Dimensions,
-  Alert,
-  Modal,
-  Pressable,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import {
@@ -20,27 +10,42 @@ import {
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { Product, ProductType } from "../../../schema/GeneralSchema";
-import SmallProductCard from "../../../components/SmallProductCard";
-import Search from "../../(tabs)/Search";
+import ProductContainer from "../../../components/ProductContainer";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]); //this are the products in display
-  const [loading, setLoading] = useState(true); //idk what this does but im not touching it
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); //the selected Product is the product that the modal is going to show
-  const [isModalVisible, setIsModalVisible] = useState(false); //boolean variable, we use it to show the modal or to not show it at all
+  const [loading, setLoading] = useState(true); //Makes sure the user gets feedback when refreshing the FlatList, necessary for the flatList refresh to work
   const [searchText, setSearchText] = useState<string>(""); //this is the text that is inputed in the search bar
   const [categories, setCategories] = useState<ProductType[]>([]); //this are all the categories that we get from all the products
   const [filter, setSelectedFilter] = useState<string>(""); //this is the filter that is going to be used to filter the products, its either Quitar (wich filters without a categoria and by name) or Categoria (Filters by category)
-  const fileringCategory = useRef<string>("");
+  const [selectedCategory, setSelctedCategory] = useState<string>("");
 
-  function categorieNames(): string[] {
-    //this functions return the name of the categories of all the products
-    return categories.flatMap((cat) => cat.name);
+  async function fetchAndSetProducts() {
+    setLoading(true); // To show the user that it is in fact loading
+    if (
+      selectedCategory !== "" &&
+      (filter === "" || filter === "Quitar Filtro") // If there is no filter, bit there is a category selected, that means its a name and category search
+    ) {
+      const products = await getProductsByCategoryAndName(
+        selectedCategory,
+        searchText
+      );
+      setProducts(products);
+      setLoading(false); // Sets the loading to false so the user knows its done
+    } else {
+      // for now we have no other options, but if we figure out a few filters, they would go here
+      const products = await searchProductsByName(searchText);
+      setProducts(products);
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    fetchAndSetProducts();
+  }, [selectedCategory, searchText, filter]); //If the search changes in anyway, we need to get the products with the new data
+
+  useEffect(() => {
+    fetchCategories(); // The categories will not change while the user is searching, so they should only be called once
   }, []);
 
   const fetchCategories = async () => {
@@ -53,171 +58,57 @@ const ReadProductScreen = () => {
     }
   };
 
-  useEffect(() => {
-    // console.log(searchText);
-    // console.log(filter);
-    if (filter === "" || filter === "Quitar Filtro") {
-      //TODO: filter just by name
-      getProductsByName();
-    } else {
-      if (filter !== "Categoria") {
-        getProductsByCategoryAndSearch(fileringCategory.current);
-      }
-    }
-  }, [searchText, categories, filter]);
-
-  function getProductsByName() {
-    const searchProducts = async () => {
-      try {
-        const result = await searchProductsByName(searchText);
-        setProducts(result);
-      } catch (error) {}
-    };
-    searchProducts();
-  }
-
-  const fetchProducts = async () => {
-    try {
-      const response: [] = await getProducts();
-
-      if (response && response.length > 0) {
-        setProducts(response);
-      } else {
-        Alert.alert("Error", "No se encontraron productos");
-      }
-    } catch (error) {
-      console.log("Error al obtener productos", error);
-      Alert.alert("Error", "Fallo al cargar los productos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleProductPress = (product: Product) => {
-    setSelectedProduct(product);
-    setIsModalVisible(true);
-  };
-
-  function getProductsByCategoryAndSearch(categoryName: string) {
-    const fetchData = async () => {
-      const locals = await getProductsByCategoryAndName(
-        categoryName,
-        searchText
-      );
-      if (locals && locals.length > 0) {
-        setProducts(locals);
-      } else {
-        // Alert.alert("Error", "No se encontraron productos");   FIXME: we may have tp figure out of making this work
-        setProducts([]);
-      }
-    };
-    fetchData();
-  }
-
-  const selectedCategory = (cat: string) => {
-    getProductsByCategoryAndSearch(cat);
-    fileringCategory.current = cat;
+  const handleselectedCategory = (cat: string) => {
+    //Sets the category to the one selected in the searchbar
+    setSelctedCategory(cat);
   };
 
   return (
-    <View style={styles.container}>
+    <View className="bg-[#1a253d] w-full h-full flex flex-col">
       <Stack.Screen
         options={{
           header: () => <Header title="Consultar Producto" />,
         }}
       />
-      <View style={styles.searchButtonContainer}>
-        <BasicSearchButton
-          placeholder="Buscar"
-          onSearch={setSearchText}
-          selectedCategory={selectedCategory}
-          categories={categorieNames()}
-          selectedFilters={setSelectedFilter}
-          filters={["Categoria", "Quitar Filtro"]}
-        />
-      </View>
+      <BasicSearchButton
+        placeholder="Buscar"
+        onSearch={setSearchText}
+        selectedCategory={handleselectedCategory}
+        categories={categories}
+        selectedFilters={setSelectedFilter}
+        filters={[]}
+        style="mt-16"
+      />
+
       {loading ? (
         <Text style={styles.loadingText}>Cargando productos...</Text>
       ) : (
-        <FlatList
-          data={products}
-          renderItem={({ item }) => {
-            const category = categories.find(
-              (cat) => cat.id === item.productTypeId
-            );
-            return (
-              <SmallProductCard
-                name={item.name}
-                imgURL={item.imgURL ?? "https://via.placeholder.com/150"}
-                category={category ? category.name : "Sin categoría"}
-                onPress={() => handleProductPress(item)}
-              />
-            );
-          }}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={3}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
-
-      {selectedProduct && (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => setIsModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Image
-                source={{
-                  uri:
-                    selectedProduct.imgURL || "https://via.placeholder.com/150",
-                }}
-                style={styles.modalImage}
-                resizeMode="center"
-              />
-              <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
-
-              <View style={styles.modalInfoContainer}>
-                <Text style={styles.modalInfoLabel}>Descripción:</Text>
-                <Text style={styles.modalInfoText}>
-                  {selectedProduct.description || "No disponible"}
-                </Text>
-
-                <Text style={styles.modalInfoLabel}>Marca:</Text>
-                <Text style={styles.modalInfoText}>
-                  {selectedProduct.brand || "No disponible"}
-                </Text>
-
-                <Text style={styles.modalInfoLabel}>Medida:</Text>
-                <Text style={styles.modalInfoText}>
-                  {selectedProduct.mesurement || "No disponible"}
-                </Text>
-              </View>
-
-              <Pressable
-                style={styles.customButton}
-                onPress={() => setIsModalVisible(false)}
-              >
-                <Text style={styles.customButtonText}>Cerrar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+        <View className="w-full h-full bg-white rounded-t-3xl">
+          <FlatList
+            data={products}
+            horizontal={false}
+            numColumns={2}
+            renderItem={({ item, index }) => {
+              const category = categories.find(
+                (cat) => cat.id === item.productTypeId //This will get fixed when we bring the category name directly from the data base
+              );
+              return (
+                <ProductContainer
+                  product={item}
+                  productCategory={""}
+                  key={index}
+                />
+              );
+            }}
+            keyExtractor={(item) => item.id!.toString()}
+          />
+        </View>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 20,
-    backgroundColor: "#f8f8f8",
-    justifyContent: "center",
-  },
   searchButtonContainer: {
     justifyContent: "center",
     alignItems: "center",
@@ -243,46 +134,111 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
-    width: "90%",
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalInfoContainer: {
-    width: "100%",
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
-  modalInfoLabel: {
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  modalInfoText: {
-    marginBottom: 15,
-    lineHeight: 18,
-  },
-  modalImage: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
 });
 
 export default ReadProductScreen;
+
+// {
+//   selectedProduct && (
+//     <Modal
+//       animationType="slide"
+//       transparent={true}
+//       visible={isModalVisible}
+//       onRequestClose={() => setIsModalVisible(false)}
+//     >
+//       <View style={styles.modalContainer}>
+//         <View style={styles.modalContent}>
+//           <Image
+//             source={{
+//               uri:
+//                 selectedProduct.imgURL || "https://via.placeholder.com/150",
+//             }}
+//             style={styles.modalImage}
+//             resizeMode="center"
+//           />
+//           <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
+
+//           <View style={styles.modalInfoContainer}>
+//             <Text style={styles.modalInfoLabel}>Descripción:</Text>
+//             <Text style={styles.modalInfoText}>
+//               {selectedProduct.description || "No disponible"}
+//             </Text>
+
+//             <Text style={styles.modalInfoLabel}>Marca:</Text>
+//             <Text style={styles.modalInfoText}>
+//               {selectedProduct.brand || "No disponible"}
+//             </Text>
+
+//             <Text style={styles.modalInfoLabel}>Medida:</Text>
+//             <Text style={styles.modalInfoText}>
+//               {selectedProduct.mesurement || "No disponible"}
+//             </Text>
+//           </View>
+
+//           <Pressable
+//             style={styles.customButton}
+//             onPress={() => setIsModalVisible(false)}
+//           >
+//             <Text style={styles.customButtonText}>Cerrar</Text>
+//           </Pressable>
+//         </View>
+//       </View>
+//     </Modal>
+//   );
+// }
+
+// useEffect(() => {
+//   // console.log(searchText);
+//   // console.log(filter);
+//   if (filter === "" || filter === "Quitar Filtro") {
+//     //TODO: filter just by name
+//     getProductsByName();
+//   } else {
+//     if (filter !== "Categoria") {
+//       getProductsByCategoryAndSearch(fileringCategory.current);
+//     }
+//   }
+// }, [searchText, categories, filter]);
+
+// function getProductsByName() {
+//   const searchProducts = async () => {
+//     try {
+//       const result = await searchProductsByName(searchText);
+//       setProducts(result);
+//     } catch (error) {}
+//   };
+//   searchProducts();
+// }
+
+// const fetchProducts = async () => {
+//   try {
+//     const response: [] = await getProducts();
+
+//     if (response && response.length > 0) {
+//       setProducts(response);
+//     } else {
+//       Alert.alert("Error", "No se encontraron productos");
+//     }
+//   } catch (error) {
+//     console.log("Error al obtener productos", error);
+//     Alert.alert("Error", "Fallo al cargar los productos");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+// function getProductsByCategoryAndSearch(categoryName: string) {
+//   const fetchData = async () => {
+//     const locals = await getProductsByCategoryAndName(
+//       categoryName,
+//       searchText
+//     );
+//     if (locals && locals.length > 0) {
+//       setProducts(locals);
+//     } else {
+//       // Alert.alert("Error", "No se encontraron productos");   FIXME: we may have tp figure out of making this work
+//       setProducts([]);
+//     }
+//   };
+//   fetchData();
+// }

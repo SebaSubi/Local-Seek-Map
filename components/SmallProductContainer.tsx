@@ -30,7 +30,7 @@ export default function ProductContainer({
         className="flex flex-col items-center mt-3 w-36 bg-[#f8f8f8] h-fit rounded-3xl"
         key={product.id}
       >
-        <View className="w-[110px] h-[110px] flex flex-wrap items-center justify-center rounded-3xl overflow-hidden bg-black mt-4">
+        <View className="w-[110px] h-[110px] flex flex-wrap items-center justify-center rounded-3xl overflow-hidden mt-4">
           <Image
             source={{
               uri: product.imgURL || "https://via.placeholder.com/150",
