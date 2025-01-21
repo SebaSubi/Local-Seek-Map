@@ -1,7 +1,15 @@
-import { Platform, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import React from "react";
 import InformationSlot from "./InformationSlot";
-import { InstagramIcon, FacebookIcon, WebIcon, LocationIcon } from "./Logos";
+import {
+  InstagramIcon,
+  FacebookIcon,
+  WebIcon,
+  LocationIcon,
+  ArrowUpRight,
+  ArrowUpRightBox,
+  WhatsAppIcon,
+} from "./Logos";
 import { Link, Stack } from "expo-router";
 import Header from "./Header";
 import LocalMap from "./LocalMap";
@@ -28,11 +36,11 @@ export default function LocalInformation({
   const wppNumber = whatsapp?.replaceAll("+", "");
 
   return (
-    <View className="flex flex-col justify-start items-center w-full">
+    <View className="flex flex-col justify-start items-center w-full h-full">
       {location ? (
         <>
           <View
-            className="flex w-10/12 h-1/2 overflow-hidden mb-4"
+            className="flex w-full h-[40%] overflow-hidden mb-4"
             style={{
               borderRadius: 20,
               backgroundColor: colors.primary.lightGray,
@@ -55,56 +63,131 @@ export default function LocalInformation({
                 : `http://maps.apple.com/?ll=${urlCoordinates}&q=${urlLocation}&t=k`
             }
           >
-            <View className="flex w-full items-center">
-              <InformationSlot
-                text={location}
-                Icon={LocationIcon}
-                IconColor="#e40033"
-              />
+            <View className="flex w-full items-start ">
+              <View className="flex flex-row items center">
+                <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
+                  Ubicación
+                </Text>
+                <View className="ml-1 mt-4">
+                  <ArrowUpRightBox size={10} />
+                </View>
+              </View>
+              <View className="flex flex-row items-center">
+                <View className="ml-2">
+                  <LocationIcon size={20} />
+                </View>
+                <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                  {location}
+                </Text>
+              </View>
             </View>
           </Link>
+          {instagram ? (
+            <Link
+              href={`instagram://user?username=${instagram}`}
+              className="mt-3"
+            >
+              <View className="flex w-full items-start">
+                <View className="flex flex-row items center">
+                  <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
+                    Instagram
+                  </Text>
+                  <View className="ml-1 mt-4">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+                <View className="flex flex-row items-center">
+                  <View className="ml-2">
+                    <InstagramIcon size={20} />
+                  </View>
+                  <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                    {instagram}
+                  </Text>
+                </View>
+              </View>
+            </Link>
+          ) : null}
+          {whatsapp ? (
+            <Link href={`https://wa.me/${wppNumber}`}>
+              <View className="flex w-full items-start ">
+                <View className="flex flex-row items center">
+                  <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
+                    WhatsApp
+                  </Text>
+                  <View className="ml-1 mt-4">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+                <View className="flex flex-row items-center">
+                  <View className="ml-2">
+                    <WhatsAppIcon size={20} />
+                  </View>
+                  <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                    {instagram}
+                  </Text>
+                  <View className="ml-1">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+              </View>
+            </Link>
+          ) : null}
+          {facebook ? (
+            <Link
+              href={`https://www.facebook.com/${facebook}`}
+              className="mt-3"
+            >
+              <View className="flex w-full items-start">
+                <View className="flex flex-row items center">
+                  <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
+                    FaceBook
+                  </Text>
+                  <View className="ml-1 mt-4">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+                <View className="flex flex-row items-center">
+                  <View className="ml-2">
+                    <FacebookIcon size={20} />
+                  </View>
+                  <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                    {instagram}
+                  </Text>
+                </View>
+              </View>
+            </Link>
+          ) : null}
+          {webpage ? (
+            <Link href={webpage} className="mt-3">
+              <View className="flex w-full items-start">
+                <View className="flex flex-row items center">
+                  <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
+                    Pagina Web
+                  </Text>
+                  <View className="ml-1 mt-4">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+                <View className="flex flex-row items-center">
+                  <View className="ml-2">
+                    <WebIcon size={20} />
+                  </View>
+                  <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                    {webpage}
+                  </Text>
+                  <View className="ml-1">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+              </View>
+            </Link>
+          ) : null}
         </>
-      ) : null}
-      {whatsapp ? (
-        <Link href={`https://wa.me/${wppNumber}`}>
-          <View className="flex w-full items-center ">
-            <InformationSlot text={`${whatsapp}`} />
-          </View>
-        </Link>
-      ) : null}
-      {instagram ? (
-        <Link href={`instagram://user?username=${instagram}`} className="mt-3">
-          <View className="flex w-full items-center">
-            <InformationSlot
-              text={instagram}
-              Icon={InstagramIcon}
-              IconColor="#fe0b81"
-            />
-          </View>
-        </Link>
-      ) : null}
-      {facebook ? (
-        <Link href={`https://www.facebook.com/${facebook}`} className="mt-3">
-          <View className="flex w-full items-center">
-            <InformationSlot
-              text={facebook}
-              Icon={FacebookIcon}
-              IconColor="#3b5998"
-            />
-          </View>
-        </Link>
-      ) : null}
-      {webpage ? (
-        <Link href={webpage} className="mt-3">
-          <View className="flex w-full items-center">
-            <InformationSlot
-              text={webpage.replace(/^https?:\/\//, "")}
-              Icon={WebIcon}
-              IconColor="#000000"
-            />
-          </View>
-        </Link>
       ) : null}
     </View>
   );
+}
+
+{
+  /* <InformationSlot text={location} Icon={LocationIcon} IconColor="#e40033" />; */
 }
