@@ -6,45 +6,67 @@ import {
   Modal,
   StyleSheet,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import {
+  createService,
   getDisplayServices,
   getDisplayServicesByName,
   getOpenServices,
   getOpenServicesByName,
+  getOpenServicesByNameAndCategory,
   getServicesByCategory,
   getServicesByCategoryAndName,
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
-import { getServiceTypeNames } from "../../../libs/serviceType";
+import {
+  getServiceTypeNames,
+  getServiceTypes,
+} from "../../../libs/serviceType";
 import { Picker } from "@react-native-picker/picker";
+import { getReactNavigationScreensConfig } from "expo-router/build/getReactNavigationConfig";
 
-const filters = ["Ubicación", "Apertura", "Categoria", "Quitar"];
+const filters = ["Apertura", "Quitar"];
 
 export default function ReadWS() {
   const [services, setServices] = useState<Service[]>([]);
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Cancha de Paddle"); //this need to change later to Deportes
-  const [serviceCateogries, setServiceCategories] = useState<string[]>([]);
+  const [serviceCateogries, setServiceCategories] = useState<ServiceType[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   async function fetchAndSetServices() {
-    if (searchFilter === "Categoria") {
-      const locals = await getServicesByCategoryAndName(
+    setLoading(true);
+    if (
+      selectedCategory !== "" &&
+      (searchFilter === "" || searchFilter === "Quitar")
+    ) {
+      const services = await getServicesByCategoryAndName(
         selectedCategory,
         search
       );
-      setServices(locals);
+      setServices(services);
+      setLoading(false);
+    } else if (selectedCategory !== "" && searchFilter === "Apertura") {
+      const services = await getOpenServicesByNameAndCategory(
+        search,
+        selectedCategory
+      );
+      setServices(services);
+      setLoading(false);
     } else if (searchFilter === "Apertura") {
       const locals = await getOpenServicesByName(search);
       setServices(locals);
+      setLoading(false);
     } else {
       const services = await getDisplayServicesByName(search);
       setServices(services);
+      setLoading(false);
     }
   }
   // async function fetchAndSetServices() {
@@ -57,48 +79,13 @@ export default function ReadWS() {
       await fetchAndSetServices();
     };
     const fetchServiceTypes = async () => {
-      const types = await getServiceTypeNames();
+      const types = await getServiceTypes();
       setServiceCategories(types);
     };
     fetchServices();
     fetchServiceTypes();
   }, [search, searchFilter, selectedCategory]);
 
-  // useEffect(() => {
-  //   if (search === "" || search === " ") {
-  //     fetchAndSetServices();
-  //   } else {
-  //     const fetchData = async () => {
-  //       const locals = await getDisplayServicesByName(search);
-  //       setServices(locals);
-  //     };
-  //     fetchData();
-  //   }
-  // }, [search]);
-
-  // function hourFilter() {
-  //   const fetchData = async () => {
-  //     const locals = await getOpenServices();
-  //     setServices(locals);
-  //   };
-  //   fetchData();
-  // }
-
-  // function storeCategoryFilter(category: string) {
-  //   const fetchData = async () => {
-  //     const locals = await getServicesByCategory(category);
-  //     setServices(locals);
-  //   };
-  //   fetchData();
-  // }
-
-  // const handleCategorySelection = (category: string) => {
-  //   if (category === "Quitar") {
-  //     fetchAndSetServices();
-  //   } else if (category === "Apertura") hourFilter();
-  //   else if (category === "Categoria") setModalVisibility(true);
-  //   setSearch("");
-  // };
   const handleSearchFilter = (filter: string) => {
     setSearchFilter(filter);
   };
@@ -108,68 +95,35 @@ export default function ReadWS() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View className="flex items-center">
-        <Stack.Screen
-          options={{
-            header: () => <Header title="Leer Local" />,
-          }}
+    <View className="bg-[#1a253d] w-full h-full flex flex-col">
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <BasicSearchButton
+        placeholder="Buscar Servicio"
+        onSearch={setSearch}
+        categories={serviceCateogries}
+        selectedCategory={handleStoreCateory}
+        filters={filters}
+        selectedFilters={handleSearchFilter}
+        style="mt-16"
+      />
+      <View className="w-full h-full bg-white rounded-t-3xl pb-60">
+        <FlatList
+          data={services}
+          horizontal={false}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <ServiceContainer service={item} categories={serviceCateogries} />
+          )}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchAndSetServices()}
+          refreshing={loading}
         />
-        <BasicSearchButton
-          placeholder="Buscar Servicio"
-          onSearch={setSearch}
-          categories={serviceCateogries}
-          selectedCategory={handleStoreCateory}
-          filters={filters}
-          selectedFilters={handleSearchFilter}
-        />
-        {services.length > 0 &&
-          services.map((service) => (
-            <ServiceContainer key={service.id} service={service} />
-          ))}
-
-        <Pressable
-          className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
-          onPress={async () => {
-            await fetchAndSetServices();
-          }}
-        >
-          <Text className="text-white">Recargar</Text>
-        </Pressable>
-        {/* <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisibility}
-          onRequestClose={() => setModalVisibility(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                Selecciona el tipo de búsqueda
-              </Text>
-              {serviceTypes.map((category, index) => (
-                <Pressable
-                  onPress={() => handleStoreCateory(category.name)}
-                  style={styles.modalOption}
-                  key={index}
-                >
-                  <Text style={styles.modalOptionText}>{category.name}</Text>
-                </Pressable>
-              ))}
-              <Pressable
-                onPress={() => setModalVisibility(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal> */}
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

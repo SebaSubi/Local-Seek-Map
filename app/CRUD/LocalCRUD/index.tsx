@@ -14,11 +14,6 @@ import Header from "../../../components/Header";
 export default function ProductCrud() {
   return (
     <>
-      <Stack.Screen
-        options={{
-          header: () => <Header title="ABM Local" />,
-        }}
-      />
       <View className="flex w-full h-full bg-white flex-col items-center ">
         <BasicSelectable
           href="/CRUD/LocalCRUD/CreateLocal"

@@ -1,3 +1,12 @@
+import {
+  Cafeteria,
+  Supermercado,
+  Heladeria,
+  Pasteleria,
+  Ferreteria,
+  Servicio,
+} from "../components/Logos";
+
 export const days = [
   "Domingo",
   "Lunes",
@@ -9,3 +18,12 @@ export const days = [
 ];
 
 export const categories = ["Apertura", "Ubicación", "Categoria", "Quitar"];
+
+export const localCategryIcons = {
+  Cafeteria,
+  Supermercado,
+  Heladeria,
+  Pasteleria,
+  Ferreteria,
+  Servicio,
+};

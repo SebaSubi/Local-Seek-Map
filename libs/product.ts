@@ -24,9 +24,14 @@ export async function getProducts() {
   }
 }
 
-export async function getProductsByCategory(category: string) {
+export async function getProductsByCategoryAndName(
+  categoryId: string,
+  name: string
+) {
   try {
-    const rawData = await fetch(`${API_URL}/category-search/${category}`);
+    const rawData = await fetch(
+      `${API_URL}/category-name-search?category=${categoryId}&name=${name}`
+    );
     if (!rawData.ok) {
       throw new Error("Failed to fetch Products");
     }
@@ -95,7 +100,7 @@ export async function getProductById(productId: string) {
     console.error("Error fetching product:", error);
     Alert.alert(
       "Error",
-      `Error al obtener el producto: ${(error as any).message.data.msg}`,
+      `Error al obtener el producto: ${(error as any).message.data.msg}`
     );
     return null;
   }
@@ -126,11 +131,8 @@ export async function createProduct(product: Product) {
 }
 
 export const searchProductsByName = async (searchInput: string) => {
-  const cleanedInput = searchInput.trim();
-  const url = `${API_URL}/search/${cleanedInput}`;
-
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${API_URL}/search?input=${searchInput}`);
     if (!response.ok) {
       throw new Error("Error searching products");
     }

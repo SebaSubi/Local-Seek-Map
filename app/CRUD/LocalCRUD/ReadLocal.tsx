@@ -1,54 +1,69 @@
-import { createFactory, useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  Modal,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { View, FlatList, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
-import { Local, LocalDisplay } from "../../../schema/GeneralSchema";
+import { Local, LocalDisplay, LocalTypes } from "../../../schema/GeneralSchema";
 import {
   getDisplayLocals,
   getLocalsByCategory,
   getLocalsByCategoryAndName,
   getLocalsByName,
   getOpenLocals,
+  getOpenLocalsByCategoryAndName,
   getOpenLocalsByName,
 } from "../../../libs/local";
 import LocalContainer from "../../../components/LocalContainer";
 import BasicSearchButton from "../../../components/BasicSearchBar";
+import { getLocalTypes } from "../../../libs/localType";
 
-const localFilters = ["Ubicación", "Quitar", "Categoria", "Apertura"];
-const StoreCategories = ["Supermercado"];
+const localFilters = ["Ubicación", "Quitar", "Apertura"];
 
 export default function ReadLocal() {
   const [locals, setLocals] = useState<Local[]>([]);
   const [search, setSearch] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
-  const [selectedCategory, setStoreCategories] = useState("Deportes");
+  const [selectedCategory, setStoreCategories] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<LocalTypes[]>([]);
 
   async function fetchAndSetLocals() {
-    if (searchFilter === "Categoria") {
+    setLoading(true);
+    if (
+      selectedCategory !== "" &&
+      (searchFilter === "" || searchFilter === "Quitar")
+    ) {
       const locals = await getLocalsByCategoryAndName(selectedCategory, search);
       setLocals(locals);
+      setLoading(false);
+    } else if (selectedCategory !== "" && searchFilter === "Apertura") {
+      const locals = await getOpenLocalsByCategoryAndName(
+        selectedCategory,
+        search
+      );
+      setLocals(locals);
+      setLoading(false);
     } else if (searchFilter === "Apertura") {
       const locals = await getOpenLocalsByName(search);
       setLocals(locals);
+      setLoading(false);
     } else if (searchFilter === "Quitar" || searchFilter === "") {
       const locals = await getLocalsByName(search);
       setLocals(locals);
+      setLoading(false);
     } else {
       setLocals(await getDisplayLocals());
+      setLoading(false);
     }
   }
-
+  async function fetchAndSetCategories() {
+    const cat = await getLocalTypes();
+    setCategories(cat);
+  }
   useEffect(() => {
     const fetchLocals = async () => {
       await fetchAndSetLocals();
     };
+    fetchAndSetCategories();
     fetchLocals();
   }, [search, searchFilter, selectedCategory]);
 
@@ -61,80 +76,35 @@ export default function ReadLocal() {
   };
 
   return (
-    <>
+    <View className="bg-[#1a253d] w-full h-full flex flex-col">
       <Stack.Screen
         options={{
-          header: () => <Header title={"Buscar Locales"} />,
+          headerShown: false,
         }}
       />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="flex items-center">
-          <BasicSearchButton
-            placeholder="Buscar Local"
-            onSearch={setSearch}
-            categories={StoreCategories}
-            selectedFilters={handleSearchFilter}
-            filters={localFilters}
-            selectedCategory={handleCategorySelection}
-          />
-          {locals?.map((local) => (
-            <LocalContainer key={local.id} local={local} />
-          ))}
 
-          <Pressable
-            className="flex items-center justify-center h-10 w-20 bg-slate-800 rounded-xl mt-2"
-            onPress={async () => {
-              await fetchAndSetLocals();
-            }}
-          >
-            <Text className="text-white">Recargar</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </>
+      <BasicSearchButton
+        placeholder="Buscar Local"
+        onSearch={setSearch}
+        categories={categories}
+        selectedFilters={handleSearchFilter}
+        filters={localFilters}
+        selectedCategory={handleCategorySelection}
+        style="mt-16"
+      />
+      <View className="w-full h-full bg-white rounded-t-3xl">
+        <FlatList
+          data={locals}
+          horizontal={false}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <LocalContainer local={item} categories={categories} />
+          )}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchAndSetLocals()}
+          refreshing={loading}
+        />
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  modalOption: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    width: "100%",
-  },
-  modalOptionText: {
-    textAlign: "center",
-    fontSize: 16,
-  },
-  closeButton: {
-    marginTop: 15,
-    padding: 10,
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
-});

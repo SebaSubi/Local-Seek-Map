@@ -98,3 +98,31 @@ export const LogOutIcon = ({ color = "white" }) => {
 export const InfoIcon = ({ color = "white" }) => {
   return <AntDesign name="question" size={24} color={color} />;
 };
+
+export const Cafeteria = ({ color = "black" }) => {
+  return <FontAwesome6 name="mug-hot" size={24} color={color} />;
+};
+
+export const Supermercado = ({ color = "black" }) => {
+  return <AntDesign name="shoppingcart" size={24} color={color} />;
+};
+
+export const Heladeria = ({ color = "balck" }) => {
+  return <MaterialIcons name="icecream" size={24} color={color} />;
+};
+
+export const Pasteleria = ({ color = "black" }) => {
+  return <MaterialCommunityIcons name="cake" size={24} color={color} />;
+};
+
+export const Ferreteria = ({ color = "black" }) => {
+  return (
+    <MaterialCommunityIcons name="hammer-screwdriver" size={24} color={color} />
+  );
+};
+
+export const Servicio = ({ color = "black" }) => {
+  return (
+    <MaterialIcons name="miscellaneous-services" size={24} color={color} />
+  );
+};

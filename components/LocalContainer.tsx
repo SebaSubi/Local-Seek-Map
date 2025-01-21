@@ -1,25 +1,32 @@
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable, ViewComponent } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Local, LocalDisplay } from "../schema/GeneralSchema";
+import { Local, LocalDisplay, LocalTypes } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
 import { colors } from "../constants/colors";
 import { getIfLocalOpen } from "../libs/local";
+import { useFonts } from "expo-font";
 
-type LocalContainerProps = {
-  local: LocalDisplay;
-};
-
-export default function LocalContainer({ local }: { local: Local }) {
+export default function LocalContainer({
+  local,
+  categories,
+}: {
+  local: Local;
+  categories: LocalTypes[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [type, setLocalType] = useState<string>("");
 
   useEffect(() => {
     const fetchLocals = async () => {
       const open = await getIfLocalOpen(local.id);
       setIsOpen(open);
     };
+    const assignCategory = categories?.filter(
+      (category) => category.id === local.localTypeID
+    );
     fetchLocals();
+    setLocalType(assignCategory ? assignCategory[0].name : "");
   }, [local.id]);
-
   return (
     <Link
       href={{
@@ -34,95 +41,89 @@ export default function LocalContainer({ local }: { local: Local }) {
       asChild
     >
       <Pressable
-        className="flex flex-col items-center justify-center mt-2 w-13/15"
+        className="flex flex-col items-center  mt-3 w-[45%] bg-[#f8f8f8] h-64 rounded-3xl ml-3"
         key={local.id}
       >
-        <View
-          className="flex flex-row items-center h-32 w-full bg-slate-300 rounded-2xl border"
-          style={{
-            height: 120,
-            width: "100%",
-            marginBottom: 6,
-          }}
-        >
-          {/* Imagen del local */}
-          <View
-            className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
-          >
-            <View className="h-[90%] w-[90%]">
-              <Image
-                style={{
-                  height: "100%",
-                  width: "auto",
-                  borderRadius: 4,
-                  resizeMode: "contain",
-                }}
-                source={{
-                  uri: local.imgURL ?? "https://via.placeholder.com/150",
-                }}
-              ></Image>
-            </View>
-          </View>
-          {/* Contenido del texto */}
-          <View className="flex flex-col ml-2 w-2/3">
-            <Text
-              className="mt-1 font-bold text-xl"
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {local.name}
-            </Text>
-            <Text className="text-lg" numberOfLines={1} ellipsizeMode="tail">
-              Categoria:{" "}
-              {local.localTypes ? local.localTypes.toString() : "Category..."}
-            </Text>
-            <Text
-              className={`${
-                isOpen ? "text-green-700 " : "text-red-500 "
-              }font-bold text-lg`}
-            >
-              {isOpen ? "Abierto" : "Cerrado"}
-            </Text>
-          </View>
+        {/* <View className="flex flex-col items-center h-64 w-full bg-[#f8f8f8] rounded-3xl"></View> */}
+        <View className="w-[70%] h-[47%] flex items-center justify-center rounded-3xl overflow-hidden mt-6">
+          <Image
+            style={{
+              height: "100%",
+              width: "100%",
+              borderRadius: 4,
+              resizeMode: "contain",
+            }}
+            source={{
+              uri: local.imgURL ?? "https://via.placeholder.com/150",
+            }}
+          />
         </View>
-      </Pressable>
-
-      {/* <Pressable
-        className="flex flex-col items-center justify-center mt-2 w-11/12"
-        key={local.id}
-      >
-        <View className="flex flex-row items-center h-32 w-full bg-slate-300 rounded-2xl border">
-          <View
-            className={`h-5/6 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center`}
+        <View className="w-full mt-1 flex flex-col">
+          <Text className="text-lg font-semibold ml-2">{local.name}</Text>
+          <Text className="text-sm font-thin ml-2">{type}</Text>
+          <Text
+            className={`text-base font-medium ml-2  ${isOpen ? "text-[#b3d74d]" : "text-[#ff6c3d]"}`}
           >
-            <View className="h-[90%] w-[90%]">
-              <Image
-                style={{
-                  height: "100%",
-                  width: "auto",
-                  borderRadius: 4,
-                  resizeMode: "contain",
-                }}
-                source={{
-                  uri: local.imgURL ?? "https://via.placeholder.com/150",
-                }}
-              ></Image>
-            </View>
-          </View>
-          <View className="flex flex-col ml-2 pb-3">
-            <Text className="mt-1 font-bold text-xl">{local.name}</Text>
-            <Text className="text-lg">
-              Categoria:{" "}
-              {local.localTypes ? local.localTypes.toString() : "Category"}
-            </Text>
-            <Text
-              className={`${isOpen ? "text-green-700 " : "text-red-500 "}font-bold text-lg`}
-            >
-              {isOpen ? "Abierto" : "Cerrado"}
-            </Text>
-          </View>
+            {isOpen ? "Abierto" : "Cerrado"}
+          </Text>
+          <Text className="text-base font-thin ml-2">Ver productos -{">"}</Text>
         </View>
       </Pressable> */}
     </Link>
   );
 }
+
+//   return (
+//     <Link
+//       href={{
+//         pathname: "CRUD/LocalCRUD/LocalPage/[id]",
+//         params: {
+//           id: local.id,
+//           name: local.name,
+//           localCoordinates: local.location,
+//           image: local.imgURL ?? "https://via.placeholder.com/150",
+//         },
+//       }}
+//       asChild
+//     >
+//       <Pressable
+//         className="flex flex-col items-center justify-center mt-2 w-full"
+//         key={local.id}
+//       >
+//         <View className="flex flex-row items-center h-28 w-11/12 bg-[#f8f8f8] rounded-2xl">
+//           <View
+//             className={`h-24 w-24 bg-[${colors.primary.lightGray}] rounded-lg ml-2 flex items-center justify-center overflow-hidden`}
+//           >
+//             <View className="h-full w-full">
+//               <Image
+//                 style={{
+//                   height: "100%",
+//                   width: "100%",
+//                   borderRadius: 4,
+//                   resizeMode: "contain",
+//                 }}
+//                 source={{
+//                   uri: local.imgURL ?? "https://via.placeholder.com/150",
+//                 }}
+//               ></Image>
+//             </View>
+//           </View>
+//           <View className="flex flex-col ml-2 pb-3">
+//             <Text className="mt-1 font-bold text-xl">{local.name}</Text>
+//             <Text className="text-lg">
+//               Categoria:{" "}
+//               {local.localTypes
+//                 ? local.localTypes.toString()
+//                 : "CategoryPlaceHolder"}
+//             </Text>
+//             <Text
+//               className={`${isOpen ? "text-green-700 " : "text-red-500 "}font-bold text-lg`}
+//             >
+//               {isOpen ? "Abierto" : "Cerrado"}
+//             </Text>
+//           </View>
+//         </View>
+//       </Pressable>
+//     </Link>
+//   );
+// }
