@@ -14,9 +14,9 @@ type Shift = {
 };
 
 export default function Schedule({
-  schedule,
+  schedule = [],
 }: {
-  schedule: LocalSchedule[] | LocalServiceSchedule[];
+  schedule?: LocalSchedule[] | LocalServiceSchedule[];
 }) {
   const [loading, setLoading] = useState(true);
   // const [schedule, setSchedule] = useState([]);

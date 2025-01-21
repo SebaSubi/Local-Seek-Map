@@ -68,7 +68,7 @@ export default function LocalContainer({
           </Text>
           <Text className="text-base font-thin ml-2">Ver productos -{">"}</Text>
         </View>
-      </Pressable> */}
+      </Pressable>
     </Link>
   );
 }
