@@ -15,7 +15,7 @@ export default function BasicSelectable({
   return (
     <Link asChild href={href}>
       <Pressable
-        className={`flex flex-row justify-center items-center w-2/3 bg-[#e1e8e8] h-10 rounded-2xl ${style}`}
+        className={`flex flex-row justify-center items-center w-2/3 bg-[#f6f6f6] h-10 rounded-2xl ${style}`}
       >
         {logo ? (
           <View className="absolute left-0 ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">

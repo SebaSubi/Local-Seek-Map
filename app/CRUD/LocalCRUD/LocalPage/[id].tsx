@@ -82,7 +82,7 @@ export default function LocalPage() {
                 ) : null
               ) : (
                 localProducts.length > 0 && (
-                  <View className="mt-12 ">
+                  <View className="mt-12 w-full">
                     <FlatList
                       data={localProducts}
                       horizontal={false}

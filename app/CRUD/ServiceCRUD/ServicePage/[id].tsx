@@ -1,4 +1,4 @@
-import { View, Text, Pressable, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -10,7 +10,6 @@ import {
   getScheduleByLocalServiceId,
   getServicesById,
 } from "../../../../libs/localService";
-import Header from "../../../../components/Header";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import Schedule from "../../../../components/Schedule";

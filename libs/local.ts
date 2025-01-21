@@ -177,6 +177,17 @@ export async function getLocal(id: string) {
   }
 }
 
+export async function checkLocalName(name: string) {
+  try {
+    const rawData = await axios.get(`${API_URL}/check-name/${name}`);
+    return rawData.request.response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//----------------------------------------------------------------Local Products----------------------------------------------------------------
+
 export async function getProductsOfALocal(id: string) {
   const url = `${API_URL}/products/${id}`;
   try {
@@ -191,11 +202,25 @@ export async function getProductsOfALocal(id: string) {
   }
 }
 
-export async function checkLocalName(name: string) {
+export async function createProductOfLocal(productId: string, localId: string) {
+  const newProduct = { productId, localId };
   try {
-    const rawData = await axios.get(`${API_URL}/check-name/${name}`);
-    return rawData.request.response;
+    const response = await fetch(`${API_URL}/addProduct`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newProduct),
+    });
+
+    console.log(JSON.stringify(newProduct));
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to Add product");
+    } else {
+      console.log("Tamo cello");
+    }
   } catch (error) {
-    console.log(error);
+    console.log("Error: ", error);
   }
 }

@@ -76,7 +76,7 @@ export default function LocalInformation({
                 <View className="ml-2">
                   <LocationIcon size={20} />
                 </View>
-                <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                <Text className="flex-wrap w-[90%] text-base font-bold text-[#1a253d] ml-2 mt-1">
                   {location}
                 </Text>
               </View>
