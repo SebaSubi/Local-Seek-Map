@@ -120,7 +120,6 @@ const Register = ({ setReg }: RegProps) => {
     <Redirect href="(tabs)/Home" />
   ) : (
     <View className="flex items-center justify-center">
-      <Text>Register</Text>
       {emailError === "" ? null : (
         <View className="w-full flex items-start ml-28">
           <Text className="text-red-800">{emailError}</Text>

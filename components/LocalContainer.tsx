@@ -25,7 +25,7 @@ export default function LocalContainer({
       (category) => category.id === local.localTypeID
     );
     fetchLocals();
-    setLocalType(assignCategory ? assignCategory[0].name : "");
+    setLocalType(assignCategory !== undefined ? assignCategory[0].name : "");
   }, [local.id]);
   return (
     <Link

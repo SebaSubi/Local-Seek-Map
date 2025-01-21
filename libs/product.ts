@@ -24,6 +24,19 @@ export async function getProducts() {
   }
 }
 
+export async function getProductsByCategory(categroyId: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/category/${categroyId}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Products");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting products", error);
+  }
+}
+
 export async function getProductsByCategoryAndName(
   categoryId: string,
   name: string
@@ -168,5 +181,22 @@ export async function deleteProduct(id: string) {
     return await response.json();
   } catch (error) {
     console.error("Error en deleteProduct:", error);
+  }
+}
+
+export async function getLocalsOfProduct(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/locals/${id}`);
+
+    if (!response.ok) {
+      console.error("Error getting locals of product");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting locals of product");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting locals of product", error);
   }
 }

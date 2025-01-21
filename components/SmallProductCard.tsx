@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Image,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import React from "react";
 
 const SmallProductCard = ({
@@ -41,7 +34,7 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     alignItems: "center",
-    backgroundColor: "#e1e8e8",
+    backgroundColor: "#f8f8f8",
     borderRadius: 10,
     padding: 10,
     borderColor: "#324e64",

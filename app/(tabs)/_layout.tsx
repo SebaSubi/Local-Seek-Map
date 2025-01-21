@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import { ReadLogo, SearchIcon } from "../../components/Logos";
+import { ReadLogo, SearchIcon, PersonCircleIcon } from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
 import Header from "../../components/Header";
 
@@ -32,6 +32,16 @@ export default function TabLayout() {
         options={{
           title: "AMB",
           tabBarIcon: ({ color }) => <ReadLogo />,
+        }}
+      />
+      <Tabs.Screen
+        // redirect={authState?.role === Role.USER}  //everyone should be able to access this, on this part you can login or
+        name="User"
+        options={{
+          title: "Perfil",
+          tabBarIcon: ({ color }) => (
+            <PersonCircleIcon color={color} size={28} />
+          ),
         }}
       />
     </Tabs>

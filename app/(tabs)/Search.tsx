@@ -1,32 +1,6 @@
 import { Stack } from "expo-router";
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Header from "../../components/Header";
-import BasicSearchButton from "../../components/BasicSearchBar";
+import { View } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  getDisplayLocals,
-  getLocalsByCategory,
-  getLocalsByName,
-  getOpenLocals,
-} from "../../libs/local";
-import {
-  getDisplayServices,
-  getDisplayServicesByName,
-  getOpenServices,
-  getServicesByCategory,
-} from "../../libs/localService";
-import { getLocalTypes } from "../../libs/localType";
-import { getServiceTypes } from "../../libs/serviceType";
-import ServiceContainer from "../../components/ServiceContainer";
-import LocalContainer from "../../components/LocalContainer";
 import ReadWS from "../CRUD/ServiceCRUD/ReadWS";
 import ReadLocal from "../CRUD/LocalCRUD/ReadLocal";
 import React from "react";

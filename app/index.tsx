@@ -52,7 +52,6 @@ export default function Login() {
       <Redirect href="(tabs)/Home" />
     ) : (
       <View className="flex items-center justify-center">
-        <Text>Login</Text>
         <BasicTextInput
           ref={emailRef}
           inputType="text"
