@@ -4,6 +4,7 @@ import SearchComponent from "../../components/SearchComponent";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { LogOutIcon } from "../../components/Logos";
+import React from "react";
 
 export default function Tab() {
   return (
