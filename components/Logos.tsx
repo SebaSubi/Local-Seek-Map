@@ -6,6 +6,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
+<FontAwesome6 name="arrow-up-right-from-square" size={24} color="black" />;
 
 export const CreateLogo = () => {
   return <Entypo name="plus" size={24} color="black" />;
@@ -124,5 +125,15 @@ export const Ferreteria = ({ color = "black" }) => {
 export const Servicio = ({ color = "black" }) => {
   return (
     <MaterialIcons name="miscellaneous-services" size={24} color={color} />
+  );
+};
+
+export const ArrowUpRight = ({ color = "black", size = 24 }) => {
+  return <Feather name="arrow-up-right" size={size} color={color} />;
+};
+
+export const ArrowUpRightBox = ({ color = "black", size = 24 }) => {
+  return (
+    <FontAwesome6 name="arrow-up-right-from-square" size={size} color={color} />
   );
 };
