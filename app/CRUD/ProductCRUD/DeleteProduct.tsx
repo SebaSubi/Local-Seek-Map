@@ -24,9 +24,7 @@ const DeleteProductScreen = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState<string>("");
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
-    [],
-  );
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     fetchProducts();
@@ -36,7 +34,6 @@ const DeleteProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      console.log("Fetched categories:", data);
       setCategories(data.allCategories);
     } catch (err) {
       console.error("Error fetching categories", err);
@@ -52,7 +49,7 @@ const DeleteProductScreen = () => {
     if (searchText.trim()) {
       const results = products.filter((product) => {
         const category = categories.find(
-          (cat) => cat.id === Number(product.productTypeId),
+          (cat) => cat.id === product.productTypeId
         );
         const categoryName = category ? category.name.toLowerCase() : "";
 
@@ -61,7 +58,6 @@ const DeleteProductScreen = () => {
           categoryName.includes(searchText.toLowerCase())
         );
       });
-      console.log("Filtered results:", results);
       setFilteredProducts(results);
     } else {
       setFilteredProducts(products);
@@ -71,7 +67,6 @@ const DeleteProductScreen = () => {
   async function fetchProducts() {
     try {
       const response = await getProducts();
-      console.log("Fetched products:", response);
       const fetchedProducts = response.activeProducts;
 
       if (fetchedProducts && fetchedProducts.length > 0) {
@@ -139,14 +134,7 @@ const DeleteProductScreen = () => {
         }}
       />
       <View style={styles.searchButtonContainer}>
-        <BasicSearchButton
-          placeholder="Buscar"
-          onSearch={setSearchText}
-          filters={[]}
-          selectedFilters={() => {}}
-          categories={categories}
-          selectedCategory={() => {}}
-        />
+        <BasicSearchButton placeholder="Buscar" onSearch={setSearchText} />
       </View>
       {loading ? (
         <Text style={styles.loadingText}>Cargando productos...</Text>
@@ -155,12 +143,12 @@ const DeleteProductScreen = () => {
           data={filteredProducts}
           renderItem={({ item }) => {
             const category = categories.find(
-              (cat) => cat.id === Number(item.productTypeId),
+              (cat) => cat.id === item.productTypeId
             );
             return (
               <ProductItem
                 name={item.name}
-                imgURL={item.imgURL || "https://via.placeholder.com/150"}
+                imgURL={item.imgURL}
                 category={category ? category.name : "Sin categoría"}
                 onPress={() => handleProductPress(item)}
               />
