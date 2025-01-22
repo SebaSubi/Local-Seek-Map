@@ -7,9 +7,7 @@ import { LocalSchedule } from "../schema/GeneralSchema";
 //     : "http://192.168.155.114:3000";
 
 const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/store"
-    : "http://localhost:3000";
+  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
 export async function createSchedule(schedule: LocalSchedule) {
   try {
@@ -50,6 +48,7 @@ export async function getSchedulesByLocalId(id: string) {
     const response = await fetch(`${API_URL}/schedule/local/${id}`);
     if (!response.ok) {
       console.log("Error fetching schedule");
+      console.log(response);
     } else {
       const json = response.json();
       return json;

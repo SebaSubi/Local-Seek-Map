@@ -24,6 +24,7 @@ export async function createSchedule(schedule: LocalServiceSchedule) {
       Alert.alert("Error", "Failed to create Schedule");
     } else {
       console.log("Schedule succesfully added to dataBase");
+      Alert.alert("Success", "Schedule created successfully!");
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -37,8 +38,11 @@ export async function getScheduleByServiceId(id: string) {
     if (!response.ok) {
       console.log("Error fetching the Schedules");
     } else {
-      const data = response.json();
+      const data = await response.json();
       return data;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error fetching schedules: ", error);
+    Alert.alert("Error", "An error occurred while fetching schedules.");
+  }
 }

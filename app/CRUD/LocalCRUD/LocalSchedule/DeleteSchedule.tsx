@@ -27,9 +27,15 @@ export default function DeleteSchedule() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getSchedulesByLocalId(localId);
-      setSchedule(schedules);
-      setLoading(false);
+      try {
+        const schedules = await getSchedulesByLocalId(localId);
+        setSchedule(schedules || []);
+      } catch (error) {
+        console.error("Error fetching schedules:", error);
+        setSchedule([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, [localId, refresh]);
