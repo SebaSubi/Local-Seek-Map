@@ -1,17 +1,14 @@
 import { Platform, Text, View } from "react-native";
 import React from "react";
-import InformationSlot from "./InformationSlot";
 import {
   InstagramIcon,
   FacebookIcon,
   WebIcon,
   LocationIcon,
-  ArrowUpRight,
   ArrowUpRightBox,
   WhatsAppIcon,
 } from "./Logos";
-import { Link, Stack } from "expo-router";
-import Header from "./Header";
+import { Link } from "expo-router";
 import LocalMap from "./LocalMap";
 import { colors } from "../constants/colors";
 
@@ -158,7 +155,7 @@ export default function LocalInformation({
             </Link>
           ) : null}
           {webpage ? (
-            <Link href={webpage} className="mt-3">
+            <Link href={webpage} className="mt-3 w-full">
               <View className="flex w-full items-start">
                 <View className="flex flex-row items center">
                   <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
@@ -168,16 +165,13 @@ export default function LocalInformation({
                     <ArrowUpRightBox size={10} />
                   </View>
                 </View>
-                <View className="flex flex-row items-center">
+                <View className="flex flex-row items-center w-full">
                   <View className="ml-2">
                     <WebIcon size={20} />
                   </View>
-                  <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                  <Text className="flex-wrap text-base font-bold text-[#1a253d] ml-2 mr-4 mt-1">
                     {webpage}
                   </Text>
-                  <View className="ml-1">
-                    <ArrowUpRightBox size={10} />
-                  </View>
                 </View>
               </View>
             </Link>

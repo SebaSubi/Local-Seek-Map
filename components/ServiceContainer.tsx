@@ -37,7 +37,7 @@ export default function ServiceContainer({
           localId: service.localId,
           localCoordinates: service.local?.location,
           name: service.name,
-          imgURL: service.image ?? "https://via.placeholder.com/150",
+          imgURL: service.imgURL ?? "https://via.placeholder.com/150",
         },
       }}
       asChild
@@ -55,7 +55,7 @@ export default function ServiceContainer({
               resizeMode: "contain",
             }}
             source={{
-              uri: service.image ?? "https://via.placeholder.com/150",
+              uri: service.imgURL ?? "https://via.placeholder.com/150",
             }}
           />
         </View>
@@ -67,7 +67,7 @@ export default function ServiceContainer({
           >
             {isOpen ? "Abierto" : "Cerrado"}
           </Text>
-          <Text className="text-base font-thin ml-2">Ver productos -{">"}</Text>
+          <Text className="text-base font-thin ml-2">Mas Info -{">"}</Text>
         </View>
       </Pressable>
     </Link>

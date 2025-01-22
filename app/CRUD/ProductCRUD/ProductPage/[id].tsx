@@ -50,7 +50,7 @@ export default function ProductPage() {
         <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden ">
           {selectedOption === "Locals" && locals && localTypes && (
             <>
-              <View className="w-full h-1/3 rounded-3xl  overflow-hidden">
+              <View className="w-full h-[40%] rounded-3xl  overflow-hidden">
                 <ProductMap locals={locals} />
               </View>
               <FlatList

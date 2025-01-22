@@ -97,7 +97,7 @@ export interface Service {
   serviceType?: ServiceType | null;
   serviceTypeId: string;
   description: string;
-  image?: string | null;
+  imgURL?: string | null;
   reservationURL: string | null;
   dateFrom: Date;
   dateTo?: Date | null;

@@ -27,7 +27,7 @@ export default function ProductContainer({
       asChild
     >
       <Pressable
-        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3"
+        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3 overflow-hidden"
         key={product.id}
       >
         {/* <View className="mt-3">
@@ -48,9 +48,9 @@ export default function ProductContainer({
         </View>
         <View className="w-full mt-1 flex flex-col">
           <Text className="text-lg font-semibold ml-2">{product.name}</Text>
-          {/* <Text className="text-sm font-thin ml-2">
+          <Text className="text-sm font-thin ml-2">
             Categoría: {productCategory}
-          </Text> */}
+          </Text>
           <Text
             className={`text-sm ml-2 ${product.brand ? "font-thin" : "font-black"}`}
           >

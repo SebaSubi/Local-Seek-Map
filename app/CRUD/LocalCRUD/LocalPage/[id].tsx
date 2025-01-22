@@ -6,27 +6,36 @@ import {
   LocalProduct,
   LocalSchedule,
   Product,
+  ServiceType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
-import { getLocal, getProductsOfALocal } from "../../../../libs/local";
+import {
+  getLocal,
+  getProductsOfALocal,
+  getServicesOfLocal,
+} from "../../../../libs/local";
 import Header from "../../../../components/Header";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
 import ProductContainer from "../../../../components/ProductContainer";
+import ServiceContainer from "../../../../components/ServiceContainer";
+import { getServiceTypes } from "../../../../libs/serviceType";
 
-type Options = "Info" | "Schedule" | "Products";
+type Options = "Info" | "Schedule" | "Products" | "Services";
 
 export default function LocalPage() {
-  const { id, name, localCoordinates, image } = useLocalSearchParams();
+  const { id, name, localCoordinates, image, localType } =
+    useLocalSearchParams();
   const [local, setLocals] = useState<Local>();
   const [schedules, setSchedules] = useState<LocalSchedule[]>([]);
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
   const [localProducts, setLocalProducts] = useState<any>([]);
   const [loading, setLoading] = useState(true);
+  const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([]);
 
-  // const setLocalId = useLocalIdStore((state) => state.setLocalId);
-  // setLocalId(id as string);
+  // console.log(localType);
+  // console.log(selectedOption);
 
   async function fetchAndSetLocals() {
     const searchLocal = await getLocal(id as string);
@@ -35,9 +44,17 @@ export default function LocalPage() {
 
   async function fetchAndSetPorducts() {
     setLoading(true);
-    const localProducts = await getProductsOfALocal(id as string);
-    setLocalProducts(localProducts);
-    setLoading(false);
+    if (localType !== "Servicio") {
+      const localProducts = await getProductsOfALocal(id as string);
+      setLocalProducts(localProducts);
+      setLoading(false);
+    } else {
+      const localServices = await getServicesOfLocal(id as string);
+      const serviceTypes = await getServiceTypes();
+      setLocalProducts(localServices);
+      setServiceCategories(serviceTypes);
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -80,7 +97,7 @@ export default function LocalPage() {
                     webpage={local.webpage} // traete esto del localservice
                   />
                 ) : null
-              ) : (
+              ) : localType !== "Servicio" ? (
                 localProducts.length > 0 && (
                   <View className="mt-12 w-full">
                     <FlatList
@@ -101,6 +118,23 @@ export default function LocalPage() {
                     />
                   </View>
                 )
+              ) : (
+                <View className="mt-12 w-full">
+                  <FlatList
+                    data={localProducts}
+                    horizontal={false}
+                    numColumns={2}
+                    renderItem={({ item }) => (
+                      <ServiceContainer
+                        service={item}
+                        categories={serviceCategories}
+                      />
+                    )}
+                    keyExtractor={(item) => item.id!.toString()}
+                    onRefresh={() => fetchAndSetPorducts()}
+                    refreshing={loading}
+                  />
+                </View>
               ))}
           </View>
         </View>
@@ -118,10 +152,18 @@ export default function LocalPage() {
             onPress={() => setSelectedOption("Schedule")}
           />
           <BasicButton
-            background={selectedOption === "Products" ? "white" : "#7e8592"}
+            background={
+              selectedOption === "Products" || selectedOption === "Services"
+                ? "white"
+                : "#7e8592"
+            }
             style="w-[28%] mb-2 "
-            text="Productos"
-            onPress={() => setSelectedOption("Products")}
+            text={localType !== "Servicio" ? "Productos" : "Servicios"}
+            onPress={() =>
+              localType !== "Servicio"
+                ? setSelectedOption("Products")
+                : setSelectedOption("Services")
+            }
           />
         </View>
       </View>

@@ -46,12 +46,9 @@ export default function ReadLocal() {
       const locals = await getOpenLocalsByName(search);
       setLocals(locals);
       setLoading(false);
-    } else if (searchFilter === "Quitar" || searchFilter === "") {
+    } else {
       const locals = await getLocalsByName(search);
       setLocals(locals);
-      setLoading(false);
-    } else {
-      setLocals(await getDisplayLocals());
       setLoading(false);
     }
   }

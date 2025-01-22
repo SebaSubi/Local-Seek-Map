@@ -20,6 +20,8 @@ const ReadProductScreen = () => {
   const [filter, setSelectedFilter] = useState<string>(""); //this is the filter that is going to be used to filter the products, its either Quitar (wich filters without a categoria and by name) or Categoria (Filters by category)
   const [selectedCategory, setSelctedCategory] = useState<string>("");
 
+  console.log(products);
+
   async function fetchAndSetProducts() {
     setLoading(true); // To show the user that it is in fact loading
     if (
@@ -30,11 +32,13 @@ const ReadProductScreen = () => {
         selectedCategory,
         searchText
       );
+      console.log("We are in");
       setProducts(products);
       setLoading(false); // Sets the loading to false so the user knows its done
     } else {
       // for now we have no other options, but if we figure out a few filters, they would go here
       const products = await searchProductsByName(searchText);
+
       setProducts(products);
       setLoading(false);
     }
@@ -83,23 +87,18 @@ const ReadProductScreen = () => {
       {loading ? (
         <Text style={styles.loadingText}>Cargando productos...</Text>
       ) : (
-        <View className="w-full h-full bg-white rounded-t-3xl">
+        <View className="w-full h-full bg-white rounded-t-3xl pb-[218px]">
           <FlatList
             data={products}
             horizontal={false}
             numColumns={2}
-            renderItem={({ item, index }) => {
-              const category = categories.find(
-                (cat) => cat.id === item.productTypeId //This will get fixed when we bring the category name directly from the data base
-              );
-              return (
-                <ProductContainer
-                  product={item}
-                  productCategory={""}
-                  key={index}
-                />
-              );
-            }}
+            renderItem={({ item, index }) => (
+              <ProductContainer
+                product={item}
+                productCategory={item.type!.name}
+                key={index}
+              />
+            )}
             keyExtractor={(item) => item.id!.toString()}
           />
         </View>

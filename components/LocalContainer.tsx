@@ -36,6 +36,7 @@ export default function LocalContainer({
           name: local.name,
           localCoordinates: local.location,
           image: local.imgURL ?? "https://via.placeholder.com/150",
+          localType: local.localTypes?.name,
         },
       }}
       asChild
@@ -60,7 +61,9 @@ export default function LocalContainer({
         </View>
         <View className="w-full mt-1 flex flex-col">
           <Text className="text-lg font-semibold ml-2">{local.name}</Text>
-          <Text className="text-sm font-thin ml-2">{type}</Text>
+          <Text className="text-sm font-thin ml-2">
+            {local.localTypes?.name}
+          </Text>
           <Text
             className={`text-base font-medium ml-2  ${isOpen ? "text-[#b3d74d]" : "text-[#ff6c3d]"}`}
           >
