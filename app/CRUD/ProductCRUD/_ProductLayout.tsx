@@ -9,7 +9,7 @@ export default function ProductLayout() {
     <>
       <Stack.Screen
         options={{
-          header: () => <Header title="ABM Product" />,
+          header: () => <Header title="ABM Producto" />,
           headerStyle: { backgroundColor: "#fff" },
         }}
       />

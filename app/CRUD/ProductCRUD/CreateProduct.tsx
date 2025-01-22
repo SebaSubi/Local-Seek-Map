@@ -79,41 +79,41 @@ export default function CreateProduct() {
       return;
     }
     if (name.length < 2) {
-      setNameError("El nombre del produto es demasiado corto");
+      setNameError("El nombre del producto es demasiado corto");
       setbrandError("");
       setMeasurementError("");
       return;
     } else if (name.includes(",") || name.includes(".")) {
       setNameError(
-        "El nombre del produto no debe tener ni puntos '.' ni comas ','"
+        "El nombre del producto no debe tener ni puntos '.' ni comas ','",
       );
       setbrandError("");
       setMeasurementError("");
       return;
     } else if (name.length >= 50) {
-      setNameError("El nombre del produto es demasiado largo");
+      setNameError("El nombre del producto es demasiado largo");
       setbrandError("");
       setMeasurementError("");
       return;
     } else if (brand.length < 2) {
       setNameError("");
-      setbrandError("La marca del produto es demasiado corta");
+      setbrandError("La marca del producto es demasiado corta");
       setMeasurementError("");
       return;
     } else if (brand.length >= 50) {
       setNameError("");
-      setbrandError("La marca del produto es demasiado larga");
+      setbrandError("La marca del producto es demasiado larga");
       setMeasurementError("");
       return;
     } else if (mesurement.length < 2) {
       setNameError("");
       setbrandError("");
-      setMeasurementError("La medida del produto es demasiado corta");
+      setMeasurementError("La medida del producto es demasiado corta");
       return;
     } else if (mesurement.length >= 50) {
       setNameError("");
       setbrandError("");
-      setMeasurementError("La medida del produto es demasiado larga");
+      setMeasurementError("La medida del producto es demasiado larga");
       return;
     }
 

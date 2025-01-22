@@ -8,6 +8,7 @@ import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 import { Local } from "../../../../schema/GeneralSchema";
 import { getServicesByLocalId } from "../../../../libs/localService";
+import React from "react";
 
 export default function ScheduleCrud() {
   const [screen, setScreen] = useState(false);
@@ -18,7 +19,7 @@ export default function ScheduleCrud() {
   //   (state) => state.localServiceId,
   // );
   const setLocalServiceId = useLocalServiceIdStore(
-    (state) => state.setLocalServiceId
+    (state) => state.setLocalServiceId,
   );
 
   useEffect(() => {
@@ -52,13 +53,13 @@ export default function ScheduleCrud() {
           <BasicSelectable
             href="/CRUD/ServiceCRUD/ServiceSchedule/DeleteSchedule"
             logo={<UpdateLogo />}
-            text="Actualizar/Borrar Horiario"
+            text="Actualizar/Borrar Horario"
             style="mt-3"
           />
           <BasicSelectable
             href="/CRUD/ServiceCRUD/ServiceSchedule/ReadSchedules"
             logo={<ReadLogo />}
-            text="Leer Horiarios"
+            text="Leer Horario"
             style="mt-3"
           />
         </>
