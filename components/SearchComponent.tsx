@@ -31,6 +31,7 @@ const SearchComponent = () => {
   const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
+    // eslint-disable-next-line prettier/prettier
     "locals"
   );
 
@@ -135,6 +136,7 @@ const SearchComponent = () => {
                 numColumns={2}
                 renderItem={({ item }) => {
                   const category = productCategories.find(
+                    // eslint-disable-next-line prettier/prettier
                     (category) => category.id === item.productTypeId
                   );
                   return (

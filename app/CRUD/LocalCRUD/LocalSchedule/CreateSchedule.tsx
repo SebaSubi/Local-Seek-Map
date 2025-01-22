@@ -100,18 +100,22 @@ export default function CreateProduct() {
       });
 
     const SecondShiftStart = checkSchedule(
+      // eslint-disable-next-line prettier/prettier
       SecondShiftStartRef.current?.getTime()
     );
 
     const SecondShiftFinish = checkSchedule(
+      // eslint-disable-next-line prettier/prettier
       SecondShiftFinishRef.current?.getTime()
     );
 
     const ThirdShiftStart = checkSchedule(
+      // eslint-disable-next-line prettier/prettier
       ThirdShiftStartRef.current?.getTime()
     );
 
     const ThirdShiftFinish = checkSchedule(
+      // eslint-disable-next-line prettier/prettier
       ThirdShiftFinishRef.current?.getTime()
     );
 
