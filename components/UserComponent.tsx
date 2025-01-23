@@ -1,11 +1,10 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Role } from "react-native";
 import React from "react";
 import { colors } from "../constants/colors";
 import { PersonCircleIcon, UpdateLogo } from "./Logos";
-import BasicButton from "./BasicButton";
+import { AuthUser } from "../app/context/AuthContext";
 
-export default function UserComponent() {
-  const testEmail = "user.very.longgggggggg@gmail.com";
+export default function UserComponent({ user }: { user: AuthUser }) {
   return (
     <View
       className={`rounded-full h-24 flex flex-row items-center`}
@@ -14,35 +13,18 @@ export default function UserComponent() {
       <PersonCircleIcon color={colors.primary.blue} size={90} />
       <View className="flex flex-col">
         <View className="flex flex-row items-center ">
-          <Text className="text-xl font-bold">User name very long</Text>
-          <View className="ml-2 mr-6 mt-2">
-            <BasicButton
-              text="Editar"
-              background={colors.primary.blue}
-              logo={<UpdateLogo />}
-              textStyle="text-white"
-            />
-          </View>
+          <Text className="text-xl font-bold mr-6">
+            {user.username.length > 22
+              ? user.username.slice(0, 22) + "..."
+              : user.username}{" "}
+          </Text>
         </View>
-        <Text className="text-base ml-[1px]">
-          {testEmail.length > 32 ? testEmail.slice(0, 32) + "..." : testEmail}
+        <Text className="text-base ml-[1px] mr-6">
+          {user.email.length > 32
+            ? user.email.slice(0, 32) + "..."
+            : user.email}
         </Text>
       </View>
     </View>
   );
-}
-
-{
-  /* <View className="flex flex-col ">
-        <Text className="text-xl font-bold">User name</Text>
-        <Text className="text-base ml-[1px]">user.verylargo@gmail.com</Text>
-      </View>
-      <View className="ml-2 mr-4">
-        <BasicButton
-          text="Editar"
-          background={colors.primary.blue}
-          logo={<UpdateLogo />}
-          textStyle="text-white"
-        />
-      </View> */
 }
