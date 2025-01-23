@@ -1,3 +1,4 @@
+import React from "react";
 import { FlatList, Text, View } from "react-native";
 import ScheduleBox from "./ScheduleBox";
 import { shift } from "../constants/consts";
@@ -12,7 +13,7 @@ type Shift = {
 };
 
 interface ScheduleProps {
-  schedule?: (LocalSchedule | LocalServiceSchedule)[]; // Define el tipo del parámetro schedule
+  schedule?: (LocalSchedule | LocalServiceSchedule)[];
 }
 
 export default function Schedule({ schedule = [] }: ScheduleProps) {
@@ -37,10 +38,8 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
     { shiftOpen: "ThirdShiftStart", shiftClose: "ThirdShiftFinish" },
   ];
 
-  // Inicializamos todos los días de la semana
   const allDays = Array.from({ length: 7 }, (_, index) => index + 1);
 
-  // Agrupamos horarios por día y aseguramos que todos los días estén presentes
   const groupedSchedules = allDays.reduce(
     (acc, day) => {
       acc[day] = schedule.filter((item) => item.dayNumber === day) || [];
@@ -85,7 +84,6 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
 
                 {/* Horarios del día */}
                 {!hasSchedules ? (
-                  // Si está "Cerrado", centramos el texto
                   <View className="flex-1 items-center justify-center">
                     <Text className="text-lg text-gray-500">Cerrado</Text>
                   </View>
@@ -131,7 +129,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
   );
 }
 
-//el componente Schedul que estaba antes
+//el componente de Schedule que estaba antes
 // import { FlatList, Text, View } from "react-native";
 // import ScheduleBox from "./ScheduleBox";
 // import { shift } from "../constants/consts";
