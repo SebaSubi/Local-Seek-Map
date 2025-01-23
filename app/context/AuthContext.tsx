@@ -15,12 +15,18 @@ export enum Role {
   STOREOWNER = "STORE_OWNER",
 }
 
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  role: Role;
+}
 interface AuthProps {
   authState?: {
     token: string | null;
     authenticated: boolean | null;
-    username: string | null;
-    role: Role | null;
+    user: AuthUser | null;
   };
   onRegister?: (
     email: string,
@@ -32,8 +38,12 @@ interface AuthProps {
 }
 
 const TOKEN_KEY = "token";
-const USERNAME = "username";
-const ROLE_KEY = "role";
+const USER_ID = "userid";
+const USERNAME = "userinfo";
+const PASSWORD = "userpass";
+const EMAIL = "useremail";
+const ROLE = "role";
+
 export const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/auth-v2"
@@ -53,40 +63,54 @@ async function hashPassword(password: string): Promise<string> {
   return password;
 }
 
+function getRole(role: string): Role {
+  switch (role) {
+    case "STORE_OWNER":
+      return Role.STOREOWNER;
+
+    case "ADMIN":
+      return Role.ADMIN;
+
+    default:
+      return Role.USER;
+  }
+}
+
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
     token: string | null;
     authenticated: boolean | null;
-    username: string | null;
-    role: Role | null;
+    user: AuthUser | null;
   }>({
     token: null,
     authenticated: null,
-    username: null,
-    role: null,
+    user: null,
   });
 
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
-      const userName = await SecureStore.getItemAsync(USERNAME);
-      const role = (await SecureStore.getItemAsync(ROLE_KEY)) as Role | null; //checkear eso en el debug
+      const userId = await SecureStore.getItemAsync(USER_ID);
+      const username = await SecureStore.getItemAsync(USERNAME);
+      const email = await SecureStore.getItemAsync(EMAIL);
+      const password = await SecureStore.getItemAsync(PASSWORD);
+      const role = (await SecureStore.getItemAsync(ROLE)) as Role | null;
       // console.log("token: ", token);
       // console.log("username: ", userName);
       // console.log("role: ", role);
 
-      if (token) {
+      if (token && userId && username && email && password && role) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setAuthState({
           token: token,
           authenticated: true,
-          username: userName,
-          role:
-            role === "STORE_OWNER"
-              ? Role.STOREOWNER
-              : role === "ADMIN"
-                ? Role.ADMIN
-                : Role.USER,
+          user: {
+            id: userId,
+            email: email,
+            username: username,
+            password: password,
+            role: getRole(role),
+          },
         });
       }
     };
@@ -106,31 +130,34 @@ export const AuthProvider = ({ children }: any) => {
         username,
       });
 
-      setAuthState({
-        token: result.data.accessToken,
-        authenticated: true,
-        username: result.data.userId,
-        role:
-          result.data.role === "STORE_OWNER"
-            ? Role.STOREOWNER
-            : result.data.role === "ADMIN"
-              ? Role.ADMIN
-              : Role.USER,
-      });
+      if (result?.data.accessToken) {
+        const user = {
+          id: result.data.userId,
+          email: email,
+          username: result.data.username,
+          password: password,
+          role: getRole(result.data.role),
+        };
 
-      axios.defaults.headers.common["Authorization"] =
-        `Bearer ${result.data.accessToken}`;
-      // console.log(result.data.accessToken);
-      await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
-      await SecureStore.setItemAsync(USERNAME, result.data.userID);
-      await SecureStore.setItemAsync(
-        ROLE_KEY,
-        result.data.role === "STORE_OWNER"
-          ? Role.STOREOWNER
-          : result.data.role === "ADMIN"
-            ? Role.ADMIN
-            : Role.USER
-      );
+        setAuthState({
+          token: result.data.accessToken,
+          authenticated: true,
+          user: user,
+        });
+
+        axios.defaults.headers.common["Authorization"] =
+          `Bearer ${result.data.accessToken}`;
+        // console.log(result.data.accessToken);
+        await Promise.all([
+          SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken),
+          SecureStore.setItemAsync(USER_ID, user.id),
+          SecureStore.setItemAsync(USERNAME, user.username),
+          SecureStore.setItemAsync(EMAIL, email),
+          SecureStore.setItemAsync(PASSWORD, password),
+          SecureStore.setItemAsync(ROLE, user.role),
+        ]);
+      }
+
       return result;
     } catch (error) {
       return { error: true, msg: error as any };
@@ -143,24 +170,39 @@ export const AuthProvider = ({ children }: any) => {
         token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTJtNzRia28wMDAwa2dlcHNlYWl4NXkwIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzMzMDY0MjYxLCJleHAiOjE3MzU2NTYyNjF9.lhQa-66NAlpRXIQCYCObQMNRu5rpEyaoBI_4HvQuHcQ",
         authenticated: true,
-        username: "admin",
-        role: Role.ADMIN,
+        user: {
+          id: "Max Verstappen",
+          username: "Admin",
+          email: "admin@gmail.com",
+          password: "admin",
+          role: Role.ADMIN,
+        },
       });
 
-      await SecureStore.setItemAsync(
-        TOKEN_KEY,
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTJtNzRia28wMDAwa2dlcHNlYWl4NXkwIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzMzMDY0MjYxLCJleHAiOjE3MzU2NTYyNjF9.lhQa-66NAlpRXIQCYCObQMNRu5rpEyaoBI_4HvQuHcQ"
-      );
-      await SecureStore.setItemAsync(USERNAME, "admin");
-      await SecureStore.setItemAsync(ROLE_KEY, Role.ADMIN);
+      await Promise.all([
+        SecureStore.setItemAsync(
+          TOKEN_KEY,
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTV2NnJ5ejQwMDAwN21lNGZqdms3OTBiIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzM3NTYwNTg5LCJleHAiOjE3NDAxNTI1ODl9.su-5Y-ygDxSRgrJwxwXcfZ8RLvNYqiuWW8soHQbrDjc"
+        ),
+        SecureStore.setItemAsync(USER_ID, "Max Verstappen"),
+        SecureStore.setItemAsync(USERNAME, "Admin"),
+        SecureStore.setItemAsync(EMAIL, "admin@gmail.com"),
+        SecureStore.setItemAsync(PASSWORD, "admin"),
+        SecureStore.setItemAsync(ROLE, Role.ADMIN),
+      ]);
       return { status: 200 };
     } else {
       if (email === "guest@gmail.com" && password === "guest") {
         setAuthState({
           token: null,
           authenticated: true,
-          username: "guest",
-          role: Role.USER,
+          user: {
+            id: "1",
+            email: "guest@gmail.com",
+            username: "guest",
+            password: "guest",
+            role: Role.USER,
+          },
         });
         return { status: 200 };
       } else {
@@ -171,34 +213,38 @@ export const AuthProvider = ({ children }: any) => {
             password: hashedPassword,
           });
 
+          // console.log("RESULT: ", result);
           // console.log("token: ", result.data.token);
           // console.log("username: ", result.data.userId);
           // console.log("role: ", result.data.role);
-          setAuthState({
-            token: result.data.accessToken,
-            authenticated: true,
-            username: result.data.userId,
-            role:
-              result.data.role === "STORE_OWNER"
-                ? Role.STOREOWNER
-                : result.data.role === "ADMIN"
-                  ? Role.ADMIN
-                  : Role.USER,
-          });
+          if (result?.data.accessToken) {
+            const user = {
+              id: result.data.userId,
+              email: email,
+              username: result.data.username,
+              password: password,
+              role: getRole(result.data.role),
+            };
 
-          axios.defaults.headers.common["Authorization"] =
-            `Bearer ${result.data.accessToken}`;
-          // console.log(result.data.accessToken);
-          await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
-          await SecureStore.setItemAsync(USERNAME, result.data.userId);
-          await SecureStore.setItemAsync(
-            ROLE_KEY,
-            result.data.role === "STORE_OWNER"
-              ? Role.STOREOWNER
-              : result.data.role === "ADMIN"
-                ? Role.ADMIN
-                : Role.USER
-          );
+            setAuthState({
+              token: result.data.accessToken,
+              authenticated: true,
+              user: user,
+            });
+
+            axios.defaults.headers.common["Authorization"] =
+              `Bearer ${result.data.accessToken}`;
+            // console.log(result.data.accessToken);
+            await Promise.all([
+              SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken),
+              SecureStore.setItemAsync(USER_ID, user.id),
+              SecureStore.setItemAsync(USERNAME, user.username),
+              SecureStore.setItemAsync(EMAIL, email),
+              SecureStore.setItemAsync(PASSWORD, password),
+              SecureStore.setItemAsync(ROLE, user.role),
+            ]);
+          }
+
           return result;
         } catch (error) {
           return { error: true, msg: error as any };
@@ -207,16 +253,20 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
   const logout = async () => {
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
-    await SecureStore.deleteItemAsync(USERNAME);
-    await SecureStore.deleteItemAsync(ROLE_KEY);
+    await Promise.all([
+      SecureStore.deleteItemAsync(TOKEN_KEY),
+      SecureStore.deleteItemAsync(USER_ID),
+      SecureStore.deleteItemAsync(EMAIL),
+      SecureStore.deleteItemAsync(USERNAME),
+      SecureStore.deleteItemAsync(PASSWORD),
+      SecureStore.deleteItemAsync(ROLE),
+    ]);
     axios.defaults.headers.common["Authorization"] = "";
 
     setAuthState({
       token: null,
       authenticated: false,
-      username: null,
-      role: null,
+      user: null,
     });
   };
 
