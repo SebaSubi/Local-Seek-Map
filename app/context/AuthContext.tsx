@@ -158,22 +158,6 @@ export const AuthProvider = ({ children }: any) => {
         ]);
       }
 
-<<<<<<< HEAD
-      axios.defaults.headers.common["Authorization"] =
-        `Bearer ${result.data.accessToken}`;
-      // console.log(result.data.accessToken);
-      await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
-      await SecureStore.setItemAsync(USERNAME, result.data.userID);
-      await SecureStore.setItemAsync(
-        ROLE_KEY,
-        result.data.role === "STORE_OWNER"
-          ? Role.STOREOWNER
-          : result.data.role === "ADMIN"
-            ? Role.ADMIN
-            : Role.USER,
-      );
-=======
->>>>>>> 321fc151a777eda52a26eb1dd703c2d7e3c1a30a
       return result;
     } catch (error) {
       return { error: true, msg: error as any };
@@ -195,14 +179,6 @@ export const AuthProvider = ({ children }: any) => {
         },
       });
 
-<<<<<<< HEAD
-      await SecureStore.setItemAsync(
-        TOKEN_KEY,
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTJtNzRia28wMDAwa2dlcHNlYWl4NXkwIiwiZW1haWwiOiJzZWJhcGVyZXpsYXZvb3lAZ21haWwuY29tIiwiaWF0IjoxNzMzMDY0MjYxLCJleHAiOjE3MzU2NTYyNjF9.lhQa-66NAlpRXIQCYCObQMNRu5rpEyaoBI_4HvQuHcQ",
-      );
-      await SecureStore.setItemAsync(USERNAME, "admin");
-      await SecureStore.setItemAsync(ROLE_KEY, Role.ADMIN);
-=======
       await Promise.all([
         SecureStore.setItemAsync(
           TOKEN_KEY,
@@ -214,7 +190,6 @@ export const AuthProvider = ({ children }: any) => {
         SecureStore.setItemAsync(PASSWORD, "admin"),
         SecureStore.setItemAsync(ROLE, Role.ADMIN),
       ]);
->>>>>>> 321fc151a777eda52a26eb1dd703c2d7e3c1a30a
       return { status: 200 };
     } else {
       if (email === "guest@gmail.com" && password === "guest") {
@@ -270,22 +245,6 @@ export const AuthProvider = ({ children }: any) => {
             ]);
           }
 
-<<<<<<< HEAD
-          axios.defaults.headers.common["Authorization"] =
-            `Bearer ${result.data.accessToken}`;
-          // console.log(result.data.accessToken);
-          await SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken);
-          await SecureStore.setItemAsync(USERNAME, result.data.userId);
-          await SecureStore.setItemAsync(
-            ROLE_KEY,
-            result.data.role === "STORE_OWNER"
-              ? Role.STOREOWNER
-              : result.data.role === "ADMIN"
-                ? Role.ADMIN
-                : Role.USER,
-          );
-=======
->>>>>>> 321fc151a777eda52a26eb1dd703c2d7e3c1a30a
           return result;
         } catch (error) {
           return { error: true, msg: error as any };
