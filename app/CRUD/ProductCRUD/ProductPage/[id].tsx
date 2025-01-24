@@ -7,11 +7,10 @@ import {
   getLocalsOfProduct,
   getProductsByCategory,
 } from "../../../../libs/product";
-import { Local, LocalTypes, Product } from "../../../../schema/GeneralSchema";
+import { LocalTypes, Product } from "../../../../schema/GeneralSchema";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import { getLocalTypes } from "../../../../libs/localType";
-import ProductContainer from "../../../../components/ProductContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
 
 type Options = "Info" | "Locals";
@@ -21,15 +20,12 @@ export default function ProductPage() {
     useLocalSearchParams();
   const [locals, setLocals] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
-  const [localTypes, setLocalTypes] = useState<LocalTypes[]>([]);
   const [loading, setLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
   async function fetchAndSetAll() {
     const loc = await getLocalsOfProduct(id as string);
     setLocals(loc);
-    const localT = await getLocalTypes();
-    setLocalTypes(localT);
     const products = await getProductsByCategory(categoryId as string);
     setSimilarProducts(products);
     setLoading(false);
@@ -48,7 +44,7 @@ export default function ProductPage() {
       />
       <View className="flex flex-col items-start h-full justify-start bg-[#1a253d]">
         <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden ">
-          {selectedOption === "Locals" && locals && localTypes && (
+          {selectedOption === "Locals" && locals && (
             <>
               <View className="w-full h-[40%] rounded-3xl  overflow-hidden">
                 <ProductMap locals={locals} />
@@ -57,9 +53,7 @@ export default function ProductPage() {
                 data={locals}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <LocalContainer local={item} categories={localTypes} />
-                )}
+                renderItem={({ item }) => <LocalContainer local={item} />}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchAndSetAll()}
                 refreshing={loading}
@@ -105,7 +99,7 @@ export default function ProductPage() {
                       <SmallProductContainer
                         product={product}
                         productCategory={
-                          similarProducts[0]?.type.name
+                          similarProducts[0]?.type?.name
                             ? similarProducts[0].type.name
                             : ""
                         }
@@ -120,7 +114,6 @@ export default function ProductPage() {
         </View>
 
         <View className="w-full h-[10%] flex flex-row items-center justify-evenly">
-          {/* <Text></Text> */}
           <BasicButton
             background={selectedOption === "Locals" ? "white" : "#7e8592"}
             style="w-1/3 mb-2 bg-[#1a253d]"

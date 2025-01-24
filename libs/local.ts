@@ -225,6 +225,29 @@ export async function createProductOfLocal(productId: string, localId: string) {
   }
 }
 
+export async function deleteProductOfLocal(productId: string) {
+  console.log(productId);
+  try {
+    const response = await fetch(`${API_URL}/removeProduct/${productId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Error deleting product");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error al eliminar el producto");
+    }
+
+    // return await response.json();
+  } catch (error) {
+    console.error("Error en deleteProduct:", error);
+  }
+}
+
 //----------------------------------------------------------------Local Services----------------------------------------------------------------
 
 export async function getServicesOfLocal(id: string) {

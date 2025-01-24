@@ -176,134 +176,138 @@ export default function AddProduct() {
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-          paddingVertical: 20,
-          width: "100%",
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: false,
         }}
-      >
-        <Stack.Screen
-          options={{
-            header: () => <Header title="Crear Producto" />,
-          }}
-        />
-        {nameError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{nameError}</Text>
-          </View>
-        )}
-        <BasicTextInput
-          inputType="text"
-          placeholder="Nombre"
-          title="Nombre de Producto: "
-          value=""
-          ref={nameRef}
-        />
-        {brandError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{brandError}</Text>
-          </View>
-        )}
-        <BasicTextInput
-          inputType="text"
-          placeholder="Marca"
-          title="Marca: "
-          value=""
-          ref={brandRef}
-        />
-        {measurementError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{measurementError}</Text>
-          </View>
-        )}
-        <BasicTextInput
-          inputType="text"
-          placeholder="Medida"
-          title="Medida: "
-          value=""
-          ref={measurementRef}
-        />
-        <BigTextInput
-          inputType="text"
-          placeholder="Descripción"
-          title="Descripción: "
-          value=""
-          ref={descriptionRef}
-        />
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={typeModalVisibility}
-          onRequestClose={() => setTypeModalVisibility(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                Selecciona el tipo de producto
+      />
+      <View className="bg-[#1a253d] w-full h-full flex items-center">
+        <View className=" h-[90%] w-full ">
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            className=" bg-white w-full rounded-3xl overflow-hidden"
+          >
+            {nameError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{nameError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="Nombre"
+              title="Nombre de Producto: "
+              value=""
+              ref={nameRef}
+            />
+            {brandError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{brandError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="Marca"
+              title="Marca: "
+              value=""
+              ref={brandRef}
+            />
+            {measurementError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{measurementError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="Medida"
+              title="Medida: "
+              value=""
+              ref={measurementRef}
+            />
+            <BigTextInput
+              inputType="text"
+              placeholder="Descripción"
+              title="Descripción: "
+              value=""
+              ref={descriptionRef}
+            />
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={typeModalVisibility}
+              onRequestClose={() => setTypeModalVisibility(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    Selecciona el tipo de producto
+                  </Text>
+                  <ScrollView style={styles.scrollView}>
+                    {serviceTypes.length === 0 ? (
+                      <Text>No hay tipos disponibles</Text>
+                    ) : (
+                      serviceTypes.map((category, index) => (
+                        <Pressable
+                          key={index}
+                          onPress={() => {
+                            setSelectedType(category);
+                            setTypeModalVisibility(false);
+                          }}
+                          style={styles.modalOption}
+                        >
+                          <Text style={styles.modalOptionText}>
+                            {category.name}
+                          </Text>
+                        </Pressable>
+                      ))
+                    )}
+                  </ScrollView>
+                  <Pressable
+                    onPress={() => setTypeModalVisibility(false)}
+                    style={styles.closeButton}
+                  >
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+
+            <Pressable
+              onPress={() => setTypeModalVisibility(true)}
+              style={styles.typeButton}
+            >
+              <Text style={styles.typeButtonText}>
+                {selectedType
+                  ? selectedType.name
+                  : "Seleccionar Tipo de Producto"}
               </Text>
-              <ScrollView style={styles.scrollView}>
-                {serviceTypes.length === 0 ? (
-                  <Text>No hay tipos disponibles</Text>
-                ) : (
-                  serviceTypes.map((category, index) => (
-                    <Pressable
-                      key={index}
-                      onPress={() => {
-                        setSelectedType(category);
-                        setTypeModalVisibility(false);
-                      }}
-                      style={styles.modalOption}
-                    >
-                      <Text style={styles.modalOptionText}>
-                        {category.name}
-                      </Text>
-                    </Pressable>
-                  ))
-                )}
-              </ScrollView>
-              <Pressable
-                onPress={() => setTypeModalVisibility(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-              </Pressable>
+            </Pressable>
+
+            <View style={{ marginTop: 20 }}>
+              <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
             </View>
-          </View>
-        </Modal>
-
-        <Pressable
-          onPress={() => setTypeModalVisibility(true)}
-          style={styles.typeButton}
-        >
-          <Text style={styles.typeButtonText}>
-            {selectedType ? selectedType.name : "Seleccionar Tipo de Producto"}
-          </Text>
-        </Pressable>
-
-        <View style={{ marginTop: 20 }}>
-          <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+            {image && (
+              <Image
+                source={{ uri: image }}
+                style={{ width: 100, height: 100, marginTop: 10 }}
+              />
+            )}
+          </ScrollView>
         </View>
-        {image && (
-          <Image
-            source={{ uri: image }}
-            style={{ width: 100, height: 100, marginTop: 10 }}
-          />
-        )}
         <View style={{ marginTop: 20, alignItems: "center", width: "80%" }}>
           <BasicButton
             logo={<CreateLogo />}
             text="Crear Producto"
-            style="mt-3"
             onPress={handleSubmit}
+            background="#ffffff"
           />
         </View>
       </View>
-    </ScrollView>
+    </>
   );
 }
 
@@ -320,7 +324,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
-    maxHeight: 400, // Establece la altura máxima que deseas
+    maxHeight: 400,
   },
   scrollView: {
     width: "100%",

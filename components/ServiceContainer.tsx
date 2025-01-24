@@ -5,27 +5,17 @@ import { Local, Product, Service, ServiceType } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
 import { getIfServiceOpen } from "../libs/localService";
 
-export default function ServiceContainer({
-  service,
-  categories,
-}: {
-  service: Service;
-  categories: ServiceType[];
-}) {
+export default function ServiceContainer({ service }: { service: Service }) {
   if (!service || !service.name) return;
   const [isOpen, setIsOpen] = useState(false);
-  const [type, setLocalType] = useState<string>("");
 
   useEffect(() => {
     const fetchLocals = async () => {
       const open = await getIfServiceOpen(service.id!);
       setIsOpen(open);
     };
-    const assignCategory = categories?.filter(
-      (category) => category.id === service.serviceTypeId
-    );
+
     fetchLocals();
-    setLocalType(assignCategory ? assignCategory[0].name : "");
   }, [service.id]);
 
   return (
@@ -61,7 +51,9 @@ export default function ServiceContainer({
         </View>
         <View className="w-full mt-1 flex flex-col">
           <Text className="text-lg font-semibold ml-2">{service.name}</Text>
-          <Text className="text-sm font-thin ml-2">{type}</Text>
+          <Text className="text-sm font-thin ml-2">
+            {service.serviceType?.name}
+          </Text>
           <Text
             className={`text-base font-medium ml-2  ${isOpen ? "text-[#b3d74d]" : "text-[#ff6c3d]"}`}
           >

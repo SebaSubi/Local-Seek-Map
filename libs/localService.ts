@@ -43,6 +43,7 @@ export async function getDisplayServicesByName(name: string) {
       throw new Error("Failed to fetch Services by name");
     }
     const json = await rawData.json();
+    // console.log(json);
     return json;
   } catch (error) {
     console.log("Error getting Services by name", error);

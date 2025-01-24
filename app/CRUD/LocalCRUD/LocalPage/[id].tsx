@@ -32,7 +32,6 @@ export default function LocalPage() {
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
   const [localProducts, setLocalProducts] = useState<any>([]);
   const [loading, setLoading] = useState(true);
-  const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([]);
 
   // console.log(localType);
   // console.log(selectedOption);
@@ -50,9 +49,7 @@ export default function LocalPage() {
       setLoading(false);
     } else {
       const localServices = await getServicesOfLocal(id as string);
-      const serviceTypes = await getServiceTypes();
       setLocalProducts(localServices);
-      setServiceCategories(serviceTypes);
       setLoading(false);
     }
   }
@@ -99,7 +96,7 @@ export default function LocalPage() {
                 ) : null
               ) : localType !== "Servicio" ? (
                 localProducts.length > 0 && (
-                  <View className="mt-12 w-full">
+                  <View className="mt-12 w-full h-full">
                     <FlatList
                       data={localProducts}
                       horizontal={false}
@@ -119,16 +116,13 @@ export default function LocalPage() {
                   </View>
                 )
               ) : (
-                <View className="mt-12 w-full">
+                <View className="mt-12 w-full h-full">
                   <FlatList
                     data={localProducts}
                     horizontal={false}
                     numColumns={2}
                     renderItem={({ item }) => (
-                      <ServiceContainer
-                        service={item}
-                        categories={serviceCategories}
-                      />
+                      <ServiceContainer service={item} />
                     )}
                     keyExtractor={(item) => item.id!.toString()}
                     onRefresh={() => fetchAndSetPorducts()}
