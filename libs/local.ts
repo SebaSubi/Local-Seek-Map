@@ -177,6 +177,17 @@ export async function getLocal(id: string) {
   }
 }
 
+export async function checkLocalName(name: string) {
+  try {
+    const rawData = await axios.get(`${API_URL}/check-name/${name}`);
+    return rawData.request.response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//----------------------------------------------------------------Local Products----------------------------------------------------------------
+
 export async function getProductsOfALocal(id: string) {
   const url = `${API_URL}/products/${id}`;
   try {
@@ -191,6 +202,7 @@ export async function getProductsOfALocal(id: string) {
   }
 }
 
+<<<<<<< HEAD
 export async function deleteLocal(id: string) {
   try {
     const response = await fetch(`${API_URL}/${id}`, {
@@ -214,10 +226,43 @@ export async function deleteLocal(id: string) {
 }
 
 export async function checkLocalName(name: string) {
+=======
+export async function createProductOfLocal(productId: string, localId: string) {
+  const newProduct = { productId, localId };
+>>>>>>> 321fc151a777eda52a26eb1dd703c2d7e3c1a30a
   try {
-    const rawData = await axios.get(`${API_URL}/check-name/${name}`);
-    return rawData.request.response;
+    const response = await fetch(`${API_URL}/addProduct`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newProduct),
+    });
+
+    console.log(JSON.stringify(newProduct));
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to Add product");
+    } else {
+      console.log("Tamo cello");
+    }
   } catch (error) {
-    console.log(error);
+    console.log("Error: ", error);
+  }
+}
+
+//----------------------------------------------------------------Local Services----------------------------------------------------------------
+
+export async function getServicesOfLocal(id: string) {
+  const url = `http://localhost:3000/service/service-localid/${id}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch store services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting store services", error);
   }
 }

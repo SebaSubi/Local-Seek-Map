@@ -68,18 +68,18 @@ export interface ViewLocal {
 }
 
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
-  updatedAt: Date;
+  updatedAt?: Date;
   brand: string;
   mesurement: string;
-  imgURL: string | null;
-  price: number | null;
+  imgURL?: string | null;
+  price?: number | null;
   description: string;
   dateFrom: Date;
-  dateTo: Date | null;
-  local: LocalProduct[];
-  type: ProductType;
+  dateTo?: Date | null;
+  local?: LocalProduct[];
+  type?: ProductType;
   productTypeId: string;
 }
 
@@ -97,7 +97,7 @@ export interface Service {
   serviceType?: ServiceType | null;
   serviceTypeId: string;
   description: string;
-  image?: string | null;
+  imgURL?: string | null;
   reservationURL: string | null;
   dateFrom: Date;
   dateTo?: Date | null;

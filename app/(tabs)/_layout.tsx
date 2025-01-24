@@ -3,6 +3,7 @@ import { Tabs } from "expo-router";
 import { ReadLogo, SearchIcon, PersonCircleIcon } from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
 import Header from "../../components/Header";
+import User from "./User";
 
 export default function TabLayout() {
   const { authState } = useAuth();
@@ -27,7 +28,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        redirect={authState?.role === Role.USER} //we have to use the role that we DON'T want to be able to access this.
+        redirect={authState?.user?.role === Role.USER} //we have to use the role that we DON'T want to be able to access this.
         name="CRUD"
         options={{
           title: "AMB",

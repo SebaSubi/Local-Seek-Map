@@ -129,13 +129,14 @@ export async function createProduct(product: Product) {
       body: JSON.stringify(product),
     });
 
-    console.log(JSON.stringify(product));
+    // console.log(JSON.stringify(product));
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Product");
     } else {
-      console.log("Product succesfully added to dataBase");
-      return response.ok;
+      console.log("We good man");
+      const data: Product = await response.json();
+      return data;
     }
   } catch (error) {
     console.log("Error: ", error);

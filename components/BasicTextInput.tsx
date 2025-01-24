@@ -9,12 +9,14 @@ const BasicTextInput = forwardRef(
       title,
       textStyle,
       value,
+      textSecure = false,
     }: {
       placeholder: string;
       inputType: "text" | "number";
       title?: string;
       textStyle?: string;
       value: string;
+      textSecure?: boolean;
     },
     ref: React.ForwardedRef<{ getValue: () => string }>
   ) => {
@@ -43,6 +45,7 @@ const BasicTextInput = forwardRef(
           onChangeText={handleChange}
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}
+          secureTextEntry={textSecure}
         />
       </View>
     );

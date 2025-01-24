@@ -53,11 +53,6 @@ const Register = ({ setReg }: RegProps) => {
       setPasswordError("");
       setEmailError("");
       setUsernameError("El nombre de usuario debe tener al menos 2 caracteres");
-    } else if ((username.current?.getValue() ?? "").includes(" ")) {
-      //handle Username without spaces
-      setPasswordError("");
-      setEmailError("");
-      setUsernameError("El nombre de usuario no puede tener espacios");
     } else if ((password.current?.getValue().length ?? 0) < 8) {
       //handle no first Password
       setPasswordError("La contraseña debe tener al menos 8 caracteres");
@@ -85,14 +80,13 @@ const Register = ({ setReg }: RegProps) => {
       validUsername.request.response === "true"
     ) {
       //handle username already in use
-      console.log("dasdas");
       setPasswordError("");
       setEmailError("");
       setUsernameError("Este Nombre de Usuario no esta disponible");
     }
 
     // too much characters
-    else if ((email.current?.getValue().length ?? 0) >= 50) {
+    else if ((email.current?.getValue().length ?? 0) >= 250) {
       //handle
       setPasswordError("");
       setEmailError("El Email es demasiado largo");

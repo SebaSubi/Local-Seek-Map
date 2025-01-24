@@ -1,5 +1,5 @@
 import { Alert, Platform } from "react-native";
-import { LocalHours } from "../schema/GeneralSchema";
+import { LocalSchedule } from "../schema/GeneralSchema";
 
 // const API_URL =
 //   Platform.OS === "android"
@@ -7,11 +7,9 @@ import { LocalHours } from "../schema/GeneralSchema";
 //     : "http://192.168.155.114:3000";
 
 const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/store"
-    : "http://localhost:3000";
+  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
-export async function createSchedule(schedule: LocalHours) {
+export async function createSchedule(schedule: LocalSchedule) {
   try {
     const response = await fetch(`${API_URL}/schedule`, {
       method: "POST",
@@ -50,6 +48,7 @@ export async function getSchedulesByLocalId(id: string) {
     const response = await fetch(`${API_URL}/schedule/local/${id}`);
     if (!response.ok) {
       console.log("Error fetching schedule");
+      console.log(response);
     } else {
       const json = response.json();
       return json;
@@ -80,7 +79,7 @@ export async function deleteSchedule(id: string) {
   }
 }
 
-export async function updateSchedule(id: string, schedule: LocalHours) {
+export async function updateSchedule(id: string, schedule: LocalSchedule) {
   try {
     const response = await fetch(`${API_URL}/schedule/update/${id}`, {
       method: "PUT",

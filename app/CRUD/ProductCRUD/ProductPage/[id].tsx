@@ -39,8 +39,6 @@ export default function ProductPage() {
     fetchAndSetAll();
   }, []);
 
-  // console.log(similarProducts);
-
   return (
     <>
       <Stack.Screen
@@ -52,7 +50,7 @@ export default function ProductPage() {
         <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden ">
           {selectedOption === "Locals" && locals && localTypes && (
             <>
-              <View className="w-full h-1/3 rounded-3xl  overflow-hidden">
+              <View className="w-full h-[40%] rounded-3xl  overflow-hidden">
                 <ProductMap locals={locals} />
               </View>
               <FlatList
@@ -125,13 +123,13 @@ export default function ProductPage() {
           {/* <Text></Text> */}
           <BasicButton
             background={selectedOption === "Locals" ? "white" : "#7e8592"}
-            style="w-1/3 mb-2"
+            style="w-1/3 mb-2 bg-[#1a253d]"
             text="Disponible en:"
             onPress={() => setSelectedOption("Locals")}
           />
           <BasicButton
             background={selectedOption === "Info" ? "white" : "#7e8592"}
-            style="w-1/3 mb-2"
+            style="w-1/3 mb-2 bg-[#1a253d]"
             text="Información"
             onPress={() => setSelectedOption("Info")}
           />

@@ -6,6 +6,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Fontisto from "@expo/vector-icons/Fontisto";
+
+<FontAwesome6 name="arrow-up-right-from-square" size={24} color="black" />;
 
 export const CreateLogo = () => {
   return <Entypo name="plus" size={24} color="black" />;
@@ -125,4 +128,38 @@ export const Servicio = ({ color = "black" }) => {
   return (
     <MaterialIcons name="miscellaneous-services" size={24} color={color} />
   );
+};
+
+export const ArrowUpRight = ({ color = "black", size = 24 }) => {
+  return <Feather name="arrow-up-right" size={size} color={color} />;
+};
+
+export const ArrowUpRightBox = ({ color = "black", size = 24 }) => {
+  return (
+    <FontAwesome6 name="arrow-up-right-from-square" size={size} color={color} />
+  );
+};
+
+export const Checkbox = ({ color = "black" }) => {
+  return <AntDesign name="checksquareo" size={24} color={color} />;
+};
+
+export const CloseCircle = ({ color = "black" }) => {
+  return <AntDesign name="closecircle" size={24} color={color} />;
+};
+
+export const Save = ({ color = "black" }) => {
+  return <Feather name="save" size={24} color={color} />;
+};
+
+export const Edit = ({ color = "black", size = 24 }) => {
+  return <AntDesign name="edit" size={size} color={color} />;
+};
+
+export const Eye = ({ color = "black", size = 24 }) => {
+  return <Feather name="eye" size={size} color={color} />;
+};
+
+export const EyeOff = ({ color = "black", size = 24 }) => {
+  return <Feather name="eye-off" size={size} color={color} />;
 };

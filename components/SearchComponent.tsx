@@ -42,7 +42,12 @@ const SearchComponent = () => {
   const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
+<<<<<<< HEAD
     "locals",
+=======
+    // eslint-disable-next-line prettier/prettier
+    "locals"
+>>>>>>> 321fc151a777eda52a26eb1dd703c2d7e3c1a30a
   );
 
   useEffect(() => {
@@ -146,7 +151,12 @@ const SearchComponent = () => {
                 numColumns={2}
                 renderItem={({ item }) => {
                   const category = productCategories.find(
+<<<<<<< HEAD
                     (category) => category.id === item.productTypeId,
+=======
+                    // eslint-disable-next-line prettier/prettier
+                    (category) => category.id === item.productTypeId
+>>>>>>> 321fc151a777eda52a26eb1dd703c2d7e3c1a30a
                   );
                   return (
                     <ProductContainer
@@ -219,6 +229,8 @@ const SearchComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    // alignItems: "center",
     paddingHorizontal: 10,
     paddingTop: 20,
     backgroundColor: "#f8f8f8",
