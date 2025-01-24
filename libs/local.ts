@@ -191,6 +191,28 @@ export async function getProductsOfALocal(id: string) {
   }
 }
 
+export async function deleteLocal(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Error deleting store");
+      const errorResponse = await response.json();
+      console.log(errorResponse);
+      throw new Error("Error deleting store");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.log("Error en deleteLocal:", error);
+  }
+}
+
 export async function checkLocalName(name: string) {
   try {
     const rawData = await axios.get(`${API_URL}/check-name/${name}`);

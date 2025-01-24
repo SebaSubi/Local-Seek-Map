@@ -19,7 +19,7 @@ import SmallProductCard from "../../../components/SmallProductCard";
 import { Product, ProductType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 
-export default function DeleteProduct() {
+const DeleteProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]); // Lista completa de productos
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Productos filtrados
   const [loading, setLoading] = useState(true); // Indicador de carga
@@ -166,7 +166,7 @@ export default function DeleteProduct() {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f5f5f5", padding: 10 },
@@ -188,3 +188,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+export default DeleteProductScreen;
