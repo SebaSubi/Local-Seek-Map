@@ -1,15 +1,38 @@
-import { View, Text, Modal } from "react-native";
-import React, { useState } from "react";
+import { View, Text, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
 import UserComponent from "../../components/UserComponent";
 import { colors } from "../../constants/colors";
 import BasicButton from "../../components/BasicButton";
 import { Checkbox, LogOutIcon, UpdateLogo } from "../../components/Logos";
-import AuthContext, { Role, useAuth } from "../context/AuthContext";
+import { Role, useAuth } from "../context/AuthContext";
 import UserUpdateModal from "../../components/UserUpdateModal";
+import LocalContainer from "../../components/LocalContainer";
+import { getUserLocals, UserLocal } from "../../libs/user";
+import { LocalTypes } from "../../schema/GeneralSchema";
+import GoBackButton from "../../components/GoBackButton";
 
-export default function User() {
+export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [locals, setLocals] = useState<UserLocal[]>([]);
+
+  useEffect(() => {
+    fetchData();
+  }, [authState]);
+
+  const fetchData = async () => {
+    if (
+      authState?.user?.username &&
+      authState.user.username !== "Admin" &&
+      authState.user.username !== "guest"
+    ) {
+      const fetchedLocals = await getUserLocals(authState.user.id);
+      // console.log(fetchedLocals.data);
+      if (fetchedLocals.data) {
+        setLocals(fetchedLocals.data);
+      }
+    }
+  };
 
   // console.log(authState);
   const guestUser = {
@@ -54,14 +77,50 @@ export default function User() {
           )}
 
           <Text className="text-2xl font-bold">Mi Local</Text>
-          {authState?.user?.role === Role.USER ? (
-            <BasicButton
-              text="Registrar mi local"
-              background={colors.primary.lightGray}
-              textStyle={`font-bold text-[#1A253D] text-base`}
-              style="h-11 mt-3"
-              logo={<Checkbox color={colors.primary.blue} />}
-            />
+          {authState?.user?.username !== "guest" && locals.length >= 1 ? (
+            <View className="w-full h-[60%]">
+              <FlatList
+                data={locals}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => (
+                  <LocalContainer
+                    local={{
+                      id: item.id,
+                      address: item.address,
+                      dateFrom: new Date(),
+                      dateTo: null,
+                      facebook: item.facebook,
+                      imgURL: item.imgURL,
+                      instagram: item.instagram,
+                      localTypeID: item.localTypes.id,
+                      localTypes: item.localTypes as LocalTypes,
+                      location: item.location,
+                      name: item.name,
+                      product: [],
+                      schedule: [],
+                      services: [],
+                      users: [],
+                      viewLocal: [],
+                      webpage: item.webpage,
+                      whatsapp: +item.whatsapp,
+                      // whatsapp: null,
+                    }}
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+                onRefresh={() => fetchData()}
+                // refreshing={loading}
+                refreshing={false}
+              />
+              <BasicButton
+                text="Registrar mi local"
+                background={colors.primary.lightGray}
+                textStyle={`font-bold text-[#1A253D] text-base`}
+                style="h-11 mt-3"
+                logo={<Checkbox color={colors.primary.blue} />}
+              />
+            </View>
           ) : (
             ""
           )}
@@ -75,6 +134,7 @@ export default function User() {
             onPress={onLogout}
           />
         </View>
+        {/* <GoBackButton /> */}
       </View>
     </View>
   );

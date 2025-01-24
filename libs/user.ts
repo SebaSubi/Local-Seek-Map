@@ -22,3 +22,26 @@ export async function EditUser(user: {
 }) {
   return await axios.put(`${API_URL}/update-user`, user);
 }
+
+export type UserLocal = {
+  id: string;
+  name: string;
+  location: string;
+  address: string;
+  whatsapp: string;
+  webpage: string;
+  facebook: string;
+  instagram: string;
+  imgURL: string;
+  localTypes: {
+    id: string;
+    name: string;
+  };
+};
+export async function getUserLocals(userId: string) {
+  return await axios.get(`${API_URL}/user-locals`, {
+    params: {
+      userId: userId,
+    },
+  });
+}

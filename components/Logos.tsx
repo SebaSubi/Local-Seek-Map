@@ -163,3 +163,7 @@ export const Eye = ({ color = "black", size = 24 }) => {
 export const EyeOff = ({ color = "black", size = 24 }) => {
   return <Feather name="eye-off" size={size} color={color} />;
 };
+
+export const ArrowLeft = ({ color = "black", size = 24 }) => {
+  return <AntDesign name="arrowleft" size={size} color={color} />;
+};
