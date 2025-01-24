@@ -26,8 +26,7 @@ const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [localCategories, setLocalCategories] = useState<LocalTypes[]>([]);
-  const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([]);
+
   const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
@@ -42,21 +41,17 @@ const SearchComponent = () => {
 
   const fetchData = async () => {
     try {
-      const [localsData, productsData, serviceData, localTypes, serviceTypes] =
-        await Promise.all([
-          getLocals(),
-          getProducts(),
-          getDisplayServices(),
-          getLocalTypes(),
-          getServiceTypes(),
-          //Missing Product Types
-        ]);
+      const [localsData, productsData, serviceData] = await Promise.all([
+        getLocals(),
+        getProducts(),
+        getDisplayServices(),
+        getLocalTypes(),
+        getServiceTypes(),
+      ]);
 
       setLocals(localsData);
       setProducts(productsData);
       setServices(serviceData);
-      setLocalCategories(localTypes.allCategories);
-      setServiceCategories(serviceTypes);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -118,9 +113,7 @@ const SearchComponent = () => {
                 data={locals}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <LocalContainer local={item} categories={localCategories} />
-                )}
+                renderItem={({ item }) => <LocalContainer local={item} />}
                 keyExtractor={(item) => item.id.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
@@ -159,12 +152,7 @@ const SearchComponent = () => {
                 data={services}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <ServiceContainer
-                    service={item}
-                    categories={serviceCategories}
-                  />
-                )}
+                renderItem={({ item }) => <ServiceContainer service={item} />}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
@@ -176,36 +164,6 @@ const SearchComponent = () => {
     </>
   );
 };
-
-// <View style={styles.buttonContainer}>
-//   <Pressable
-//     style={[
-//       styles.button,
-//       viewType === "locales" ? styles.buttonActive : styles.buttonInactive,
-//     ]}
-//     onPress={() => setViewType("locales")}
-//   >
-//     <Text style={styles.buttonText}>Locales</Text>
-//   </Pressable>
-//   <Pressable
-//     style={[
-//       styles.button,
-//       viewType === "productos" ? styles.buttonActive : styles.buttonInactive,
-//     ]}
-//     onPress={() => setViewType("productos")}
-//   >
-//     <Text style={styles.buttonText}>Productos</Text>
-//   </Pressable>
-//   <Pressable
-//     style={[
-//       styles.button,
-//       viewType === "servicios" ? styles.buttonActive : styles.buttonInactive,
-//     ]}
-//     onPress={() => setViewType("servicios")}
-//   >
-//     <Text style={styles.buttonText}>Servicios</Text>
-//   </Pressable>
-// </View>;
 
 const styles = StyleSheet.create({
   container: {

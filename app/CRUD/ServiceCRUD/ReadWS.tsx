@@ -1,41 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  Modal,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import {
-  createService,
-  getDisplayServices,
   getDisplayServicesByName,
-  getOpenServices,
   getOpenServicesByName,
   getOpenServicesByNameAndCategory,
-  getServicesByCategory,
   getServicesByCategoryAndName,
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
-import {
-  getServiceTypeNames,
-  getServiceTypes,
-} from "../../../libs/serviceType";
-import { Picker } from "@react-native-picker/picker";
-import { getReactNavigationScreensConfig } from "expo-router/build/getReactNavigationConfig";
+import { getServiceTypes } from "../../../libs/serviceType";
 
 const filters = ["Apertura", "Quitar"];
 
 export default function ReadWS() {
   const [services, setServices] = useState<Service[]>([]);
   const [searchFilter, setSearchFilter] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Cancha de Paddle"); //this need to change later to Deportes
+  const [selectedCategory, setSelectedCategory] = useState(""); //this need to change later to Deportes
   const [serviceCateogries, setServiceCategories] = useState<ServiceType[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -65,6 +47,7 @@ export default function ReadWS() {
       setLoading(false);
     } else {
       const services = await getDisplayServicesByName(search);
+      // console.log("we are in");
       setServices(services);
       setLoading(false);
     }
@@ -115,9 +98,7 @@ export default function ReadWS() {
           data={services}
           horizontal={false}
           numColumns={2}
-          renderItem={({ item }) => (
-            <ServiceContainer service={item} categories={serviceCateogries} />
-          )}
+          renderItem={({ item }) => <ServiceContainer service={item} />}
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchAndSetServices()}
           refreshing={loading}
@@ -167,3 +148,44 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+[
+  {
+    dateFrom: "2024-12-01T16:55:36.001Z",
+    dateTo: null,
+    description: "Alquiler de 1 hora en la cancha de paddle de Sebas's Club",
+    id: "cm24sz9030001xbxtdcx8q41q",
+    imgURL:
+      "https://lh5.googleusercontent.com/p/AF1QipMj7QyVRS4zgme_HiRlnnbBvp_6jrE0EgeX3bUk=w408-h306-k-no",
+    local: {
+      address: "Placeholder 13527 123",
+      imgURL: null,
+      location: "-32.05684199439024, -60.44329571681652",
+      name: "Seba's Club",
+    },
+    localId: "cm24sa2k8000qqojgwkkzrh9q",
+    name: "Canchas de Paddle",
+    reservationURL: null,
+    serviceType: { id: "cm24sq26k0000xbxt0ov8aqy5", name: "Cancha de Paddle" },
+    serviceTypeId: "cm24sq26k0000xbxt0ov8aqy5",
+  },
+  {
+    dateFrom: "2024-12-12T22:06:13.317Z",
+    dateTo: null,
+    description: "Para nadar",
+    id: "cm4lvccjd0001zryu3we372d6",
+    imgURL:
+      "https://kailepiletas.com.ar/wp-content/uploads/2019/05/pileta-verano.jpg",
+    local: {
+      address: "Placeholder 13527 123",
+      imgURL: null,
+      location: "-32.05684199439024, -60.44329571681652",
+      name: "Seba's Club",
+    },
+    localId: "cm24sa2k8000qqojgwkkzrh9q",
+    name: "Pileta",
+    reservationURL: "11111",
+    serviceType: { id: "cm24sq26k0000xbxt0ov8aqy5", name: "Cancha de Paddle" },
+    serviceTypeId: "cm24sq26k0000xbxt0ov8aqy5",
+  },
+];
