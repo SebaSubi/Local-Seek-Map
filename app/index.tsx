@@ -5,14 +5,14 @@ import { useAuth } from "./context/AuthContext";
 import Register from "../components/Register";
 import { validateEmail } from "../components/Register";
 import { colors } from "../constants/colors";
-import { Ionicons } from "@expo/vector-icons"; // Importar íconos
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Login() {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [login, setLogin] = useState(true);
   const [loginError, setLoginError] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false); // Estado para manejar la visibilidad de la contraseña
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { onLogin, authState } = useAuth();
 
@@ -77,13 +77,13 @@ export default function Login() {
           <View className="w-full mb-4 relative">
             <TextInput
               placeholder="Contraseña"
-              secureTextEntry={!passwordVisible} // Cambia la visibilidad de la contraseña
+              secureTextEntry={!passwordVisible}
               className="w-full py-4 px-4 rounded-3xl border-gray-300 text-gray-700"
               style={{ backgroundColor: colors.primary.lightGray }}
               onChangeText={(text) => (passwordRef.current = text)}
             />
             <TouchableOpacity
-              onPress={() => setPasswordVisible(!passwordVisible)} // Alterna la visibilidad
+              onPress={() => setPasswordVisible(!passwordVisible)}
               style={{
                 position: "absolute",
                 right: 20,
@@ -91,7 +91,7 @@ export default function Login() {
               }}
             >
               <Ionicons
-                name={passwordVisible ? "eye-off" : "eye"} // Cambia el ícono según el estado
+                name={passwordVisible ? "eye-off" : "eye"}
                 size={24}
                 color={colors.primary.blue}
               />
