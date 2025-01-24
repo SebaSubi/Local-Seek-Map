@@ -18,6 +18,7 @@ const BasicTextInput = forwardRef(
       value: string;
       textSecure?: boolean;
     },
+    // eslint-disable-next-line prettier/prettier
     ref: React.ForwardedRef<{ getValue: () => string }>
   ) => {
     const [text, setText] = useState(value);
@@ -31,9 +32,11 @@ const BasicTextInput = forwardRef(
 
     useImperativeHandle(ref, () => ({
       getValue: () => text,
+      // setValue: (newValue: string) => setText(newValue),
     }));
     useImperativeHandle(ref, () => ({
       getValue: () => text,
+      // setValue: (newValue: string) => setText(newValue),
     }));
 
     return (

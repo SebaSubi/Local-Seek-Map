@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   View,
   Alert,
@@ -25,6 +24,10 @@ import BigTextInput from "../../../components/BigTextInput";
 
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
+  // const nameRef = useRef<{
+  // getValue: () => string;
+  // setValue: (value: string) => void;
+  // }>(null);
   const brandRef = useRef<any>(null);
   const measurementRef = useRef<any>(null);
   const descriptionRef = useRef<any>(null);
@@ -49,7 +52,7 @@ export default function CreateProduct() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -85,6 +88,7 @@ export default function CreateProduct() {
       return;
     } else if (name.includes(",") || name.includes(".")) {
       setNameError(
+        // eslint-disable-next-line prettier/prettier
         "El nombre del produto no debe tener ni puntos '.' ni comas ','"
       );
       setbrandError("");
@@ -118,7 +122,17 @@ export default function CreateProduct() {
     }
 
     try {
+      // const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen");
+      //   return;
+      // }
+
+      // Alert.alert("Cargando...", "Subiendo imagen...");
+
       const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+
+      // Verifica si hubo un error al subir la imagen
       if (!uploadedImageUrl) {
         Alert.alert("Error", "No se pudo cargar la imagen");
         return;
@@ -142,9 +156,110 @@ export default function CreateProduct() {
       descriptionRef.current.setValue("");
       setImage(null);
     } catch (error) {
-      Alert.alert("Error", "No se pudo crear el producto");
+      // Alert.alert("Error", "No se pudo crear el producto");
     }
   };
+
+  // const handleSubmit = async () => {
+  //   // Primero, capturar los valores de los inputs
+  //   const name = nameRef.current?.getValue();
+  //   const brand = brandRef.current?.getValue();
+  //   const mesurement = measurementRef.current?.getValue();
+  //   const description = descriptionRef.current?.getValue();
+  //   const productTypeId = selectedType?.id;
+
+  //   // Validación de los campos antes de proceder
+  //   if (
+  //     !name ||
+  //     !brand ||
+  //     !mesurement ||
+  //     !description ||
+  //     !image ||
+  //     !productTypeId
+  //   ) {
+  //     Alert.alert("Error", "Por favor complete todos los campos");
+  //     return;
+  //   }
+
+  //   // Validación adicional de los campos
+  //   if (name.length < 2) {
+  //     setNameError("El nombre del producto es demasiado corto");
+  //     setbrandError("");
+  //     setMeasurementError("");
+  //     return;
+  //   } else if (name.includes(",") || name.includes(".")) {
+  //     setNameError(
+  //       // eslint-disable-next-line prettier/prettier
+  //       "El nombre del producto no debe tener ni puntos '.' ni comas ','"
+  //     );
+  //     setbrandError("");
+  //     setMeasurementError("");
+  //     return;
+  //   } else if (name.length >= 50) {
+  //     setNameError("El nombre del producto es demasiado largo");
+  //     setbrandError("");
+  //     setMeasurementError("");
+  //     return;
+  //   } else if (brand.length < 2) {
+  //     setNameError("");
+  //     setbrandError("La marca del producto es demasiado corta");
+  //     setMeasurementError("");
+  //     return;
+  //   } else if (brand.length >= 50) {
+  //     setNameError("");
+  //     setbrandError("La marca del producto es demasiado larga");
+  //     setMeasurementError("");
+  //     return;
+  //   } else if (mesurement.length < 2) {
+  //     setNameError("");
+  //     setbrandError("");
+  //     setMeasurementError("La medida del producto es demasiado corta");
+  //     return;
+  //   } else if (mesurement.length >= 50) {
+  //     setNameError("");
+  //     setbrandError("");
+  //     setMeasurementError("La medida del producto es demasiado larga");
+  //     return;
+  //   }
+
+  //   try {
+  //     // Aquí el código para subir la imagen y crear el producto
+  //     const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+  //     if (!uploadedImageUrl) {
+  //       Alert.alert("Error", "No se pudo cargar la imagen");
+  //       return;
+  //     }
+
+  //     const newProduct: Product = {
+  //       name,
+  //       brand,
+  //       mesurement,
+  //       description,
+  //       productTypeId,
+  //       imgURL: uploadedImageUrl,
+  //       dateFrom: new Date(),
+  //     };
+
+  //     await createProduct(newProduct);
+
+  //     // Confirmación de éxito
+  //     Alert.alert("Éxito", "Producto creado exitosamente");
+
+  //     // Limpiar los campos después de la creación
+  //     // nameRef.current.setValue("");
+  //     // brandRef.current.setValue("");
+  //     // measurementRef.current.setValue("");
+  //     // descriptionRef.current.setValue("");
+  //     if (nameRef.current) nameRef.current.setValue("");
+  //     if (brandRef.current) brandRef.current.setValue("");
+  //     if (measurementRef.current) measurementRef.current.setValue("");
+  //     if (descriptionRef.current) descriptionRef.current.setValue("");
+  //     setImage(null);
+  //   } catch (error) {
+  //     console.error(error);
+  //     Alert.alert("Error", "No se pudo crear el producto. Intenta nuevamente.");
+  //   }
+  // };
 
   // Función para obtener los tipos de producto
   const fetchCategories = async () => {
