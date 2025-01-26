@@ -38,9 +38,13 @@ export default function EditLocalContainer({ local }: { local: Local }) {
         key={local.id}
       >
         <View className="flex flex-row w-full pt-2 justify-center">
-          <Text className="font-bold text-lg text-[#555555]">Editar Local</Text>
+          <Text
+            className={`font-bold text-lg text-[${colors.secondary.darkGray}]`}
+          >
+            Editar Local
+          </Text>
           <View className="pt-1 pl-1">
-            <Edit size={20} color="#555555" />
+            <Edit size={20} color={colors.secondary.darkGray} />
           </View>
         </View>
         <View className="w-[70%] h-[47%] flex items-center justify-center rounded-3xl overflow-hidden">

@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
@@ -20,6 +20,8 @@ import {
   getScheduleByScheduleId,
   updateSchedule,
 } from "../../../../libs/localSchedule";
+import GoBackButton from "../../../../components/GoBackButton";
+import { colors } from "../../../../constants/colors";
 
 export default function UpdateSchedule() {
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
@@ -32,6 +34,8 @@ export default function UpdateSchedule() {
   const ThirdShiftStartRef = useRef<any>(null);
   const ThirdShiftFinishRef = useRef<any>(null);
   const localScheduleId = useLocalIdStore((state) => state.scheduleId);
+
+  const { name } = useLocalSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,57 +102,77 @@ export default function UpdateSchedule() {
 
   return loaded ? (
     <>
-      <Stack.Screen
-        options={{
-          header: () => <Header title="Actualizar Horario" />,
-        }}
-      />
-      <View className="flex justify-center items-center bg-white h-full w-full">
-        <Text>Day number: {schedule!.dayNumber}</Text>
-        <TimeSelect
-          text="Hora de Apertura Primer Turno:"
-          ref={FirstShiftStartRef}
+      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
         />
-        <TimeSelect
-          text="Hora de Cerrada Primer Turno:"
-          ref={FirstShiftFinishRef}
-        />
-        <TimeSelect
-          text="Hora de Apertura Segundo Turno:"
-          ref={SecondShiftStartRef}
-        />
-        <TimeSelect
-          text="Hora de Cerrada Segundo Turno:"
-          ref={SecondShiftFinishRef}
-        />
-        <TimeSelect
-          text="Hora de Apertura Tercer Turno:"
-          ref={ThirdShiftStartRef}
-        />
-        <TimeSelect
-          text="Hora de Cerrada Tercer Turno:"
-          ref={ThirdShiftFinishRef}
-        />
-
-        <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-          <BasicButton
-            logo={<CreateLogo />}
-            text="Actualizar Horario"
-            style="mt-3"
-            onPress={handleSubmit}
+        <View className="flex flex-row justify-between w-full items-center mb-2">
+          <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+            {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
+          </Text>
+          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        </View>
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center ">
+          <Text className="mt-6">Day number: {schedule!.dayNumber}</Text>
+          <TimeSelect
+            text="Hora de Apertura Primer Turno:"
+            ref={FirstShiftStartRef}
           />
+          <TimeSelect
+            text="Hora de Cerrada Primer Turno:"
+            ref={FirstShiftFinishRef}
+          />
+          <TimeSelect
+            text="Hora de Apertura Segundo Turno:"
+            ref={SecondShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Segundo Turno:"
+            ref={SecondShiftFinishRef}
+          />
+          <TimeSelect
+            text="Hora de Apertura Tercer Turno:"
+            ref={ThirdShiftStartRef}
+          />
+          <TimeSelect
+            text="Hora de Cerrada Tercer Turno:"
+            ref={ThirdShiftFinishRef}
+          />
+
+          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            <BasicButton
+              logo={<CreateLogo />}
+              text="Actualizar Horario"
+              style="mt-3"
+              onPress={handleSubmit}
+            />
+          </View>
         </View>
       </View>
     </>
   ) : (
     <>
-      <Stack.Screen
-        options={{
-          header: () => <Header title="Actualizar Horario" />,
-        }}
-      />
-      <View className="flex justify-center items-center bg-white h-full w-full">
-        <Text>Loading...</Text>
+      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
+        <View className="flex flex-row justify-between w-full items-center mb-2">
+          <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+            {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
+          </Text>
+          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        </View>
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+          <View className="flex justify-center items-center bg-white h-full w-full">
+            <Text>Loading...</Text>
+          </View>
+        </View>
       </View>
     </>
   );

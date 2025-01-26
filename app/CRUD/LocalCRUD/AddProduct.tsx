@@ -17,7 +17,7 @@ import { Product, ProductType } from "../../../schema/GeneralSchema";
 import { uploadImageToCloudinaryProducts } from "../../../libs/cloudinary";
 import { createProduct } from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../components/Header";
 import BasicTextInput from "../../../components/BasicTextInput";
 import BigTextInput from "../../../components/BigTextInput";
@@ -25,6 +25,8 @@ import BasicButton from "../../../components/BasicButton";
 import { CreateLogo } from "../../../components/Logos";
 import { createProductOfLocal } from "../../../libs/local";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import GoBackButton from "../../../components/GoBackButton";
+import { colors } from "../../../constants/colors";
 
 export default function AddProduct() {
   const nameRef = useRef<any>(null);
@@ -42,6 +44,7 @@ export default function AddProduct() {
   const [measurementError, setMeasurementError] = useState("");
 
   const localId = useLocalIdStore((state) => state.localId);
+  const { name } = useLocalSearchParams();
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -177,13 +180,20 @@ export default function AddProduct() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
-      <View className="bg-[#1a253d] w-full h-full flex items-center">
-        <View className=" h-[90%] w-full ">
+      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
+        <View className="flex flex-row justify-between w-full items-center mb-2">
+          <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+            {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
+          </Text>
+          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        </View>
+        <View className="bg-white h-[85%] w-full rounded-3xl flex items-center justify-center">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -298,7 +308,14 @@ export default function AddProduct() {
             )}
           </ScrollView>
         </View>
-        <View style={{ marginTop: 20, alignItems: "center", width: "80%" }}>
+        <View
+          style={{
+            marginTop: 20,
+            alignItems: "center",
+            width: "80%",
+            marginBottom: 10,
+          }}
+        >
           <BasicButton
             logo={<CreateLogo />}
             text="Crear Producto"
@@ -346,7 +363,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   closeButton: {
-    marginTop: 15,
+    marginTop: 5,
     padding: 10,
     backgroundColor: "#e1e8e8",
     borderRadius: 5,

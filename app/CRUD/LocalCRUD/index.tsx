@@ -1,9 +1,11 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import BasicSelectable from "../../../components/BasicSelectable";
 import {
+  ClockLogo,
   CreateLogo,
   DeleteLogo,
   ProductIcon,
+  ReaderIcon,
   ReadLogo,
   UpdateLogo,
 } from "../../../components/Logos";
@@ -52,7 +54,7 @@ export default function ProductCrud() {
           <>
             <View className="flex flex-row justify-between w-full">
               <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3" />
-              <Text className="text-white font-semibold text-lg mt-1">
+              <Text className="text-white font-semibold text-xl mt-1">
                 {`Editar ${name as string}`}
               </Text>
               <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
@@ -66,10 +68,17 @@ export default function ProductCrud() {
               /> */}
 
               <BasicSelectable
-                href="/CRUD/LocalCRUD/UpdateLocal"
+                href="/CRUD/LocalCRUD/NewUpdateLocal"
                 logo={<UpdateLogo />}
                 text="Actualizar Local"
                 style="mt-3"
+                params={{
+                  id: id,
+                  name: name,
+                  localCoordinates: localCoordinates,
+                  image: image,
+                  localType: localType,
+                }}
               />
               <BasicSelectable
                 href="/CRUD/LocalCRUD/LocalPage/[id]"
@@ -80,7 +89,7 @@ export default function ProductCrud() {
                   image: image,
                   localType: localType,
                 }}
-                logo={<ReadLogo />}
+                logo={<ReaderIcon />}
                 text="Ver Local"
                 style="mt-3"
               />
@@ -92,15 +101,25 @@ export default function ProductCrud() {
               />
               <BasicSelectable
                 href="/CRUD/LocalCRUD/LocalSchedule/"
-                logo={<ReadLogo />}
+                logo={<ClockLogo />}
                 text="Horarios Local"
                 style="mt-3"
+                params={{
+                  id: id,
+                  name: name,
+                  localCoordinates: localCoordinates,
+                  image: image,
+                  localType: localType,
+                }}
               />
               <BasicSelectable
                 href="/CRUD/LocalCRUD/AddProduct"
                 logo={<ProductIcon />}
                 text="Agregar Producto"
                 style="mt-3"
+                params={{
+                  name: name,
+                }}
               />
               <BasicSelectable
                 href="/CRUD/LocalCRUD/EditProduct"

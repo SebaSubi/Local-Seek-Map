@@ -167,3 +167,15 @@ export const EyeOff = ({ color = "black", size = 24 }) => {
 export const ArrowLeft = ({ color = "black", size = 24 }) => {
   return <AntDesign name="arrowleft" size={size} color={color} />;
 };
+
+export const ClockLogo = ({ color = "black", size = 24 }) => {
+  return <Feather name="clock" size={size} color={color} />;
+};
+
+export const ReadMore = ({ color = "black", size = 24 }) => {
+  return <MaterialIcons name="read-more" size={size} color={color} />;
+};
+
+export const ReaderIcon = ({ color = "black", size = 24 }) => {
+  return <Ionicons name="reader-outline" size={size} color={color} />;
+};

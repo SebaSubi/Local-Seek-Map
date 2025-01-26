@@ -11,13 +11,14 @@ import {
 } from "../../../libs/local";
 import { Local } from "../../../schema/GeneralSchema";
 import { verifyUrl } from "./CreateLocal";
+import { Stack, useLocalSearchParams } from "expo-router";
+import GoBackButton from "../../../components/GoBackButton";
+import { colors } from "../../../constants/colors";
 
 export default function UpdateLocal() {
-  //   const [locals, setLocals] = useState<Local[]>([]);
-  //   const [screen, setScreen] = useState(false);
+  const { id, name, localCoordinates, image, localType } =
+    useLocalSearchParams();
   const [local, setLocal] = useState<Local>();
-  const setLocalId = useLocalIdStore((state) => state.setLocalId);
-  const localId = useLocalIdStore((state) => state.localId);
 
   const nameRef = useRef(null);
   const locationRef = useRef(null);
@@ -35,22 +36,26 @@ export default function UpdateLocal() {
   const [facebookError, setFacebookError] = useState("");
   const [webpageError, setWebpageError] = useState("");
 
-  useEffect(() => {
-    const fetchLocals = async () => {
-      const locals = await getLocals();
-      setLocals(locals);
+  async function getSpecificLocal(id: string) {
+    const fetchLocal = async () => {
+      const local = await getLocal(id);
+      setLocal(local);
     };
-    fetchLocals();
-  }, []);
+    fetchLocal();
+  }
+
+  useEffect(() => {
+    getSpecificLocal(id as string);
+  }, [id]);
 
   const handlePress = async () => {
     const name = nameRef.current?.getValue();
-    const location = locationRef.current.getValue();
-    const whatsapp = wppNumberRef.current.getValue();
-    const instagram = instagramRef.current.getValue();
-    const facebook = facebookRef.current.getValue();
-    const webpage = paginaWebRef.current.getValue();
-    const image = imgURLRef.current.getValue();
+    const location = locationRef?.current?.getValue();
+    const whatsapp = wppNumberRef?.current?.getValue();
+    const instagram = instagramRef?.current?.getValue();
+    const facebook = facebookRef?.current?.getValue();
+    const webpage = paginaWebRef?.current?.getValue();
+    const image = imgURLRef?.current?.getValue();
 
     if (!name || !location || !image) {
       Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
@@ -223,7 +228,8 @@ export default function UpdateLocal() {
       return;
     }
 
-    const newLocal: Local = {
+    // const newLocal: Local = {
+    const newLocal = {
       name,
       location,
       whatsapp,
@@ -236,129 +242,114 @@ export default function UpdateLocal() {
     console.log(newLocal);
     // console.log(createLocal(newLocal))
   };
-  async function getSpecificLocal(id: string) {
-    const fetchLocal = async () => {
-      const local = await getLocal(id);
-      setLocal(local);
-    };
-    fetchLocal();
-  }
 
   return (
-    <View className="flex flex-col justify-center bg-white items-center w-full h-full">
-      {screen ? (
-        <>
-          {nameError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{nameError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            placeholder="Nombre del Local"
-            inputType="text"
-            title="Nuevo Nombre: "
-            textStyle="mt-4"
-            value={local ? local.name : ""}
-            ref={nameRef}
-          />
-          {locationError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{locationError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            placeholder="Ubicacion de Local"
-            inputType="text"
-            title="Nueva Ubicacion del Local" //This we will have to change later, since the person most likely wont knoe the coordinates
-            textStyle="mt-4"
-            value={local ? local.location : ""}
-            ref={locationRef}
-          />
-          {whatsappError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{whatsappError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            placeholder="Numero de WhatsApp"
-            inputType="number"
-            title="Nuevo Numero: "
-            textStyle="mt-4"
-            value={
-              local ? (local.whatsapp ? local.whatsapp.toString() : "") : ""
-            }
-            ref={wppNumberRef}
-          />
-          {instagramError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{instagramError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            placeholder="Instagram"
-            inputType="text"
-            title="Nuevo @Instagram: "
-            textStyle="mt-4"
-            ref={instagramRef}
-            value={local ? (local.instagram ? local.instagram : "") : ""}
-          />
-          {facebookError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{facebookError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            placeholder="Nuevo Facebook"
-            inputType="text"
-            title="Nuevo @Facebook: "
-            textStyle="mt-4"
-            ref={facebookRef}
-            value={local ? (local.facebook ? local.facebook : "") : ""}
-          />
-          {webpageError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{webpageError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            placeholder="Sitio Web"
-            inputType="text"
-            title="Nuevo URL: "
-            textStyle="mt-4"
-            ref={paginaWebRef}
-            value={local ? (local.webpage ? local.webpage : "") : ""}
-          />
-          <BasicTextInput
-            placeholder="Imagen"
-            inputType="text"
-            title="Esto tenemos que definir" //We have to see hoe we are gonna do the logic for this.
-            textStyle="mt-4"
-            ref={imgURLRef}
-            value={local ? (local.webpage ? local.image : "") : ""}
-          />
-          <BasicButton
-            text="Actualizar Local"
-            style="mt-4"
-            onPress={handlePress}
-          />
-        </>
-      ) : (
-        <>
-          {locals.map((local) => (
-            <Pressable
-              key={local.id}
-              className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-              onPress={() => {
-                getSpecificLocal(local.id);
-                setLocalId(local.id);
-                setScreen(true);
-              }}
-            >
-              <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
-            </Pressable>
-          ))}
-        </>
-      )}
+    <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <View className="flex flex-row justify-between w-full items-center mb-2">
+        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+          {`Actualizar/Borrar Horarios ${name === undefined ? "" : (name as string)}`}
+        </Text>
+        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+      </View>
+      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+        {nameError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{nameError}</Text>
+          </View>
+        )}
+        <BasicTextInput
+          placeholder="Nombre del Local"
+          inputType="text"
+          title="Nuevo Nombre: "
+          textStyle="mt-4"
+          value={local ? local.name : ""}
+          ref={nameRef}
+        />
+        {locationError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{locationError}</Text>
+          </View>
+        )}
+        <BasicTextInput
+          placeholder="Ubicacion de Local"
+          inputType="text"
+          title="Nueva Ubicacion del Local" //This we will have to change later, since the person most likely wont knoe the coordinates
+          textStyle="mt-4"
+          value={local ? local.location : ""}
+          ref={locationRef}
+        />
+        {whatsappError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{whatsappError}</Text>
+          </View>
+        )}
+        <BasicTextInput
+          placeholder="Numero de WhatsApp"
+          inputType="number"
+          title="Nuevo Numero: "
+          textStyle="mt-4"
+          value={local ? (local.whatsapp ? local.whatsapp.toString() : "") : ""}
+          ref={wppNumberRef}
+        />
+        {instagramError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{instagramError}</Text>
+          </View>
+        )}
+        <BasicTextInput
+          placeholder="Instagram"
+          inputType="text"
+          title="Nuevo @Instagram: "
+          textStyle="mt-4"
+          ref={instagramRef}
+          value={local ? (local.instagram ? local.instagram : "") : ""}
+        />
+        {facebookError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{facebookError}</Text>
+          </View>
+        )}
+        <BasicTextInput
+          placeholder="Nuevo Facebook"
+          inputType="text"
+          title="Nuevo @Facebook: "
+          textStyle="mt-4"
+          ref={facebookRef}
+          value={local ? (local.facebook ? local.facebook : "") : ""}
+        />
+        {webpageError === "" ? null : (
+          <View className="w-full flex items-start ml-28">
+            <Text className="text-red-800">{webpageError}</Text>
+          </View>
+        )}
+        <BasicTextInput
+          placeholder="Sitio Web"
+          inputType="text"
+          title="Nuevo URL: "
+          textStyle="mt-4"
+          ref={paginaWebRef}
+          value={local ? (local.webpage ? local.webpage : "") : ""}
+        />
+        <BasicTextInput
+          placeholder="Imagen"
+          inputType="text"
+          title="Esto tenemos que definir" //We have to see hoe we are gonna do the logic for this.
+          textStyle="mt-4"
+          ref={imgURLRef}
+          value={local ? (local.imgURL ? local.imgURL : "") : ""}
+        />
+        <BasicButton
+          text="Actualizar Local"
+          style="mt-4"
+          onPress={handlePress}
+        />
+      </View>
     </View>
   );
 }
