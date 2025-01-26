@@ -98,9 +98,9 @@ export const uploadImageToCloudinaryProducts = async (
   imageUri: string
 ): Promise<string | null> => {
   const cloudName = "local-seek-map";
-  const uploadPreset = "products_test"; // Nombre del preset unsigned
+  const uploadPreset = "products_test";
 
-  const fileExtension = imageUri.split(".").pop()?.toLowerCase(); // para saber la extensión de la imagen
+  const fileExtension = imageUri.split(".").pop()?.toLowerCase();
   const imageType: "image/jpeg" | "image/png" =
     fileExtension === "jpg" || fileExtension === "jpeg"
       ? "image/jpeg"
@@ -110,7 +110,7 @@ export const uploadImageToCloudinaryProducts = async (
   const formData = new FormData();
   formData.append("file", {
     uri: imageUri,
-    type: imageType, // Se usa imageType aquí
+    type: imageType,
     name: `image.${fileExtension}`,
   } as any);
   formData.append("upload_preset", uploadPreset);
@@ -129,7 +129,6 @@ export const uploadImageToCloudinaryProducts = async (
     );
 
     if (!response.ok) {
-      // Verificamos si la respuesta no es exitosa
       const errorData = await response.json();
       throw new Error(
         // eslint-disable-next-line prettier/prettier
@@ -138,7 +137,7 @@ export const uploadImageToCloudinaryProducts = async (
     }
 
     const data = await response.json();
-    return data.secure_url; // URL segura de la imagen
+    return data.secure_url;
   } catch (error) {
     console.error("Error subiendo imagen a Cloudinary:", error);
     return null;
@@ -150,9 +149,9 @@ export const uploadImageToCloudinaryLocals = async (
   imageUri: string
 ): Promise<string | null> => {
   const cloudName = "local-seek-map";
-  const uploadPreset = "locals_upload"; // Nombre del preset unsigned
+  const uploadPreset = "locals_upload";
 
-  const fileExtension = imageUri.split(".").pop()?.toLowerCase(); // para saber la extensión de la imagen
+  const fileExtension = imageUri.split(".").pop()?.toLowerCase();
   const imageType =
     fileExtension === "jpg" || fileExtension === "jpeg"
       ? "image/jpeg"
@@ -161,16 +160,17 @@ export const uploadImageToCloudinaryLocals = async (
   const formData = new FormData();
   formData.append("file", {
     uri: imageUri,
-    type: imageType, // para que se pueda cargar jpg o png
+    type: imageType,
     name: `image.${fileExtension}`,
   } as any);
   formData.append("upload_preset", uploadPreset);
 
   try {
-    const response = await axios.post(
+    const response = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      formData,
       {
+        method: "POST",
+        body: formData,
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -178,13 +178,18 @@ export const uploadImageToCloudinaryLocals = async (
       }
     );
 
-    return response.data.secure_url; // URL segura de la imagen
-  } catch (error: any) {
-    console.error(
-      "Error subiendo imagen a Cloudinary:",
-      // eslint-disable-next-line prettier/prettier
-      error.response?.data || error
-    );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        // eslint-disable-next-line prettier/prettier
+        `Error subiendo imagen: ${errorData.message || response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  } catch (error) {
+    console.error("Error subiendo imagen a Cloudinary:", error);
     return null;
   }
 };
@@ -211,10 +216,11 @@ export const uploadImageToCloudinaryServices = async (
   formData.append("upload_preset", uploadPreset);
 
   try {
-    const response = await axios.post(
+    const response = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      formData,
       {
+        method: "POST",
+        body: formData,
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -222,13 +228,18 @@ export const uploadImageToCloudinaryServices = async (
       }
     );
 
-    return response.data.secure_url;
-  } catch (error: any) {
-    console.error(
-      "Error subiendo imagen a Cloudinary:",
-      // eslint-disable-next-line prettier/prettier
-      error.response?.data || error
-    );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        // eslint-disable-next-line prettier/prettier
+        `Error subiendo imagen: ${errorData.message || response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  } catch (error) {
+    console.error("Error subiendo imagen a Cloudinary:", error);
     return null;
   }
 };

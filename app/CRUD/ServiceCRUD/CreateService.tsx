@@ -63,7 +63,7 @@ export default function CreateProduct() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -86,18 +86,18 @@ export default function CreateProduct() {
     }
 
     try {
-      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      // if (!uploadedImageUrl) {
-      //   Alert.alert("Error", "No se pudo cargar la imagen.");
-      //   return;
-      // }
+      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen.");
+        return;
+      }
 
       const newService: Service = {
         name,
         localId,
         description,
         reservationURL,
-        // image: uploadedImageUrl,
+        imgURL: uploadedImageUrl,
         serviceTypeId,
         dateFrom: new Date(),
       };

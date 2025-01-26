@@ -65,7 +65,7 @@ export default function CreateLocal() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -120,6 +120,7 @@ export default function CreateLocal() {
     if (location.length < 5) {
       setNameError("");
       setLocationError(
+        // eslint-disable-next-line prettier/prettier
         "La ubicacion del Local requiere minimamente 5 caracteres"
       );
       setWhatsappError("");
@@ -141,6 +142,7 @@ export default function CreateLocal() {
       setNameError("");
       setLocationError("");
       setWhatsappError(
+        // eslint-disable-next-line prettier/prettier
         "La longitud minima de un numero de Whatsapp es de 8 numeros"
       );
       setInstagramError("");
@@ -153,6 +155,7 @@ export default function CreateLocal() {
       setNameError("");
       setLocationError("");
       setWhatsappError(
+        // eslint-disable-next-line prettier/prettier
         "La longitud maxima de un numero de Whatsapp es de 18 numeros"
       );
       setInstagramError("");
@@ -165,6 +168,7 @@ export default function CreateLocal() {
       setLocationError("");
       setWhatsappError("");
       setInstagramError(
+        // eslint-disable-next-line prettier/prettier
         "La longitud minima de un usuario de instagram es de 1 caracter"
       );
       setFacebookError("");
@@ -176,6 +180,7 @@ export default function CreateLocal() {
       setLocationError("");
       setWhatsappError("");
       setInstagramError(
+        // eslint-disable-next-line prettier/prettier
         "La longitud maxima de un usuario de instagram es de 30 caracteres"
       );
       setFacebookError("");
@@ -215,6 +220,7 @@ export default function CreateLocal() {
       setWhatsappError("");
       setInstagramError("");
       setFacebookError(
+        // eslint-disable-next-line prettier/prettier
         "un usuario de Facebook debe tener como minimo 5 caracteres"
       );
       setWebpageError("");
@@ -226,6 +232,7 @@ export default function CreateLocal() {
       setWhatsappError("");
       setInstagramError("");
       setFacebookError(
+        // eslint-disable-next-line prettier/prettier
         "un usuario de Facebook debe tener como maximo 50 caracteres"
       );
       setWebpageError("");
@@ -246,15 +253,15 @@ export default function CreateLocal() {
       setWebpageError("");
       return;
     }
-    if (webpage && !verifyUrl(webpage)) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("URL no valida");
-      return;
-    }
+    // if (webpage && !verifyUrl(webpage)) {
+    //   setNameError("");
+    //   setLocationError("");
+    //   setWhatsappError("");
+    //   setInstagramError("");
+    //   setFacebookError("");
+    //   setWebpageError("URL no valida");
+    //   return;
+    // }
     try {
       const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
       if (!uploadedImageUrl) {
