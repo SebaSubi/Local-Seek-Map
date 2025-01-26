@@ -6,14 +6,22 @@ export default function BasicSelectable({
   logo,
   text,
   style,
+  params,
 }: {
   href: string;
   logo?: any;
   text: string;
   style?: string;
+  params?: any;
 }) {
   return (
-    <Link asChild href={href}>
+    <Link
+      asChild
+      href={{
+        pathname: href,
+        params: params,
+      }}
+    >
       <Pressable
         className={`flex flex-row justify-center items-center w-2/3 bg-[#f6f6f6] h-10 rounded-2xl ${style}`}
       >
