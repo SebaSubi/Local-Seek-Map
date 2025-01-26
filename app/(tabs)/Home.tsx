@@ -2,11 +2,8 @@ import { View } from "react-native";
 import SearchComponent from "../../components/SearchComponent";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
-<<<<<<< HEAD
-=======
 import { LogOutIcon } from "../../components/Logos";
 import React from "react";
->>>>>>> faDev
 
 export default function Tab() {
   return (
