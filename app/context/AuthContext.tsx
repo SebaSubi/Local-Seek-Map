@@ -31,7 +31,7 @@ interface AuthProps {
   onRegister?: (
     email: string,
     password: string,
-    username: string
+    username: string,
   ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }: any) => {
   const register = async (
     email: string,
     password: string,
-    username: string
+    username: string,
   ) => {
     try {
       const hashedPassword = await hashPassword(password);

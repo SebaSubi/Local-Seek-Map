@@ -1,12 +1,11 @@
-import { View, Text } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import BasicTextInput from "./BasicTextInput";
-import BasicButton from "./BasicButton";
-import { CreateLogo, PersonCircleIcon } from "./Logos";
-import { z } from "zod";
+import { Ionicons } from "@expo/vector-icons"; // Para el ícono del ojo
 import { useAuth } from "../app/context/AuthContext";
 import { Redirect } from "expo-router";
+import { z } from "zod";
 import { checkEmail, checkUsername } from "../libs/user";
+import { colors } from "../constants/colors"; // Archivo para colores personalizados
 
 interface RegProps {
   setReg: Dispatch<SetStateAction<boolean>>;
@@ -16,10 +15,8 @@ export const validateEmail = (email: string): boolean => {
   const emailSchema = z.string().email();
   try {
     emailSchema.parse(email);
-    // console.log(`${email} es un email válido.`);
     return true;
-  } catch (error) {
-    // console.error(`${email} no es un email válido.`);
+  } catch {
     return false;
   }
 };
@@ -27,153 +24,164 @@ export const validateEmail = (email: string): boolean => {
 const Register = ({ setReg }: RegProps) => {
   const { onRegister, authState } = useAuth();
 
-  const email = useRef<{ getValue: () => string }>(null);
-  const username = useRef<{ getValue: () => string }>(null);
-  const password = useRef<{ getValue: () => string }>(null);
-  const secondPassword = useRef<{ getValue: () => string }>(null);
+  const email = useRef("");
+  const username = useRef("");
+  const password = useRef("");
+  const secondPassword = useRef("");
 
   const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false); // Visibilidad de la contraseña
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // Visibilidad de la contraseña de confirmación
 
   const handleRegister = async () => {
-    const validEmail = email.current?.getValue()
-      ? await checkEmail(email.current?.getValue() ?? "")
+    const validEmail = email.current ? await checkEmail(email.current) : true;
+    const validUsername = username.current
+      ? await checkUsername(username.current)
       : true;
-    const validUsername = username.current?.getValue()
-      ? await checkUsername(username.current?.getValue() ?? "")
-      : true;
-    if (!validateEmail(email.current?.getValue() ?? "")) {
-      //handle wrong email format
-      setEmailError("La direccion de email no es valida");
-      setPasswordError("");
-      setUsernameError("");
-    } else if ((username.current?.getValue().length ?? 0) < 2) {
-      //handle no Username
-      setPasswordError("");
-      setEmailError("");
-      setUsernameError("El nombre de usuario debe tener al menos 2 caracteres");
-    } else if ((password.current?.getValue().length ?? 0) < 8) {
-      //handle no first Password
-      setPasswordError("La contraseña debe tener al menos 8 caracteres");
-      setEmailError("");
-      setUsernameError("");
-    } else if ((secondPassword.current?.getValue().length ?? 0) < 8) {
-      //handle no second Password
-      setPasswordError("La contraseña debe tener al menos 8 caracteres");
-      setEmailError("");
-      setUsernameError("");
-    } else if (
-      secondPassword.current?.getValue() !== password.current?.getValue()
-    ) {
-      setPasswordError("Las contraseñas no coinciden");
-      setEmailError("");
-      setUsernameError("");
-    } else if (validEmail === true || validEmail.request.response === "true") {
-      //handle email already in use
-      setPasswordError("");
-      setEmailError("Este Email ya tiene una cuenta asociada");
-      //   setEmailError("hoy me levante re loco");
-      setUsernameError("");
-    } else if (
-      validUsername === true ||
-      validUsername.request.response === "true"
-    ) {
-      //handle username already in use
-      setPasswordError("");
-      setEmailError("");
-      setUsernameError("Este Nombre de Usuario no esta disponible");
-    }
 
-    // too much characters
-    else if ((email.current?.getValue().length ?? 0) >= 250) {
-      //handle
+    if (!validateEmail(email.current)) {
+      setEmailError("La dirección de email no es válida.");
       setPasswordError("");
-      setEmailError("El Email es demasiado largo");
       setUsernameError("");
-    } else if ((username.current?.getValue().length ?? 0) >= 30) {
-      //handle
+    } else if (username.current.length < 2) {
       setPasswordError("");
       setEmailError("");
-      setUsernameError("El nombre del usuario es muy largo");
-    } else if ((password.current?.getValue().length ?? 0) >= 20) {
-      //handle
-      setPasswordError("La contraseña es demasiado larga");
-      setEmailError("");
-      setUsernameError("");
-    } else {
-      console.log("registering");
-      onRegister!(
-        email.current!.getValue(),
-        password.current!.getValue(),
-        username.current!.getValue()
+      setUsernameError(
+        "El nombre de usuario debe tener al menos 2 caracteres.",
       );
+    } else if (password.current.length < 8) {
+      setPasswordError("La contraseña debe tener al menos 8 caracteres.");
+      setEmailError("");
+      setUsernameError("");
+    } else if (secondPassword.current.length < 8) {
+      setPasswordError(
+        "La contraseña de confirmación debe tener al menos 8 caracteres.",
+      );
+      setEmailError("");
+      setUsernameError("");
+    } else if (secondPassword.current !== password.current) {
+      setPasswordError("Las contraseñas no coinciden.");
+      setEmailError("");
+      setUsernameError("");
+    } else if (validEmail === true) {
+      setPasswordError("");
+      setEmailError("Este Email ya tiene una cuenta asociada.");
+      setUsernameError("");
+    } else if (validUsername === true) {
+      setPasswordError("");
+      setEmailError("");
+      setUsernameError("Este Nombre de Usuario no está disponible.");
+    } else {
+      onRegister!(email.current, password.current, username.current);
     }
   };
+
   return authState?.authenticated === true ? (
     <Redirect href="(tabs)/Home" />
   ) : (
-    <View className="flex items-center justify-center">
-      {emailError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{emailError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="Email"
-        title="Email: "
-        textStyle="mt-2"
-        value={email.current?.getValue() ?? ""}
-        ref={email}
+    <View
+      className="flex-1 justify-center px-6 bg-gray-100"
+      style={{ backgroundColor: colors.primary.white }}
+    >
+      <Text className="text-2xl font-bold text-gray-800 mb-6">Registro</Text>
+
+      {/* Campo de Email */}
+      <TextInput
+        placeholder="Correo Electrónico"
+        className="w-full py-4 px-4 rounded-3xl border-gray-300 text-gray-700 mb-4"
+        style={{ backgroundColor: colors.primary.lightGray }}
+        onChangeText={(text) => {
+          email.current = text;
+          setEmailError("");
+        }}
       />
-      {usernameError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{usernameError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
+      {emailError ? (
+        <Text className="text-red-600 mb-2">{emailError}</Text>
+      ) : null}
+
+      {/* Campo de Nombre de Usuario */}
+      <TextInput
         placeholder="Nombre de Usuario"
-        title="Nombre de Usuario: "
-        textStyle="mt-2"
-        value={username.current?.getValue() ?? ""}
-        ref={username}
+        className="w-full py-4 px-4 rounded-3xl border-gray-300 text-gray-700 mb-4"
+        style={{ backgroundColor: colors.primary.lightGray }}
+        onChangeText={(text) => {
+          username.current = text;
+          setUsernameError("");
+        }}
       />
-      {passwordError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{passwordError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="Contraseña"
-        title="Contraseña: "
-        textStyle="mt-2"
-        value={password.current?.getValue() ?? ""}
-        ref={password}
-      />
-      <BasicTextInput
-        inputType="text"
-        placeholder="Contraseña"
-        title="Repetir Contraseña: "
-        textStyle="mt-2"
-        value={secondPassword.current?.getValue() ?? ""}
-        ref={secondPassword}
-      />
-      <BasicButton
-        logo={<CreateLogo />}
-        text="Registrarse"
-        style="mt-3"
-        onPress={async () => await handleRegister()}
-      />
-      <Text className="mt-4">¿Ya tienes cuenta?</Text>
-      <BasicButton
-        logo={<PersonCircleIcon />}
-        text="Iniciar Sesión"
-        style="mt-3"
-        onPress={() => setReg(true)}
-      />
+      {usernameError ? (
+        <Text className="text-red-600 mb-2">{usernameError}</Text>
+      ) : null}
+
+      {/* Campo de Contraseña */}
+      <View className="w-full mb-4 relative">
+        <TextInput
+          placeholder="Contraseña"
+          secureTextEntry={!passwordVisible}
+          className="w-full py-4 px-4 rounded-3xl border-gray-300 text-gray-700"
+          style={{ backgroundColor: colors.primary.lightGray }}
+          onChangeText={(text) => {
+            password.current = text;
+            setPasswordError("");
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => setPasswordVisible(!passwordVisible)}
+          style={{ position: "absolute", right: 20, top: "30%" }}
+        >
+          <Ionicons
+            name={passwordVisible ? "eye-off" : "eye"}
+            size={24}
+            color={colors.primary.gray}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Campo de Confirmar Contraseña */}
+      <View className="w-full mb-4 relative">
+        <TextInput
+          placeholder="Confirmar Contraseña"
+          secureTextEntry={!confirmPasswordVisible}
+          className="w-full py-4 px-4 rounded-3xl border-gray-300 text-gray-700"
+          style={{ backgroundColor: colors.primary.lightGray }}
+          onChangeText={(text) => {
+            secondPassword.current = text;
+            setPasswordError("");
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+          style={{ position: "absolute", right: 20, top: "30%" }}
+        >
+          <Ionicons
+            name={confirmPasswordVisible ? "eye-off" : "eye"}
+            size={24}
+            color={colors.primary.blue}
+          />
+        </TouchableOpacity>
+      </View>
+      {passwordError ? (
+        <Text className="text-red-600 mb-2">{passwordError}</Text>
+      ) : null}
+
+      {/* Botón de Registrarse */}
+      <TouchableOpacity
+        className="w-full py-4 rounded-3xl items-center"
+        style={{ backgroundColor: colors.primary.blue }}
+        onPress={handleRegister}
+      >
+        <Text className="text-white font-bold">Registrarse</Text>
+      </TouchableOpacity>
+      <View className="w-full items-center py-4">
+        <TouchableOpacity onPress={() => setReg(true)}>
+          <Text className="text-center mt-4">
+            ¿Ya tienes cuenta?
+            <Text style={{ color: colors.primary.orange }}>Iniciar Sesión</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

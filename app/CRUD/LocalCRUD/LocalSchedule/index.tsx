@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import { Local } from "../../../../schema/GeneralSchema";
 import { getLocals } from "../../../../libs/local";
+import React from "react";
 
 export default function LocalSchedule() {
   return (

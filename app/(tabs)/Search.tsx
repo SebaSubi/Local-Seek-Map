@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { useEffect, useState } from "react";
 import ReadWS from "../CRUD/ServiceCRUD/ReadWS";
 import ReadLocal from "../CRUD/LocalCRUD/ReadLocal";
+import React from "react";
 import BasicButton from "../../components/BasicButton";
 import { LocalIcon, ProductIcon, ServiceIcon } from "../../components/Logos";
 import ReadProductScreen from "../CRUD/ProductCRUD/ReadProduct";
@@ -11,7 +12,7 @@ const avaliableItems = ["Locales", "Servicios", "Productos"];
 
 export default function Search() {
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
-    "locals"
+    "locals",
   );
 
   return (
