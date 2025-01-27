@@ -82,7 +82,7 @@ const Register = ({ setReg }: RegProps) => {
     <Redirect href="(tabs)/Home" />
   ) : (
     <View
-      className="flex-1 justify-center px-6 bg-gray-100"
+      className="flex-1 py-20 justify-start bg-gray-100 px-6"
       style={{ backgroundColor: colors.primary.white }}
     >
       <Text className="text-2xl font-bold text-gray-800 mb-6">Registro</Text>
@@ -134,7 +134,7 @@ const Register = ({ setReg }: RegProps) => {
           <Ionicons
             name={passwordVisible ? "eye-off" : "eye"}
             size={24}
-            color={colors.primary.gray}
+            color={colors.primary.lightGray}
           />
         </TouchableOpacity>
       </View>
@@ -174,7 +174,7 @@ const Register = ({ setReg }: RegProps) => {
       >
         <Text className="text-white font-bold">Registrarse</Text>
       </TouchableOpacity>
-      <View className="w-full items-center py-4">
+      <View className="w-full h-[57%] justify-end items-center">
         <TouchableOpacity onPress={() => setReg(true)}>
           <Text className="text-center mt-4">
             ¿Ya tienes cuenta?

@@ -115,24 +115,24 @@ export default function Login() {
             <Text className="text-white font-bold">Iniciar Sesión</Text>
           </TouchableOpacity>
 
-          <View className="w-full items-center py-4">
-            <TouchableOpacity onPress={() => setLogin(false)}>
-              <Text>
-                ¿No tienes una cuenta?{" "}
-                <Text style={{ color: colors.primary.orange }}>Regístrate</Text>
-              </Text>
-            </TouchableOpacity>
-
-            {/* Agregar la opción de iniciar como invitado */}
+          <View className="w-full items-center ">
             <TouchableOpacity onPress={onGuestInPress}>
               <Text
-                className="mt-8 text-center"
+                className="mt-4 text-center"
                 style={{ color: colors.primary.black }}
               >
                 ¿No quieres iniciar sesión?{" "}
                 <Text style={{ color: colors.primary.orange }}>
                   Continuar como invitado
                 </Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View className="w-full h-[65%] justify-end items-center">
+            <TouchableOpacity onPress={() => setLogin(false)}>
+              <Text>
+                ¿No tienes una cuenta?{" "}
+                <Text style={{ color: colors.primary.orange }}>Regístrate</Text>
               </Text>
             </TouchableOpacity>
           </View>
