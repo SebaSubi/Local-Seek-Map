@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Pressable,
+  Modal,
+  Image,
+  Alert,
+} from "react-native";
 import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
@@ -22,12 +31,13 @@ import { getLocalTypes } from "../libs/localType";
 import { getServiceTypes } from "../libs/serviceType";
 import { getProductTypes } from "../libs/productType";
 
+const defaultImage = "https://via.placeholder.com/50";
+
 const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [localCategories, setLocalCategories] = useState<LocalTypes[]>([]);
-  const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([]);
+
   const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
@@ -42,21 +52,17 @@ const SearchComponent = () => {
 
   const fetchData = async () => {
     try {
-      const [localsData, productsData, serviceData, localTypes, serviceTypes] =
-        await Promise.all([
-          getLocals(),
-          getProducts(),
-          getDisplayServices(),
-          getLocalTypes(),
-          getServiceTypes(),
-          //Missing Product Types
-        ]);
+      const [localsData, productsData, serviceData] = await Promise.all([
+        getLocals(),
+        getProducts(),
+        getDisplayServices(),
+        getLocalTypes(),
+        getServiceTypes(),
+      ]);
 
       setLocals(localsData);
       setProducts(productsData);
       setServices(serviceData);
-      setLocalCategories(localTypes.allCategories);
-      setServiceCategories(serviceTypes);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -118,9 +124,7 @@ const SearchComponent = () => {
                 data={locals}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <LocalContainer local={item} categories={localCategories} />
-                )}
+                renderItem={({ item }) => <LocalContainer local={item} />}
                 keyExtractor={(item) => item.id.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
@@ -159,12 +163,7 @@ const SearchComponent = () => {
                 data={services}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <ServiceContainer
-                    service={item}
-                    categories={serviceCategories}
-                  />
-                )}
+                renderItem={({ item }) => <ServiceContainer service={item} />}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
@@ -176,36 +175,6 @@ const SearchComponent = () => {
     </>
   );
 };
-
-// <View style={styles.buttonContainer}>
-//   <Pressable
-//     style={[
-//       styles.button,
-//       viewType === "locales" ? styles.buttonActive : styles.buttonInactive,
-//     ]}
-//     onPress={() => setViewType("locales")}
-//   >
-//     <Text style={styles.buttonText}>Locales</Text>
-//   </Pressable>
-//   <Pressable
-//     style={[
-//       styles.button,
-//       viewType === "productos" ? styles.buttonActive : styles.buttonInactive,
-//     ]}
-//     onPress={() => setViewType("productos")}
-//   >
-//     <Text style={styles.buttonText}>Productos</Text>
-//   </Pressable>
-//   <Pressable
-//     style={[
-//       styles.button,
-//       viewType === "servicios" ? styles.buttonActive : styles.buttonInactive,
-//     ]}
-//     onPress={() => setViewType("servicios")}
-//   >
-//     <Text style={styles.buttonText}>Servicios</Text>
-//   </Pressable>
-// </View>;
 
 const styles = StyleSheet.create({
   container: {
@@ -241,6 +210,58 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     color: "#666",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "90%",
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalInfoContainer: {
+    width: "100%",
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  modalInfoLabel: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  modalInfoText: {
+    marginBottom: 15,
+    lineHeight: 18,
+  },
+  modalImage: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  customButton: {
+    backgroundColor: "#e1e8e8",
+    padding: 10,
+    borderRadius: 30,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  customButtonText: {
+    color: "#324e64",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

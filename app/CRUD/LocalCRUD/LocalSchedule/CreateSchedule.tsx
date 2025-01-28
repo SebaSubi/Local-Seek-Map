@@ -1,6 +1,6 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import BasicTextInput from "../../../../components/BasicTextInput";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
@@ -19,6 +19,8 @@ import {
   getSchedulesByLocalId,
   updateSchedule,
 } from "../../../../libs/localSchedule";
+import { colors } from "../../../../constants/colors";
+import GoBackButton from "../../../../components/GoBackButton";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
@@ -31,6 +33,8 @@ export default function CreateProduct() {
   const scheduleId = useLocalIdStore((state) => state.scheduleId);
 
   const dayNumberRef = useRef<any>(null);
+
+  const { name } = useLocalSearchParams();
 
   // Create refs for each TimeSelect component
   const FirstShiftStartRef = useRef<any>(null);
@@ -147,89 +151,98 @@ export default function CreateProduct() {
   }
 
   return (
-    <View className="flex justify-center items-center bg-white h-full w-full">
+    <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
       <Stack.Screen
         options={{
-          header: () => <Header title="Crear Horario" />,
+          headerShown: false,
         }}
       />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        className="w-full h-full mb-32"
-      >
-        <View
-          className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
+      <View className="flex flex-row justify-between w-full items-center mb-2">
+        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+          {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
+        </Text>
+        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+      </View>
+      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center">
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          className="w-full h-full mb-32"
         >
-          <BasicTextInput
-            inputType="text"
-            value=""
-            placeholder="Numero de Dia"
-            title="Dia de la semana (1 = Domingo):"
-            textStyle="mt-4"
-            ref={dayNumberRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Primer Turno:"
-            ref={FirstShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Primer Turno:"
-            ref={FirstShiftFinishRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Segundo Turno:"
-            ref={SecondShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Segundo Turno:"
-            ref={SecondShiftFinishRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Tercer Turno:"
-            ref={ThirdShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Tercer Turno:"
-            ref={ThirdShiftFinishRef}
-          />
-          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-            <BasicButton
-              logo={<CreateLogo />}
-              text="Crear Horario"
-              style="mt-3"
-              onPress={() => {
-                handleCreate();
-              }}
+          <View
+            className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
+          >
+            <BasicTextInput
+              inputType="text"
+              value=""
+              placeholder="Numero de Dia"
+              title="Dia de la semana (1 = Domingo):"
+              textStyle="mt-4"
+              ref={dayNumberRef}
             />
+            <TimeSelect
+              text="Hora de Apertura Primer Turno:"
+              ref={FirstShiftStartRef}
+            />
+            <TimeSelect
+              text="Hora de Cerrada Primer Turno:"
+              ref={FirstShiftFinishRef}
+            />
+            <TimeSelect
+              text="Hora de Apertura Segundo Turno:"
+              ref={SecondShiftStartRef}
+            />
+            <TimeSelect
+              text="Hora de Cerrada Segundo Turno:"
+              ref={SecondShiftFinishRef}
+            />
+            <TimeSelect
+              text="Hora de Apertura Tercer Turno:"
+              ref={ThirdShiftStartRef}
+            />
+            <TimeSelect
+              text="Hora de Cerrada Tercer Turno:"
+              ref={ThirdShiftFinishRef}
+            />
+            <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+              <BasicButton
+                logo={<CreateLogo />}
+                text="Crear Horario"
+                style="mt-3"
+                onPress={() => {
+                  handleCreate();
+                }}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
 
-      {warning && (
-        <BasicWarning
-          text="El dia que indicaste ya existe dentro de este horario, desea actualizarlo con los nuevo datos?"
-          cancelButton={false}
-          buttonLeft="Cancelar"
-          buttonRight="Reemplazar"
-          onPressRight={() => {
-            handleUpdate();
-          }}
-          onPressLeft={() => setWarning(false)}
-          style="absolute"
-        />
-      )}
-      {error && (
-        <BasicWarning
-          text={error}
-          cancelButton={true}
-          buttonLeft="Ok"
-          onPressLeft={() => {
-            setError("");
-            setWarning(false);
-          }}
-          style="absolute"
-        />
-      )}
+        {warning && (
+          <BasicWarning
+            text="El dia que indicaste ya existe dentro de este horario, desea actualizarlo con los nuevo datos?"
+            cancelButton={false}
+            buttonLeft="Cancelar"
+            buttonRight="Reemplazar"
+            onPressRight={() => {
+              handleUpdate();
+            }}
+            onPressLeft={() => setWarning(false)}
+            style="absolute"
+          />
+        )}
+        {error && (
+          <BasicWarning
+            text={error}
+            cancelButton={true}
+            buttonLeft="Ok"
+            onPressLeft={() => {
+              setError("");
+              setWarning(false);
+            }}
+            style="absolute"
+          />
+        )}
+      </View>
     </View>
   );
 }

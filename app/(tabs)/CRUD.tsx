@@ -13,7 +13,7 @@ export default function Main() {
       <BasicSelectable
         href="/CRUD/ProductCRUD"
         logo={<ProductIcon />}
-        text="ABM Proucto"
+        text="ABM Producto"
         style="mt-2"
       />
       <BasicSelectable

@@ -1,9 +1,9 @@
-import { View, Text, Pressable } from "react-native";
-import { useAuth } from "../context/AuthContext";
+import { View } from "react-native";
 import SearchComponent from "../../components/SearchComponent";
 import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { LogOutIcon } from "../../components/Logos";
+import React from "react";
 
 export default function Tab() {
   return (

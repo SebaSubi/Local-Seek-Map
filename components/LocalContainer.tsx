@@ -6,13 +6,7 @@ import { colors } from "../constants/colors";
 import { getIfLocalOpen } from "../libs/local";
 import { useFonts } from "expo-font";
 
-export default function LocalContainer({
-  local,
-  categories,
-}: {
-  local: Local;
-  categories: LocalTypes[];
-}) {
+export default function LocalContainer({ local }: { local: Local }) {
   const [isOpen, setIsOpen] = useState(false);
   const [type, setLocalType] = useState<string>("");
 
@@ -21,11 +15,7 @@ export default function LocalContainer({
       const open = await getIfLocalOpen(local.id);
       setIsOpen(open);
     };
-    const assignCategory = categories?.filter(
-      (category) => category.id === local.localTypeID
-    );
     fetchLocals();
-    setLocalType(assignCategory !== undefined ? assignCategory[0].name : "");
   }, [local.id]);
   return (
     <Link

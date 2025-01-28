@@ -3,7 +3,10 @@ export const colors = {
     blue: "#1A253D",
     white: "#fff",
     orange: "#FF7034",
-    lightGray: "#F2F2F2",
+    lightGray: "#e1e8e8",
+  },
+  secondary: {
+    darkGray: "#555555",
     black: "#000",
   },
 };

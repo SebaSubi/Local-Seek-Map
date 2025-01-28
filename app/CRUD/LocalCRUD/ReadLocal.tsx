@@ -94,9 +94,7 @@ export default function ReadLocal() {
           data={locals}
           horizontal={false}
           numColumns={2}
-          renderItem={({ item }) => (
-            <LocalContainer local={item} categories={categories} />
-          )}
+          renderItem={({ item }) => <LocalContainer local={item} />}
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchAndSetLocals()}
           refreshing={loading}

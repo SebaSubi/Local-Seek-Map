@@ -1,22 +1,18 @@
-//imports
-import { View, Text } from "react-native";
-import React from "react";
-import { useRef, useState } from "react";
-import { z } from "zod";
-import { Redirect } from "expo-router";
-//components
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useRef, useState } from "react";
+import { Redirect, Stack } from "expo-router";
 import { useAuth } from "./context/AuthContext";
-import BasicTextInput from "../components/BasicTextInput";
-import BasicButton from "../components/BasicButton";
-import { CreateLogo, PersonCircleIcon } from "../components/Logos";
 import Register from "../components/Register";
 import { validateEmail } from "../components/Register";
+import { colors } from "../constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Login() {
-  const emailRef = useRef<{ getValue: () => string }>(null);
-  const passwordRef = useRef<{ getValue: () => string }>(null);
+  const emailRef = useRef("");
+  const passwordRef = useRef("");
   const [login, setLogin] = useState(true);
   const [loginError, setLoginError] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { onLogin, authState } = useAuth();
 
@@ -25,25 +21,27 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    const email = emailRef.current?.getValue();
-    const password = passwordRef.current?.getValue();
+    const email = emailRef.current;
+    const password = passwordRef.current;
 
-    if (!email) {
-      console.log("The email is missing");
-      setLoginError("El email esta incompleto");
+    if (!email.trim()) {
+      setLoginError("Por favor, ingresa tu correo electrónico.");
       return;
     }
-    if (!password) {
-      console.log("The password is missing");
-      setLoginError("La contraseña esta vacia");
+
+    if (!validateEmail(email)) {
+      setLoginError("Por favor, ingresa un correo electrónico válido.");
       return;
     }
-    if (validateEmail(email)) {
-      const result = await onLogin!(email, password);
-      // console.log("Login result:", result);
-      if (result.status !== 200) {
-        setLoginError("Email o Contraseña incorrecta");
-      }
+
+    if (!password.trim()) {
+      setLoginError("Por favor, ingresa tu contraseña.");
+      return;
+    }
+
+    const result = await onLogin!(email, password);
+    if (result.status !== 200) {
+      setLoginError("Correo o contraseña incorrectos.");
     }
   };
 
@@ -51,50 +49,95 @@ export default function Login() {
     return authState?.authenticated ? (
       <Redirect href="(tabs)/Home" />
     ) : (
-      <View className="flex items-center justify-center">
-        <BasicTextInput
-          ref={emailRef}
-          inputType="text"
-          placeholder="Email"
-          title="Email: "
-          textStyle="mt-2"
-          value="admin@gmail.com"
+      <>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
         />
-        {loginError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{loginError}</Text>
-          </View>
-        )}
-        <BasicTextInput
-          ref={passwordRef}
-          inputType="text"
-          placeholder="Contraseña"
-          title="Contraseña: "
-          textStyle="mt-2"
-          value="admin"
-        />
+        <View
+          className="flex-1 py-20 justify-start bg-gray-100 px-6"
+          style={{ backgroundColor: colors.primary.white }}
+        >
+          <Text className="text-2xl font-bold text-gray-800 mb-6">
+            Iniciar Sesión
+          </Text>
 
-        <BasicButton
-          logo={<CreateLogo />}
-          text="Iniciar sesión"
-          style="mt-3"
-          onPress={handleLogin}
-        />
-        <Text className="mt-4">¿Todavia no tienes cuenta?</Text>
-        <BasicButton
-          logo={<PersonCircleIcon />}
-          text="Crear Cuenta"
-          style="mt-3"
-          onPress={() => setLogin(false)}
-        />
-        <Text className="mt-8">¿No quieres inciar sesion?</Text>
-        <BasicButton
-          logo={<PersonCircleIcon />}
-          text="Continuar como invitado"
-          style="mt-3"
-          onPress={onGuestInPress}
-        />
-      </View>
+          <TextInput
+            placeholder="Correo electrónico"
+            className="w-full py-4 px-4 rounded-3xl  border-gray-300 text-gray-700 mb-4"
+            style={{ backgroundColor: colors.primary.lightGray }}
+            onChangeText={(text) => (emailRef.current = text)}
+          />
+          {loginError && (
+            <Text className="w-full text-left text-red-600 mb-2">
+              {loginError}
+            </Text>
+          )}
+          <View className="w-full mb-4 relative">
+            <TextInput
+              placeholder="Contraseña"
+              secureTextEntry={!passwordVisible}
+              className="w-full py-4 px-4 rounded-3xl border-gray-300 text-gray-700"
+              style={{ backgroundColor: colors.primary.lightGray }}
+              onChangeText={(text) => (passwordRef.current = text)}
+            />
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              style={{
+                position: "absolute",
+                right: 20,
+                top: "30%",
+              }}
+            >
+              <Ionicons
+                name={passwordVisible ? "eye-off" : "eye"}
+                size={24}
+                color={colors.primary.blue}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={() => setLogin(false)}>
+            <Text
+              className="w-full text-center mb-4"
+              style={{ color: colors.primary.orange }}
+            >
+              ¿Olvidaste tu contraseña?
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="w-full py-4 rounded-3xl items-center"
+            style={{ backgroundColor: colors.primary.blue }}
+            onPress={handleLogin}
+          >
+            <Text className="text-white font-bold">Iniciar Sesión</Text>
+          </TouchableOpacity>
+
+          <View className="w-full items-center py-4">
+            <TouchableOpacity onPress={() => setLogin(false)}>
+              <Text>
+                ¿No tienes una cuenta?{" "}
+                <Text style={{ color: colors.primary.orange }}>Regístrate</Text>
+              </Text>
+            </TouchableOpacity>
+
+            {/* Agregar la opción de iniciar como invitado */}
+            <TouchableOpacity onPress={onGuestInPress}>
+              <Text
+                className="mt-8 text-center"
+                style={{ color: colors.primary.black }}
+              >
+                ¿No quieres iniciar sesión?{" "}
+                <Text style={{ color: colors.primary.orange }}>
+                  Continuar como invitado
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </>
     );
   } else {
     return <Register setReg={setLogin} />;
