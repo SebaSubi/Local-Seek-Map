@@ -1,4 +1,4 @@
-import { Product } from "../schema/GeneralSchema";
+import { LocalProduct, Product } from "../schema/GeneralSchema";
 import { Alert } from "react-native";
 import { Platform } from "react-native";
 
@@ -92,6 +92,7 @@ export async function updateProduct(product: Product) {
 }
 
 export async function getProductById(productId: string) {
+  console.log(productId);
   const url = `${API_URL}/${productId}`;
 
   try {
@@ -146,7 +147,7 @@ export async function createProduct(product: Product) {
 
 export const searchProductsByName = async (searchInput: string) => {
   try {
-    const response = await fetch(`${API_URL}/search?input=${searchInput}`);
+    const response = await fetch(`${API_URL}/search?name=${searchInput}`);
     if (!response.ok) {
       throw new Error("Error searching products");
     }
@@ -185,6 +186,8 @@ export async function deleteProduct(id: string) {
   }
 }
 
+//------------------------------------------------------------Local - Products -------------------------------------------------------
+
 export async function getLocalsOfProduct(id: string) {
   try {
     const response = await fetch(`${API_URL}/locals/${id}`);
@@ -199,5 +202,102 @@ export async function getLocalsOfProduct(id: string) {
     return await response.json();
   } catch (error) {
     console.error("Error getting locals of product", error);
+  }
+}
+
+export async function getProductOfLocal(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/local-product/${id}`);
+
+    if (!response.ok) {
+      console.error("Error getting product of local");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting product of local");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting product of local", error);
+  }
+}
+
+export async function getLocalProductCategories() {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-categories`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product categories");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product categories");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting local product categories", error);
+  }
+}
+
+export async function getLocalProductCategoriesByName(name: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-categories/search-name?name=${name}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product categories by name");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product categories by name");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting local product categories by name", error);
+  }
+}
+
+export async function getLocalProductSubCategoriesByName(name: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-sub-categories/search-name?name=${name}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product sub categories by name");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product sub categories by name");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting local product sub categories by name", error);
+  }
+}
+
+export async function createLocalProduct(localProduct: LocalProduct) {
+  try {
+    const response = await fetch("http://localhost:3000/local-product/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(localProduct),
+    });
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to create Product");
+    } else {
+      console.log("We good man");
+      const data: Product = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }

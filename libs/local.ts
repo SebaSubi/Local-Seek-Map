@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { Local } from "../schema/GeneralSchema";
+import { Local, LocalProduct } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 import axios from "axios";
 import { validateEmail } from "../components/Register";
@@ -202,18 +202,18 @@ export async function getProductsOfALocal(id: string) {
   }
 }
 
-export async function createProductOfLocal(productId: string, localId: string) {
-  const newProduct = { productId, localId };
+export async function createProductOfLocal(localProduct: LocalProduct) {
+  // const newProduct = { localId, ...localProduct};
   try {
     const response = await fetch(`${API_URL}/addProduct`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newProduct),
+      body: JSON.stringify(localProduct),
     });
 
-    console.log(JSON.stringify(newProduct));
+    console.log(JSON.stringify(localProduct));
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to Add product");

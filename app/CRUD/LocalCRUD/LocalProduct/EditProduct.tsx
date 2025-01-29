@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { LocalProduct, Product } from "../../../schema/GeneralSchema";
-import { deleteProduct, getProducts } from "../../../libs/product";
-import { deleteProductOfLocal, getProductsOfALocal } from "../../../libs/local";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import { LocalProduct, Product } from "../../../../schema/GeneralSchema";
+import { deleteProduct, getProducts } from "../../../../libs/product";
+import {
+  deleteProductOfLocal,
+  getProductsOfALocal,
+} from "../../../../libs/local";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import { Stack } from "expo-router";
 import { FlatList, View } from "react-native";
-import EditProductContainer from "../../../components/EditProductContainer";
+import EditProductContainer from "../../../../components/EditProductContainer";
 
 export default function EditProduct() {
   const [products, setProduct] = useState<LocalProduct[]>([]);
@@ -25,6 +28,7 @@ export default function EditProduct() {
   }, []);
 
   const handleDelete = (id: string) => {
+    console.log("deleted product");
     deleteProductOfLocal(id);
     getAndSetProducts();
   };

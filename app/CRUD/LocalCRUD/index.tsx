@@ -76,13 +76,13 @@ export default function ProductCrud() {
                 style="mt-3"
               />
               <BasicSelectable
-                href="/CRUD/LocalCRUD/AddProduct"
+                href="/CRUD/LocalCRUD/LocalProduct/AddProduct"
                 logo={<ProductIcon />}
                 text="Agregar Producto"
                 style="mt-3"
               />
               <BasicSelectable
-                href="/CRUD/LocalCRUD/EditProduct"
+                href="/CRUD/LocalCRUD/LocalProduct/EditProduct"
                 logo={<UpdateLogo />}
                 text="Editar Productos"
                 style="mt-3"

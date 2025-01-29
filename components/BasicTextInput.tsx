@@ -18,22 +18,21 @@ const BasicTextInput = forwardRef(
       value: string;
       textSecure?: boolean;
     },
-    ref: React.ForwardedRef<{ getValue: () => string }>
+    ref: React.ForwardedRef<{
+      getValue: () => string;
+      setValue: (value: string) => void;
+    }>
   ) => {
     const [text, setText] = useState(value);
 
     const handleChange = (input: string) => {
       if (inputType === "number" && !/^\d*$/.test(input)) return;
       setText(input);
-      if (inputType === "number" && !/^\d*$/.test(input)) return;
-      setText(input);
     };
 
     useImperativeHandle(ref, () => ({
       getValue: () => text,
-    }));
-    useImperativeHandle(ref, () => ({
-      getValue: () => text,
+      setValue: (newValue: string) => setText(newValue),
     }));
 
     return (
@@ -41,7 +40,7 @@ const BasicTextInput = forwardRef(
         {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
         <TextInput
           value={text}
-          className="w-full bg-[#e1e8e8] h-12 rounded-2xl text-center"
+          className="w-full bg-[#f8f8f8] h-12 rounded-2xl text-center"
           onChangeText={handleChange}
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}
@@ -49,7 +48,6 @@ const BasicTextInput = forwardRef(
         />
       </View>
     );
-    // eslint-disable-next-line prettier/prettier
   }
 );
 
