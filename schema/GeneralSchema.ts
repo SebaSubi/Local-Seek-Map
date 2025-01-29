@@ -31,13 +31,31 @@ export interface Local {
 }
 
 export interface LocalProduct {
-  id: string;
-  local: Local;
+  id?: string | null;
+  local?: Local | null;
   localId: string;
-  product: Product;
+  product?: Product | null;
   productId: string;
-  dateFrom: Date;
-  dateTo: Date | null;
+  price?: number | null;
+  localProductDecription?: string | null;
+  localProductCategory?: LocalProductCategory | null;
+  localProductCategoryId?: string | null;
+  localProductSubCategory?: LocalProductSubCategory | null;
+  localProductSubCategoryId?: string | null;
+  dateFrom: Date | null;
+  dateTo?: Date | null;
+}
+
+export interface LocalProductCategory {
+  id?: string | null; // Unique identifier, generated using cuid
+  name: string; // Unique name for the category
+  localProduct?: LocalProduct[] | null; // Array of related local products
+}
+
+export interface LocalProductSubCategory {
+  id?: string | null; // Unique identifier, generated using cuid
+  name: string; // Unique name for the subcategory
+  product?: LocalProduct[] | null; // Array of related local products
 }
 
 export interface LocalSchedule {
@@ -72,7 +90,7 @@ export interface Product {
   name: string;
   updatedAt?: Date;
   brand: string;
-  mesurement: string;
+  measurement: string;
   imgURL?: string | null;
   price?: number | null;
   description: string;

@@ -39,7 +39,7 @@ const BigTextInput = forwardRef(
         {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
         <TextInput
           value={text}
-          className="w-full bg-[#e1e8e8] h-24 rounded-2xl text-center p-2"
+          className="w-full bg-[#f8f8f8] h-24 rounded-2xl text-center p-2"
           onChangeText={handleChange}
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}

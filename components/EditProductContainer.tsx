@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { LocalProduct, Product } from "../schema/GeneralSchema";
 import {
   StyleSheet,
@@ -25,11 +26,14 @@ export default function EditProductContainer({
       }
     },
     onPanResponderRelease: (_, gestureState) => {
-      if (gestureState.dx < -50) {
-        console.log("worked");
-        // onDelete(product.id);
+      if (gestureState.dx < -100) {
         Animated.spring(translateX, {
-          toValue: -100,
+          toValue: -80,
+          useNativeDriver: true,
+        }).start();
+      } else if (gestureState.dx > 100) {
+        Animated.spring(translateX, {
+          toValue: 80,
           useNativeDriver: true,
         }).start();
       } else {
@@ -40,6 +44,10 @@ export default function EditProductContainer({
       }
     },
   });
+
+  function handleUpdate() {
+    // console.log("yes"); For some reason if i dont do this it calls the delete function
+  }
   return (
     <View style={{ flex: 1 }} className="flex-row ">
       <Animated.View
@@ -47,6 +55,22 @@ export default function EditProductContainer({
           transform: [{ translateX: translateX }],
         }}
       >
+        <Link
+          href={{
+            pathname: "CRUD/LocalCRUD/LocalProduct/[id]",
+            params: {
+              id: product.id,
+            },
+          }}
+          asChild
+        >
+          <TouchableOpacity
+            className="w-20 h-20 bg-[#1a253d] justify-center items-center  mt-2 absolute left-[-80px] z-[-1]"
+            onPress={handleUpdate}
+          >
+            <Text className="text-white font-bold">Actualizar</Text>
+          </TouchableOpacity>
+        </Link>
         <View
           className="flex items-center justify-center w-72 h-20 bg-[#f6f6f6] mt-2 "
           {...panResponder.panHandlers}
@@ -57,7 +81,7 @@ export default function EditProductContainer({
           onPress={() => onDelete(product.id)}
           className="w-20 h-20 bg-red-500 justify-center items-center  mt-2 absolute right-[-80px] z-[-1]"
         >
-          <Text className="text-white font-bold">Delete</Text>
+          <Text className="text-white font-bold">Borrar</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>
