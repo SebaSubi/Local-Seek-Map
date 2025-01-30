@@ -48,7 +48,7 @@ export default function EditProduct() {
             renderItem={({ item }) => (
               <EditProductContainer product={item} onDelete={handleDelete} />
             )}
-            keyExtractor={(item) => item.product.id!}
+            keyExtractor={(item) => item.product!.id!}
             onRefresh={() => getAndSetProducts()}
             refreshing={loading}
             className="mt-16"
