@@ -3,7 +3,6 @@ import {
   View,
   Alert,
   Image,
-  Button,
   ScrollView,
   Pressable,
   Modal,
@@ -11,40 +10,41 @@ import {
   Text,
   FlatList,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { useEffect, useRef, useState } from "react";
 import {
   LocalProduct,
   LocalProductCategory,
   LocalProductSubCategory,
   Product,
-  ProductType,
 } from "../../../../schema/GeneralSchema";
-import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 import {
-  createLocalProduct,
-  createProduct,
-  getLocalProductCategories,
+  createLocalProductCategory,
+  createLocalProductSubCategory,
   getLocalProductCategoriesByName,
   getLocalProductSubCategoriesByName,
-  getProducts,
   searchProductsByName,
 } from "../../../../libs/product";
-import { getProductTypes } from "../../../../libs/productType";
-import { Link, Stack, useRouter } from "expo-router";
-import Header from "../../../../components/Header";
+import { Stack, useRouter } from "expo-router";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
-import { createProductOfLocal } from "../../../../libs/local";
 import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
+import {
+  createLocalProduct,
+  getProductIdsOfLocal,
+  getProductOfLocal,
+  reactivateLocalProduct,
+} from "../../../../libs/localProducts";
 
 export default function AddProduct() {
   const priceRef = useRef<any>(null);
   const subDescriptionRef = useRef<any>(null);
-
+  const categoryRef = useRef<any>(null);
+  const subCategoryRef = useRef<any>(null);
+  const [createCategory, setCreateCategory] = useState(false);
+  const [createSubCategory, setCreateSubCategory] = useState(false);
   const [productModalVisibility, setProductModalVisibility] = useState(true);
   const [productCategoryModal, setProductCategoryModal] = useState(false);
   const [localProductCategories, setLocalProductCategories] = useState();
@@ -56,8 +56,18 @@ export default function AddProduct() {
   const [search, setSearch] = useState<string>("");
   const [products, setProducts] = useState<Product[]>([]);
   const [productId, setProductId] = useState("");
+  const [localPrducts, setLocalProducts] = useState<LocalProduct[]>([]);
 
   const localId = useLocalIdStore((state) => state.localId);
+
+  async function fetchAndSetLocalProducts() {
+    const localProd = await getProductIdsOfLocal(localId);
+    setLocalProducts(localProd);
+  }
+
+  useEffect(() => {
+    fetchAndSetLocalProducts();
+  }, []);
 
   const rounter = useRouter();
 
@@ -66,6 +76,18 @@ export default function AddProduct() {
     const localProductCategoryId = selectedProductCategory?.id;
     const localProductSubCategoryId = selectedProductSubCategory?.id;
     const localProductDecription = subDescriptionRef.current?.getValue();
+
+    for (const lp of localPrducts) {
+      if (lp.productId === productId && lp.dateTo !== null) {
+        console.log(lp.id);
+        reactivateLocalProduct(lp.id!);
+        Alert.alert("Éxito", "Producto creado exitosamente");
+        return;
+      } else if (lp.productId === productId) {
+        Alert.alert("Error", "Este producto ya existe en tu local!");
+        return;
+      }
+    }
 
     try {
       const uploadedImageUrl = "";
@@ -79,8 +101,6 @@ export default function AddProduct() {
         price = null;
       }
 
-      console.log(priceRef.current?.getValue());
-
       const newProduct: LocalProduct = {
         localId,
         productId,
@@ -91,8 +111,7 @@ export default function AddProduct() {
         dateFrom: new Date(),
       };
 
-      const createdProduct = await createLocalProduct(newProduct);
-      // await createProductOfLocal(createdProduct?.id!, localId);
+      await createLocalProduct(newProduct);
       Alert.alert("Éxito", "Producto creado exitosamente");
       // nameRef.current.setValue("");
       // brandRef.current.setValue("");
@@ -122,6 +141,22 @@ export default function AddProduct() {
     const localSubProductCategories =
       await getLocalProductSubCategoriesByName(search);
     setLocalProductCategories(localSubProductCategories);
+  }
+
+  async function hanldeCreateCategory() {
+    const name = categoryRef.current?.getValue();
+    const productCategory = await createLocalProductCategory({ name });
+    console.log(productCategory);
+    productCategory ? setSelectedCategory(productCategory) : null;
+    setCreateCategory(false);
+  }
+
+  async function hanldeCreateSubCategory() {
+    const name = subCategoryRef.current?.getValue();
+    const productSubCategory = await createLocalProductSubCategory({ name });
+    console.log(productSubCategory);
+    productSubCategory ? setSelectedSubCategory(productSubCategory) : null;
+    setCreateSubCategory(false);
   }
 
   useEffect(() => {
@@ -263,7 +298,7 @@ export default function AddProduct() {
                 <Text>
                   {selectedProductSubCategory
                     ? selectedProductSubCategory.name
-                    : "Seleccionar Categoria (Ej: comida)"}
+                    : "Seleccionar Sub Categoria (Ej: Pastas)"}
                 </Text>
               </Pressable>
               <Modal
@@ -277,26 +312,57 @@ export default function AddProduct() {
                   style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
                 >
                   <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
-                    <BasicSearchButton
-                      placeholder="Buscar Categoria"
-                      onSearch={setSearch}
+                    <BasicButton
+                      text="No encunetra la categoría?"
+                      onPress={() => setCreateCategory(true)}
                       background="#f8f8f8"
+                      style="mt-4"
                     />
-                    <FlatList
-                      data={localProductCategories}
-                      renderItem={({ item, index }) => (
-                        <Pressable
-                          className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                    {createCategory ? (
+                      <View className="w-full h-full flex items-center justify-center">
+                        <BasicTextInput
+                          inputType="text"
+                          placeholder="Nombre"
+                          title="Nombre de Nueva Categoría: "
+                          value=""
+                          ref={categoryRef}
+                        />
+                        <BasicButton
+                          logo={<CreateLogo />}
+                          text="Crear Categoría"
                           onPress={() => {
-                            setSelectedCategory(item);
+                            setCreateCategory(false);
+                            hanldeCreateCategory();
                             setProductCategoryModal(false);
                           }}
-                        >
-                          <Text>{item.name}</Text>
-                        </Pressable>
-                      )}
-                      keyExtractor={(item) => item.id!.toString()}
-                    />
+                          background="#f8f8f8"
+                          style="mt-4"
+                        />
+                      </View>
+                    ) : (
+                      <>
+                        <BasicSearchButton
+                          placeholder="Buscar Categoria"
+                          onSearch={setSearch}
+                          background="#f8f8f8"
+                        />
+                        <FlatList
+                          data={localProductCategories}
+                          renderItem={({ item, index }) => (
+                            <Pressable
+                              className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                              onPress={() => {
+                                setSelectedCategory(item);
+                                setProductCategoryModal(false);
+                              }}
+                            >
+                              <Text>{item.name}</Text>
+                            </Pressable>
+                          )}
+                          keyExtractor={(item) => item.id!.toString()}
+                        />
+                      </>
+                    )}
                   </View>
                 </View>
               </Modal>
@@ -311,26 +377,57 @@ export default function AddProduct() {
                   style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
                 >
                   <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
-                    <BasicSearchButton
-                      placeholder="Buscar Categoria"
-                      onSearch={setSearch}
+                    <BasicButton
+                      text="No encunetra la sub categoría?"
+                      onPress={() => setCreateSubCategory(true)}
                       background="#f8f8f8"
+                      style="mt-4"
                     />
-                    <FlatList
-                      data={localProductCategories}
-                      renderItem={({ item, index }) => (
-                        <Pressable
-                          className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                    {createSubCategory ? (
+                      <View className="w-full h-full flex items-center justify-center">
+                        <BasicTextInput
+                          inputType="text"
+                          placeholder="Nombre"
+                          title="Nombre de Nueva Sub Categoría: "
+                          value=""
+                          ref={subCategoryRef}
+                        />
+                        <BasicButton
+                          logo={<CreateLogo />}
+                          text="Crear Sub Categoría"
                           onPress={() => {
-                            setSelectedSubCategory(item);
+                            setCreateSubCategory(false);
+                            hanldeCreateSubCategory();
                             setProductSubCategoryModal(false);
                           }}
-                        >
-                          <Text>{item.name}</Text>
-                        </Pressable>
-                      )}
-                      keyExtractor={(item) => item.id!.toString()}
-                    />
+                          background="#f8f8f8"
+                          style="mt-4"
+                        />
+                      </View>
+                    ) : (
+                      <>
+                        <BasicSearchButton
+                          placeholder="Buscar Categoria"
+                          onSearch={setSearch}
+                          background="#f8f8f8"
+                        />
+                        <FlatList
+                          data={localProductCategories}
+                          renderItem={({ item, index }) => (
+                            <Pressable
+                              className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                              onPress={() => {
+                                setSelectedSubCategory(item);
+                                setProductSubCategoryModal(false);
+                              }}
+                            >
+                              <Text>{item.name}</Text>
+                            </Pressable>
+                          )}
+                          keyExtractor={(item) => item.id!.toString()}
+                        />
+                      </>
+                    )}
                   </View>
                 </View>
               </Modal>

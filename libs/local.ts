@@ -188,65 +188,28 @@ export async function checkLocalName(name: string) {
 
 //----------------------------------------------------------------Local Products----------------------------------------------------------------
 
-export async function getProductsOfALocal(id: string) {
-  const url = `${API_URL}/products/${id}`;
-  try {
-    const rawData = await fetch(url);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch Stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting store products", error);
-  }
-}
+// export async function createProductOfLocal(localProduct: LocalProduct) {
+//   // const newProduct = { localId, ...localProduct};
+//   try {
+//     const response = await fetch(`${API_URL}/addProduct`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(localProduct),
+//     });
 
-export async function createProductOfLocal(localProduct: LocalProduct) {
-  // const newProduct = { localId, ...localProduct};
-  try {
-    const response = await fetch(`${API_URL}/addProduct`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(localProduct),
-    });
+//     console.log(JSON.stringify(localProduct));
 
-    console.log(JSON.stringify(localProduct));
-
-    if (!response.ok) {
-      Alert.alert("Error", "Failed to Add product");
-    } else {
-      console.log("Tamo cello");
-    }
-  } catch (error) {
-    console.log("Error: ", error);
-  }
-}
-
-export async function deleteProductOfLocal(productId: string) {
-  console.log(productId);
-  try {
-    const response = await fetch(`${API_URL}/removeProduct/${productId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      console.error("Error deleting product");
-      const errorResponse = await response.json();
-      console.error(errorResponse);
-      throw new Error("Error al eliminar el producto");
-    }
-
-    // return await response.json();
-  } catch (error) {
-    console.error("Error en deleteProduct:", error);
-  }
-}
+//     if (!response.ok) {
+//       Alert.alert("Error", "Failed to Add product");
+//     } else {
+//       console.log("Tamo cello");
+//     }
+//   } catch (error) {
+//     console.log("Error: ", error);
+//   }
+// }
 
 //----------------------------------------------------------------Local Services----------------------------------------------------------------
 
