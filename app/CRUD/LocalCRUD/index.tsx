@@ -13,13 +13,14 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../schema/GeneralSchema";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
-import { getLocals } from "../../../libs/local";
+import { getLocalById, getLocals } from "../../../libs/local";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 
 export default function ProductCrud() {
   const [screen, setScreen] = useState(false);
   const [locals, setLocals] = useState<Local[]>([]);
+  const [local, setLocal] = useState<Local>();
   const setLocalId = useLocalIdStore((state) => state.setLocalId);
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
@@ -37,9 +38,11 @@ export default function ProductCrud() {
     fetchLocals();
   }, [id]);
 
-  function handlePress(id: string) {
+  async function handlePress(id: string) {
     setLocalId(id);
     setScreen(true);
+    const local = await getLocalById(id);
+    setLocal(local);
   }
 
   return (
@@ -73,11 +76,16 @@ export default function ProductCrud() {
                 text="Actualizar Local"
                 style="mt-3"
                 params={{
-                  id: id,
-                  name: name,
-                  localCoordinates: localCoordinates,
-                  image: image,
-                  localType: localType,
+                  id: local?.id,
+                  name: local?.name,
+                  location: local?.location,
+                  address: local?.address,
+                  wpp: local?.whatsapp,
+                  instagram: local?.instagram,
+                  facebook: local?.facebook,
+                  webpage: local?.webpage,
+                  image: local?.imgURL,
+                  localType: local?.localTypes,
                 }}
               />
               <BasicSelectable

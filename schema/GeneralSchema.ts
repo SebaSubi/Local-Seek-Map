@@ -10,24 +10,24 @@ export interface User {
 }
 
 export interface Local {
-  id: string;
-  name: string;
-  location: string; // Consider changing to a more specific type, e.g., { lat: number; lng: number }
-  address: string;
-  whatsapp: number | null;
-  instagram: string | null;
-  facebook: string | null;
-  webpage: string | null;
-  imgURL: string | null;
-  dateFrom: Date;
-  dateTo: Date | null;
-  users: User[];
-  schedule: LocalSchedule[];
-  services: Service[];
-  localTypes: LocalTypes | null;
-  localTypeID: string | null;
-  product: LocalProduct[];
-  viewLocal: ViewLocal[];
+  id?: string;
+  name: string | null;
+  location?: string | null; // Consider changing to a more specific type, e.g., { lat: number; lng: number }
+  address?: string;
+  whatsapp?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
+  webpage?: string | null;
+  imgURL?: string | null;
+  dateFrom?: Date;
+  dateTo?: Date | null;
+  users?: User[];
+  schedule?: LocalSchedule[];
+  services?: Service[];
+  localTypes?: LocalTypes | null;
+  localTypeID?: string | null;
+  product?: LocalProduct[];
+  viewLocal?: ViewLocal[];
 }
 
 export interface LocalProduct {

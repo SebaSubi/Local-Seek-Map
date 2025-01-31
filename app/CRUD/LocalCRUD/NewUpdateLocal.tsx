@@ -6,8 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import {
   checkLocalName,
   createLocal,
-  getLocal,
+  getLocalById,
   getLocals,
+  updateLocal,
 } from "../../../libs/local";
 import { Local } from "../../../schema/GeneralSchema";
 import { verifyUrl } from "./CreateLocal";
@@ -16,18 +17,48 @@ import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 
 export default function UpdateLocal() {
-  const { id, name, localCoordinates, image, localType } =
-    useLocalSearchParams();
+  const {
+    id,
+    name,
+    location,
+    address,
+    wpp,
+    instagram,
+    facebook,
+    webpage,
+    image,
+    localType,
+  } = useLocalSearchParams();
   const [local, setLocal] = useState<Local>();
 
-  const nameRef = useRef(null);
-  const locationRef = useRef(null);
-  const wppNumberRef = useRef(null);
-  const instagramRef = useRef(null);
-  const facebookRef = useRef(null);
-  const paginaWebRef = useRef(null);
-  const imgURLRef = useRef(null);
-
+  const nameRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
+  const locationRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
+  const wppNumberRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
+  const instagramRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
+  const facebookRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
+  const paginaWebRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
+  const imgURLRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  } | null>(null);
   //errorHandlers
   const [nameError, setNameError] = useState("");
   const [locationError, setLocationError] = useState("");
@@ -36,17 +67,33 @@ export default function UpdateLocal() {
   const [facebookError, setFacebookError] = useState("");
   const [webpageError, setWebpageError] = useState("");
 
-  async function getSpecificLocal(id: string) {
-    const fetchLocal = async () => {
-      const local = await getLocal(id);
-      setLocal(local);
-    };
-    fetchLocal();
-  }
+  // async function getSpecificLocal(id: string) {
+  //   const fetchLocal = async () => {
+  //     const local = await getLocal(id);
+  //     setLocal(local);
+  //   };
+  //   fetchLocal();
+  // }
+
+  // useEffect(() => {
+  //   getSpecificLocal(id as string);
+  // }, [id]);
 
   useEffect(() => {
-    getSpecificLocal(id as string);
-  }, [id]);
+    if (nameRef.current) nameRef.current.setValue(name ? name.toString() : "");
+    if (locationRef.current)
+      locationRef.current.setValue(location ? location.toString() : "");
+    if (wppNumberRef.current)
+      wppNumberRef.current.setValue(wpp ? wpp.toString() : "");
+    if (instagramRef.current)
+      instagramRef.current.setValue(instagram ? instagram.toString() : "");
+    if (facebookRef.current)
+      facebookRef.current.setValue(facebook ? facebook.toString() : "");
+    if (paginaWebRef.current)
+      paginaWebRef.current.setValue(webpage ? webpage.toString() : "");
+    if (imgURLRef.current)
+      imgURLRef.current.setValue(image ? image.toString() : "");
+  }, []);
 
   const handlePress = async () => {
     const name = nameRef.current?.getValue();
@@ -229,7 +276,7 @@ export default function UpdateLocal() {
     }
 
     // const newLocal: Local = {
-    const newLocal = {
+    const newLocal: Local = {
       name,
       location,
       whatsapp,
@@ -240,6 +287,8 @@ export default function UpdateLocal() {
       dateFrom: new Date(),
     };
     console.log(newLocal);
+    await updateLocal(id as string, newLocal);
+
     // console.log(createLocal(newLocal))
   };
 
@@ -268,7 +317,7 @@ export default function UpdateLocal() {
           inputType="text"
           title="Nuevo Nombre: "
           textStyle="mt-4"
-          value={local ? local.name : ""}
+          value={local ? local.name! : ""}
           ref={nameRef}
         />
         {locationError === "" ? null : (
@@ -281,7 +330,7 @@ export default function UpdateLocal() {
           inputType="text"
           title="Nueva Ubicacion del Local" //This we will have to change later, since the person most likely wont knoe the coordinates
           textStyle="mt-4"
-          value={local ? local.location : ""}
+          value={local ? local.location! : ""}
           ref={locationRef}
         />
         {whatsappError === "" ? null : (

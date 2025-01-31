@@ -40,11 +40,14 @@ const BasicTextInput = forwardRef(
         {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
         <TextInput
           value={text}
-          className="w-full bg-[#f8f8f8] h-12 rounded-2xl text-center"
+          multiline={false}
+          numberOfLines={1}
+          className="w-full bg-[#f8f8f8] h-11 rounded-2xl px-2"
           onChangeText={handleChange}
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}
           secureTextEntry={textSecure}
+          style={{ overflow: "hidden" }}
         />
       </View>
     );

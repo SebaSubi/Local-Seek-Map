@@ -163,7 +163,7 @@ export async function createLocal(local: Local) {
   }
 }
 
-export async function getLocal(id: string) {
+export async function getLocalById(id: string) {
   const url = `${API_URL}/${id}`;
   try {
     const rawData = await fetch(url);
@@ -183,6 +183,37 @@ export async function checkLocalName(name: string) {
     return rawData.request.response;
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function updateLocal(id: string, local: Local) {
+  try {
+    const response = await fetch(`${API_URL}/update/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(local),
+    });
+
+    console.log("Response Status:", response.status);
+    console.log("Response Headers:", response.headers);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.log("Error Response Body:", errorText);
+      Alert.alert("Error", `Failed to update local: ${response.status}`);
+      return;
+    } else {
+      Alert.alert("Local actualizado con éxito");
+    }
+
+    // Handle empty response
+    const data = response.status !== 204 ? await response.json() : null;
+    return data;
+  } catch (error) {
+    console.log("Error: ", error);
+    Alert.alert("Error", "Something went wrong");
   }
 }
 

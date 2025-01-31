@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
+import { FlatList, View } from "react-native";
 import {
   Alert,
   Image,
@@ -22,6 +22,8 @@ import {
 } from "../../../../schema/GeneralSchema";
 import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 import {
+  createLocalProductCategory,
+  createLocalProductSubCategory,
   createProduct,
   getLocalProductCategoriesByName,
   getLocalProductSubCategoriesByName,
@@ -38,6 +40,7 @@ import {
   getProductOfLocal,
   updateLocalProduct,
 } from "../../../../libs/localProducts";
+import BasicSearchButton from "../../../../components/BasicSearchBar";
 
 export default function EditProductPage() {
   const { id } = useLocalSearchParams();
@@ -48,38 +51,40 @@ export default function EditProductPage() {
     getValue: () => "",
     setValue: (value: string) => {},
   });
-  const brandRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>({ getValue: () => "", setValue: () => {} });
-  const measurementRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>({ getValue: () => "", setValue: () => {} });
   const descriptionRef = useRef<{
     getValue: () => string;
     setValue: (value: string) => void;
+  }>({
+    getValue: () => "",
+    setValue: (value: string) => {},
+  });
+
+  const categoryRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
   }>({ getValue: () => "", setValue: () => {} });
+
+  const subCategoryRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>({ getValue: () => "", setValue: () => {} });
+
   const [product, setProduct] = useState<LocalProduct | null>(null);
-  const [LocalProductCategories, setLocalProductCategories] = useState<
+  const [localProductCategories, setLocalProductCategories] = useState<
     LocalProductCategory[] | LocalProductSubCategory[]
   >([]);
   const [selectedProductCategory, setSelectedProductCategory] =
     useState<LocalProductCategory>();
   const [selectedProductSubCategory, setSelectedProductSubCategory] =
-    useState<LocalProductCategory>();
+    useState<LocalProductSubCategory>();
   const [productSubCategoryModal, setProductSubCategoryModal] = useState(false);
   const [productCategoryModal, setProductCategoryModal] = useState(false);
+  const [createCategory, setCreateCategory] = useState(false);
+  const [createSubCategory, setCreateSubCategory] = useState(false);
   const [image, setImage] = useState<string | null>(null);
-  const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [search, setSearch] = useState<string>("");
 
   //errorHandlers
-  const [nameError, setNameError] = useState("");
-  const [brandError, setbrandError] = useState("");
-  const [measurementError, setMeasurementError] = useState("");
-
-  const localId = useLocalIdStore((state) => state.localId);
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -106,6 +111,15 @@ export default function EditProductPage() {
   const handleSubmit = async () => {
     let price: any = priceRef.current?.getValue();
     const localProductDecription = descriptionRef.current?.getValue();
+    let localProductCategoryId;
+    let localProductSubCategoryId;
+
+    selectedProductCategory
+      ? (localProductCategoryId = selectedProductCategory.id)
+      : (localProductCategoryId = null);
+    selectedProductSubCategory
+      ? (localProductSubCategoryId = selectedProductSubCategory.id)
+      : (localProductSubCategoryId = null);
 
     try {
       const uploadedImageUrl = "";
@@ -123,6 +137,8 @@ export default function EditProductPage() {
       const newProduct: LocalProduct = {
         price,
         localProductDecription,
+        localProductCategoryId,
+        localProductSubCategoryId,
         imgURL: uploadedImageUrl,
         dateFrom: new Date(),
       };
@@ -164,6 +180,8 @@ export default function EditProductPage() {
     }
   };
 
+  console.log(product);
+
   useEffect(() => {
     fetchAndSetProduct();
   }, []);
@@ -171,11 +189,29 @@ export default function EditProductPage() {
   useEffect(() => {
     if (product) {
       priceRef.current?.setValue(product.price?.toString() || "");
-      brandRef.current?.setValue(product.product?.brand || "");
+      descriptionRef.current?.setValue(product.localProductDecription || "");
       setSelectedProductCategory(product.localProductCategory!);
       setSelectedProductSubCategory(product.localProductSubCategory!);
     }
   }, [product]);
+
+  async function hanldeCreateCategory() {
+    const name = categoryRef.current?.getValue();
+    const productCategory = await createLocalProductCategory({ name });
+    // console.log(productCategory);
+    productCategory ? setSelectedProductCategory(productCategory) : null;
+    setCreateCategory(false);
+  }
+
+  async function hanldeCreateSubCategory() {
+    const name = subCategoryRef.current?.getValue();
+    const productSubCategory = await createLocalProductSubCategory({ name });
+    console.log(productSubCategory);
+    productSubCategory
+      ? setSelectedProductSubCategory(productSubCategory)
+      : null;
+    setCreateSubCategory(false);
+  }
 
   return (
     <>
@@ -194,11 +230,6 @@ export default function EditProductPage() {
             }}
             className=" bg-white w-full rounded-3xl overflow-hidden"
           >
-            {nameError === "" ? null : (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{nameError}</Text>
-              </View>
-            )}
             <BasicTextInput
               inputType="text"
               placeholder="Nombre"
@@ -248,6 +279,136 @@ export default function EditProductPage() {
                 style={{ width: 100, height: 100, marginTop: 10 }}
               />
             )}
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={productCategoryModal}
+              onRequestClose={() => setProductCategoryModal(false)}
+            >
+              <View
+                className="flex items-center justify-center w-full h-full "
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+                  <BasicButton
+                    text="No encunetra la categoría?"
+                    onPress={() => setCreateCategory(true)}
+                    background="#f8f8f8"
+                    style="mt-4"
+                  />
+                  {createCategory ? (
+                    <View className="w-full h-full flex items-center justify-center">
+                      <BasicTextInput
+                        inputType="text"
+                        placeholder="Nombre"
+                        title="Nombre de Nueva Categoría: "
+                        value=""
+                        ref={categoryRef}
+                      />
+                      <BasicButton
+                        logo={<CreateLogo />}
+                        text="Crear Categoría"
+                        onPress={() => {
+                          setCreateCategory(false);
+                          hanldeCreateCategory();
+                          setProductCategoryModal(false);
+                        }}
+                        background="#f8f8f8"
+                        style="mt-4"
+                      />
+                    </View>
+                  ) : (
+                    <>
+                      <BasicSearchButton
+                        placeholder="Buscar Categoria"
+                        onSearch={setSearch}
+                        background="#f8f8f8"
+                      />
+                      <FlatList
+                        data={localProductCategories}
+                        renderItem={({ item, index }) => (
+                          <Pressable
+                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            onPress={() => {
+                              setSelectedProductCategory(item);
+                              setProductCategoryModal(false);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </Pressable>
+                        )}
+                        keyExtractor={(item) => item.id!.toString()}
+                      />
+                    </>
+                  )}
+                </View>
+              </View>
+            </Modal>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={productSubCategoryModal}
+              onRequestClose={() => setProductSubCategoryModal(false)}
+            >
+              <View
+                className="flex items-center justify-center w-full h-full "
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+                  <BasicButton
+                    text="No encunetra la sub categoría?"
+                    onPress={() => setCreateSubCategory(true)}
+                    background="#f8f8f8"
+                    style="mt-4"
+                  />
+                  {createSubCategory ? (
+                    <View className="w-full h-full flex items-center justify-center">
+                      <BasicTextInput
+                        inputType="text"
+                        placeholder="Nombre"
+                        title="Nombre de Nueva Sub Categoría: "
+                        value=""
+                        ref={subCategoryRef}
+                      />
+                      <BasicButton
+                        logo={<CreateLogo />}
+                        text="Crear Sub Categoría"
+                        onPress={() => {
+                          setCreateSubCategory(false);
+                          hanldeCreateSubCategory();
+                          setProductSubCategoryModal(false);
+                        }}
+                        background="#f8f8f8"
+                        style="mt-4"
+                      />
+                    </View>
+                  ) : (
+                    <>
+                      <BasicSearchButton
+                        placeholder="Buscar Categoria"
+                        onSearch={setSearch}
+                        background="#f8f8f8"
+                      />
+                      <FlatList
+                        data={localProductCategories}
+                        renderItem={({ item, index }) => (
+                          <Pressable
+                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            onPress={() => {
+                              setSelectedProductSubCategory(item);
+                              setProductSubCategoryModal(false);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </Pressable>
+                        )}
+                        keyExtractor={(item) => item.id!.toString()}
+                      />
+                    </>
+                  )}
+                </View>
+              </View>
+            </Modal>
           </ScrollView>
         </View>
         <View style={{ marginTop: 20, alignItems: "center", width: "80%" }}>
@@ -262,64 +423,3 @@ export default function EditProductPage() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    maxHeight: 400,
-  },
-  scrollView: {
-    width: "100%",
-    maxHeight: 300, // Limita la altura del contenido dentro del ScrollView
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  modalOption: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    width: "100%",
-  },
-  modalOptionText: {
-    textAlign: "center",
-    fontSize: 16,
-  },
-  closeButton: {
-    marginTop: 15,
-    padding: 10,
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
-  typeButton: {
-    marginTop: 20,
-    paddingVertical: 15, // Aumenta el padding vertical
-    paddingHorizontal: 20, // Aumenta el padding horizontal
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
-    minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  typeButtonText: {
-    fontSize: 16, // Aumenta el tamaño de la fuente
-    // fontWeight: "bold",
-    textAlign: "center",
-  },
-});

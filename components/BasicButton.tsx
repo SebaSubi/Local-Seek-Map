@@ -19,8 +19,8 @@ export default function BasicButton({
 }: BasicSelectableProps) {
   return (
     <Pressable
-      className={`flex flex-row justify-evenly items-center w-fit h-9 rounded-3xl ${style}`}
-      style={{ backgroundColor: background ? background : "#e1e8e8" }}
+      className={`flex flex-row justify-evenly items-center w-fit h-11 rounded-3xl ${style}`}
+      style={{ backgroundColor: background ? background : "#f8f8f8" }}
       onPress={onPress}
     >
       {logo && (

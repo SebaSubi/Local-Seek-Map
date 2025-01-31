@@ -99,6 +99,8 @@ export default function AddProduct() {
 
       if (price === "") {
         price = null;
+      } else {
+        price = parseFloat(price);
       }
 
       const newProduct: LocalProduct = {
@@ -263,11 +265,12 @@ export default function AddProduct() {
               </Text>
               <BasicTextInput
                 inputType="text"
-                placeholder="Medida"
-                title="Medida: "
+                placeholder="Precio"
+                title="Precio: "
                 value=""
                 ref={priceRef}
               />
+
               <BigTextInput
                 inputType="text"
                 placeholder="Descripción"

@@ -16,22 +16,21 @@ const BigTextInput = forwardRef(
       textStyle?: string;
       value: string;
     },
-    ref: React.ForwardedRef<{ getValue: () => string }>
+    ref: React.ForwardedRef<{
+      getValue: () => string;
+      setValue: (newValue: string) => void;
+    }>
   ) => {
     const [text, setText] = useState(value);
 
     const handleChange = (input: string) => {
       if (inputType === "number" && !/^\d*$/.test(input)) return;
       setText(input);
-      if (inputType === "number" && !/^\d*$/.test(input)) return;
-      setText(input);
     };
 
     useImperativeHandle(ref, () => ({
       getValue: () => text,
-    }));
-    useImperativeHandle(ref, () => ({
-      getValue: () => text,
+      setValue: (newValue: string) => setText(newValue), // ✅ Now you can update it externally
     }));
 
     return (
@@ -47,7 +46,6 @@ const BigTextInput = forwardRef(
         />
       </View>
     );
-    // eslint-disable-next-line prettier/prettier
   }
 );
 
