@@ -103,9 +103,9 @@ export interface Product {
 }
 
 export interface ProductType {
-  id: string;
+  id?: string | null;
   name: string;
-  product: Product[];
+  product?: Product[] | null;
 }
 
 export interface Service {

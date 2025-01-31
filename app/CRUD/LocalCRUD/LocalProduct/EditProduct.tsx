@@ -29,7 +29,6 @@ export default function EditProduct() {
   }, []);
 
   const handleDelete = (id: string) => {
-    console.log("deleted product");
     deleteProductOfLocal(id);
     getAndSetProducts();
   };

@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import {
   Alert,
   Button,
+  FlatList,
   Image,
   Modal,
   Pressable,
@@ -14,24 +15,29 @@ import {
   View,
 } from "react-native";
 import { createProduct } from "../../../../libs/product";
-import { getProductTypes } from "../../../../libs/productType";
+import {
+  createProductType,
+  getProductTypes,
+  getProductTypesByName,
+} from "../../../../libs/productType";
 import { Stack, useRouter } from "expo-router";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
-import { createProductOfLocal } from "../../../../libs/local";
 
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
   const brandRef = useRef<any>(null);
   const measurementRef = useRef<any>(null);
   const descriptionRef = useRef<any>(null);
+  const typeRef = useRef<any>();
   const [serviceTypes, setServiceTypes] = useState<ProductType[]>([]);
   const [selectedType, setSelectedType] = useState<ProductType | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+  const [createType, setCreateType] = useState(false);
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
 
@@ -62,13 +68,11 @@ export default function CreateProduct() {
     }
   };
 
-  // Función para obtener los tipos de producto
   const fetchCategories = async () => {
     try {
-      const data = await getProductTypes();
-      // Acceder directamente a allCategories
-      if (data.allCategories) {
-        setServiceTypes(data.allCategories);
+      const data = await getProductTypesByName(search);
+      if (data) {
+        setServiceTypes(data);
       } else {
         console.warn("No se encontró 'allCategories' en la respuesta");
         setServiceTypes([]);
@@ -172,6 +176,12 @@ export default function CreateProduct() {
     }
   };
 
+  async function handleCreateType() {
+    const name: string = typeRef.current?.getValue();
+    const newProductType = await createProductType({ name });
+    setSelectedType(newProductType);
+  }
+
   return (
     <>
       <Stack.Screen
@@ -238,37 +248,62 @@ export default function CreateProduct() {
               visible={typeModalVisibility}
               onRequestClose={() => setTypeModalVisibility(false)}
             >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>
-                    Selecciona el tipo de producto
-                  </Text>
-                  <ScrollView style={styles.scrollView}>
-                    {serviceTypes.length === 0 ? (
-                      <Text>No hay tipos disponibles</Text>
-                    ) : (
-                      serviceTypes.map((category, index) => (
-                        <Pressable
-                          key={index}
-                          onPress={() => {
-                            setSelectedType(category);
-                            setTypeModalVisibility(false);
-                          }}
-                          style={styles.modalOption}
-                        >
-                          <Text style={styles.modalOptionText}>
-                            {category.name}
-                          </Text>
-                        </Pressable>
-                      ))
-                    )}
-                  </ScrollView>
-                  <Pressable
-                    onPress={() => setTypeModalVisibility(false)}
-                    style={styles.closeButton}
-                  >
-                    <Text style={styles.closeButtonText}>Cerrar</Text>
-                  </Pressable>
+              <View
+                className="flex items-center justify-center w-full h-full "
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+                  <BasicButton
+                    text="No encunetra la categoría?"
+                    onPress={() => setCreateType(true)}
+                    background="#f8f8f8"
+                    style="mt-4"
+                  />
+                  {createType ? (
+                    <View className="w-full h-full flex items-center justify-center">
+                      <BasicTextInput
+                        inputType="text"
+                        placeholder="Nombre"
+                        title="Nombre de Nueva Categoría: "
+                        value=""
+                        ref={typeRef}
+                      />
+                      <BasicButton
+                        logo={<CreateLogo />}
+                        text="Crear Categoría"
+                        onPress={() => {
+                          setCreateType(false);
+                          handleCreateType();
+                          setTypeModalVisibility(false);
+                        }}
+                        background="#f8f8f8"
+                        style="mt-4"
+                      />
+                    </View>
+                  ) : (
+                    <>
+                      <BasicSearchButton
+                        placeholder="Buscar Categoria"
+                        onSearch={setSearch}
+                        background="#f8f8f8"
+                      />
+                      <FlatList
+                        data={serviceTypes}
+                        renderItem={({ item, index }) => (
+                          <Pressable
+                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            onPress={() => {
+                              setSelectedType(item);
+                              setTypeModalVisibility(false);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </Pressable>
+                        )}
+                        keyExtractor={(item) => item.id!.toString()}
+                      />
+                    </>
+                  )}
                 </View>
               </View>
             </Modal>
