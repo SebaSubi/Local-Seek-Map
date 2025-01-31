@@ -13,12 +13,19 @@ import {
 
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useRef, useState } from "react";
-import { Product, ProductType } from "../../../../schema/GeneralSchema";
+import {
+  LocalProduct,
+  LocalProductCategory,
+  LocalProductSubCategory,
+  Product,
+  ProductType,
+} from "../../../../schema/GeneralSchema";
 import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 import {
   createProduct,
+  getLocalProductCategoriesByName,
+  getLocalProductSubCategoriesByName,
   getProductById,
-  getProductOfLocal,
 } from "../../../../libs/product";
 import { getProductTypes } from "../../../../libs/productType";
 import Header from "../../../../components/Header";
@@ -26,16 +33,21 @@ import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
-import { createProductOfLocal } from "../../../../libs/local";
 import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import {
+  getProductOfLocal,
+  updateLocalProduct,
+} from "../../../../libs/localProducts";
 
 export default function EditProductPage() {
   const { id } = useLocalSearchParams();
-
-  const nameRef = useRef<{
+  const priceRef = useRef<{
     getValue: () => string;
     setValue: (value: string) => void;
-  }>({ getValue: () => "", setValue: () => {} });
+  }>({
+    getValue: () => "",
+    setValue: (value: string) => {},
+  });
   const brandRef = useRef<{
     getValue: () => string;
     setValue: (value: string) => void;
@@ -48,11 +60,19 @@ export default function EditProductPage() {
     getValue: () => string;
     setValue: (value: string) => void;
   }>({ getValue: () => "", setValue: () => {} });
-  const [product, setProduct] = useState<Product | null>(null);
-  const [productTypes, setProductTypes] = useState<ProductType[]>([]);
-  const [selectedType, setSelectedType] = useState<ProductType | null>(null);
+  const [product, setProduct] = useState<LocalProduct | null>(null);
+  const [LocalProductCategories, setLocalProductCategories] = useState<
+    LocalProductCategory[] | LocalProductSubCategory[]
+  >([]);
+  const [selectedProductCategory, setSelectedProductCategory] =
+    useState<LocalProductCategory>();
+  const [selectedProductSubCategory, setSelectedProductSubCategory] =
+    useState<LocalProductCategory>();
+  const [productSubCategoryModal, setProductSubCategoryModal] = useState(false);
+  const [productCategoryModal, setProductCategoryModal] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+  const [search, setSearch] = useState<string>("");
 
   //errorHandlers
   const [nameError, setNameError] = useState("");
@@ -84,61 +104,8 @@ export default function EditProductPage() {
   };
 
   const handleSubmit = async () => {
-    const name = nameRef.current?.getValue();
-    const brand = brandRef.current?.getValue();
-    const mesurement = measurementRef.current?.getValue();
-    const description = descriptionRef.current?.getValue();
-    const productTypeId = selectedType?.id;
-
-    if (
-      !name ||
-      !brand ||
-      !mesurement ||
-      !description ||
-      // !image ||
-      !productTypeId
-    ) {
-      Alert.alert("Error", "Por favor complete todos los campos");
-      return;
-    }
-    if (name.length < 2) {
-      setNameError("El nombre del produto es demasiado corto");
-      setbrandError("");
-      setMeasurementError("");
-      return;
-    } else if (name.includes(",") || name.includes(".")) {
-      setNameError(
-        "El nombre del produto no debe tener ni puntos '.' ni comas ','"
-      );
-      setbrandError("");
-      setMeasurementError("");
-      return;
-    } else if (name.length >= 50) {
-      setNameError("El nombre del produto es demasiado largo");
-      setbrandError("");
-      setMeasurementError("");
-      return;
-    } else if (brand.length < 2) {
-      setNameError("");
-      setbrandError("La marca del produto es demasiado corta");
-      setMeasurementError("");
-      return;
-    } else if (brand.length >= 50) {
-      setNameError("");
-      setbrandError("La marca del produto es demasiado larga");
-      setMeasurementError("");
-      return;
-    } else if (mesurement.length < 2) {
-      setNameError("");
-      setbrandError("");
-      setMeasurementError("La medida del produto es demasiado corta");
-      return;
-    } else if (mesurement.length >= 50) {
-      setNameError("");
-      setbrandError("");
-      setMeasurementError("La medida del produto es demasiado larga");
-      return;
-    }
+    let price: any = priceRef.current?.getValue();
+    const localProductDecription = descriptionRef.current?.getValue();
 
     try {
       const uploadedImageUrl = "";
@@ -147,19 +114,21 @@ export default function EditProductPage() {
       //   Alert.alert("Error", "No se pudo cargar la imagen");
       //   return;
       // }
+      if (price === "") {
+        price = null;
+      } else {
+        price = parseInt(price);
+      } // This is horrible i know
 
-      const newProduct: Product = {
-        name,
-        brand,
-        mesurement,
-        description,
-        productTypeId,
+      const newProduct: LocalProduct = {
+        price,
+        localProductDecription,
         imgURL: uploadedImageUrl,
         dateFrom: new Date(),
       };
 
-      const createdProduct = await createProduct(newProduct);
-      await createProductOfLocal(createdProduct?.id!, localId);
+      const createdProduct = await updateLocalProduct(id as string, newProduct);
+      // await createProductOfLocal(createdProduct?.id!, localId);
       Alert.alert("Éxito", "Producto creado exitosamente");
       // nameRef.current.setValue("");
       // brandRef.current.setValue("");
@@ -172,22 +141,20 @@ export default function EditProductPage() {
     }
   };
 
-  // Función para obtener los tipos de producto
-  const fetchProductAndCategories = async () => {
-    try {
-      const data = await getProductTypes();
-      // Acceder directamente a allCategories
-      if (data.allCategories) {
-        setProductTypes(data.allCategories);
-      } else {
-        console.warn("No se encontró 'allCategories' en la respuesta");
-        setProductTypes([]);
-      }
-    } catch (err) {
-      console.error("Error fetching categories", err);
-      Alert.alert("Error", "Fallo al cargar las categorías");
-    }
+  async function getAndSetCategories() {
+    const localProductCategories =
+      await getLocalProductCategoriesByName(search);
+    setLocalProductCategories(localProductCategories);
+  }
 
+  async function getAndSetSubCategories() {
+    const localSubProductCategories =
+      await getLocalProductSubCategoriesByName(search);
+    setLocalProductCategories(localSubProductCategories);
+  }
+
+  // Función para obtener los tipos de producto
+  const fetchAndSetProduct = async () => {
     try {
       const product = await getProductOfLocal(id as string);
       setProduct(product);
@@ -198,16 +165,15 @@ export default function EditProductPage() {
   };
 
   useEffect(() => {
-    fetchProductAndCategories();
+    fetchAndSetProduct();
   }, []);
 
   useEffect(() => {
     if (product) {
-      console.log("hols");
-      nameRef.current?.setValue(product.name || "Hola");
-      brandRef.current?.setValue(product.brand || "");
-      measurementRef.current?.setValue(product.mesurement || "");
-      descriptionRef.current?.setValue(product.description || "");
+      priceRef.current?.setValue(product.price?.toString() || "");
+      brandRef.current?.setValue(product.product?.brand || "");
+      setSelectedProductCategory(product.localProductCategory!);
+      setSelectedProductSubCategory(product.localProductSubCategory!);
     }
   }, [product]);
 
@@ -236,93 +202,43 @@ export default function EditProductPage() {
             <BasicTextInput
               inputType="text"
               placeholder="Nombre"
-              title="Nombre de Producto: "
+              title="Precio"
               value=""
-              ref={nameRef}
+              ref={priceRef}
             />
-            {brandError === "" ? null : (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{brandError}</Text>
-              </View>
-            )}
-            <BasicTextInput
-              inputType="text"
-              placeholder="Marca"
-              title="Marca: "
-              value=""
-              ref={brandRef}
-            />
-            {measurementError === "" ? null : (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{measurementError}</Text>
-              </View>
-            )}
-            <BasicTextInput
-              inputType="text"
-              placeholder="Medida"
-              title="Medida: "
-              value=""
-              ref={measurementRef}
-            />
-            {/* <BigTextInput
+            <BigTextInput
               inputType="text"
               placeholder="Descripción"
               title="Descripción: "
               value=""
               ref={descriptionRef}
-            /> */}
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={typeModalVisibility}
-              onRequestClose={() => setTypeModalVisibility(false)}
-            >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>
-                    Selecciona el tipo de producto
-                  </Text>
-                  <ScrollView style={styles.scrollView}>
-                    {productTypes.length === 0 ? (
-                      <Text>No hay tipos disponibles</Text>
-                    ) : (
-                      productTypes.map((category, index) => (
-                        <Pressable
-                          key={index}
-                          onPress={() => {
-                            setSelectedType(category);
-                            setTypeModalVisibility(false);
-                          }}
-                          style={styles.modalOption}
-                        >
-                          <Text style={styles.modalOptionText}>
-                            {category.name}
-                          </Text>
-                        </Pressable>
-                      ))
-                    )}
-                  </ScrollView>
-                  <Pressable
-                    onPress={() => setTypeModalVisibility(false)}
-                    style={styles.closeButton}
-                  >
-                    <Text style={styles.closeButtonText}>Cerrar</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
-
+            />
             <Pressable
-              onPress={() => setTypeModalVisibility(true)}
-              style={styles.typeButton}
+              className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
+              onPress={() => {
+                getAndSetCategories();
+                setProductCategoryModal(true);
+              }}
             >
-              <Text style={styles.typeButtonText}>
-                {selectedType
-                  ? selectedType.name
-                  : "Seleccionar Tipo de Producto"}
+              <Text>
+                {selectedProductCategory
+                  ? selectedProductCategory.name
+                  : "Seleccionar Categoria (Ej: comida)"}
               </Text>
             </Pressable>
-
+            <Pressable
+              className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
+              onPress={() => {
+                getAndSetSubCategories();
+                setProductSubCategoryModal(true);
+              }}
+            >
+              <Text>
+                {selectedProductSubCategory
+                  ? selectedProductSubCategory.name
+                  : "Seleccionar Sub Categoria (Ej: Pastas)"}
+              </Text>
+            </Pressable>
             <View style={{ marginTop: 20 }}>
               <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
             </View>

@@ -36,7 +36,7 @@ export async function getProductsOfLocal(id: string) {
 
 export async function getProductOfLocal(id: string) {
   try {
-    const response = await fetch(`${API_URL}/local/${id}`);
+    const response = await fetch(`${API_URL}/${id}`);
 
     if (!response.ok) {
       console.error("Error getting product of local");
@@ -94,7 +94,7 @@ export async function deleteProductOfLocal(productId: string) {
 
 export async function createLocalProduct(localProduct: LocalProduct) {
   try {
-    const response = await fetch("http://localhost:3000/local-product/create", {
+    const response = await fetch(`${API_URL}/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -133,5 +133,30 @@ export async function reactivateLocalProduct(id: string) {
     return await response.json();
   } catch (error) {
     console.error("Error-3 reactivating products", error);
+  }
+}
+
+export async function updateLocalProduct(
+  id: string,
+  localProduct: LocalProduct
+) {
+  try {
+    const response = await fetch(`${API_URL}/update/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(localProduct),
+    });
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to update local Product");
+    } else {
+      const data: LocalProduct = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }

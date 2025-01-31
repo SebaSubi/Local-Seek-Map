@@ -33,10 +33,11 @@ export interface Local {
 export interface LocalProduct {
   id?: string | null;
   local?: Local | null;
-  localId: string;
+  localId?: string;
   product?: Product | null;
-  productId: string;
+  productId?: string;
   price?: number | null;
+  imgURL?: string | null;
   localProductDecription?: string | null;
   localProductCategory?: LocalProductCategory | null;
   localProductCategoryId?: string | null;

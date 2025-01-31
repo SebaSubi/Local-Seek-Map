@@ -75,10 +75,10 @@ export default function EditProductContainer({
           className="flex items-center justify-center w-72 h-20 bg-[#f6f6f6] mt-2 "
           {...panResponder.panHandlers}
         >
-          <Text>{product.product.name}</Text>
+          <Text>{product.product!.name}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => onDelete(product.id)}
+          onPress={() => onDelete(product.id!)}
           className="w-20 h-20 bg-red-500 justify-center items-center  mt-2 absolute right-[-80px] z-[-1]"
         >
           <Text className="text-white font-bold">Borrar</Text>
