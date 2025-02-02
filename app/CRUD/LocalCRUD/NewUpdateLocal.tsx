@@ -1,15 +1,8 @@
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import BasicButton from "../../../components/BasicButton";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { useEffect, useRef, useState } from "react";
-import {
-  checkLocalName,
-  createLocal,
-  getLocalById,
-  getLocals,
-  updateLocal,
-} from "../../../libs/local";
+import { checkLocalName, updateLocal } from "../../../libs/local";
 import { Local } from "../../../schema/GeneralSchema";
 import { verifyUrl } from "./CreateLocal";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -21,15 +14,13 @@ export default function UpdateLocal() {
     id,
     name,
     location,
-    address,
+
     wpp,
     instagram,
     facebook,
     webpage,
     image,
-    localType,
   } = useLocalSearchParams();
-  const [local, setLocal] = useState<Local>();
 
   const nameRef = useRef<{
     getValue: () => string;
@@ -288,8 +279,6 @@ export default function UpdateLocal() {
     };
     console.log(newLocal);
     await updateLocal(id as string, newLocal);
-
-    // console.log(createLocal(newLocal))
   };
 
   return (
@@ -317,7 +306,6 @@ export default function UpdateLocal() {
           inputType="text"
           title="Nuevo Nombre: "
           textStyle="mt-4"
-          value={local ? local.name! : ""}
           ref={nameRef}
         />
         {locationError === "" ? null : (
@@ -328,9 +316,8 @@ export default function UpdateLocal() {
         <BasicTextInput
           placeholder="Ubicacion de Local"
           inputType="text"
-          title="Nueva Ubicacion del Local" //This we will have to change later, since the person most likely wont knoe the coordinates
+          title="Nueva Ubicación del Local" //This we will have to change later, since the person most likely wont knoe the coordinates
           textStyle="mt-4"
-          value={local ? local.location! : ""}
           ref={locationRef}
         />
         {whatsappError === "" ? null : (
@@ -341,9 +328,8 @@ export default function UpdateLocal() {
         <BasicTextInput
           placeholder="Numero de WhatsApp"
           inputType="number"
-          title="Nuevo Numero: "
+          title="Nuevo Número: "
           textStyle="mt-4"
-          value={local ? (local.whatsapp ? local.whatsapp.toString() : "") : ""}
           ref={wppNumberRef}
         />
         {instagramError === "" ? null : (
@@ -357,7 +343,6 @@ export default function UpdateLocal() {
           title="Nuevo @Instagram: "
           textStyle="mt-4"
           ref={instagramRef}
-          value={local ? (local.instagram ? local.instagram : "") : ""}
         />
         {facebookError === "" ? null : (
           <View className="w-full flex items-start ml-28">
@@ -370,7 +355,6 @@ export default function UpdateLocal() {
           title="Nuevo @Facebook: "
           textStyle="mt-4"
           ref={facebookRef}
-          value={local ? (local.facebook ? local.facebook : "") : ""}
         />
         {webpageError === "" ? null : (
           <View className="w-full flex items-start ml-28">
@@ -383,7 +367,6 @@ export default function UpdateLocal() {
           title="Nuevo URL: "
           textStyle="mt-4"
           ref={paginaWebRef}
-          value={local ? (local.webpage ? local.webpage : "") : ""}
         />
         <BasicTextInput
           placeholder="Imagen"
@@ -391,7 +374,6 @@ export default function UpdateLocal() {
           title="Esto tenemos que definir" //We have to see hoe we are gonna do the logic for this.
           textStyle="mt-4"
           ref={imgURLRef}
-          value={local ? (local.imgURL ? local.imgURL : "") : ""}
         />
         <BasicButton
           text="Actualizar Local"

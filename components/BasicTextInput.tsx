@@ -15,7 +15,7 @@ const BasicTextInput = forwardRef(
       inputType: "text" | "number";
       title?: string;
       textStyle?: string;
-      value: string;
+      value?: string;
       textSecure?: boolean;
     },
     ref: React.ForwardedRef<{
@@ -23,7 +23,7 @@ const BasicTextInput = forwardRef(
       setValue: (value: string) => void;
     }>
   ) => {
-    const [text, setText] = useState(value);
+    const [text, setText] = useState("");
 
     const handleChange = (input: string) => {
       if (inputType === "number" && !/^\d*$/.test(input)) return;

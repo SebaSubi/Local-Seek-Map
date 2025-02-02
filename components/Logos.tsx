@@ -22,8 +22,8 @@ export const UpdateLogo = () => {
   return <Entypo name="new-message" size={18} color="black" />;
 };
 
-export const DeleteLogo = () => {
-  return <MaterialIcons name="delete-outline" size={24} color="black" />;
+export const DeleteLogo = ({ color = "black", size = 24 }) => {
+  return <MaterialIcons name="delete-outline" size={size} color={color} />;
 };
 
 export const ProductIcon = () => {

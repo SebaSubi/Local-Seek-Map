@@ -89,13 +89,13 @@ export default function ProductCrud() {
                 }}
               />
               <BasicSelectable
-                href="/CRUD/LocalCRUD/LocalPage/[id]"
+                href="CRUD/LocalCRUD/LocalPage/[id]"
                 params={{
-                  id: id,
-                  name: name,
-                  localCoordinates: localCoordinates,
-                  image: image,
-                  localType: localType,
+                  id: local?.id,
+                  name: local?.name,
+                  localCoordinates: local?.location,
+                  image: local?.imgURL,
+                  localType: local?.localTypes,
                 }}
                 logo={<ReaderIcon />}
                 text="Ver Local"

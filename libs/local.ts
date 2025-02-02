@@ -217,30 +217,44 @@ export async function updateLocal(id: string, local: Local) {
   }
 }
 
-//----------------------------------------------------------------Local Products----------------------------------------------------------------
+export async function deleteLocal(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/removeLocal/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-// export async function createProductOfLocal(localProduct: LocalProduct) {
-//   // const newProduct = { localId, ...localProduct};
-//   try {
-//     const response = await fetch(`${API_URL}/addProduct`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(localProduct),
-//     });
+    if (!response.ok) {
+      console.error("Error deleting product");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error al eliminar el producto");
+    }
+    // const data = response.status !== 204 ? await response.json() : null;
 
-//     console.log(JSON.stringify(localProduct));
+    // return data;
+  } catch (error) {
+    console.error("Error en deleteProduct:", error);
+  }
+}
 
-//     if (!response.ok) {
-//       Alert.alert("Error", "Failed to Add product");
-//     } else {
-//       console.log("Tamo cello");
-//     }
-//   } catch (error) {
-//     console.log("Error: ", error);
-//   }
-// }
+//----------------------------------------------------------------Local User----------------------------------------------------------------
+
+export async function getLocalsOfUser(userEmail: string) {
+  const url = `http://localhost:3000/local-user/locals/${userEmail}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch store services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting store services", error);
+  }
+}
 
 //----------------------------------------------------------------Local Services----------------------------------------------------------------
 

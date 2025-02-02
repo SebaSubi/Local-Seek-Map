@@ -9,7 +9,7 @@ import {
   ServiceType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
-import { getLocal, getServicesOfLocal } from "../../../../libs/local";
+import { getLocalById, getServicesOfLocal } from "../../../../libs/local";
 import Header from "../../../../components/Header";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
@@ -34,7 +34,7 @@ export default function LocalPage() {
   // console.log(selectedOption);
 
   async function fetchAndSetLocals() {
-    const searchLocal = await getLocal(id as string);
+    const searchLocal = await getLocalById(id as string);
     setLocals(searchLocal);
   }
 

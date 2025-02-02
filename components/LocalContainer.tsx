@@ -8,12 +8,13 @@ import { useFonts } from "expo-font";
 
 export default function LocalContainer({ local }: { local: Local }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [type, setLocalType] = useState<string>("");
 
   useEffect(() => {
     const fetchLocals = async () => {
-      const open = await getIfLocalOpen(local.id);
-      setIsOpen(open);
+      if (local?.id) {
+        const open = await getIfLocalOpen(local.id);
+        setIsOpen(open);
+      }
     };
     fetchLocals();
   }, [local.id]);

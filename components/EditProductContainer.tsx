@@ -79,7 +79,7 @@ export default function EditProductContainer({
         </View>
         <TouchableOpacity
           onPress={() => onDelete(product.id!)}
-          className="w-20 h-20 bg-red-500 justify-center items-center  mt-2 absolute right-[-80px] z-[-1]"
+          className="w-20 h-20 bg-[#ff6c3d] justify-center items-center  mt-2 absolute right-[-80px] z-[-1]"
         >
           <Text className="text-white font-bold">Borrar</Text>
         </TouchableOpacity>

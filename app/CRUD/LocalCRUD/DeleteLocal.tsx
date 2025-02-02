@@ -1,158 +1,97 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
-import {
-  getLocals,
-  deleteLocal, // Necesitarás crear esta función si no existe
-  getLocalsByCategoryAndName,
-} from "../../../libs/local"; // Asegúrate de que el path sea correcto
-import SmallLocalCard from "../../../components/SmallLocalCard";
-import { Local } from "../../../schema/GeneralSchema";
-import BasicSearchButton from "../../../components/BasicSearchBar";
+import { useEffect, useState } from "react";
+import { Alert, FlatList, Modal, View } from "react-native";
+import { useAuth } from "../../context/AuthContext";
+import { deleteLocal, getLocalsOfUser } from "../../../libs/local";
+import DeleteLocalCard from "../../../components/SmallLocalCard";
+import BasicWarning from "../../../components/BasicWarning";
 
-const DeleteLocalScreen = () => {
-  const [locals, setLocals] = useState<Local[]>([]); // Lista completa de locales
-  const [filteredLocals, setFilteredLocals] = useState<Local[]>([]); // Locales filtrados
-  const [loading, setLoading] = useState(true); // Indicador de carga
-  const [searchText, setSearchText] = useState(""); // Texto del buscador
-  const filteringCategory = useRef<string>(""); // Categoría seleccionada
+export default function DeleteLocal() {
+  const { authState } = useAuth();
+  const [userLocals, setUserLocals] = useState();
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [localId, setLocalId] = useState<string | null>(null);
+  const [localName, setLocalName] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchLocals(); // Cargar locales al montar el componente
-  }, []);
-
-  useEffect(() => {
-    filterLocals(searchText); // Filtrar locales al cambiar el texto de búsqueda
-  }, [searchText, locals]);
-
-  // Obtener todos los locales
-  const fetchLocals = async () => {
-    try {
-      setLoading(true);
-      const response: Local[] = await getLocals();
-      if (response && response.length > 0) {
-        setLocals(response);
-        setFilteredLocals(response); // Inicialmente todos los locales están visibles
-      } else {
-        Alert.alert("Error", "No se encontraron locales.");
-      }
-    } catch (error) {
-      console.error("Error al obtener locales:", error);
-      Alert.alert("Error", "Fallo al cargar los locales.");
-    } finally {
+  async function getAndSetUserLocals() {
+    setLoading(true);
+    if (authState && authState.user) {
+      const uLocals = await getLocalsOfUser(authState.user.email);
+      setUserLocals(uLocals);
       setLoading(false);
     }
-  };
+  }
 
-  // Manejar la eliminación de un local
-  const handleDeleteLocal = async (localId: number) => {
-    Alert.alert(
-      "Confirmar eliminación",
-      "¿Estás seguro de que deseas eliminar este local?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Eliminar",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteLocal(localId.toString()); // Llamar a la API para eliminar
-              Alert.alert("Éxito", "Local eliminado correctamente.");
-              fetchLocals(); // Actualizar la lista
-            } catch (error) {
-              console.error("Error al eliminar local:", error);
-              Alert.alert(
-                "Error",
-                "No se pudo eliminar el local. Inténtalo de nuevo.",
-              );
-            }
-          },
-        },
-      ],
-    );
-  };
+  useEffect(() => {
+    getAndSetUserLocals();
+  }, []);
 
-  // Filtrar locales según el texto de búsqueda
-  const filterLocals = (text: string) => {
-    const lowercasedFilter = text.toLowerCase();
-    const filtered = locals.filter((local) =>
-      local.name.toLowerCase().includes(lowercasedFilter),
-    );
-    setFilteredLocals(filtered);
-  };
+  function handleDelete(id: string, name: string) {
+    setLocalId(id);
+    setLocalName(name);
+    setConfirmModal(true);
+  }
 
-  const getLocalsByCategoryAndSearch = (categoryName: string) => {
-    const fetchData = async () => {
-      const result = await getLocalsByCategoryAndName(categoryName, searchText);
-      if (result && result.length > 0) {
-        setLocals(result);
-      } else {
-        setLocals([]);
-      }
-    };
-    fetchData();
-  };
+  async function DeleteLocal() {
+    console.log(localId);
+    console.log(localName);
+    localId
+      ? await deleteLocal(localId)
+      : Alert.alert(
+          "Error",
+          "Error a borrar local, por fabor intentelo mas tarde"
+        );
 
-  const selectedCategory = (cat: string) => {
-    getLocalsByCategoryAndSearch(cat);
-    filteringCategory.current = cat;
-  };
+    getAndSetUserLocals();
+  }
 
   return (
-    <View style={styles.container}>
+    <>
       <Stack.Screen
         options={{
-          header: () => <Header title="Eliminar Local" />,
+          headerShown: false,
         }}
       />
-      <View style={styles.searchButtonContainer}>
-        <BasicSearchButton
-          placeholder="Buscar"
-          onSearch={setSearchText}
-          selectedCategory={selectedCategory}
-          categories={[]} // Asegúrate de pasar las categorías correctas si las necesitas
-          selectedFilters={() => {}} // Agregar lógica si es necesario
-          filters={["Categoria", "Quitar Filtro"]}
-        />
+      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+          <FlatList
+            data={userLocals}
+            horizontal={false}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <DeleteLocalCard local={item} onDelete={handleDelete} />
+            )}
+            keyExtractor={(item) => item.id!.toString()}
+            onRefresh={() => getAndSetUserLocals()}
+            refreshing={loading}
+            style={{ width: "100%" }}
+          />
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={confirmModal}
+            onRequestClose={() => setConfirmModal(false)}
+          >
+            <View
+              className="flex items-center justify-center w-full h-full"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text={`Estas seguro que desea borrar el local ${localName}?`}
+                cancelButton={false}
+                buttonRight="Borrar"
+                buttonLeft="Cancelar"
+                onPressRight={DeleteLocal}
+                onPressLeft={() => {
+                  setConfirmModal(false);
+                  setLocalId(null);
+                }}
+              />
+            </View>
+          </Modal>
+        </View>
       </View>
-      {loading ? (
-        <Text style={styles.loadingText}>Cargando locales...</Text>
-      ) : filteredLocals.length > 0 ? (
-        <FlatList
-          data={filteredLocals}
-          renderItem={({ item }) => (
-            <SmallLocalCard
-              name={item.name}
-              imgURL={item.imgURL ?? "https://via.placeholder.com/150"}
-              category="Sin categoría"
-              onPress={() => handleDeleteLocal(item.id)} // Manejar eliminación
-            />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={3}
-          contentContainerStyle={styles.listContent}
-        />
-      ) : (
-        <Text style={styles.noResultsText}>No se encontraron resultados.</Text>
-      )}
-    </View>
+    </>
   );
-};
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f5f5", padding: 10 },
-  loadingText: { textAlign: "center", fontSize: 16, color: "#555" },
-  noResultsText: { textAlign: "center", fontSize: 16, color: "#888" },
-  listContent: { paddingBottom: 20 },
-  searchButtonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-});
-
-export default DeleteLocalScreen;
+}

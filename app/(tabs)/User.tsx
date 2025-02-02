@@ -104,7 +104,7 @@ export default function UserScreen() {
                       users: [],
                       viewLocal: [],
                       webpage: item.webpage,
-                      whatsapp: +item.whatsapp,
+                      whatsapp: item.whatsapp,
                       // whatsapp: null,
                     }}
                   />
