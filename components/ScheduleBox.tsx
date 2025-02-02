@@ -113,12 +113,16 @@ export default function ScheduleBox({
     })
     .filter((shift) => shift !== null); // Filtra los turnos nulos
 
+  console.log(availableShifts);
+
   return (
     <View className="flex flex-row items-center">
       {/* Si no hay turnos disponibles, no renderiza nada */}
       {availableShifts.map((shift, index) => (
         <View key={index} className="rounded-lg mx-1">
-          <Text className="text-base text-gray-700">{shift}</Text>
+          <Text className="text-base text-gray-700">
+            {shift?.includes("23:59") ? shift.replace("11:59", "00:00") : shift}
+          </Text>
         </View>
       ))}
     </View>

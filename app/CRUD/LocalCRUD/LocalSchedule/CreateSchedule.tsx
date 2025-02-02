@@ -1,4 +1,4 @@
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, Alert } from "react-native";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
@@ -76,6 +76,15 @@ export default function CreateProduct() {
     if (hour === specificDate) {
       return null;
     }
+    if (
+      hour.toLocaleTimeString(undefined, {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      }) === "00:00"
+    ) {
+      return "23:59";
+    }
     return hour.toLocaleTimeString(undefined, {
       hour12: false,
       hour: "2-digit",
@@ -95,13 +104,25 @@ export default function CreateProduct() {
         minute: "2-digit",
       });
 
-    const FirstShiftFinish = FirstShiftFinishRef.current
-      ?.getTime()
-      ?.toLocaleTimeString(undefined, {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+    const FirstShiftFinish = (): string => {
+      if (
+        FirstShiftFinishRef.current?.getTime()?.toLocaleTimeString(undefined, {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+        }) === "00:00"
+      ) {
+        return "23:59";
+      } else {
+        return FirstShiftFinishRef.current
+          ?.getTime()
+          .toLocaleTimeString(undefined, {
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+      }
+    };
 
     const SecondShiftStart = checkSchedule(
       // eslint-disable-next-line prettier/prettier
@@ -127,7 +148,7 @@ export default function CreateProduct() {
       localId,
       dayNumber,
       FirstShiftStart,
-      FirstShiftFinish,
+      FirstShiftFinish: FirstShiftFinish(),
       SecondShiftStart,
       SecondShiftFinish,
       ThirdShiftStart,
@@ -140,6 +161,7 @@ export default function CreateProduct() {
 
   async function handleSubmit() {
     const newSchedule = createNewSchedule();
+    console.log(newSchedule);
     createSchedule(newSchedule);
   }
 
@@ -159,12 +181,12 @@ export default function CreateProduct() {
       />
       <View className="flex flex-row justify-between w-full items-center mb-2">
         <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
-        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
           {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
         </Text>
-        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        <GoBackButton style="bg-white w-12 h-8 justify-center opacity-0" />
       </View>
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center">
+      <View className="bg-white h-[89%] w-full rounded-3xl overflow-hidden flex items-center">
         <ScrollView
           keyboardShouldPersistTaps="handled"
           className="w-full h-full mb-32"
