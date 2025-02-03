@@ -62,10 +62,10 @@ export interface LocalProductSubCategory {
 export interface LocalSchedule {
   id?: string;
   local?: Local;
-  localId: string;
+  localId?: string;
   dateFrom: Date;
   dateTo?: Date | null;
-  dayNumber: number;
+  dayNumber?: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
   SecondShiftStart: string | null;

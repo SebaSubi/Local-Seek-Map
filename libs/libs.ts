@@ -1,5 +1,19 @@
 import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 
+export function bringDayName(dayNumber: number) {
+  const days = [
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+  ];
+
+  return days[dayNumber - 1];
+}
+
 export function scheduleInputValidation(
   schedule: LocalSchedule | LocalServiceSchedule
 ): string | boolean {

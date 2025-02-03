@@ -1,11 +1,11 @@
-import { Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
 import {
-  LocalHours,
+  LocalSchedule,
   LocalServiceSchedule,
 } from "../../../../schema/GeneralSchema";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
@@ -22,8 +22,10 @@ import {
 } from "../../../../libs/localSchedule";
 import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
+import { bringDayName } from "../../../../libs/libs";
 
 export default function UpdateSchedule() {
+  const { id } = useLocalSearchParams();
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
   const [loaded, setLoaded] = useState(false);
 
@@ -39,7 +41,7 @@ export default function UpdateSchedule() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedule = await getScheduleByScheduleId(localScheduleId); //Make sure this is set
+      const schedule = await getScheduleByScheduleId(id as string); //Make sure this is set
       setSchedule(schedule[0]);
       setLoaded(true);
     };
@@ -84,9 +86,8 @@ export default function UpdateSchedule() {
     const ThirdShiftFinish = checkSchedule(
       ThirdShiftFinishRef.current?.getTime()
     );
-    const dateFrom = new Date();
-    console.log(FirstShiftStart);
-    const newSchedule: LocalHours = {
+
+    const newSchedule: LocalSchedule = {
       FirstShiftStart,
       FirstShiftFinish,
       SecondShiftStart,
@@ -95,9 +96,10 @@ export default function UpdateSchedule() {
       ThirdShiftFinish,
       dateFrom: new Date(),
     };
+    console.log(id);
     if (JSON.stringify(schedule) === JSON.stringify(newSchedule)) return;
-    console.log(newSchedule);
-    updateSchedule(localScheduleId, newSchedule);
+    updateSchedule(id as string, newSchedule);
+    Alert.alert("Exito", "Horario actualizado con exito");
   };
 
   return loaded ? (
@@ -108,49 +110,62 @@ export default function UpdateSchedule() {
             headerShown: false,
           }}
         />
-        <View className="flex flex-row justify-between w-full items-center mb-2">
+        <View className="flex flex-row justify-between w-full items-center mb-2 mt-14">
           <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
             {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
           </Text>
           <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
         </View>
-        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center ">
-          <Text className="mt-6">Day number: {schedule!.dayNumber}</Text>
-          <TimeSelect
-            text="Hora de Apertura Primer Turno:"
-            ref={FirstShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Primer Turno:"
-            ref={FirstShiftFinishRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Segundo Turno:"
-            ref={SecondShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Segundo Turno:"
-            ref={SecondShiftFinishRef}
-          />
-          <TimeSelect
-            text="Hora de Apertura Tercer Turno:"
-            ref={ThirdShiftStartRef}
-          />
-          <TimeSelect
-            text="Hora de Cerrada Tercer Turno:"
-            ref={ThirdShiftFinishRef}
-          />
-
-          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-            <BasicButton
-              logo={<CreateLogo />}
-              text="Actualizar Horario"
-              style="mt-3"
-              onPress={handleSubmit}
+        <ScrollView
+          className="bg-white h-[89%] w-full rounded-3xl"
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View className="w-full h-full flex items-center justify-center">
+            <Text className="mt-6">
+              Dia: {bringDayName(schedule!.dayNumber)}
+            </Text>
+            <Text className="mt-1 text-sm font-light">
+              *Los campos que no cambie o deje en vacio quedaran sin modificar
+            </Text>
+            <TimeSelect
+              text="Hora de Apertura Primer Turno:"
+              ref={FirstShiftStartRef}
             />
+            <TimeSelect
+              text="Hora de Cerrada Primer Turno:"
+              ref={FirstShiftFinishRef}
+            />
+            <TimeSelect
+              text="Hora de Apertura Segundo Turno:"
+              ref={SecondShiftStartRef}
+            />
+            <TimeSelect
+              text="Hora de Cerrada Segundo Turno:"
+              ref={SecondShiftFinishRef}
+            />
+            <TimeSelect
+              text="Hora de Apertura Tercer Turno:"
+              ref={ThirdShiftStartRef}
+            />
+            <TimeSelect
+              text="Hora de Cerrada Tercer Turno:"
+              ref={ThirdShiftFinishRef}
+            />
+
+            <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+              <BasicButton
+                logo={<CreateLogo />}
+                text="Actualizar Horario"
+                style="mt-3"
+                onPress={handleSubmit}
+              />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     </>
   ) : (

@@ -113,8 +113,6 @@ export default function ScheduleBox({
     })
     .filter((shift) => shift !== null); // Filtra los turnos nulos
 
-  console.log(availableShifts);
-
   return (
     <View className="flex flex-row items-center">
       {/* Si no hay turnos disponibles, no renderiza nada */}
