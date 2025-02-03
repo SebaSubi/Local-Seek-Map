@@ -12,9 +12,11 @@ import { bringDayName } from "../libs/libs";
 
 export default function EditScheduleContainer({
   schedule,
+  href,
   onDelete,
 }: {
   schedule: LocalSchedule;
+  href: string;
   onDelete: (id: string) => void;
 }) {
   const translateX = new Animated.Value(0);
@@ -59,7 +61,7 @@ export default function EditScheduleContainer({
       >
         <Link
           href={{
-            pathname: "CRUD/LocalCRUD/LocalSchedule/UpdateSchedule",
+            pathname: href,
             params: {
               id: schedule.id,
             },

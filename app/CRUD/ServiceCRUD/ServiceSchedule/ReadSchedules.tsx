@@ -3,6 +3,10 @@ import ScheduleBox from "../../../../components/ScheduleBox";
 import { shift } from "../../../../constants/consts";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
+import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
+import { useEffect, useState } from "react";
+import { getScheduleByLocalServiceId } from "../../../../libs/localService";
+import { LocalServiceSchedule } from "../../../../schema/GeneralSchema";
 
 type Shift = {
   shiftOpen: shift;
@@ -10,6 +14,19 @@ type Shift = {
 };
 
 export default function ReadSchedule() {
+  const [reload, setReload] = useState(false);
+  const [schedules, setSchedule] = useState<LocalServiceSchedule[]>();
+  const localId = useLocalServiceIdStore((state) => state.localServiceId);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const schedules = await getScheduleByLocalServiceId(localId);
+      setSchedule(schedules);
+      setReload(false);
+    };
+    fetchData();
+  }, [localId, reload]);
+
   const shifts: Shift[] = [
     {
       shiftOpen: "FirstShiftStart",
@@ -32,28 +49,31 @@ export default function ReadSchedule() {
           header: () => <Header title="Actualizar Horario" />,
         }}
       />
-      <FlatList
-        data={shifts}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{ paddingHorizontal: 0 }}
-        renderItem={({ item, index }) => (
-          <View className="flex flex-col w-full items-center">
-            <Text className="text-xl mt-10">
-              {index === 0
-                ? "Primer Turno"
-                : index === 1
-                  ? "Segundo Turno"
-                  : index === 2
-                    ? "Tercer Turno"
-                    : null}
-            </Text>
-            <ScheduleBox
-              shiftOpen={item.shiftOpen}
-              shiftClose={item.shiftClose}
-            />
-          </View>
-        )}
-      />
+      {schedules && (
+        <FlatList
+          data={shifts}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={{ paddingHorizontal: 0 }}
+          renderItem={({ item, index }) => (
+            <View className="flex flex-col w-full items-center">
+              <Text className="text-xl mt-10">
+                {index === 0
+                  ? "Primer Turno"
+                  : index === 1
+                    ? "Segundo Turno"
+                    : index === 2
+                      ? "Tercer Turno"
+                      : null}
+              </Text>
+              <ScheduleBox
+                schedules={schedules}
+                shiftOpen={item.shiftOpen}
+                shiftClose={item.shiftClose}
+              />
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 }

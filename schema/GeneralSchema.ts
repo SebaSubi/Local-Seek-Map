@@ -125,10 +125,10 @@ export interface Service {
 
 export interface LocalServiceSchedule {
   id?: string;
-  localServiceId: string;
+  localServiceId?: string;
   dateFrom: Date;
   dateTo?: Date | null;
-  dayNumber: number;
+  dayNumber?: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
   SecondShiftStart: string | null;
@@ -139,7 +139,7 @@ export interface LocalServiceSchedule {
 }
 
 export interface ServiceType {
-  id: string;
+  id?: string;
   localService?: Service[];
   name: string;
 }
