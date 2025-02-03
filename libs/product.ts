@@ -48,7 +48,7 @@ export async function getProductsByCategoryAndName(
 ) {
   try {
     const rawData = await fetch(
-      `${API_URL}/category-name-search?category=${categoryId}&name=${name}`
+      `${API_URL}/category-name-search/${categoryId}?name=${name}`
     );
     if (!rawData.ok) {
       throw new Error("Failed to fetch Products");

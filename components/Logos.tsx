@@ -26,9 +26,13 @@ export const DeleteLogo = ({ color = "black", size = 24 }) => {
   return <MaterialIcons name="delete-outline" size={size} color={color} />;
 };
 
-export const ProductIcon = () => {
+export const ProductIcon = ({ color = "black", size = 24 }) => {
   return (
-    <MaterialCommunityIcons name="food-apple-outline" size={24} color="black" />
+    <MaterialCommunityIcons
+      name="food-apple-outline"
+      size={size}
+      color={color}
+    />
   );
 };
 

@@ -23,13 +23,11 @@ export default function BasicButton({
       style={{ backgroundColor: background ? background : "#f8f8f8" }}
       onPress={onPress}
     >
-      {logo && (
-        <View className="ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
-          {logo}
-        </View>
-      )}
+      {logo && <>{logo}</>}
 
-      <Text className={`ml-3 mr-3 text-sm font-light ${textStyle}`}>
+      <Text
+        className={`${logo ? null : "ml-3"} mr-3 text-sm font-light ${textStyle}`}
+      >
         {text}
       </Text>
     </Pressable>
