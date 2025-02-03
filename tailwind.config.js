@@ -10,6 +10,12 @@ module.exports = {
       fontFamily: {
         roboto: ["Roboto_400Regular", "Roboto_700Bold"],
       },
+      colors: {
+        defaultBlue: "#1a253d",
+        defaultGray: "#f8f8f8",
+        defaultOrange: "#ff6c3d",
+        defaultText: "#1a253d",
+      },
     },
   },
   plugins: [],

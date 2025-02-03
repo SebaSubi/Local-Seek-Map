@@ -24,7 +24,6 @@ import GoBackButton from "../../../../components/GoBackButton";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
-  const [schedules, setSchedules] = useState<LocalServiceSchedule[]>([]);
   const [error, setError] = useState("");
 
   const localId = useLocalIdStore((state) => state.localId);
@@ -59,11 +58,11 @@ export default function CreateProduct() {
       });
     }
 
-    const localSchedule = createNewSchedule();
-
     if (localWarning) {
       return;
     }
+
+    const localSchedule = createNewSchedule();
 
     if (scheduleInputValidation(localSchedule) !== "Correct") {
       setError(scheduleInputValidation(localSchedule) as string);
@@ -161,13 +160,11 @@ export default function CreateProduct() {
 
   async function handleSubmit() {
     const newSchedule = createNewSchedule();
-    console.log(newSchedule);
     createSchedule(newSchedule);
   }
 
   async function handleUpdate() {
     const newSchedule = createNewSchedule();
-    console.log(JSON.stringify(newSchedule));
     updateSchedule(scheduleId, newSchedule);
     setWarning(false);
   }
@@ -189,10 +186,10 @@ export default function CreateProduct() {
       <View className="bg-white h-[89%] w-full rounded-3xl overflow-hidden flex items-center">
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          className="w-full h-full mb-32"
+          className="w-full h-full"
         >
           <View
-            className={`flex justify-center items-center bg-white h-full w-full ${warning ? "opacity-25" : "opacity-100"}`}
+            className={`flex justify-center items-center bg-white h-full w-full mb-8 ${warning ? "opacity-25" : "opacity-100"}`}
           >
             <BasicTextInput
               inputType="text"

@@ -1,7 +1,7 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import BasicSelectable from "../../../../components/BasicSelectable";
 import { CreateLogo, ReadLogo, UpdateLogo } from "../../../../components/Logos";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import Header from "../../../../components/Header";
 import { useEffect, useState } from "react";
 import { useLocalIdStore } from "../../../../libs/scheduleZustang";
@@ -10,6 +10,8 @@ import { Local } from "../../../../schema/GeneralSchema";
 import { getServicesByLocalId } from "../../../../libs/localService";
 
 export default function ScheduleCrud() {
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
   const [screen, setScreen] = useState(false);
   const [locals, setlocals] = useState<Local[]>([]);
 
@@ -22,11 +24,17 @@ export default function ScheduleCrud() {
   );
 
   useEffect(() => {
-    const fetchServicesByLocalId = async () => {
-      const locals = await getServicesByLocalId(localId);
-      setlocals(locals);
-    };
-    fetchServicesByLocalId();
+    if (id) {
+      setScreen(true);
+      setLocalServiceId(id as string);
+      router.push("/CRUD/ServiceCRUD/ServiceSchedule/CreateSchedule");
+    } else {
+      const fetchServicesByLocalId = async () => {
+        const locals = await getServicesByLocalId(localId);
+        setlocals(locals);
+      };
+      fetchServicesByLocalId();
+    }
   }, []);
 
   function handlePress(id: string) {

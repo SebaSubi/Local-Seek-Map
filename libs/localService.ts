@@ -179,12 +179,13 @@ export async function createService(data: Service) {
       },
       body: JSON.stringify(data),
     });
-    console.log(JSON.stringify(data));
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Service");
     } else {
-      console.log("Service succesfully added to dataBase");
+      Alert.alert("Éxito", "servicio creado con éxito");
+
+      return response.json();
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -285,8 +286,9 @@ export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
     console.log(JSON.stringify(data));
 
     if (!response.ok) {
-      Alert.alert("Error", "Failed to create localServiceSchedule");
+      Alert.alert("Error", "No se a podido crear el horario");
     } else {
+      Alert.alert("Éxito", "El horario fue creado con éxito!");
       console.log("Service succesfully added to localServiceSchedule");
     }
   } catch (error) {
@@ -296,7 +298,7 @@ export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
 
 export async function updateServiceSchedule(
   id: string,
-  schedule: LocalServiceSchedule,
+  schedule: LocalServiceSchedule
 ) {
   try {
     const response = await fetch(`${API_URL}/service-schedule/update/${id}`, {
@@ -311,7 +313,7 @@ export async function updateServiceSchedule(
       // console.log(response);
     } else {
       const json = response.json();
-      console.log("Updated service schedule");
+      Alert.alert("Éxito", "El horario fue actualizado con éxito");
       return json;
     }
   } catch (error) {

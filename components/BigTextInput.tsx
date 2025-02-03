@@ -35,7 +35,11 @@ const BigTextInput = forwardRef(
 
     return (
       <View className="w-3/4">
-        {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
+        {title && (
+          <Text className={`ml-2 mb-1 text-sm font-light ${textStyle}`}>
+            {title}
+          </Text>
+        )}
         <TextInput
           value={text}
           className="w-full bg-[#f8f8f8] h-24 rounded-2xl text-center p-2"

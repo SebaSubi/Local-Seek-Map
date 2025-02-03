@@ -126,7 +126,7 @@ export default function UpdateSchedule() {
         >
           <View className="w-full h-full flex items-center justify-center">
             <Text className="mt-6">
-              Dia: {bringDayName(schedule!.dayNumber)}
+              Dia: {bringDayName(schedule?.dayNumber!)}
             </Text>
             <Text className="mt-1 text-sm font-light">
               *Los campos que no cambie o deje en vacio quedaran sin modificar

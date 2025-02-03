@@ -25,13 +25,10 @@ import { colors } from "../../../../constants/colors";
 import EditScheduleContainer from "../../../../components/EditScheduleContainer";
 
 export default function DeleteSchedule() {
-  const [schedule, setSchedule] = useState<
-    LocalSchedule[] | LocalServiceSchedule[]
-  >([]);
+  const [schedule, setSchedule] = useState<LocalSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const localId = useLocalIdStore((state) => state.localId);
-  const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
 
   const { name } = useLocalSearchParams();
 
@@ -80,6 +77,7 @@ export default function DeleteSchedule() {
               data={schedule}
               renderItem={({ item }) => (
                 <EditScheduleContainer
+                  href="CRUD/LocalCRUD/LocalSchedule/UpdateSchedule"
                   schedule={item}
                   onDelete={handleDelete}
                 />

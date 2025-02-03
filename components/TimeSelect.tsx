@@ -49,7 +49,7 @@ const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
         <Text className="ml-2">{props.text}</Text>
 
         <Pressable
-          className="flex items-center justify-center w-full bg-[#e1e8e8] h-12 rounded-2xl text-center"
+          className="flex items-center justify-center w-full bg-defaultGray h-12 rounded-2xl text-center"
           onPress={togglePicker}
         >
           <Text>

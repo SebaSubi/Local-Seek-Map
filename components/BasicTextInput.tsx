@@ -37,7 +37,11 @@ const BasicTextInput = forwardRef(
 
     return (
       <View className="w-3/4">
-        {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
+        {title && (
+          <Text className={`ml-2 mb-1 text-sm font-light ${textStyle}`}>
+            {title}
+          </Text>
+        )}
         <TextInput
           value={text}
           multiline={false}
