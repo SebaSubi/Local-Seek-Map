@@ -9,11 +9,7 @@ import {
   ServiceType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
-import {
-  getLocal,
-  getProductsOfALocal,
-  getServicesOfLocal,
-} from "../../../../libs/local";
+import { getLocalById, getServicesOfLocal } from "../../../../libs/local";
 import Header from "../../../../components/Header";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
@@ -21,6 +17,7 @@ import BasicButton from "../../../../components/BasicButton";
 import ProductContainer from "../../../../components/ProductContainer";
 import ServiceContainer from "../../../../components/ServiceContainer";
 import { getServiceTypes } from "../../../../libs/serviceType";
+import { getProductsOfLocal } from "../../../../libs/localProducts";
 
 type Options = "Info" | "Schedule" | "Products" | "Services";
 
@@ -37,14 +34,14 @@ export default function LocalPage() {
   // console.log(selectedOption);
 
   async function fetchAndSetLocals() {
-    const searchLocal = await getLocal(id as string);
+    const searchLocal = await getLocalById(id as string);
     setLocals(searchLocal);
   }
 
-  async function fetchAndSetPorducts() {
+  async function fetchAndSetProducts() {
     setLoading(true);
     if (localType !== "Servicio") {
-      const localProducts = await getProductsOfALocal(id as string);
+      const localProducts = await getProductsOfLocal(id as string);
       setLocalProducts(localProducts);
       setLoading(false);
     } else {
@@ -57,7 +54,7 @@ export default function LocalPage() {
   useEffect(() => {
     const fetchAll = async () => {
       await fetchAndSetLocals();
-      await fetchAndSetPorducts();
+      await fetchAndSetProducts();
       const schedules = await getSchedulesByLocalId(id as string);
       setSchedules(schedules);
     };
@@ -110,7 +107,7 @@ export default function LocalPage() {
                         />
                       )}
                       keyExtractor={(item) => item.product.id!.toString()}
-                      onRefresh={() => fetchAndSetPorducts()}
+                      onRefresh={() => fetchAndSetProducts()}
                       refreshing={loading}
                     />
                   </View>
@@ -125,7 +122,7 @@ export default function LocalPage() {
                       <ServiceContainer service={item} />
                     )}
                     keyExtractor={(item) => item.id!.toString()}
-                    onRefresh={() => fetchAndSetPorducts()}
+                    onRefresh={() => fetchAndSetProducts()}
                     refreshing={loading}
                   />
                 </View>

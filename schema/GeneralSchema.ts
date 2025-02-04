@@ -10,43 +10,62 @@ export interface User {
 }
 
 export interface Local {
-  id: string;
-  name: string;
-  location: string; // Consider changing to a more specific type, e.g., { lat: number; lng: number }
-  address: string;
-  whatsapp: number | null;
-  instagram: string | null;
-  facebook: string | null;
-  webpage: string | null;
-  imgURL: string | null;
-  dateFrom: Date;
-  dateTo: Date | null;
-  users: User[];
-  schedule: LocalSchedule[];
-  services: Service[];
-  localTypes: LocalTypes | null;
-  localTypeID: string | null;
-  product: LocalProduct[];
-  viewLocal: ViewLocal[];
+  id?: string;
+  name: string | null;
+  location?: string | null; // Consider changing to a more specific type, e.g., { lat: number; lng: number }
+  address?: string;
+  whatsapp?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
+  webpage?: string | null;
+  imgURL?: string | null;
+  dateFrom?: Date;
+  dateTo?: Date | null;
+  users?: User[];
+  schedule?: LocalSchedule[];
+  services?: Service[];
+  localTypes?: LocalTypes | null;
+  localTypeID?: string | null;
+  product?: LocalProduct[];
+  viewLocal?: ViewLocal[];
 }
 
 export interface LocalProduct {
-  id: string;
-  local: Local;
-  localId: string;
-  product: Product;
-  productId: string;
-  dateFrom: Date;
-  dateTo: Date | null;
+  id?: string | null;
+  local?: Local | null;
+  localId?: string;
+  product?: Product | null;
+  productId?: string;
+  price?: number | null;
+  imgURL?: string | null;
+  localProductDecription?: string | null;
+  localProductCategory?: LocalProductCategory | null;
+  localProductCategoryId?: string | null;
+  localProductSubCategory?: LocalProductSubCategory | null;
+  localProductSubCategoryId?: string | null;
+  dateFrom: Date | null;
+  dateTo?: Date | null;
+}
+
+export interface LocalProductCategory {
+  id?: string | null; // Unique identifier, generated using cuid
+  name: string; // Unique name for the category
+  localProduct?: LocalProduct[] | null; // Array of related local products
+}
+
+export interface LocalProductSubCategory {
+  id?: string | null; // Unique identifier, generated using cuid
+  name: string; // Unique name for the subcategory
+  product?: LocalProduct[] | null; // Array of related local products
 }
 
 export interface LocalSchedule {
   id?: string;
   local?: Local;
-  localId: string;
+  localId?: string;
   dateFrom: Date;
   dateTo?: Date | null;
-  dayNumber: number;
+  dayNumber?: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
   SecondShiftStart: string | null;
@@ -72,7 +91,7 @@ export interface Product {
   name: string;
   updatedAt?: Date;
   brand: string;
-  mesurement: string;
+  measurement: string;
   imgURL?: string | null;
   price?: number | null;
   description: string;
@@ -84,9 +103,9 @@ export interface Product {
 }
 
 export interface ProductType {
-  id: string;
+  id?: string | null;
   name: string;
-  product: Product[];
+  product?: Product[] | null;
 }
 
 export interface Service {
@@ -106,10 +125,10 @@ export interface Service {
 
 export interface LocalServiceSchedule {
   id?: string;
-  localServiceId: string;
+  localServiceId?: string;
   dateFrom: Date;
   dateTo?: Date | null;
-  dayNumber: number;
+  dayNumber?: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
   SecondShiftStart: string | null;
@@ -120,7 +139,7 @@ export interface LocalServiceSchedule {
 }
 
 export interface ServiceType {
-  id: string;
+  id?: string;
   localService?: Service[];
   name: string;
 }

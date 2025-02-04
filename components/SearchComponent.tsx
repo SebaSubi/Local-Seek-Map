@@ -73,7 +73,7 @@ const SearchComponent = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      setProductCategories(data.allCategories); //this is alright idk why the object retuned is something like this {allCategories:{...}}
+      setProductCategories(data);
     } catch (err) {
       // console.error("Error fetching categories", err);
       // Alert.alert("Error", "Fallo al cargar las categorías");

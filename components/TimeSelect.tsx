@@ -2,6 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { View, Text, Pressable, TouchableWithoutFeedback } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { specificDate } from "../constants/consts";
+import { Platform } from "react-native";
 
 const options: Intl.DateTimeFormatOptions = {
   hour: "2-digit",
@@ -22,6 +23,9 @@ const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
   const handleTimeChange = (e: any, selectedDate?: Date) => {
     if (selectedDate) {
       setTime(selectedDate);
+      if (Platform.OS === "android") {
+        setPickerVisible(false);
+      }
     }
   };
 
@@ -45,7 +49,7 @@ const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
         <Text className="ml-2">{props.text}</Text>
 
         <Pressable
-          className="flex items-center justify-center w-full bg-[#e1e8e8] h-12 rounded-2xl text-center"
+          className="flex items-center justify-center w-full bg-defaultGray h-12 rounded-2xl text-center"
           onPress={togglePicker}
         >
           <Text>
@@ -60,7 +64,7 @@ const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
               value={time}
               mode="time"
               is24Hour={true}
-              display="spinner"
+              display={Platform.OS === "android" ? "clock" : "spinner"}
               onChange={handleTimeChange}
             />
           </View>

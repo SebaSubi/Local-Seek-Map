@@ -20,8 +20,6 @@ const ReadProductScreen = () => {
   const [filter, setSelectedFilter] = useState<string>(""); //this is the filter that is going to be used to filter the products, its either Quitar (wich filters without a categoria and by name) or Categoria (Filters by category)
   const [selectedCategory, setSelctedCategory] = useState<string>("");
 
-  console.log(products);
-
   async function fetchAndSetProducts() {
     setLoading(true); // To show the user that it is in fact loading
     if (
@@ -32,7 +30,6 @@ const ReadProductScreen = () => {
         selectedCategory,
         searchText
       );
-      console.log("We are in");
       setProducts(products);
       setLoading(false); // Sets the loading to false so the user knows its done
     } else {
@@ -55,15 +52,16 @@ const ReadProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      setCategories(data.allCategories); //this is alright idk why the object retuned uis something like this {allCategories:{...}}
+      setCategories(data); //this is alright idk why the object retuned uis something like this {allCategories:{...}}
     } catch (err) {
       console.error("Error fetching categories", err);
       Alert.alert("Error", "Fallo al cargar las categorías");
     }
   };
 
-  const handleselectedCategory = (cat: string) => {
+  const handleSelectedCategory = (cat: string) => {
     //Sets the category to the one selected in the searchbar
+    console.log(cat);
     setSelctedCategory(cat);
   };
 
@@ -71,13 +69,13 @@ const ReadProductScreen = () => {
     <View className="bg-[#1a253d] w-full h-full flex flex-col">
       <Stack.Screen
         options={{
-          header: () => <Header title="Consultar Producto" />,
+          headerShown: false,
         }}
       />
       <BasicSearchButton
         placeholder="Buscar"
         onSearch={setSearchText}
-        selectedCategory={handleselectedCategory}
+        selectedCategory={handleSelectedCategory}
         categories={categories}
         selectedFilters={setSelectedFilter}
         filters={[]}

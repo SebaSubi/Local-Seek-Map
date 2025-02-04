@@ -6,6 +6,7 @@ import BasicButton from "./BasicButton";
 import BasicTextInput from "./BasicTextInput";
 import { checkEmail, checkUsername, EditUser } from "../libs/user";
 import { validateEmail } from "./Register";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AuthUser, useAuth } from "../app/context/AuthContext";
 
 const UserUpdateModal = ({
@@ -153,6 +154,7 @@ const UserUpdateModal = ({
                   setPasswordError,
                   setUsernameError,
                   user,
+                  // eslint-disable-next-line prettier/prettier
                   onLogin
                 )
               }
@@ -181,6 +183,7 @@ const handleUserChange = async (
   setPasswordError: React.Dispatch<React.SetStateAction<string>>,
   setUsernameError: React.Dispatch<React.SetStateAction<string>>,
   user: AuthUser,
+  // eslint-disable-next-line prettier/prettier
   onLogin: any
 ) => {
   const validEmail = email.current?.getValue()

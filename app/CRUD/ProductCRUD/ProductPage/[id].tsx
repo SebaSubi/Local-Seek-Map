@@ -3,15 +3,13 @@ import Header from "../../../../components/Header";
 import { Stack, useLocalSearchParams } from "expo-router";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useState } from "react";
-import {
-  getLocalsOfProduct,
-  getProductsByCategory,
-} from "../../../../libs/product";
+import { getProductsByCategory } from "../../../../libs/product";
 import { LocalTypes, Product } from "../../../../schema/GeneralSchema";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import { getLocalTypes } from "../../../../libs/localType";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
+import { getLocalsOfProduct } from "../../../../libs/localProducts";
 
 type Options = "Info" | "Locals";
 

@@ -1,47 +1,50 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useEffect, useRef, useState } from "react";
+import { Product, ProductType } from "../../../../schema/GeneralSchema";
+import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import * as ImagePicker from "expo-image-picker";
 import {
-  View,
   Alert,
-  Image,
   Button,
-  ScrollView,
-  Pressable,
+  FlatList,
+  Image,
   Modal,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
+  View,
 } from "react-native";
+import { createProduct } from "../../../../libs/product";
+import {
+  createProductType,
+  getProductTypes,
+  getProductTypesByName,
+} from "../../../../libs/productType";
+import { Stack, useRouter } from "expo-router";
+import BasicSearchButton from "../../../../components/BasicSearchBar";
+import BasicTextInput from "../../../../components/BasicTextInput";
+import BigTextInput from "../../../../components/BigTextInput";
+import BasicButton from "../../../../components/BasicButton";
+import { CreateLogo } from "../../../../components/Logos";
 
-import * as ImagePicker from "expo-image-picker";
-import { useEffect, useRef, useState } from "react";
-import { Product, ProductType } from "../../../schema/GeneralSchema";
-import { uploadImageToCloudinaryProducts } from "../../../libs/cloudinary";
-import { createProduct } from "../../../libs/product";
-import { getProductTypes } from "../../../libs/productType";
-import { Stack } from "expo-router";
-import Header from "../../../components/Header";
-import BasicTextInput from "../../../components/BasicTextInput";
-import BigTextInput from "../../../components/BigTextInput";
-import BasicButton from "../../../components/BasicButton";
-import { CreateLogo } from "../../../components/Logos";
-import { createProductOfLocal } from "../../../libs/local";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
-
-export default function AddProduct() {
+export default function CreateProduct() {
   const nameRef = useRef<any>(null);
   const brandRef = useRef<any>(null);
   const measurementRef = useRef<any>(null);
   const descriptionRef = useRef<any>(null);
+  const typeRef = useRef<any>();
   const [serviceTypes, setServiceTypes] = useState<ProductType[]>([]);
   const [selectedType, setSelectedType] = useState<ProductType | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+  const [createType, setCreateType] = useState(false);
+  const [search, setSearch] = useState<string>("");
+  const router = useRouter();
 
   //errorHandlers
   const [nameError, setNameError] = useState("");
   const [brandError, setbrandError] = useState("");
   const [measurementError, setMeasurementError] = useState("");
-
-  const localId = useLocalIdStore((state) => state.localId);
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -65,17 +68,36 @@ export default function AddProduct() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const data = await getProductTypesByName(search);
+      if (data) {
+        setServiceTypes(data);
+      } else {
+        console.warn("No se encontró 'allCategories' en la respuesta");
+        setServiceTypes([]);
+      }
+    } catch (err) {
+      console.error("Error fetching categories", err);
+      Alert.alert("Error", "Fallo al cargar las categorías");
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
     const brand = brandRef.current?.getValue();
-    const mesurement = measurementRef.current?.getValue();
+    const measurement = measurementRef.current?.getValue();
     const description = descriptionRef.current?.getValue();
     const productTypeId = selectedType?.id;
 
     if (
       !name ||
       !brand ||
-      !mesurement ||
+      !measurement ||
       !description ||
       // !image ||
       !productTypeId
@@ -110,12 +132,12 @@ export default function AddProduct() {
       setbrandError("La marca del produto es demasiado larga");
       setMeasurementError("");
       return;
-    } else if (mesurement.length < 2) {
+    } else if (measurement.length < 2) {
       setNameError("");
       setbrandError("");
       setMeasurementError("La medida del produto es demasiado corta");
       return;
-    } else if (mesurement.length >= 50) {
+    } else if (measurement.length >= 50) {
       setNameError("");
       setbrandError("");
       setMeasurementError("La medida del produto es demasiado larga");
@@ -133,7 +155,7 @@ export default function AddProduct() {
       const newProduct: Product = {
         name,
         brand,
-        mesurement,
+        measurement,
         description,
         productTypeId,
         imgURL: uploadedImageUrl,
@@ -141,7 +163,7 @@ export default function AddProduct() {
       };
 
       const createdProduct = await createProduct(newProduct);
-      await createProductOfLocal(createdProduct?.id!, localId);
+      router.replace("/CRUD/LocalCRUD/LocalProduct/AddProduct");
       Alert.alert("Éxito", "Producto creado exitosamente");
       // nameRef.current.setValue("");
       // brandRef.current.setValue("");
@@ -154,26 +176,11 @@ export default function AddProduct() {
     }
   };
 
-  // Función para obtener los tipos de producto
-  const fetchCategories = async () => {
-    try {
-      const data = await getProductTypes();
-      // Acceder directamente a allCategories
-      if (data.allCategories) {
-        setServiceTypes(data.allCategories);
-      } else {
-        console.warn("No se encontró 'allCategories' en la respuesta");
-        setServiceTypes([]);
-      }
-    } catch (err) {
-      console.error("Error fetching categories", err);
-      Alert.alert("Error", "Fallo al cargar las categorías");
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  async function handleCreateType() {
+    const name: string = typeRef.current?.getValue();
+    const newProductType = await createProductType({ name });
+    setSelectedType(newProductType);
+  }
 
   return (
     <>
@@ -183,14 +190,14 @@ export default function AddProduct() {
         }}
       />
       <View className="bg-[#1a253d] w-full h-full flex items-center">
-        <View className=" h-[90%] w-full ">
+        <View className=" h-[90%] w-full flex items-center">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
               alignItems: "center",
               justifyContent: "center",
             }}
-            className=" bg-white w-full rounded-3xl overflow-hidden"
+            className=" bg-white w-full rounded-3xl overflow-hidden pt-6"
           >
             {nameError === "" ? null : (
               <View className="w-full flex items-start ml-28">
@@ -241,44 +248,69 @@ export default function AddProduct() {
               visible={typeModalVisibility}
               onRequestClose={() => setTypeModalVisibility(false)}
             >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>
-                    Selecciona el tipo de producto
-                  </Text>
-                  <ScrollView style={styles.scrollView}>
-                    {serviceTypes.length === 0 ? (
-                      <Text>No hay tipos disponibles</Text>
-                    ) : (
-                      serviceTypes.map((category, index) => (
-                        <Pressable
-                          key={index}
-                          onPress={() => {
-                            setSelectedType(category);
-                            setTypeModalVisibility(false);
-                          }}
-                          style={styles.modalOption}
-                        >
-                          <Text style={styles.modalOptionText}>
-                            {category.name}
-                          </Text>
-                        </Pressable>
-                      ))
-                    )}
-                  </ScrollView>
-                  <Pressable
-                    onPress={() => setTypeModalVisibility(false)}
-                    style={styles.closeButton}
-                  >
-                    <Text style={styles.closeButtonText}>Cerrar</Text>
-                  </Pressable>
+              <View
+                className="flex items-center justify-center w-full h-full "
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+                  <BasicButton
+                    text="No encunetra la categoría?"
+                    onPress={() => setCreateType(true)}
+                    background="#f8f8f8"
+                    style="mt-4"
+                  />
+                  {createType ? (
+                    <View className="w-full h-full flex items-center justify-center">
+                      <BasicTextInput
+                        inputType="text"
+                        placeholder="Nombre"
+                        title="Nombre de Nueva Categoría: "
+                        value=""
+                        ref={typeRef}
+                      />
+                      <BasicButton
+                        logo={<CreateLogo />}
+                        text="Crear Categoría"
+                        onPress={() => {
+                          setCreateType(false);
+                          handleCreateType();
+                          setTypeModalVisibility(false);
+                        }}
+                        background="#f8f8f8"
+                        style="mt-4"
+                      />
+                    </View>
+                  ) : (
+                    <>
+                      <BasicSearchButton
+                        placeholder="Buscar Categoria"
+                        onSearch={setSearch}
+                        background="#f8f8f8"
+                      />
+                      <FlatList
+                        data={serviceTypes}
+                        renderItem={({ item, index }) => (
+                          <Pressable
+                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            onPress={() => {
+                              setSelectedType(item);
+                              setTypeModalVisibility(false);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </Pressable>
+                        )}
+                        keyExtractor={(item) => item.id!.toString()}
+                      />
+                    </>
+                  )}
                 </View>
               </View>
             </Modal>
-
             <Pressable
               onPress={() => setTypeModalVisibility(true)}
               style={styles.typeButton}
+              className="rounded-2xl"
             >
               <Text style={styles.typeButtonText}>
                 {selectedType
@@ -286,7 +318,6 @@ export default function AddProduct() {
                   : "Seleccionar Tipo de Producto"}
               </Text>
             </Pressable>
-
             <View style={{ marginTop: 20 }}>
               <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
             </View>
@@ -301,7 +332,7 @@ export default function AddProduct() {
         <View style={{ marginTop: 20, alignItems: "center", width: "80%" }}>
           <BasicButton
             logo={<CreateLogo />}
-            text="Crear Producto"
+            text="Agregar Producto"
             onPress={handleSubmit}
             background="#ffffff"
           />
@@ -359,8 +390,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 15, // Aumenta el padding vertical
     paddingHorizontal: 20, // Aumenta el padding horizontal
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
+    backgroundColor: "#f8f8f8",
     minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
     alignItems: "center",
     justifyContent: "center",

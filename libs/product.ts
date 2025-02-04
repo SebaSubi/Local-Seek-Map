@@ -1,4 +1,9 @@
-import { Product } from "../schema/GeneralSchema";
+import {
+  LocalProduct,
+  LocalProductCategory,
+  LocalProductSubCategory,
+  Product,
+} from "../schema/GeneralSchema";
 import { Alert } from "react-native";
 import { Platform } from "react-native";
 
@@ -43,7 +48,7 @@ export async function getProductsByCategoryAndName(
 ) {
   try {
     const rawData = await fetch(
-      `${API_URL}/category-name-search?category=${categoryId}&name=${name}`
+      `${API_URL}/category-name-search/${categoryId}?name=${name}`
     );
     if (!rawData.ok) {
       throw new Error("Failed to fetch Products");
@@ -92,6 +97,7 @@ export async function updateProduct(product: Product) {
 }
 
 export async function getProductById(productId: string) {
+  console.log(productId);
   const url = `${API_URL}/${productId}`;
 
   try {
@@ -146,7 +152,7 @@ export async function createProduct(product: Product) {
 
 export const searchProductsByName = async (searchInput: string) => {
   try {
-    const response = await fetch(`${API_URL}/search?input=${searchInput}`);
+    const response = await fetch(`${API_URL}/search?name=${searchInput}`);
     if (!response.ok) {
       throw new Error("Error searching products");
     }
@@ -185,19 +191,119 @@ export async function deleteProduct(id: string) {
   }
 }
 
-export async function getLocalsOfProduct(id: string) {
+//------------------------------------------------------------Local - Products -------------------------------------------------------
+
+//------------------------------------------------------- LocalProduct Category ---------------------------------------------------
+
+export async function getLocalProductCategories() {
   try {
-    const response = await fetch(`${API_URL}/locals/${id}`);
+    const response = await fetch(
+      `http://localhost:3000/local-product-categories`
+    );
 
     if (!response.ok) {
-      console.error("Error getting locals of product");
+      console.error("Error getting local product categories");
       const errorResponse = await response.json();
       console.error(errorResponse);
-      throw new Error("Error getting locals of product");
+      throw new Error("Error getting local product categories");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error getting locals of product", error);
+    console.error("Error getting local product categories", error);
+  }
+}
+
+export async function getLocalProductCategoriesByName(name: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-categories/search-name?name=${name}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product categories by name");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product categories by name");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting local product categories by name", error);
+  }
+}
+
+export async function createLocalProductCategory(
+  localProductCategory: LocalProductCategory
+) {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/local-product-categories/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(localProductCategory),
+      }
+    );
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to create Local Product Category");
+    } else {
+      const data: LocalProductCategory = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    Alert.alert("Error: ", (error as any).message.data.msg);
+  }
+}
+
+//------------------------------------------------------- LocalProduct SubCategory ---------------------------------------------------
+
+export async function getLocalProductSubCategoriesByName(name: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-sub-categories/search-name?name=${name}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product sub categories by name");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product sub categories by name");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting local product sub categories by name", error);
+  }
+}
+
+export async function createLocalProductSubCategory(
+  localProductSubCategory: LocalProductSubCategory
+) {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/local-product-sub-categories/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(localProductSubCategory),
+      }
+    );
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to create Local Product Category");
+    } else {
+      const data: LocalProductCategory = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }

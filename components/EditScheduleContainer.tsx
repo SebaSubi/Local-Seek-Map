@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { LocalProduct, Product } from "../schema/GeneralSchema";
+import { LocalProduct, LocalSchedule, Product } from "../schema/GeneralSchema";
 import {
   StyleSheet,
   Text,
@@ -8,12 +8,15 @@ import {
   TouchableOpacity,
   Animated,
 } from "react-native";
+import { bringDayName } from "../libs/libs";
 
-export default function EditProductContainer({
-  product,
+export default function EditScheduleContainer({
+  schedule,
+  href,
   onDelete,
 }: {
-  product: LocalProduct;
+  schedule: LocalSchedule;
+  href: string;
   onDelete: (id: string) => void;
 }) {
   const translateX = new Animated.Value(0);
@@ -48,6 +51,7 @@ export default function EditProductContainer({
   function handleUpdate() {
     // console.log("yes"); For some reason if i dont do this it calls the delete function
   }
+
   return (
     <View style={{ flex: 1 }} className="flex-row ">
       <Animated.View
@@ -57,9 +61,9 @@ export default function EditProductContainer({
       >
         <Link
           href={{
-            pathname: "CRUD/LocalCRUD/LocalProduct/[id]",
+            pathname: href,
             params: {
-              id: product.id,
+              id: schedule.id,
             },
           }}
           asChild
@@ -75,10 +79,15 @@ export default function EditProductContainer({
           className="flex items-center justify-center w-72 h-20 bg-[#f6f6f6] mt-2 "
           {...panResponder.panHandlers}
         >
-          <Text>{product.product!.name}</Text>
+          <Text>
+            {schedule.dayNumber ? bringDayName(schedule.dayNumber) : null}
+          </Text>
+          <Text>
+            {schedule.FirstShiftStart} - {schedule.FirstShiftFinish}...
+          </Text>
         </View>
         <TouchableOpacity
-          onPress={() => onDelete(product.id!)}
+          onPress={() => onDelete(schedule.id!)}
           className="w-20 h-20 bg-[#ff6c3d] justify-center items-center  mt-2 absolute right-[-80px] z-[-1]"
         >
           <Text className="text-white font-bold">Borrar</Text>

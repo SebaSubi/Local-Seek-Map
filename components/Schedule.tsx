@@ -1,4 +1,5 @@
-import { FlatList, Text, View } from "react-native";
+import React from "react";
+import { FlatList, Text, View, ScrollView } from "react-native";
 import ScheduleBox from "./ScheduleBox";
 import { shift } from "../constants/consts";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ type Shift = {
 };
 
 interface ScheduleProps {
-  schedule?: (LocalSchedule | LocalServiceSchedule)[]; // Define el tipo del parámetro schedule
+  schedule?: (LocalSchedule | LocalServiceSchedule)[];
 }
 
 export default function Schedule({ schedule = [] }: ScheduleProps) {
@@ -37,10 +38,8 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
     { shiftOpen: "ThirdShiftStart", shiftClose: "ThirdShiftFinish" },
   ];
 
-  // Inicializamos todos los días de la semana
   const allDays = Array.from({ length: 7 }, (_, index) => index + 1);
 
-  // Agrupamos horarios por día y aseguramos que todos los días estén presentes
   const groupedSchedules = allDays.reduce(
     (acc, day) => {
       acc[day] = schedule.filter((item) => item.dayNumber === day) || [];
@@ -50,88 +49,379 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
     {} as Record<number, (LocalSchedule | LocalServiceSchedule)[]>
   );
 
+  // return (
+  //   <>
+  //     {loading ? (
+  //       <Text>Loading...</Text>
+  //     ) : (
+  //       <>
+  //         <View className="flex items-center mt-6 border-b">
+  //           <Text className="text-4xl font-bold mt-2 mb-6">HORARIOS</Text>
+  //         </View>
+  //         {Object.keys(groupedSchedules).map((dayNumber) => {
+  //           const daySchedules = groupedSchedules[parseInt(dayNumber)];
+  //           const hasSchedules = daySchedules.length > 0;
+
+  //           return (
+  //             <View key={dayNumber} className="flex flex-col my-3 px-4 py-3">
+  //               <View className="flex flex-row items-center">
+  //                 <Text className="text-xl font-bold w-1/4">
+  //                   {
+  //                     [
+  //                       "Domingo",
+  //                       "Lunes",
+  //                       "Martes",
+  //                       "Miércoles",
+  //                       "Jueves",
+  //                       "Viernes",
+  //                       "Sábado",
+  //                     ][parseInt(dayNumber) - 1]
+  //                   }
+  //                 </Text>
+  //                 <View className="flex-1">
+  //                   {!hasSchedules ? (
+  //                     <Text className="text-lg text-gray-500">Cerrado</Text>
+  //                   ) : (
+  //                     <FlatList
+  //                       data={shifts.filter((shift) =>
+  //                         daySchedules.some(
+  //                           (schedule) =>
+  //                             (shift.shiftOpen === "FirstShiftStart" &&
+  //                               schedule.FirstShiftStart) ||
+  //                             (shift.shiftOpen === "SecondShiftStart" &&
+  //                               schedule.SecondShiftStart) ||
+  //                             (shift.shiftOpen === "ThirdShiftStart" &&
+  //                               // eslint-disable-next-line prettier/prettier
+  //                               schedule.ThirdShiftStart)
+  //                           // eslint-disable-next-line prettier/prettier
+  //                         )
+  //                       )}
+  //                       keyExtractor={(item, index) => index.toString()}
+  //                       numColumns={2}
+  //                       renderItem={({ item }) => (
+  //                         <View className="m-1">
+  //                           <ScheduleBox
+  //                             schedules={daySchedules as LocalSchedule[]}
+  //                             shiftOpen={item.shiftOpen as shift}
+  //                             shiftClose={item.shiftClose as shift}
+  //                           />
+  //                         </View>
+  //                       )}
+  //                     />
+  //                   )}
+  //                 </View>
+  //               </View>
+  //             </View>
+  //           );
+  //         })}
+  //       </>
+  //     )}
+  //   </>
+  // );
+  // return (
+  //   <>
+  //     {loading ? (
+  //       <Text>Loading...</Text>
+  //     ) : (
+  //       <>
+  //         <View className="flex items-center mt-6 border-b">
+  //           <Text className="text-4xl font-bold mt-2 mb-6">HORARIOS</Text>
+  //         </View>
+  //         {Object.keys(groupedSchedules).map((dayNumber) => {
+  //           const daySchedules = groupedSchedules[parseInt(dayNumber)];
+  //           const hasSchedules = daySchedules.length > 0;
+
+  //           return (
+  //             <View
+  //               key={dayNumber}
+  //               className="flex flex-col items-center my-3 px-4 py-3"
+  //             >
+  //               <Text className="text-xl font-bold text-center mb-2">
+  //                 {
+  //                   [
+  //                     "Domingo",
+  //                     "Lunes",
+  //                     "Martes",
+  //                     "Miércoles",
+  //                     "Jueves",
+  //                     "Viernes",
+  //                     "Sábado",
+  //                   ][parseInt(dayNumber) - 1]
+  //                 }
+  //               </Text>
+  //               <View className="flex items-center justify-center w-full">
+  //                 {!hasSchedules ? (
+  //                   <Text className="text-lg text-gray-500">Cerrado</Text>
+  //                 ) : (
+  //                   <FlatList
+  //                     data={shifts.filter((shift) =>
+  //                       daySchedules.some(
+  //                         (schedule) =>
+  //                           (shift.shiftOpen === "FirstShiftStart" &&
+  //                             schedule.FirstShiftStart) ||
+  //                           (shift.shiftOpen === "SecondShiftStart" &&
+  //                             schedule.SecondShiftStart) ||
+  //                           (shift.shiftOpen === "ThirdShiftStart" &&
+  //                             schedule.ThirdShiftStart)
+  //                       )
+  //                     )}
+  //                     keyExtractor={(item, index) => index.toString()}
+  //                     numColumns={2}
+  //                     columnWrapperStyle={{
+  //                       justifyContent: "center", // 🔥 Centra los turnos horizontalmente
+  //                     }}
+  //                     renderItem={({ item }) => (
+  //                       <View className="m-1 flex items-center">
+  //                         <ScheduleBox
+  //                           schedules={daySchedules as LocalSchedule[]}
+  //                           shiftOpen={item.shiftOpen as shift}
+  //                           shiftClose={item.shiftClose as shift}
+  //                         />
+  //                       </View>
+  //                     )}
+  //                   />
+  //                 )}
+  //               </View>
+  //             </View>
+  //           );
+  //         })}
+  //       </>
+  //     )}
+  //   </>
+  // );
+  // return (
+  //   <>
+  //     {loading ? (
+  //       <Text>Loading...</Text>
+  //     ) : (
+  //       <>
+  //         <View className="flex items-center mt-6 border-b">
+  //           <Text className="text-4xl font-bold mt-2 mb-6">HORARIOS</Text>
+  //         </View>
+  //         <View>
+  //           {Object.keys(groupedSchedules).map((dayNumber) => {
+  //             const daySchedules = groupedSchedules[parseInt(dayNumber)];
+  //             const hasSchedules = daySchedules.length > 0;
+
+  //             return (
+  //               <View
+  //                 key={dayNumber}
+  //                 className="flex flex-col items-center my-3 px-4"
+  //               >
+  //                 <Text className="text-xl font-bold text-center">
+  //                   {
+  //                     [
+  //                       "Domingo",
+  //                       "Lunes",
+  //                       "Martes",
+  //                       "Miércoles",
+  //                       "Jueves",
+  //                       "Viernes",
+  //                       "Sábado",
+  //                     ][parseInt(dayNumber) - 1]
+  //                   }
+  //                 </Text>
+  //                 <View className="flex items-center justify-center w-full">
+  //                   {!hasSchedules ? (
+  //                     <Text className="text-lg text-gray-500">Cerrado</Text>
+  //                   ) : (
+  //                     <FlatList
+  //                       data={shifts.filter((shift) =>
+  //                         daySchedules.some(
+  //                           (schedule) =>
+  //                             (shift.shiftOpen === "FirstShiftStart" &&
+  //                               schedule.FirstShiftStart) ||
+  //                             (shift.shiftOpen === "SecondShiftStart" &&
+  //                               schedule.SecondShiftStart) ||
+  //                             (shift.shiftOpen === "ThirdShiftStart" &&
+  //                               // eslint-disable-next-line prettier/prettier
+  //                               schedule.ThirdShiftStart)
+  //                           // eslint-disable-next-line prettier/prettier
+  //                         )
+  //                       )}
+  //                       keyExtractor={(item, index) => index.toString()}
+  //                       numColumns={2}
+  //                       columnWrapperStyle={{
+  //                         justifyContent: "center",
+  //                       }}
+  //                       renderItem={({ item }) => (
+  //                         <View className="m-1 flex items-center">
+  //                           <ScheduleBox
+  //                             schedules={daySchedules as LocalSchedule[]}
+  //                             shiftOpen={item.shiftOpen as shift}
+  //                             shiftClose={item.shiftClose as shift}
+  //                           />
+  //                         </View>
+  //                       )}
+  //                     />
+  //                   )}
+  //                 </View>
+  //               </View>
+  //             );
+  //           })}
+  //         </View>
+  //       </>
+  //     )}
+  //   </>
+  // );
   return (
     <>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <>
-          <View className="flex items-center mt-5 border-b">
-            <Text className="text-4xl font-bold mt-14 mb-6">HORARIOS</Text>
+          <View className="flex items-center mt-6 border-b">
+            <Text className="text-4xl font-bold mt-2 mb-6">HORARIOS</Text>
           </View>
-          {Object.keys(groupedSchedules).map((dayNumber) => {
-            const daySchedules = groupedSchedules[parseInt(dayNumber)];
-            const hasSchedules = daySchedules.length > 0;
+          <View>
+            {Object.keys(groupedSchedules).map((dayNumber) => {
+              const daySchedules = groupedSchedules[parseInt(dayNumber)];
+              const hasSchedules = daySchedules.length > 0;
 
-            return (
-              <View
-                key={dayNumber}
-                className="flex flex-row items-center justify-center my-3 px-4 py-3"
-              >
-                {/* Nombre del día */}
-                <Text className="text-xl font-bold w-1/3 ml-6">
-                  {
-                    [
-                      "Domingo",
-                      "Lunes",
-                      "Martes",
-                      "Miércoles",
-                      "Jueves",
-                      "Viernes",
-                      "Sábado",
-                    ][parseInt(dayNumber) - 1]
-                  }
-                </Text>
-
-                {/* Horarios del día */}
-                {!hasSchedules ? (
-                  // Si está "Cerrado", centramos el texto
-                  <View className="flex-1 items-center justify-center">
-                    <Text className="text-lg text-gray-500">Cerrado</Text>
+              return (
+                <View
+                  key={dayNumber}
+                  className="flex flex-row items-center my-3 px-4 py-2"
+                >
+                  <Text className="text-xl font-bold w-1/4 text-left">
+                    {
+                      [
+                        "Domingo",
+                        "Lunes",
+                        "Martes",
+                        "Miércoles",
+                        "Jueves",
+                        "Viernes",
+                        "Sábado",
+                      ][parseInt(dayNumber) - 1]
+                    }
+                  </Text>
+                  <View className="flex-1">
+                    {!hasSchedules ? (
+                      <View
+                        className="flex justify-center items-center"
+                        style={{ minHeight: 60 }}
+                      >
+                        <Text className="text-lg text-gray-500">Cerrado</Text>
+                      </View>
+                    ) : (
+                      <FlatList
+                        data={shifts.filter((shift) =>
+                          daySchedules.some(
+                            (schedule) =>
+                              (shift.shiftOpen === "FirstShiftStart" &&
+                                schedule.FirstShiftStart) ||
+                              (shift.shiftOpen === "SecondShiftStart" &&
+                                schedule.SecondShiftStart) ||
+                              (shift.shiftOpen === "ThirdShiftStart" &&
+                                // eslint-disable-next-line prettier/prettier
+                                schedule.ThirdShiftStart)
+                            // eslint-disable-next-line prettier/prettier
+                          )
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        numColumns={2}
+                        columnWrapperStyle={{
+                          justifyContent: "center", // Centra los turnos horizontalmente
+                        }}
+                        renderItem={({ item }) => (
+                          <View className="m-1 flex items-center">
+                            <ScheduleBox
+                              schedules={daySchedules as LocalSchedule[]}
+                              shiftOpen={item.shiftOpen as shift}
+                              shiftClose={item.shiftClose as shift}
+                            />
+                          </View>
+                        )}
+                      />
+                    )}
                   </View>
-                ) : (
-                  <View
-                    className={`flex-1 ${
-                      daySchedules.length === 1
-                        ? "items-center justify-center"
-                        : ""
-                    }`}
-                  >
-                    <FlatList
-                      horizontal
-                      data={shifts.filter((shift) => {
-                        return daySchedules.some((schedule) => {
-                          return (
-                            (shift.shiftOpen === "FirstShiftStart" &&
-                              schedule.FirstShiftStart) ||
-                            (shift.shiftOpen === "SecondShiftStart" &&
-                              schedule.SecondShiftStart) ||
-                            (shift.shiftOpen === "ThirdShiftStart" &&
-                              schedule.ThirdShiftStart)
-                          );
-                        });
-                      })}
-                      keyExtractor={(item, index) => index.toString()}
-                      renderItem={({ item }) => (
-                        <ScheduleBox
-                          schedules={daySchedules as LocalSchedule[]}
-                          shiftOpen={item.shiftOpen as shift}
-                          shiftClose={item.shiftClose as shift}
-                        />
-                      )}
-                    />
-                  </View>
-                )}
-              </View>
-            );
-          })}
+                </View>
+              );
+            })}
+          </View>
         </>
       )}
     </>
   );
+  // return (
+  //   <>
+  //     {loading ? (
+  //       <Text>Loading...</Text>
+  //     ) : (
+  //       <>
+  //         <View className="flex items-center mt-6 border-b">
+  //           <Text className="text-4xl font-bold mt-2 mb-6">HORARIOS</Text>
+  //         </View>
+  //         <View>
+  //           {Object.keys(groupedSchedules).map((dayNumber) => {
+  //             const daySchedules = groupedSchedules[parseInt(dayNumber)] || []; // Asegurarse de que esté siempre un array
+  //             const hasSchedules = daySchedules.length > 0;
+
+  //             return (
+  //               <View
+  //                 key={dayNumber}
+  //                 className="flex flex-row items-center my-3 px-4 py-2"
+  //               >
+  //                 <Text className="text-xl font-bold w-1/4 text-left">
+  //                   {
+  //                     [
+  //                       "Domingo",
+  //                       "Lunes",
+  //                       "Martes",
+  //                       "Miércoles",
+  //                       "Jueves",
+  //                       "Viernes",
+  //                       "Sábado",
+  //                     ][parseInt(dayNumber) - 1]
+  //                   }
+  //                 </Text>
+  //                 <View className="flex-1">
+  //                   {!hasSchedules ? (
+  //                     <View className="flex justify-center items-center h-full">
+  //                       <Text className="text-lg text-gray-500">Cerrado</Text>
+  //                     </View>
+  //                   ) : (
+  //                     <FlatList
+  //                       data={shifts.filter((shift) =>
+  //                         daySchedules.some(
+  //                           (schedule) =>
+  //                             (shift.shiftOpen === "FirstShiftStart" &&
+  //                               schedule.FirstShiftStart) ||
+  //                             (shift.shiftOpen === "SecondShiftStart" &&
+  //                               schedule.SecondShiftStart) ||
+  //                             (shift.shiftOpen === "ThirdShiftStart" &&
+  //                               schedule.ThirdShiftStart)
+  //                         )
+  //                       )}
+  //                       keyExtractor={(item, index) => index.toString()}
+  //                       numColumns={2}
+  //                       columnWrapperStyle={{
+  //                         justifyContent: "center", // Centra los turnos horizontalmente
+  //                       }}
+  //                       renderItem={({ item }) => (
+  //                         <View className="m-1 flex items-center">
+  //                           <ScheduleBox
+  //                             schedules={daySchedules as LocalSchedule[]}
+  //                             shiftOpen={item.shiftOpen as shift}
+  //                             shiftClose={item.shiftClose as shift}
+  //                           />
+  //                         </View>
+  //                       )}
+  //                     />
+  //                   )}
+  //                 </View>
+  //               </View>
+  //             );
+  //           })}
+  //         </View>
+  //       </>
+  //     )}
+  //   </>
+  // );
 }
 
-//el componente Schedul que estaba antes
+//el componente de Schedule que estaba antes
 // import { FlatList, Text, View } from "react-native";
 // import ScheduleBox from "./ScheduleBox";
 // import { shift } from "../constants/consts";

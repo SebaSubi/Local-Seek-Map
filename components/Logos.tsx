@@ -22,13 +22,17 @@ export const UpdateLogo = () => {
   return <Entypo name="new-message" size={18} color="black" />;
 };
 
-export const DeleteLogo = () => {
-  return <MaterialIcons name="delete-outline" size={24} color="black" />;
+export const DeleteLogo = ({ color = "black", size = 24 }) => {
+  return <MaterialIcons name="delete-outline" size={size} color={color} />;
 };
 
-export const ProductIcon = () => {
+export const ProductIcon = ({ color = "black", size = 24 }) => {
   return (
-    <MaterialCommunityIcons name="food-apple-outline" size={24} color="black" />
+    <MaterialCommunityIcons
+      name="food-apple-outline"
+      size={size}
+      color={color}
+    />
   );
 };
 
@@ -166,4 +170,16 @@ export const EyeOff = ({ color = "black", size = 24 }) => {
 
 export const ArrowLeft = ({ color = "black", size = 24 }) => {
   return <AntDesign name="arrowleft" size={size} color={color} />;
+};
+
+export const ClockLogo = ({ color = "black", size = 24 }) => {
+  return <Feather name="clock" size={size} color={color} />;
+};
+
+export const ReadMore = ({ color = "black", size = 24 }) => {
+  return <MaterialIcons name="read-more" size={size} color={color} />;
+};
+
+export const ReaderIcon = ({ color = "black", size = 24 }) => {
+  return <Ionicons name="reader-outline" size={size} color={color} />;
 };

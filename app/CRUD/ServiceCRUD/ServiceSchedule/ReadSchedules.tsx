@@ -3,6 +3,13 @@ import ScheduleBox from "../../../../components/ScheduleBox";
 import { shift } from "../../../../constants/consts";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
+import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
+import { useEffect, useState } from "react";
+import { getScheduleByLocalServiceId } from "../../../../libs/localService";
+import { LocalServiceSchedule } from "../../../../schema/GeneralSchema";
+import GoBackButton from "../../../../components/GoBackButton";
+import Schedule from "../../../../components/Schedule";
+import { colors } from "../../../../constants/colors";
 
 type Shift = {
   shiftOpen: shift;
@@ -10,50 +17,42 @@ type Shift = {
 };
 
 export default function ReadSchedule() {
-  const shifts: Shift[] = [
-    {
-      shiftOpen: "FirstShiftStart",
-      shiftClose: "FirstShiftFinish",
-    },
-    {
-      shiftOpen: "SecondShiftStart",
-      shiftClose: "SecondShiftFinish",
-    },
-    {
-      shiftOpen: "ThirdShiftStart",
-      shiftClose: "ThirdShiftFinish",
-    },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [schedules, setSchedule] = useState<LocalServiceSchedule[]>();
+  const localId = useLocalServiceIdStore((state) => state.localServiceId);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const schedules = await getScheduleByLocalServiceId(localId);
+      setSchedule(schedules);
+      setLoading(false);
+    };
+    fetchData();
+  }, [localId]);
 
   return (
-    <View className="flex flex-col  h-full w-full">
+    <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
       <Stack.Screen
         options={{
-          header: () => <Header title="Actualizar Horario" />,
+          headerShown: false,
         }}
       />
-      <FlatList
-        data={shifts}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{ paddingHorizontal: 0 }}
-        renderItem={({ item, index }) => (
-          <View className="flex flex-col w-full items-center">
-            <Text className="text-xl mt-10">
-              {index === 0
-                ? "Primer Turno"
-                : index === 1
-                  ? "Segundo Turno"
-                  : index === 2
-                    ? "Tercer Turno"
-                    : null}
-            </Text>
-            <ScheduleBox
-              shiftOpen={item.shiftOpen}
-              shiftClose={item.shiftClose}
-            />
+      <View className="flex flex-row justify-between w-full items-center mb-2">
+        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+          Leer Horarios
+        </Text>
+        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+      </View>
+      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center">
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : schedules?.length ? (
+          <View className="w-full h-full bg-white">
+            <Schedule schedule={schedules} />
           </View>
-        )}
-      />
+        ) : null}
+      </View>
     </View>
   );
 }

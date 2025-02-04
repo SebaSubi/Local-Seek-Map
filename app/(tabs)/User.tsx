@@ -10,6 +10,7 @@ import LocalContainer from "../../components/LocalContainer";
 import { getUserLocals, UserLocal } from "../../libs/user";
 import { LocalTypes } from "../../schema/GeneralSchema";
 import GoBackButton from "../../components/GoBackButton";
+import EditLocalContainer from "../../components/EditLocalContainer";
 
 export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
@@ -84,7 +85,7 @@ export default function UserScreen() {
                 horizontal={false}
                 numColumns={2}
                 renderItem={({ item }) => (
-                  <LocalContainer
+                  <EditLocalContainer
                     local={{
                       id: item.id,
                       address: item.address,
@@ -103,7 +104,7 @@ export default function UserScreen() {
                       users: [],
                       viewLocal: [],
                       webpage: item.webpage,
-                      whatsapp: +item.whatsapp,
+                      whatsapp: item.whatsapp,
                       // whatsapp: null,
                     }}
                   />

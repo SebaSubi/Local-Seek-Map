@@ -15,41 +15,46 @@ const BasicTextInput = forwardRef(
       inputType: "text" | "number";
       title?: string;
       textStyle?: string;
-      value: string;
+      value?: string;
       textSecure?: boolean;
     },
-    ref: React.ForwardedRef<{ getValue: () => string }>
+    ref: React.ForwardedRef<{
+      getValue: () => string;
+      setValue: (value: string) => void;
+    }>
   ) => {
-    const [text, setText] = useState(value);
+    const [text, setText] = useState("");
 
     const handleChange = (input: string) => {
-      if (inputType === "number" && !/^\d*$/.test(input)) return;
-      setText(input);
       if (inputType === "number" && !/^\d*$/.test(input)) return;
       setText(input);
     };
 
     useImperativeHandle(ref, () => ({
       getValue: () => text,
-    }));
-    useImperativeHandle(ref, () => ({
-      getValue: () => text,
+      setValue: (newValue: string) => setText(newValue),
     }));
 
     return (
       <View className="w-3/4">
-        {title && <Text className={`ml-2 mb-1 ${textStyle}`}>{title}</Text>}
+        {title && (
+          <Text className={`ml-2 mb-1 text-sm font-light ${textStyle}`}>
+            {title}
+          </Text>
+        )}
         <TextInput
           value={text}
-          className="w-full bg-[#e1e8e8] h-12 rounded-2xl text-center"
+          multiline={false}
+          numberOfLines={1}
+          className="w-full bg-[#f8f8f8] h-11 rounded-2xl px-2"
           onChangeText={handleChange}
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}
           secureTextEntry={textSecure}
+          style={{ overflow: "hidden" }}
         />
       </View>
     );
-    // eslint-disable-next-line prettier/prettier
   }
 );
 

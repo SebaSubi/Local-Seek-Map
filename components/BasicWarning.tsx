@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { WarningIcon } from "./Logos";
 
 export default function BasicWarning({
@@ -20,49 +20,49 @@ export default function BasicWarning({
 }) {
   return (
     <View
-      className={`flex flex-col items-center justify-center w-3/4 h-1/2 rounded-xl bg-[#e1e8e8] shadow-lg ${style}`}
+      className={`flex flex-col items-center justify-center w-72 h-72 rounded-xl bg-white shadow-lg ${style}`}
     >
       <View className="absolute top-4">
         <WarningIcon />
       </View>
-      <Text className="ml-5 mr-5 text-lg text-center">{text}</Text>
+      <Text className="ml-5 mr-5 text-lg font-light text-center">{text}</Text>
       {cancelButton ? (
-        <Pressable
+        <TouchableOpacity
           style={{
-            borderTopWidth: 1,
-            borderRightWidth: 1,
-            borderTopColor: "white",
-            borderRightColor: "white",
+            borderTopWidth: 2,
+            borderRightWidth: 2,
+            borderTopColor: "#f8f8f8",
+            borderRightColor: "#f8f8f8",
           }}
           className="flex flex-col items-center justify-center absolute bottom-0 rounded-sm w-full h-12"
           onPress={onPressLeft}
         >
           <Text>Ok</Text>
-        </Pressable>
+        </TouchableOpacity>
       ) : (
         <>
-          <Pressable
+          <TouchableOpacity
             style={{
-              borderTopWidth: 1,
-              borderRightWidth: 1,
-              borderTopColor: "white",
-              borderRightColor: "white",
+              borderTopWidth: 2,
+              borderRightWidth: 2,
+              borderTopColor: "#f8f8f8",
+              borderRightColor: "#f8f8f8",
             }}
             className="flex flex-col items-center justify-center absolute bottom-0 left-0 rounded-sm w-1/2 h-12"
             onPress={onPressLeft}
           >
             <Text>{buttonLeft}</Text>
-          </Pressable>
-          <Pressable
+          </TouchableOpacity>
+          <TouchableOpacity
             style={{
-              borderTopWidth: 1,
-              borderTopColor: "white",
+              borderTopWidth: 2,
+              borderTopColor: "#f8f8f8",
             }}
             className="flex flex-col items-center justify-center absolute bottom-0 right-0 rounded-sm w-1/2 h-12"
             onPress={onPressRight}
           >
             <Text className="text-red-500">{buttonRight}</Text>
-          </Pressable>
+          </TouchableOpacity>
         </>
       )}
     </View>

@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { Local } from "../schema/GeneralSchema";
+import { Local, LocalProduct } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 import axios from "axios";
 import { validateEmail } from "../components/Register";
@@ -163,7 +163,7 @@ export async function createLocal(local: Local) {
   }
 }
 
-export async function getLocal(id: string) {
+export async function getLocalById(id: string) {
   const url = `${API_URL}/${id}`;
   try {
     const rawData = await fetch(url);
@@ -186,49 +186,40 @@ export async function checkLocalName(name: string) {
   }
 }
 
-//----------------------------------------------------------------Local Products----------------------------------------------------------------
-
-export async function getProductsOfALocal(id: string) {
-  const url = `${API_URL}/products/${id}`;
+export async function updateLocal(id: string, local: Local) {
   try {
-    const rawData = await fetch(url);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch Stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting store products", error);
-  }
-}
-
-export async function createProductOfLocal(productId: string, localId: string) {
-  const newProduct = { productId, localId };
-  try {
-    const response = await fetch(`${API_URL}/addProduct`, {
-      method: "POST",
+    const response = await fetch(`${API_URL}/update/${id}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newProduct),
+      body: JSON.stringify(local),
     });
 
-    console.log(JSON.stringify(newProduct));
+    console.log("Response Status:", response.status);
+    console.log("Response Headers:", response.headers);
 
     if (!response.ok) {
-      Alert.alert("Error", "Failed to Add product");
+      const errorText = await response.text();
+      console.log("Error Response Body:", errorText);
+      Alert.alert("Error", `Failed to update local: ${response.status}`);
+      return;
     } else {
-      console.log("Tamo cello");
+      Alert.alert("Local actualizado con éxito");
     }
+
+    // Handle empty response
+    const data = response.status !== 204 ? await response.json() : null;
+    return data;
   } catch (error) {
     console.log("Error: ", error);
+    Alert.alert("Error", "Something went wrong");
   }
 }
 
-export async function deleteProductOfLocal(productId: string) {
-  console.log(productId);
+export async function deleteLocal(id: string) {
   try {
-    const response = await fetch(`${API_URL}/removeProduct/${productId}`, {
+    const response = await fetch(`${API_URL}/removeLocal/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -241,10 +232,27 @@ export async function deleteProductOfLocal(productId: string) {
       console.error(errorResponse);
       throw new Error("Error al eliminar el producto");
     }
+    // const data = response.status !== 204 ? await response.json() : null;
 
-    // return await response.json();
+    // return data;
   } catch (error) {
     console.error("Error en deleteProduct:", error);
+  }
+}
+
+//----------------------------------------------------------------Local User----------------------------------------------------------------
+
+export async function getLocalsOfUser(userEmail: string) {
+  const url = `http://localhost:3000/local-user/locals/${userEmail}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch store services");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting store services", error);
   }
 }
 

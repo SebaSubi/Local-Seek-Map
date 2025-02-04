@@ -19,23 +19,23 @@ import { LocalTypes, ProductType, ServiceType } from "../schema/GeneralSchema";
 
 export default function BasicSearchButton({
   placeholder,
-  className,
   onSearch,
   filters,
   selectedFilters,
   categories,
   selectedCategory,
   style,
+  background,
   // typeOfSearch,
 }: {
   placeholder: string;
-  className?: any;
-  filters: string[];
+  filters?: string[];
   style?: string;
+  background?: string;
   // typeOfSearch: "Locals" | "Services" | "Products" | "All";
-  selectedFilters: (type: string) => void;
-  categories: LocalTypes[] | ProductType[] | ServiceType[];
-  selectedCategory: (category: string) => void;
+  selectedFilters?: (type: string) => void;
+  categories?: LocalTypes[] | ProductType[] | ServiceType[];
+  selectedCategory?: (category: string) => void;
   onSearch: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [text, setText] = useState("");
@@ -51,30 +51,40 @@ export default function BasicSearchButton({
   };
 
   const handleSelectSearchType = (type: string) => {
-    setSearchType(type);
-    type !== "Categoria" ? setModalVisible(false) : null;
-    console.log(`Tipo de búsqueda seleccionado: ${type}`);
-    selectedFilters(type);
+    if (selectedFilters) {
+      setSearchType(type);
+      type !== "Categoria" ? setModalVisible(false) : null;
+      console.log(`Tipo de búsqueda seleccionado: ${type}`);
+      selectedFilters(type);
+    } else null;
   };
 
   const handleCategorySelection = (category: string) => {
-    if (category === categorySelected) {
-      setCategory("");
+    if (selectedCategory) {
+      if (category === categorySelected) {
+        setCategory("");
 
-      setSearchType("Nombre");
-      selectedCategory("");
+        setSearchType("Nombre");
+        selectedCategory("");
+      } else {
+        setCategory(category);
+        setSearchType("Nombre");
+        selectedCategory(category);
+      }
     } else {
-      setCategory(category);
-      setSearchType("Nombre");
-      selectedCategory(category);
+      console.log("no categories are available");
     }
   };
 
   return (
     <View style={styles.container} className={`${style} h-[14%]`}>
-      <View className="flex flex-row ">
+      <View className="flex flex-row items-center">
         <TextInput
-          style={StyleSheet.flatten([styles.textInput, className])}
+          className="text-center text-black w-[70%] h-12 rounded-2xl mr-1"
+          style={{
+            backgroundColor: background ? background : "#ffffff",
+            marginLeft: categories ? 32 : 1,
+          }}
           onChangeText={(text) => setText(text)}
           value={text}
           placeholder={placeholder}
@@ -131,7 +141,7 @@ export default function BasicSearchButton({
           </>
         )}
       </View>
-      {categories.length !== 0 && categories ? (
+      {categories && categories.length !== 0 && categories ? (
         <ScrollView className="mt-3 w-full" horizontal={true}>
           {categories.map((category, index) => (
             <BasicButton
@@ -157,16 +167,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     // marginTop: 10,
-  },
-  textInput: {
-    backgroundColor: "#ffffff",
-    textAlign: "center",
-    color: "#000",
-    width: "70%",
-    height: 48,
-    borderRadius: 24,
-    marginRight: 4,
-    marginLeft: 34,
   },
   filterButton: {
     height: 48,

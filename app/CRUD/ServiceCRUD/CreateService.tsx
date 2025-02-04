@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Alert,
   Button,
@@ -9,24 +8,29 @@ import {
   Text,
   View,
   Image,
+  TouchableOpacity,
+  FlatList,
 } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import Header from "../../../components/Header";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
-import { getServiceTypes } from "../../../libs/serviceType";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import BasicSelectable from "../../../components/BasicSelectable";
+import {
+  createServiceType,
+  getAllTypesByName,
+  getServiceTypes,
+} from "../../../libs/serviceType";
 import { createService } from "../../../libs/localService";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
-import { Picker } from "@react-native-picker/picker";
+import BigTextInput from "../../../components/BigTextInput";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+import BasicSelectable from "../../../components/BasicSelectable";
 
-export default function CreateProduct() {
+export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [selectedType, setSelectedType] = useState<ServiceType>({
     id: "0000",
@@ -34,24 +38,27 @@ export default function CreateProduct() {
   });
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [createType, setCreateType] = useState(false);
+  const [createdService, setCreatedService] = useState<Service | null>(null);
+  const [goSchedule, setGoSchedule] = useState(false);
 
   const localId = useLocalIdStore((state) => state.localId);
+  const router = useRouter();
 
   const nameRef = useRef<any>(null);
   const descriptionRef = useRef<any>(null);
   const URLRef = useRef<any>(null);
+  const typeRef = useRef<any>(null);
 
-  function fetchServiceTypes() {
-    const fetchData = async () => {
-      const serviceTypes = await getServiceTypes();
-      setServiceTypes(serviceTypes);
-    };
-    fetchData();
+  async function fetchServiceTypes() {
+    const serviceTypes = await getAllTypesByName(search);
+    setServiceTypes(serviceTypes);
   }
 
   useEffect(() => {
     fetchServiceTypes();
-  }, []);
+  }, [search]);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -63,7 +70,7 @@ export default function CreateProduct() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -74,11 +81,11 @@ export default function CreateProduct() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (schedule: boolean) => {
     const name = nameRef.current?.getValue();
     const description = descriptionRef.current?.getValue();
     const reservationURL = URLRef.current.getValue();
-    const serviceTypeId = selectedType.id;
+    const serviceTypeId = selectedType.id!;
 
     if (!name || !description || !reservationURL || serviceTypeId === "0000") {
       Alert.alert("Por favor rellenar los campos obligatorios");
@@ -97,14 +104,20 @@ export default function CreateProduct() {
         localId,
         description,
         reservationURL,
-        // image: uploadedImageUrl,
+        // imgURL: uploadedImageUrl,
         serviceTypeId,
         dateFrom: new Date(),
       };
 
-      // console.log(createService(newService));
-      await createService(newService);
-      // Alert.alert("Éxito", "Local creado exitosamente");
+      const service = await createService(newService);
+      if (schedule) {
+        router.push({
+          pathname: "/CRUD/ServiceCRUD/ServiceSchedule",
+          params: {
+            id: service.id,
+          },
+        });
+      }
       setImage(null);
     } catch (error) {
       console.log(error);
@@ -112,129 +125,183 @@ export default function CreateProduct() {
     }
   };
 
+  async function handleCreateType() {
+    const name = typeRef.current?.getValue();
+    const newType = await createServiceType({ name });
+    setSelectedType(newType);
+  }
+
+  // function handleCreatePlusSchedule() {
+  //   console.log(createdService);
+  //   if (createdService) {
+  //     router.push({
+  //       pathname: "/CRUD/ServiceCRUD/ServiceSchedule/CreateSchedule",
+  //       params: {
+  //         id: createdService.id,
+  //       },
+  //     });
+  //   } else {
+  //     Alert.alert(
+  //       "Error",
+  //       "El servicio fue creado con exito, pero no se pudo navegar a crear horario"
+  //     );
+  //   }
+  // }
+
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "white",
-      }}
-    >
-      <Stack.Screen
-        options={{
-          header: () => <Header title="Crear Servicio" />,
-        }}
-      />
-      <BasicTextInput
-        inputType="text"
-        value=""
-        placeholder="Nombre"
-        textStyle="mt-4"
-        title="Nombre del Servicio: "
-        ref={nameRef}
-      />
+    <View className="w-full h-full bg-defaultBlue">
+      <View className="w-full h-[90%] rounded-3xl overflow-hidden bg-white">
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "white",
+          }}
+        >
+          <Stack.Screen
+            options={{
+              headerShown: false,
+            }}
+          />
+          <BasicTextInput
+            inputType="text"
+            value=""
+            placeholder="Nombre"
+            textStyle="mt-4"
+            title="Nombre del Servicio: "
+            ref={nameRef}
+          />
 
-      <BasicTextInput
-        inputType="text"
-        value=""
-        placeholder="Descripción"
-        textStyle="mt-4"
-        title="Descripcion del Servicio: "
-        ref={descriptionRef}
-      />
+          <BigTextInput
+            inputType="text"
+            value=""
+            placeholder="Descripción"
+            textStyle="mt-4"
+            title="Descripcion del Servicio: "
+            ref={descriptionRef}
+          />
 
-      <BasicTextInput
-        inputType="text"
-        value=""
-        placeholder="URL o Numero"
-        textStyle="mt-4"
-        title="URL Reservas o Numero: "
-        ref={URLRef}
-      />
+          <BasicTextInput
+            inputType="text"
+            value=""
+            placeholder="URL o Numero"
+            textStyle="mt-4"
+            title="URL Reservas o Numero: "
+            ref={URLRef}
+          />
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={typeModalVisibility}
-        onRequestClose={() => setTypeModalVisibility(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Selecciona el tipo de producto
-            </Text>
-            <ScrollView style={styles.scrollView}>
-              {serviceTypes.length === 0 ? (
-                <Text>No hay tipos disponibles</Text>
-              ) : (
-                serviceTypes.map((category, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => {
-                      setSelectedType(category);
-                      setTypeModalVisibility(false);
-                    }}
-                    style={styles.modalOption}
-                  >
-                    <Text style={styles.modalOptionText}>{category.name}</Text>
-                  </Pressable>
-                ))
-              )}
-            </ScrollView>
-            <Pressable
-              onPress={() => setTypeModalVisibility(false)}
-              style={styles.closeButton}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={typeModalVisibility}
+            onRequestClose={() => setTypeModalVisibility(false)}
+          >
+            <View
+              className="flex items-center justify-center w-full h-full "
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
             >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+              <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+                <BasicButton
+                  text="No encunetra la categoría?"
+                  onPress={() => setCreateType(true)}
+                  background="#f8f8f8"
+                  style="mt-4"
+                />
+                {createType ? (
+                  <View className="w-full h-full flex items-center justify-center">
+                    <BasicTextInput
+                      inputType="text"
+                      placeholder="Nombre"
+                      title="Nombre de Nueva Categoría: "
+                      value=""
+                      ref={typeRef}
+                    />
+                    <BasicButton
+                      logo={<CreateLogo />}
+                      text="Crear Categoría"
+                      onPress={() => {
+                        setCreateType(false);
+                        handleCreateType();
+                        setTypeModalVisibility(false);
+                      }}
+                      background="#f8f8f8"
+                      style="mt-4"
+                    />
+                  </View>
+                ) : (
+                  <>
+                    <BasicSearchButton
+                      placeholder="Buscar Categoria"
+                      onSearch={setSearch}
+                      background="#f8f8f8"
+                    />
+                    <FlatList
+                      data={serviceTypes}
+                      renderItem={({ item, index }) => (
+                        <Pressable
+                          className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                          onPress={() => {
+                            setSelectedType(item);
+                            setTypeModalVisibility(false);
+                          }}
+                        >
+                          <Text>{item.name}</Text>
+                        </Pressable>
+                      )}
+                      keyExtractor={(item) => item.id!.toString()}
+                    />
+                  </>
+                )}
+              </View>
+            </View>
+          </Modal>
 
-      <Pressable
-        onPress={() => setTypeModalVisibility(true)}
-        style={styles.typeButton}
-      >
-        <Text style={styles.typeButtonText}>
-          {selectedType && selectedType.name !== "default"
-            ? selectedType.name
-            : "Seleccionar Tipo de Local"}
-        </Text>
-      </Pressable>
+          <Pressable
+            onPress={() => setTypeModalVisibility(true)}
+            className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
+          >
+            <Text className="text-sm font-light">
+              {selectedType && selectedType.name !== "default"
+                ? selectedType.name
+                : "Seleccionar Tipo de Servicio"}
+            </Text>
+          </Pressable>
+          <TouchableOpacity
+            onPress={handleImagePicker}
+            className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
+          >
+            <Text className="text-sm font-light">Seleccionar Imagen</Text>
+          </TouchableOpacity>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100, marginTop: 10 }}
+            />
+          )}
 
-      <View style={{ marginTop: 20 }}>
-        <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+          <Text className="text-red-600 mt-4">
+            *No te olvides de agregale un horario a tu Servicio!
+          </Text>
+        </ScrollView>
       </View>
-      {image && (
-        <Image
-          source={{ uri: image }}
-          style={{ width: 100, height: 100, marginTop: 10 }}
-        />
-      )}
-
-      <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+      <View className="flex flex-row justify-evenly items-center w-full">
         <BasicButton
           logo={<CreateLogo />}
           text="Crear Servicio"
-          style="mt-3"
-          onPress={handleSubmit}
+          style="mt-4"
+          onPress={() => handleSubmit(false)}
+          background="white"
+        />
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear + Horario"
+          style="mt-4"
+          onPress={() => handleSubmit(true)}
+          background="white"
         />
       </View>
-
-      {/* <Pressable
-        onPress={() => setTypeModalVisibility(true)}
-        style={styles.typeButton}
-      >
-        <Text style={styles.typeButtonText}>
-          {selectedType ? selectedType.name : "Seleccionar Tipo de Producto"}
-        </Text>
-      </Pressable> */}
-
-      <Text className="text-red-600 mt-4">
-        *No te olvides de agegale un horario a tu Servicio!
-      </Text>
-    </ScrollView>
+    </View>
   );
 } //For the Brand and for the Tupe, we will have to make them select from ones we give them, or else the database will get filled with garbage. We might have to make a new component for that.
 // Also add that you can change the imput type to number for the price. And it only accepts numbers
@@ -282,16 +349,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "bold",
   },
-  typeButton: {
-    marginTop: 20,
-    paddingVertical: 15, // Aumenta el padding vertical
-    paddingHorizontal: 20, // Aumenta el padding horizontal
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
-    minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   typeButtonText: {
     fontSize: 16, // Aumenta el tamaño de la fuente
     // fontWeight: "bold",

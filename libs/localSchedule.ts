@@ -18,12 +18,12 @@ export async function createSchedule(schedule: LocalSchedule) {
       },
       body: JSON.stringify(schedule),
     });
-    console.log(JSON.stringify(schedule));
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Schedule");
     } else {
       console.log("Schedule succesfully added to dataBase");
+      Alert.alert("Exito", "El horario fue creado correctamente");
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -82,7 +82,7 @@ export async function deleteSchedule(id: string) {
 export async function updateSchedule(id: string, schedule: LocalSchedule) {
   try {
     const response = await fetch(`${API_URL}/schedule/update/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "content-Type": "application/json",
       },
@@ -90,7 +90,7 @@ export async function updateSchedule(id: string, schedule: LocalSchedule) {
     });
     if (!response.ok) {
       console.log("Error updating schedule");
-      // console.log(response);
+      console.log(response);
     } else {
       const json = response.json();
       console.log("Updated Schedule");
