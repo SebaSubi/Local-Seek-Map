@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { Product, ProductType } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
+import { getPlaceholders } from "../libs/libs";
 
 export default function ProductContainer({
   product,
@@ -21,7 +22,7 @@ export default function ProductContainer({
           brand: product.brand,
           image: product.imgURL ?? "https://via.placeholder.com/150",
           categoryId: product.productTypeId,
-          size: product.mesurement,
+          size: product.measurement,
         },
       }}
       asChild
@@ -36,7 +37,9 @@ export default function ProductContainer({
         <View className="w-[70%] h-[48%] flex items-center justify-center rounded-3xl overflow-hidden mt-6 bg-white">
           <Image
             source={{
-              uri: product.imgURL || "https://via.placeholder.com/150",
+              uri: product.imgURL
+                ? product.imgURL
+                : getPlaceholders(productCategory),
             }}
             style={{
               height: "100%",
@@ -47,17 +50,29 @@ export default function ProductContainer({
           />
         </View>
         <View className="w-full mt-1 flex flex-col">
-          <Text className="text-lg font-semibold ml-2">{product.name}</Text>
-          <Text className="text-sm font-thin ml-2">
+          <Text
+            className="text-lg font-semibold ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {product.name}
+          </Text>
+          <Text
+            className="text-sm font-thin ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             Categoría: {productCategory}
           </Text>
           <Text
-            className={`text-sm ml-2 ${product.brand ? "font-thin" : "font-black"}`}
+            className={`text-sm ml-2 font-thin`}
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
-            Marca: {product.brand ? product.brand : "No tiene"}
+            {product.brand ? `Marca: ${product.brand}` : "---"}
           </Text>
           <Text className="text-sm font-thin ml-2">
-            Cantidad: {product.mesurement}
+            Cantidad: {product.measurement}
           </Text>
           <Text className="text-sm font-thin ml-2">Disponible en -{">"}</Text>
           {/* <Text style={styles.text}>Precio: ${product.price !== undefined ? product.price.toFixed(2) : 'N/A'}</Text> */}
@@ -85,3 +100,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+// {
+//               uri: product.imgURL || "https://via.placeholder.com/150",
+//             }

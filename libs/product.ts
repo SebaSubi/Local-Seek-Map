@@ -260,6 +260,24 @@ export async function createLocalProductCategory(
   }
 }
 
+export async function getLPByNameAndCategory(category: string, name: string) {
+  try {
+    const response = await fetch(
+      `${API_URL}/lp-category-name-search/${category}?name=${name}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting product of local by cat 1");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting product of local by cat 2");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting product of local by cat 3", error);
+  }
+}
+
 //------------------------------------------------------- LocalProduct SubCategory ---------------------------------------------------
 
 export async function getLocalProductSubCategoriesByName(name: string) {

@@ -6,12 +6,14 @@ export default function BasicSelectable({
   logo,
   text,
   style,
+  background,
   params,
 }: {
   href: string;
   logo?: any;
   text: string;
   style?: string;
+  background?: string;
   params?: any;
 }) {
   return (
@@ -23,7 +25,7 @@ export default function BasicSelectable({
       }}
     >
       <Pressable
-        className={`flex flex-row justify-center items-center  bg-white h-10 rounded-3xl ${style ? style : " w-2/3 "}`}
+        className={`flex flex-row justify-center items-center ${background ? background : "bg-white"} h-10 rounded-3xl ${style ? style : " w-2/3 "}`}
       >
         {logo ? (
           <View className="ml-1 flex items-center justify-center h-7 w-7 bg-white rounded-full">
