@@ -161,6 +161,8 @@ export async function updateLocalProduct(
   }
 }
 
+// category - name - search;
+
 // ------------------------------------ Categories ------------------------------------
 
 export async function getLocalProductCategories() {

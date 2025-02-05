@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { View, FlatList, Alert, ScrollView } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
 import {
+  getLPByNameAndCategory,
   getLocalProductCategories,
-  getProducts,
   getProductsByCategoryAndName,
   searchProductsByName,
 } from "../../../libs/product";
@@ -35,7 +27,7 @@ const ReadProductScreen = () => {
   const [localProductCategories, setLocalProductCateogries] = useState<
     LocalProductCategory[]
   >([]);
-  const [selectedLocalProductCategories, setSelectedLocalProductCateogries] =
+  const [selectedLocalProductCategory, setSelectedLocalProductCateogry] =
     useState<string>();
 
   async function fetchAndSetProducts() {
@@ -57,16 +49,35 @@ const ReadProductScreen = () => {
       setProducts(products);
       setLoading(false);
     }
-    if (selectedCategory === "Item Menu" && !selectedLocalProductCategories) {
-      console.log("we are in");
-      const localProductCat = await getLocalProductCategories();
-      setLocalProductCateogries(localProductCat);
+  }
+
+  async function fetchAndSetMenuItems() {
+    setLoading(true);
+    if (
+      selectedLocalProductCategory && // Typescript obligates me to do this
+      selectedLocalProductCategory !== "" &&
+      (filter === "" || filter === "Quitar Filtro")
+    ) {
+      const products = await getLPByNameAndCategory(
+        selectedLocalProductCategory,
+        searchText
+      );
+      setProducts(products);
+      setLoading(false);
+    } else if (!selectedLocalProductCategory) {
+      const products = await getProductsByCategoryAndName(
+        "Item Menu",
+        searchText
+      );
+      setProducts(products);
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchAndSetProducts();
-  }, [selectedCategory, searchText, filter]); //If the search changes in anyway, we need to get the products with the new data
+    if (selectedCategory !== "Item Menu") fetchAndSetProducts();
+    else fetchAndSetMenuItems();
+  }, [selectedCategory, searchText, filter, selectedLocalProductCategory]); //If the search changes in anyway, we need to get the products with the new data
 
   useEffect(() => {
     fetchCategories(); // The categories will not change while the user is searching, so they should only be called once
@@ -75,7 +86,9 @@ const ReadProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
+      const localProductCat = await getLocalProductCategories();
       setCategories(data);
+      setLocalProductCateogries(localProductCat);
     } catch (err) {
       console.error("Error fetching categories", err);
       Alert.alert("Error", "Fallo al cargar las categorías");
@@ -117,14 +130,14 @@ const ReadProductScreen = () => {
                   key={index}
                   style="ml-2"
                   background={
-                    selectedLocalProductCategories === category.name
+                    selectedLocalProductCategory === category.name
                       ? "#ff6c3d"
                       : "#ffffff"
                   }
                   onPress={() => {
-                    selectedLocalProductCategories === category.name
-                      ? setSelectedLocalProductCateogries("")
-                      : setSelectedLocalProductCateogries(category.name);
+                    selectedLocalProductCategory === category.name
+                      ? setSelectedLocalProductCateogry("")
+                      : setSelectedLocalProductCateogry(category.name);
                   }}
                 />
               ))}
@@ -133,7 +146,12 @@ const ReadProductScreen = () => {
         </>
       ) : null}
 
-      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
+      <View
+        className="w-full h-full bg-white rounded-t-3xl overflow-hidden"
+        style={{
+          paddingBottom: selectedLocalProductCategory ? 272 : 220,
+        }}
+      >
         <FlatList
           data={products}
           horizontal={false}
@@ -153,138 +171,4 @@ const ReadProductScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  searchButtonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  listContent: {
-    justifyContent: "center",
-  },
-  loadingText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 18,
-  },
-  customButton: {
-    backgroundColor: "#e1e8e8",
-    padding: 10,
-    borderRadius: 30,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  customButtonText: {
-    color: "#324e64",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
-
 export default ReadProductScreen;
-
-// {
-//   selectedProduct && (
-//     <Modal
-//       animationType="slide"
-//       transparent={true}
-//       visible={isModalVisible}
-//       onRequestClose={() => setIsModalVisible(false)}
-//     >
-//       <View style={styles.modalContainer}>
-//         <View style={styles.modalContent}>
-//           <Image
-//             source={{
-//               uri:
-//                 selectedProduct.imgURL || "https://via.placeholder.com/150",
-//             }}
-//             style={styles.modalImage}
-//             resizeMode="center"
-//           />
-//           <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
-
-//           <View style={styles.modalInfoContainer}>
-//             <Text style={styles.modalInfoLabel}>Descripción:</Text>
-//             <Text style={styles.modalInfoText}>
-//               {selectedProduct.description || "No disponible"}
-//             </Text>
-
-//             <Text style={styles.modalInfoLabel}>Marca:</Text>
-//             <Text style={styles.modalInfoText}>
-//               {selectedProduct.brand || "No disponible"}
-//             </Text>
-
-//             <Text style={styles.modalInfoLabel}>Medida:</Text>
-//             <Text style={styles.modalInfoText}>
-//               {selectedProduct.mesurement || "No disponible"}
-//             </Text>
-//           </View>
-
-//           <Pressable
-//             style={styles.customButton}
-//             onPress={() => setIsModalVisible(false)}
-//           >
-//             <Text style={styles.customButtonText}>Cerrar</Text>
-//           </Pressable>
-//         </View>
-//       </View>
-//     </Modal>
-//   );
-// }
-
-// useEffect(() => {
-//   // console.log(searchText);
-//   // console.log(filter);
-//   if (filter === "" || filter === "Quitar Filtro") {
-//     //TODO: filter just by name
-//     getProductsByName();
-//   } else {
-//     if (filter !== "Categoria") {
-//       getProductsByCategoryAndSearch(fileringCategory.current);
-//     }
-//   }
-// }, [searchText, categories, filter]);
-
-// function getProductsByName() {
-//   const searchProducts = async () => {
-//     try {
-//       const result = await searchProductsByName(searchText);
-//       setProducts(result);
-//     } catch (error) {}
-//   };
-//   searchProducts();
-// }
-
-// const fetchProducts = async () => {
-//   try {
-//     const response: [] = await getProducts();
-
-//     if (response && response.length > 0) {
-//       setProducts(response);
-//     } else {
-//       Alert.alert("Error", "No se encontraron productos");
-//     }
-//   } catch (error) {
-//     console.log("Error al obtener productos", error);
-//     Alert.alert("Error", "Fallo al cargar los productos");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-// function getProductsByCategoryAndSearch(categoryName: string) {
-//   const fetchData = async () => {
-//     const locals = await getProductsByCategoryAndName(
-//       categoryName,
-//       searchText
-//     );
-//     if (locals && locals.length > 0) {
-//       setProducts(locals);
-//     } else {
-//       // Alert.alert("Error", "No se encontraron productos");   FIXME: we may have tp figure out of making this work
-//       setProducts([]);
-//     }
-//   };
-//   fetchData();
-// }
