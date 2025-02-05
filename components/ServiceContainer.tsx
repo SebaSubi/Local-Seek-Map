@@ -50,12 +50,24 @@ export default function ServiceContainer({ service }: { service: Service }) {
           />
         </View>
         <View className="w-full mt-1 flex flex-col">
-          <Text className="text-lg font-semibold ml-2">{service.name}</Text>
-          <Text className="text-sm font-thin ml-2">
+          <Text
+            className="text-lg font-semibold ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {service.name}
+          </Text>
+          <Text
+            className="text-sm font-thin ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {service.serviceType?.name}
           </Text>
           <Text
             className={`text-base font-medium ml-2  ${isOpen ? "text-[#b3d74d]" : "text-[#ff6c3d]"}`}
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {isOpen ? "Abierto" : "Cerrado"}
           </Text>

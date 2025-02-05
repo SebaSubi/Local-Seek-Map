@@ -160,3 +160,24 @@ export async function updateLocalProduct(
     Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }
+
+// ------------------------------------ Categories ------------------------------------
+
+export async function getLocalProductCategories() {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-categories`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product categories");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting product of local");
+    } else {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error("Error getting local product categories", error);
+  }
+}

@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import {
+  getLocalProductCategories,
   getProducts,
   getProductsByCategoryAndName,
   searchProductsByName,
 } from "../../../libs/product";
 import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-import { Product, ProductType } from "../../../schema/GeneralSchema";
+import {
+  LocalProductCategory,
+  Product,
+  ProductType,
+} from "../../../schema/GeneralSchema";
 import ProductContainer from "../../../components/ProductContainer";
+import BasicButton from "../../../components/BasicButton";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]); //this are the products in display
@@ -19,6 +32,11 @@ const ReadProductScreen = () => {
   const [categories, setCategories] = useState<ProductType[]>([]); //this are all the categories that we get from all the products
   const [filter, setSelectedFilter] = useState<string>(""); //this is the filter that is going to be used to filter the products, its either Quitar (wich filters without a categoria and by name) or Categoria (Filters by category)
   const [selectedCategory, setSelctedCategory] = useState<string>("");
+  const [localProductCategories, setLocalProductCateogries] = useState<
+    LocalProductCategory[]
+  >([]);
+  const [selectedLocalProductCategories, setSelectedLocalProductCateogries] =
+    useState<string>();
 
   async function fetchAndSetProducts() {
     setLoading(true); // To show the user that it is in fact loading
@@ -39,6 +57,11 @@ const ReadProductScreen = () => {
       setProducts(products);
       setLoading(false);
     }
+    if (selectedCategory === "Item Menu" && !selectedLocalProductCategories) {
+      console.log("we are in");
+      const localProductCat = await getLocalProductCategories();
+      setLocalProductCateogries(localProductCat);
+    }
   }
 
   useEffect(() => {
@@ -52,7 +75,7 @@ const ReadProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      setCategories(data); //this is alright idk why the object retuned uis something like this {allCategories:{...}}
+      setCategories(data);
     } catch (err) {
       console.error("Error fetching categories", err);
       Alert.alert("Error", "Fallo al cargar las categorías");
@@ -61,8 +84,10 @@ const ReadProductScreen = () => {
 
   const handleSelectedCategory = (cat: string) => {
     //Sets the category to the one selected in the searchbar
-    console.log(cat);
+    // console.log(cat);
     setSelctedCategory(cat);
+    if (selectedCategory === "Item Menu") {
+    }
   };
 
   return (
@@ -82,25 +107,49 @@ const ReadProductScreen = () => {
         style="mt-16"
       />
 
-      {loading ? (
-        <Text style={styles.loadingText}>Cargando productos...</Text>
-      ) : (
-        <View className="w-full h-full bg-white rounded-t-3xl pb-[218px]">
-          <FlatList
-            data={products}
-            horizontal={false}
-            numColumns={2}
-            renderItem={({ item, index }) => (
-              <ProductContainer
-                product={item}
-                productCategory={item.type!.name}
-                key={index}
-              />
-            )}
-            keyExtractor={(item) => item.id!.toString()}
-          />
-        </View>
-      )}
+      {selectedCategory === "Item Menu" && localProductCategories ? (
+        <>
+          <View>
+            <ScrollView className="mb-3 w-full" horizontal={true}>
+              {localProductCategories.map((category, index) => (
+                <BasicButton
+                  text={category.name}
+                  key={index}
+                  style="ml-2"
+                  background={
+                    selectedLocalProductCategories === category.name
+                      ? "#ff6c3d"
+                      : "#ffffff"
+                  }
+                  onPress={() => {
+                    selectedLocalProductCategories === category.name
+                      ? setSelectedLocalProductCateogries("")
+                      : setSelectedLocalProductCateogries(category.name);
+                  }}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        </>
+      ) : null}
+
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
+        <FlatList
+          data={products}
+          horizontal={false}
+          numColumns={2}
+          renderItem={({ item, index }) => (
+            <ProductContainer
+              product={item}
+              productCategory={item.type!.name}
+              key={index}
+            />
+          )}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchAndSetProducts()}
+          refreshing={loading}
+        />
+      </View>
     </View>
   );
 };

@@ -14,6 +14,17 @@ export function bringDayName(dayNumber: number) {
   return days[dayNumber - 1];
 }
 
+export function getPlaceholders(category: string): string {
+  // console.log(category);
+  switch (category) {
+    case "Item Menu":
+      return "https://orders.goodthymes.ca/assets/img/goodthymes/default-menu-image-placeholder.png";
+
+    default:
+      return "";
+  }
+}
+
 export function scheduleInputValidation(
   schedule: LocalSchedule | LocalServiceSchedule
 ): string | boolean {

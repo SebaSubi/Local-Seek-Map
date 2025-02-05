@@ -14,13 +14,15 @@ export default function Main() {
         href="/CRUD/LocalCRUD"
         logo={<LocalIcon />}
         text="ABM Local"
+        background="bg-defaultGray"
         style="mt-4 w-1/2"
       />
       <BasicSelectable
         href="/CRUD/ServiceCRUD"
         logo={<ServiceIcon />}
         text="ABM Servicio"
-        style="mt-4"
+        background="bg-defaultGray"
+        style="mt-4 w-1/2"
       />
     </View>
   );

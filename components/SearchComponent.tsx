@@ -117,7 +117,7 @@ const SearchComponent = () => {
         ) : (
           <View className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
             <View
-              className="w-full h-full"
+              className="w-full h-full pb-14"
               style={{ display: viewType === "locals" ? "flex" : "none" }}
             >
               <FlatList
@@ -125,13 +125,13 @@ const SearchComponent = () => {
                 horizontal={false}
                 numColumns={2}
                 renderItem={({ item }) => <LocalContainer local={item} />}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
               />
             </View>
             <View
-              className="w-full h-full "
+              className="w-full h-full pb-14"
               style={{ display: viewType === "products" ? "flex" : "none" }}
             >
               <FlatList
@@ -156,7 +156,7 @@ const SearchComponent = () => {
               />
             </View>
             <View
-              className="w-full h-full"
+              className="w-full h-full pb-14"
               style={{ display: viewType === "services" ? "flex" : "none" }}
             >
               <FlatList

@@ -89,7 +89,7 @@ export default function ReadLocal() {
         selectedCategory={handleCategorySelection}
         style="mt-16"
       />
-      <View className="w-full h-full bg-white rounded-t-3xl">
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
         <FlatList
           data={locals}
           horizontal={false}
