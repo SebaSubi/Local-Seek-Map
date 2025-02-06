@@ -139,16 +139,7 @@ const SearchComponent = () => {
                 horizontal={false}
                 numColumns={2}
                 renderItem={({ item }) => {
-                  const category = productCategories.find(
-                    // eslint-disable-next-line prettier/prettier
-                    (category) => category.id === item.productTypeId
-                  );
-                  return (
-                    <ProductContainer
-                      product={item}
-                      productCategory={category ? category.name : ""}
-                    />
-                  );
+                  return <ProductContainer product={item} />;
                 }}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}

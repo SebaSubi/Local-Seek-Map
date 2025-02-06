@@ -153,7 +153,6 @@ export default function LocalPage() {
                           <ProductContainer
                             menuItem={true}
                             product={item.product}
-                            productCategory={item.product.type.name || ""}
                           />
                         )}
                         keyExtractor={(item) => item.product.id!.toString()}
@@ -183,7 +182,6 @@ export default function LocalPage() {
                           <ProductContainer
                             menuItem={true}
                             product={item.product}
-                            productCategory={item.product.type.name || ""}
                           />
                         )}
                         keyExtractor={(item) => item.product.id!.toString()}
