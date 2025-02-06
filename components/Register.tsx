@@ -6,6 +6,7 @@ import { Redirect } from "expo-router";
 import { z } from "zod";
 import { checkEmail, checkUsername } from "../libs/user";
 import { colors } from "../constants/colors"; // Archivo para colores personalizados
+import { StatusBar } from "expo-status-bar";
 
 interface RegProps {
   setReg: Dispatch<SetStateAction<boolean>>;
@@ -49,7 +50,7 @@ const Register = ({ setReg }: RegProps) => {
       setPasswordError("");
       setEmailError("");
       setUsernameError(
-        "El nombre de usuario debe tener al menos 2 caracteres.",
+        "El nombre de usuario debe tener al menos 2 caracteres."
       );
     } else if (password.current.length < 8) {
       setPasswordError("La contraseña debe tener al menos 8 caracteres.");
@@ -57,7 +58,7 @@ const Register = ({ setReg }: RegProps) => {
       setUsernameError("");
     } else if (secondPassword.current.length < 8) {
       setPasswordError(
-        "La contraseña de confirmación debe tener al menos 8 caracteres.",
+        "La contraseña de confirmación debe tener al menos 8 caracteres."
       );
       setEmailError("");
       setUsernameError("");
@@ -85,6 +86,8 @@ const Register = ({ setReg }: RegProps) => {
       className="flex-1 justify-center px-6 bg-gray-100"
       style={{ backgroundColor: colors.primary.white }}
     >
+      <StatusBar style="auto" />
+
       <Text className="text-2xl font-bold text-gray-800 mb-6">Registro</Text>
 
       {/* Campo de Email */}
@@ -134,7 +137,7 @@ const Register = ({ setReg }: RegProps) => {
           <Ionicons
             name={passwordVisible ? "eye-off" : "eye"}
             size={24}
-            color={colors.primary.gray}
+            color={colors.primary.lightGray}
           />
         </TouchableOpacity>
       </View>
