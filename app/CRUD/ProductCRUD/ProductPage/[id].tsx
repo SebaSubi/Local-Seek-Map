@@ -1,20 +1,19 @@
 import { View, Text, Image, FlatList, ScrollView } from "react-native";
-import Header from "../../../../components/Header";
 import { Stack, useLocalSearchParams } from "expo-router";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useState } from "react";
 import { getProductsByCategory } from "../../../../libs/product";
-import { LocalTypes, Product } from "../../../../schema/GeneralSchema";
+import { Product } from "../../../../schema/GeneralSchema";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
-import { getLocalTypes } from "../../../../libs/localType";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
 import { getLocalsOfProduct } from "../../../../libs/localProducts";
+import { getPlaceholders } from "../../../../libs/libs";
 
 type Options = "Info" | "Locals";
 
 export default function ProductPage() {
-  const { id, name, image, description, brand, categoryId, size } =
+  const { id, name, image, description, brand, categoryName, size } =
     useLocalSearchParams();
   const [locals, setLocals] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
@@ -24,7 +23,7 @@ export default function ProductPage() {
   async function fetchAndSetAll() {
     const loc = await getLocalsOfProduct(id as string);
     setLocals(loc);
-    const products = await getProductsByCategory(categoryId as string);
+    const products = await getProductsByCategory(categoryName as string);
     setSimilarProducts(products);
     setLoading(false);
   }
@@ -32,6 +31,8 @@ export default function ProductPage() {
   useEffect(() => {
     fetchAndSetAll();
   }, []);
+
+  // console.log(image);
 
   return (
     <>
@@ -62,7 +63,11 @@ export default function ProductPage() {
             <ScrollView>
               <View className="flex items-center justify-center bg-back w-full h-56 mt-2">
                 <Image
-                  source={{ uri: image as string }}
+                  source={{
+                    uri: image
+                      ? (image as string)
+                      : getPlaceholders(categoryName as string),
+                  }}
                   style={{ height: 200, width: 100 }}
                   resizeMode="contain"
                   className="mt-12"
@@ -73,7 +78,7 @@ export default function ProductPage() {
                   {name}
                 </Text>
                 <Text className="text-lg font-thin ml-4 mt-1 text-[#1a253d]">
-                  Marca: {brand}
+                  {categoryName === "Item Menu" ? "---" : `Marca: ${brand}`}
                 </Text>
                 <Text className="text-lg font-thin ml-4 mt-1 text-[#1a253d]">
                   Medida: {size}
@@ -90,20 +95,17 @@ export default function ProductPage() {
 
                 <View className="flex flex-row flex-wrap justify-evenly mb-5">
                   {similarProducts.map((product, index) => {
-                    if (product.id === id) {
+                    if (product.id !== id) {
+                      return (
+                        <SmallProductContainer
+                          product={product}
+                          productCategory={categoryName as string}
+                          key={index}
+                        />
+                      );
+                    } else {
                       return null;
                     }
-                    return (
-                      <SmallProductContainer
-                        product={product}
-                        productCategory={
-                          similarProducts[0]?.type?.name
-                            ? similarProducts[0].type.name
-                            : ""
-                        }
-                        key={index}
-                      />
-                    );
                   })}
                 </View>
               </View>

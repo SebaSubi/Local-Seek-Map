@@ -220,3 +220,30 @@ export async function getLocalProductCategoriesOfLocal(id: string) {
     console.error("Error getting local product categories", error);
   }
 }
+
+// ------------------------------------ Sub Categories ------------------------------------
+
+export async function getLocalProductSubCategoriesOfLocal(
+  localId: string,
+  catName: string
+) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-sub-categories/sub-cats/${localId}/${catName}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product sub categories by category");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product sub categories by category");
+    } else {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error(
+      "Error getting local product sub categories by category",
+      error
+    );
+  }
+}
