@@ -18,8 +18,8 @@ export const ReadLogo = () => {
   return <FontAwesome5 name="readme" size={17} color="black" />;
 };
 
-export const UpdateLogo = () => {
-  return <Entypo name="new-message" size={18} color="black" />;
+export const UpdateLogo = ({ color = "black", size = 18 }) => {
+  return <Entypo name="new-message" size={size} color={color} />;
 };
 
 export const DeleteLogo = ({ color = "black", size = 24 }) => {
@@ -82,9 +82,9 @@ export const LocationIcon = ({ color = "black", size = 24 }) => {
   return <FontAwesome6 name="location-dot" size={size} color={color} />;
 };
 
-export const WarningIcon = () => {
-  return <AntDesign name="warning" size={35} color="black" />;
-};
+export const WarningIcon = ({ color = "black", size = 24 }) => (
+  <AntDesign name="warning" size={size} color={color} />
+);
 
 export const HomeIcon = () => {
   return <Entypo name="home" size={24} color="black" />;

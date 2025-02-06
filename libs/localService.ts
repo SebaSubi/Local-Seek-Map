@@ -196,7 +196,7 @@ export async function updateService(id: string, data: Service) {
   console.log(`${API_URL}/service/update/${id}`);
   try {
     const response = await fetch(`${API_URL}/service/update/${id}`, {
-      method: "PUT",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "Content-Type": "application/json",
       },
@@ -217,7 +217,7 @@ export async function updateService(id: string, data: Service) {
 export async function deleteService(id: string) {
   try {
     const response = await fetch(`${API_URL}/service/delete/${id}`, {
-      method: "PATCH",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "Content-Type": "application/json",
       },
@@ -302,7 +302,7 @@ export async function updateServiceSchedule(
 ) {
   try {
     const response = await fetch(`${API_URL}/service-schedule/update/${id}`, {
-      method: "PUT",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "content-Type": "application/json",
       },
