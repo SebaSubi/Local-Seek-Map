@@ -20,10 +20,22 @@ const UserUpdateModal = ({
   user: AuthUser;
   onLogin: ((email: string, password: string) => Promise<any>) | undefined;
 }) => {
-  const email = useRef<{ getValue: () => string }>(null);
-  const username = useRef<{ getValue: () => string }>(null);
-  const password = useRef<{ getValue: () => string }>(null);
-  const secondPassword = useRef<{ getValue: () => string }>(null);
+  const email = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const username = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const password = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const secondPassword = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
 
   const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -95,7 +107,7 @@ const UserUpdateModal = ({
                 ref={username}
               />
             </View>
-            <View className="w-full flex items-start ml-4 mt-2 h-4">
+            <View className="w-10/12 flex items-start ml-4 mt-2 h-8 justify-end">
               {passwordError === "" ? null : (
                 <Text className="text-red-800">{passwordError}</Text>
               )}
@@ -131,7 +143,6 @@ const UserUpdateModal = ({
                 className="mt-11 ml-5"
                 onPress={() => {
                   setSeePassword(!seePassword);
-                  setVisible(false);
                 }}
               >
                 {seePassword ? <EyeOff /> : <Eye />}
@@ -144,8 +155,8 @@ const UserUpdateModal = ({
               background={colors.primary.blue}
               textStyle="text-white"
               logo={<Save color={colors.primary.blue} />}
-              onPress={() =>
-                handleUserChange(
+              onPress={async () => {
+                const userEditPetition = await handleUserChange(
                   email,
                   username,
                   password,
@@ -156,8 +167,9 @@ const UserUpdateModal = ({
                   user,
                   // eslint-disable-next-line prettier/prettier
                   onLogin
-                )
-              }
+                );
+                userEditPetition === 200 ? setVisible(false) : "";
+              }}
             />
           </View>
         </View>
@@ -251,20 +263,25 @@ const handleUserChange = async (
     setEmailError("");
     setUsernameError("");
   } else {
-    console.log("Making Changes"); //FIXME: we have to put the method than changes the User
     const editUser = async () => {
       if (
         email.current !== null &&
         username.current !== null &&
         password.current !== null
       ) {
-        await EditUser({
+        const petition = await EditUser({
           id: user.id,
           email: email.current.getValue(),
           username: username.current.getValue(),
           password: password.current.getValue(),
         });
-        onLogin!(email.current.getValue(), password.current.getValue());
+        console.log(petition.status);
+        if (petition.status === 200) {
+          onLogin!(email.current.getValue(), password.current.getValue());
+          return 200;
+        } else {
+          setEmailError("Error, intente mas tarde nuevamente");
+        }
         // console.log(
         //   email.current.getValue(),
         //   username.current.getValue(),
@@ -276,7 +293,7 @@ const handleUserChange = async (
         setUsernameError("Los campos no deben estar vacios");
       }
     };
-    editUser();
+    return editUser();
   }
 };
 

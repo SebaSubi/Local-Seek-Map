@@ -76,7 +76,7 @@ export async function getActiveProducts() {
 export async function updateProduct(product: Product) {
   try {
     const response = await fetch(API_URL, {
-      method: "PUT",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "Content-Type": "application/json",
       },

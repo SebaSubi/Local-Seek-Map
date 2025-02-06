@@ -23,7 +23,7 @@ const BasicTextInput = forwardRef(
       setValue: (value: string) => void;
     }>
   ) => {
-    const [text, setText] = useState("");
+    const [text, setText] = useState(value ? value : "");
 
     const handleChange = (input: string) => {
       if (inputType === "number" && !/^\d*$/.test(input)) return;

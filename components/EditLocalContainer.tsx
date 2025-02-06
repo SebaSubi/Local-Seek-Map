@@ -7,15 +7,19 @@ import { getIfLocalOpen } from "../libs/local";
 import { useFonts } from "expo-font";
 import BasicButton from "./BasicButton";
 import { Edit, UpdateLogo } from "./Logos";
+import { useLocalIdStore } from "../libs/scheduleZustang";
 
 export default function EditLocalContainer({ local }: { local: Local }) {
   const [isOpen, setIsOpen] = useState(false);
   const [type, setLocalType] = useState<string>("");
+  const setLocalId = useLocalIdStore((state) => state.setLocalId); //this is for sustand
 
   useEffect(() => {
     const fetchLocals = async () => {
-      const open = await getIfLocalOpen(local.id);
-      setIsOpen(open);
+      if (local.id) {
+        const open = await getIfLocalOpen(local.id);
+        setIsOpen(open);
+      }
     };
     fetchLocals();
   }, [local.id]);
@@ -36,6 +40,10 @@ export default function EditLocalContainer({ local }: { local: Local }) {
       <Pressable
         className="flex flex-col items-center  mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3"
         key={local.id}
+        onPress={() => {
+          setLocalId(local.id ? local.id : "");
+          // console.log("aaaaaaaaaaaaaaaaaaaaaaaa");
+        }}
       >
         <View className="flex flex-row w-full pt-2 justify-center">
           <Text
