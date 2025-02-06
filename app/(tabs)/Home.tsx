@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import Header from "../../components/Header";
 import { LogOutIcon } from "../../components/Logos";
 import React from "react";
+import { StatusBar } from "expo-status-bar";
 
 export default function Tab() {
   return (
@@ -15,6 +16,7 @@ export default function Tab() {
         }}
       />
       <View className="h-full w-full">
+        <StatusBar style="auto" />
         <SearchComponent />
       </View>
     </>
