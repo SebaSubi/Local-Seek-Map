@@ -1,14 +1,10 @@
-import { ScrollView, View, Text, Alert } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack, useLocalSearchParams } from "expo-router";
-import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
-import { useEffect, useRef, useState } from "react";
-import {
-  LocalSchedule,
-  LocalServiceSchedule,
-} from "../../../../schema/GeneralSchema";
+import { useRef, useState } from "react";
+import { LocalSchedule } from "../../../../schema/GeneralSchema";
 import BasicWarning from "../../../../components/BasicWarning";
 import TimeSelect from "../../../../components/TimeSelect";
 import { scheduleInputValidation } from "../../../../libs/libs";
@@ -19,7 +15,6 @@ import {
   getSchedulesByLocalId,
   updateSchedule,
 } from "../../../../libs/localSchedule";
-import { colors } from "../../../../constants/colors";
 import GoBackButton from "../../../../components/GoBackButton";
 
 export default function CreateProduct() {

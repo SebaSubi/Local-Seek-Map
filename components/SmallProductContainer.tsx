@@ -20,8 +20,8 @@ export default function ProductContainer({
           description: product.description,
           brand: product.brand,
           image: product.imgURL ?? "https://via.placeholder.com/150",
-          categoryId: product.productTypeId,
-          size: product.mesurement,
+          categoryName: productCategory,
+          size: product.measurement,
         },
       }}
       asChild

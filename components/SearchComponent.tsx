@@ -37,8 +37,6 @@ const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-
-  const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
     // eslint-disable-next-line prettier/prettier
@@ -47,7 +45,6 @@ const SearchComponent = () => {
 
   useEffect(() => {
     fetchData();
-    fetchCategories();
   }, []);
 
   const fetchData = async () => {
@@ -69,17 +66,6 @@ const SearchComponent = () => {
       setLoading(false);
     }
   };
-
-  const fetchCategories = async () => {
-    try {
-      const data = await getProductTypes();
-      setProductCategories(data);
-    } catch (err) {
-      // console.error("Error fetching categories", err);
-      // Alert.alert("Error", "Fallo al cargar las categorías");
-    }
-  };
-
   return (
     <>
       <Stack.Screen

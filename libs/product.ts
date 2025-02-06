@@ -29,9 +29,9 @@ export async function getProducts() {
   }
 }
 
-export async function getProductsByCategory(categroyId: string) {
+export async function getProductsByCategory(categroyName: string) {
   try {
-    const rawData = await fetch(`${API_URL}/category/${categroyId}`);
+    const rawData = await fetch(`${API_URL}/category/${categroyName}`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Products");
     }

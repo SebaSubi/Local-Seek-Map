@@ -121,29 +121,27 @@ const ReadProductScreen = () => {
       />
 
       {selectedCategory === "Item Menu" && localProductCategories ? (
-        <>
-          <View>
-            <ScrollView className="mb-3 w-full" horizontal={true}>
-              {localProductCategories.map((category, index) => (
-                <BasicButton
-                  text={category.name}
-                  key={index}
-                  style="ml-2"
-                  background={
-                    selectedLocalProductCategory === category.name
-                      ? "#ff6c3d"
-                      : "#ffffff"
-                  }
-                  onPress={() => {
-                    selectedLocalProductCategory === category.name
-                      ? setSelectedLocalProductCateogry("")
-                      : setSelectedLocalProductCateogry(category.name);
-                  }}
-                />
-              ))}
-            </ScrollView>
-          </View>
-        </>
+        <View>
+          <ScrollView className="mb-3 w-full" horizontal={true}>
+            {localProductCategories.map((category, index) => (
+              <BasicButton
+                text={category.name}
+                key={index}
+                style="ml-2"
+                background={
+                  selectedLocalProductCategory === category.name
+                    ? "#ff6c3d"
+                    : "#ffffff"
+                }
+                onPress={() => {
+                  selectedLocalProductCategory === category.name
+                    ? setSelectedLocalProductCateogry("")
+                    : setSelectedLocalProductCateogry(category.name);
+                }}
+              />
+            ))}
+          </ScrollView>
+        </View>
       ) : null}
 
       <View
@@ -157,11 +155,7 @@ const ReadProductScreen = () => {
           horizontal={false}
           numColumns={2}
           renderItem={({ item, index }) => (
-            <ProductContainer
-              product={item}
-              productCategory={item.type!.name}
-              key={index}
-            />
+            <ProductContainer product={item} key={index} />
           )}
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchAndSetProducts()}

@@ -23,6 +23,8 @@ import BasicSearchButton from "../../../../components/BasicSearchBar";
 import { getProductTypes } from "../../../../libs/productType";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
+// type Categories = Record<string, string[]>;
+// const backEndCategories: Categories = {};
 
 export default function LocalPage() {
   const { id, name, localCoordinates, image, localType } =
@@ -35,7 +37,9 @@ export default function LocalPage() {
   const [categories, setCategories] = useState<
     ProductType[] | LocalProductCategory[]
   >([]);
+  const [subCategories, setSubCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [loading, setLoading] = useState(true);
 
   async function fetchAndSetLocals() {
@@ -93,6 +97,27 @@ export default function LocalPage() {
     fetchAndSetLocals();
   }, [id]);
 
+  // async function getAndSetSubCategories() {
+  //   if (backEndCategories[selectedCategory]) {
+  //     setSubCategories(backEndCategories[selectedCategory]);
+  //   } else {
+  //     console.log(selectedCategory);
+  //     const subCategories = await getLocalProductSubCategoriesOfLocal(
+  //       id as string,
+  //       selectedCategory
+  //     );
+
+  //     backEndCategories[selectedCategory] = subCategories;
+  //     setSubCategories(subCategories);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   if (selectedCategory) {
+  //     getAndSetSubCategories();
+  //   }
+  // }, [selectedCategory]);
+
   useEffect(() => {
     if (localType !== "Servicio") {
       fetchAndSetProducts();
@@ -100,6 +125,8 @@ export default function LocalPage() {
       fetchAndSetServices();
     }
   }, [search, selectedCategory]);
+
+  // console.log(subCategories);
 
   return (
     <>
@@ -143,6 +170,29 @@ export default function LocalPage() {
                     selectedCategory={handleCategorySelection}
                     style="mt-14"
                   />
+                  {/* {subCategories && selectedCategory !== "" ? (
+                    <View>
+                      <ScrollView className="mb-3 w-full" horizontal={true}>
+                        {subCategories.map((category, index) => (
+                          <BasicButton
+                            text={category}
+                            key={index}
+                            style="ml-2"
+                            background={
+                              selectedSubCategory === category
+                                ? "#1a253d"
+                                : "#ffffff"
+                            }
+                            onPress={() => {
+                              selectedSubCategory === category
+                                ? setSelectedSubCategory("")
+                                : setSelectedSubCategory(category);
+                            }}
+                          />
+                        ))}
+                      </ScrollView>
+                    </View>
+                  ) : null} */}
                   {localType === "Restaurante" ? (
                     localProducts.length > 0 && (
                       <FlatList
