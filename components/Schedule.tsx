@@ -1,5 +1,6 @@
 import React from "react";
-import { FlatList, Text, View, SafeAreaView } from "react-native";
+import { FlatList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import ScheduleBox from "./ScheduleBox";
 import { shift } from "../constants/consts";
 import { useEffect, useState } from "react";
@@ -50,7 +51,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
   );
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1 }}>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
@@ -88,7 +89,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
                         style={{ minHeight: 60 }}
                       >
                         <Text className="text-lg text-gray-500 text-right">
-                          Cerrado, o no se cargaron horarios
+                          Cerrado
                         </Text>
                       </View>
                     ) : (
