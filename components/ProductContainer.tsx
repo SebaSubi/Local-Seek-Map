@@ -7,9 +7,11 @@ import { getPlaceholders } from "../libs/libs";
 export default function ProductContainer({
   product,
   productCategory,
+  menuItem,
 }: {
   product: Product;
   productCategory: string;
+  menuItem?: boolean;
 }) {
   return (
     <Link
@@ -28,7 +30,7 @@ export default function ProductContainer({
       asChild
     >
       <Pressable
-        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3 overflow-hidden"
+        className={`flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] ${menuItem ? "h-64" : "h-72"} rounded-3xl ml-3 overflow-hidden`}
         key={product.id}
       >
         {/* <View className="mt-3">
@@ -74,7 +76,9 @@ export default function ProductContainer({
           <Text className="text-sm font-thin ml-2">
             Cantidad: {product.measurement}
           </Text>
-          <Text className="text-sm font-thin ml-2">Disponible en -{">"}</Text>
+          {menuItem ? null : (
+            <Text className="text-sm font-thin ml-2">Disponible en -{">"}</Text>
+          )}
           {/* <Text style={styles.text}>Precio: ${product.price !== undefined ? product.price.toFixed(2) : 'N/A'}</Text> */}
           {/* <Text style={styles.text}>Descripción: {product.description}</Text> */}
         </View>
