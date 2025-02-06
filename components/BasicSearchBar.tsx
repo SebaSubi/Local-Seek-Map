@@ -26,12 +26,16 @@ export default function BasicSearchButton({
   selectedCategory,
   style,
   background,
+  selectedColor = "#ff6c3d",
+  selectedCatTextStyle,
   // typeOfSearch,
 }: {
   placeholder: string;
   filters?: string[];
   style?: string;
   background?: string;
+  selectedColor?: string;
+  selectedCatTextStyle?: string;
   // typeOfSearch: "Locals" | "Services" | "Products" | "All";
   selectedFilters?: (type: string) => void;
   categories?: LocalTypes[] | ProductType[] | ServiceType[];
@@ -83,7 +87,7 @@ export default function BasicSearchButton({
           className="text-center text-black w-[70%] h-12 rounded-2xl mr-1"
           style={{
             backgroundColor: background ? background : "#ffffff",
-            marginLeft: categories ? 32 : 1,
+            marginLeft: filters ? 32 : 1,
           }}
           onChangeText={(text) => setText(text)}
           value={text}
@@ -148,8 +152,11 @@ export default function BasicSearchButton({
               text={category.name}
               key={index}
               style="ml-2"
+              textStyle={
+                categorySelected === category.name ? selectedCatTextStyle : ""
+              }
               background={
-                categorySelected === category.name ? "#ff6c3d" : "#ffffff"
+                categorySelected === category.name ? selectedColor : "#ffffff"
               }
               onPress={() => handleCategorySelection(category.name)}
             />

@@ -43,15 +43,7 @@ export default function LocalInformation({
               backgroundColor: colors.primary.lightGray,
             }}
           >
-            <Link
-              href={
-                Platform.OS === "android"
-                  ? `https://www.google.com/maps/search/?api=1&query=${urlLocation}`
-                  : `http://maps.apple.com/?ll=${urlCoordinates}&q=${urlLocation}&t=k`
-              }
-            >
-              <LocalMap localCoordinates={coordinates as string} />
-            </Link>
+            <LocalMap localCoordinates={coordinates as string} />
           </View>
           <Link
             href={
