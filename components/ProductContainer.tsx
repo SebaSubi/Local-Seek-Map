@@ -6,11 +6,9 @@ import { getPlaceholders } from "../libs/libs";
 
 export default function ProductContainer({
   product,
-  productCategory,
   menuItem,
 }: {
   product: Product;
-  productCategory: string;
   menuItem?: boolean;
 }) {
   return (
@@ -41,7 +39,7 @@ export default function ProductContainer({
             source={{
               uri: product.imgURL
                 ? product.imgURL
-                : getPlaceholders(productCategory),
+                : getPlaceholders(product.type!.name),
             }}
             style={{
               height: "100%",
@@ -64,7 +62,7 @@ export default function ProductContainer({
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            Categoría: {productCategory}
+            Categoría: {product.type?.name}
           </Text>
           <Text
             className={`text-sm ml-2 font-thin`}
