@@ -21,15 +21,15 @@ export default function ProductCrud() {
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
 
-  const setLocal = useLocalIdStore((state) => state.setLocal);
+  // const setLocal = useLocalIdStore((state) => state.setLocal);
 
-  useEffect(() => {
-    const fetchLocals = async () => {
-      const local = await getLocalById(id as string);
-      setLocal(local);
-    };
-    fetchLocals();
-  }, [id]);
+  // useEffect(() => {
+  //   const fetchLocals = async () => {
+  //     const local = await getLocalById(id as string);
+  //     setLocal(local);
+  //   };
+  //   fetchLocals();
+  // }, [id]);
 
   return (
     <>

@@ -32,8 +32,6 @@ export default function ProductPage() {
     fetchAndSetAll();
   }, []);
 
-  // console.log(image);
-
   return (
     <>
       <Stack.Screen

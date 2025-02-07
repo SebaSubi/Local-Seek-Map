@@ -35,7 +35,7 @@ import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import { useLocalScheduleIdStore } from "../../../../libs/scheduleZustang";
 import {
   getProductOfLocal,
   updateLocalProduct,
