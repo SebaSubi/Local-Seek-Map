@@ -15,7 +15,7 @@ import {
 } from "../../../../libs/localService";
 import TimeSelect from "../../../../components/TimeSelect";
 import { specificDate } from "../../../../constants/consts";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+import { useLocalScheduleIdStore } from "../../../../libs/scheduleZustang";
 import {
   getScheduleByScheduleId,
   updateSchedule,
@@ -35,7 +35,7 @@ export default function UpdateSchedule() {
   const SecondShiftFinishRef = useRef<any>(null);
   const ThirdShiftStartRef = useRef<any>(null);
   const ThirdShiftFinishRef = useRef<any>(null);
-  const localScheduleId = useLocalIdStore((state) => state.scheduleId);
+  const localScheduleId = useLocalScheduleIdStore((state) => state.scheduleId);
 
   const { name } = useLocalSearchParams();
 

@@ -12,15 +12,16 @@ import {
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { getLocalById, getLocals } from "../../../libs/local";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
+import { useLocalIdStore } from "../../../libs/localZustang";
 
 export default function ProductCrud() {
-  const [local, setLocal] = useState<Local>();
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
+
+  const setLocal = useLocalIdStore((state) => state.setLocal);
 
   useEffect(() => {
     const fetchLocals = async () => {
@@ -29,13 +30,6 @@ export default function ProductCrud() {
     };
     fetchLocals();
   }, [id]);
-
-  // async function handlePress(id: string) {
-  //   setLocalId(id);
-  //   setScreen(true);
-  //   const local = await getLocalById(id);
-  //   setLocal(local);
-  // }
 
   return (
     <>
@@ -65,28 +59,9 @@ export default function ProductCrud() {
             logo={<UpdateLogo />}
             text="Actualizar Local"
             style="mt-3"
-            params={{
-              id: local?.id,
-              name: local?.name,
-              location: local?.location,
-              address: local?.address,
-              wpp: local?.whatsapp,
-              instagram: local?.instagram,
-              facebook: local?.facebook,
-              webpage: local?.webpage,
-              image: local?.imgURL,
-              localType: local?.localTypes,
-            }}
           />
           <BasicSelectable
             href="CRUD/LocalCRUD/LocalPage/[id]"
-            params={{
-              id: local?.id,
-              name: local?.name,
-              localCoordinates: local?.location,
-              image: local?.imgURL,
-              localType: local?.localTypes,
-            }}
             logo={<ReaderIcon />}
             text="Ver Local"
             style="mt-3"
@@ -102,13 +77,6 @@ export default function ProductCrud() {
             logo={<ClockLogo />}
             text="Horarios Local"
             style="mt-3"
-            params={{
-              id: id,
-              name: name,
-              localCoordinates: localCoordinates,
-              image: image,
-              localType: localType,
-            }}
           />
           <BasicSelectable
             href="/CRUD/LocalCRUD/LocalProduct/AddProduct"

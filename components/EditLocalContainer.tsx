@@ -14,7 +14,7 @@ export default function EditLocalContainer({ local }: { local: Local }) {
 
   useEffect(() => {
     const fetchLocals = async () => {
-      const open = await getIfLocalOpen(local.id);
+      const open = await getIfLocalOpen(local.id!);
       setIsOpen(open);
     };
     fetchLocals();
