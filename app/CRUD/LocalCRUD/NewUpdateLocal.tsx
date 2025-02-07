@@ -8,6 +8,7 @@ import { verifyUrl } from "./CreateLocal";
 import { Stack, useLocalSearchParams } from "expo-router";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
+import { useLocalIdStore } from "../../../libs/localZustang";
 
 export default function UpdateLocal() {
   const {
@@ -58,6 +59,8 @@ export default function UpdateLocal() {
   const [facebookError, setFacebookError] = useState("");
   const [webpageError, setWebpageError] = useState("");
 
+  const local = useLocalIdStore((state) => state.local);
+
   // async function getSpecificLocal(id: string) {
   //   const fetchLocal = async () => {
   //     const local = await getLocal(id);
@@ -71,19 +74,22 @@ export default function UpdateLocal() {
   // }, [id]);
 
   useEffect(() => {
-    if (nameRef.current) nameRef.current.setValue(name ? name.toString() : "");
-    if (locationRef.current)
-      locationRef.current.setValue(location ? location.toString() : "");
-    if (wppNumberRef.current)
-      wppNumberRef.current.setValue(wpp ? wpp.toString() : "");
-    if (instagramRef.current)
-      instagramRef.current.setValue(instagram ? instagram.toString() : "");
-    if (facebookRef.current)
-      facebookRef.current.setValue(facebook ? facebook.toString() : "");
-    if (paginaWebRef.current)
-      paginaWebRef.current.setValue(webpage ? webpage.toString() : "");
-    if (imgURLRef.current)
-      imgURLRef.current.setValue(image ? image.toString() : "");
+    if (local) {
+      if (nameRef.current)
+        nameRef.current.setValue(local.name ? local.name : "");
+      if (locationRef.current)
+        locationRef.current.setValue(local.location ? local.location : "");
+      if (wppNumberRef.current)
+        wppNumberRef.current.setValue(local.whatsapp ? local.whatsapp : "");
+      if (instagramRef.current)
+        instagramRef.current.setValue(local.instagram ? local.instagram : "");
+      if (facebookRef.current)
+        facebookRef.current.setValue(local.facebook ? local.facebook : "");
+      if (paginaWebRef.current)
+        paginaWebRef.current.setValue(local.webpage ? local.webpage : "");
+      if (imgURLRef.current)
+        imgURLRef.current.setValue(local.imgURL ? local.imgURL : "");
+    }
   }, []);
 
   const handlePress = async () => {

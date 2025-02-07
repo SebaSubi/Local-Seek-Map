@@ -38,7 +38,7 @@ export interface LocalProduct {
   productId?: string;
   price?: number | null;
   imgURL?: string | null;
-  localProductDecription?: string | null;
+  localProductDescription?: string | null;
   localProductCategory?: LocalProductCategory | null;
   localProductCategoryId?: string | null;
   localProductSubCategory?: LocalProductSubCategory | null;

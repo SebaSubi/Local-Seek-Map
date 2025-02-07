@@ -75,7 +75,7 @@ export default function AddProduct() {
     let price = priceRef.current?.getValue();
     const localProductCategoryId = selectedProductCategory?.id;
     const localProductSubCategoryId = selectedProductSubCategory?.id;
-    const localProductDecription = subDescriptionRef.current?.getValue();
+    const localProductDescription = subDescriptionRef.current?.getValue();
 
     for (const lp of localPrducts) {
       if (lp.productId === productId && lp.dateTo !== null) {
@@ -107,7 +107,7 @@ export default function AddProduct() {
         localId: local.id,
         productId,
         price,
-        localProductDecription,
+        localProductDescription,
         localProductCategoryId,
         localProductSubCategoryId,
         dateFrom: new Date(),
