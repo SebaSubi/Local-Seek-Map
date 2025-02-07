@@ -8,7 +8,7 @@ interface Schedule {
   setScheduleId: (scheduleId: string) => void;
 }
 
-export const useLocalIdStore = create<Schedule>((set, get) => ({
+export const useLocalScheduleIdStore = create<Schedule>((set, get) => ({
   localId: "",
   scheduleId: "",
 
