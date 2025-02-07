@@ -110,7 +110,7 @@ export default function EditProductPage() {
 
   const handleSubmit = async () => {
     let price: any = priceRef.current?.getValue();
-    const localProductDecription = descriptionRef.current?.getValue();
+    const localProductDescription = descriptionRef.current?.getValue();
     let localProductCategoryId;
     let localProductSubCategoryId;
 
@@ -136,7 +136,7 @@ export default function EditProductPage() {
 
       const newProduct: LocalProduct = {
         price,
-        localProductDecription,
+        localProductDescription,
         localProductCategoryId,
         localProductSubCategoryId,
         imgURL: uploadedImageUrl,
@@ -189,7 +189,7 @@ export default function EditProductPage() {
   useEffect(() => {
     if (product) {
       priceRef.current?.setValue(product.price?.toString() || "");
-      descriptionRef.current?.setValue(product.localProductDecription || "");
+      descriptionRef.current?.setValue(product.localProductDescription || "");
       setSelectedProductCategory(product.localProductCategory!);
       setSelectedProductSubCategory(product.localProductSubCategory!);
     }

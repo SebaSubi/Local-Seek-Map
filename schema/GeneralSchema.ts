@@ -113,6 +113,9 @@ export interface Service {
   local?: Local | null;
   localId: string;
   name: string;
+  location: string;
+  address: string;
+  reservationNumber?: string;
   serviceType?: ServiceType | null;
   serviceTypeId: string;
   description: string;

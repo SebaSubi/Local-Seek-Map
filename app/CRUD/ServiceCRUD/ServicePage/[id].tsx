@@ -11,11 +11,12 @@ import {
   getServicesById,
 } from "../../../../libs/localService";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
-import { getProductsOfALocal } from "../../../../libs/local";
 import ProductContainer from "../../../../components/ProductContainer";
+import { useLocalIdStore } from "../../../../libs/localZustang";
+import { getProductsOfLocalByName } from "../../../../libs/localProducts";
+import ServiceInformation from "../../../../components/ServiceInformation";
 
 type Options = "Info" | "Schedule" | "Products";
 
@@ -26,15 +27,16 @@ export default function ServicePage() {
   const [service, setServices] = useState<Service>();
   const [localProducts, setLocalProducts] = useState<any>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const setLocalServiceId = useLocalServiceIdStore(
     (state) => state.setLocalServiceId
   );
 
-  const setLocalId = useLocalIdStore((state) => state.setLocalId);
+  const local = useLocalIdStore((state) => state.local);
 
   setLocalServiceId(id as string);
-  setLocalId(localId as string);
+  // setLocalId(localId as string);
 
   async function fetchAndSetServices() {
     const service = await getServicesById(id as string);
@@ -45,7 +47,7 @@ export default function ServicePage() {
 
   async function fetchAndSetProducts() {
     setLoading(true);
-    const localProducts = await getProductsOfALocal(localId as string);
+    const localProducts = await getProductsOfLocalByName(local.id!, search);
     setLocalProducts(localProducts);
     setLoading(false);
   }
@@ -79,9 +81,18 @@ export default function ServicePage() {
                 service.local?.webpage ||
                 service.local?.whatsapp ||
                 service.local?.address ? (
-                  <LocalInformation
+                  <ServiceInformation
                     instagram={service.local.instagram}
-                    whatsapp={service.local.whatsapp?.toString()}
+                    reservationURL={
+                      service.reservationURL
+                        ? service.reservationURL
+                        : service.local.whatsapp?.toString()
+                    }
+                    reservationNumber={
+                      service.reservationNumber
+                        ? service.reservationNumber
+                        : null
+                    }
                     facebook={service.local.facebook}
                     location={service.local.address}
                     coordinates={service.local.location}
@@ -98,9 +109,9 @@ export default function ServicePage() {
                       renderItem={({ item }) => (
                         <ProductContainer
                           product={item.product}
-                          productCategory={
-                            item.product.type.name ? item.product.type.name : ""
-                          }
+                          // productCategory={
+                          //   item.product.type.name ? item.product.type.name : ""
+                          // }
                         />
                       )}
                       keyExtractor={(item) => item.product.id!.toString()}
@@ -125,12 +136,12 @@ export default function ServicePage() {
             text="Horarios"
             onPress={() => setSelectedOption("Schedule")}
           />
-          <BasicButton
+          {/* <BasicButton
             background={selectedOption === "Products" ? "white" : "#7e8592"}
             style="w-[28%] mb-2 "
             text="Productos"
             onPress={() => setSelectedOption("Products")}
-          />
+          /> */}
         </View>
       </View>
     </>

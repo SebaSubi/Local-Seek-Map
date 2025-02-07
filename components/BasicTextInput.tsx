@@ -46,7 +46,7 @@ const BasicTextInput = forwardRef(
           value={text}
           multiline={false}
           numberOfLines={1}
-          className="w-full bg-[#f8f8f8] h-11 rounded-2xl px-2"
+          className="w-full bg-[#f8f8f8] h-11 rounded-2xl p-2 font-light"
           onChangeText={handleChange}
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}

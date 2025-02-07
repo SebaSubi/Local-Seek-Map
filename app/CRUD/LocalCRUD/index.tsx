@@ -7,6 +7,7 @@ import {
   ProductIcon,
   ReaderIcon,
   ReadLogo,
+  ServiceIcon,
   UpdateLogo,
 } from "../../../components/Logos";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -88,6 +89,14 @@ export default function ProductCrud() {
             text="Editar Productos"
             style="mt-3"
           />
+          {local.localTypes?.name === "Servicio" && (
+            <BasicSelectable
+              href="/CRUD/ServiceCRUD"
+              logo={<ServiceIcon />}
+              text="Servicios"
+              style="mt-3"
+            />
+          )}
         </View>
       </View>
     </>
