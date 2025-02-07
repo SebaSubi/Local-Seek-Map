@@ -21,6 +21,7 @@ import { useLocalIdStore } from "../../../../libs/localZustang";
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [error, setError] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
 
   // const localId = useLocalScheduleIdStore((state) => state.localId);
   const local = useLocalIdStore((state) => state.local);
@@ -35,7 +36,6 @@ export default function CreateProduct() {
   // console.log("hello?");
   // console.log(local);
 
-  // Create refs for each TimeSelect component
   const FirstShiftStartRef = useRef<any>(null);
   const FirstShiftFinishRef = useRef<any>(null);
   const SecondShiftStartRef = useRef<any>(null);
@@ -66,6 +66,7 @@ export default function CreateProduct() {
 
     if (scheduleInputValidation(localSchedule) !== "Correct") {
       setError(scheduleInputValidation(localSchedule) as string);
+      setErrorModal(true);
     } else {
       handleSubmit();
     }
@@ -260,16 +261,28 @@ export default function CreateProduct() {
           // </View>
         )}
         {error && (
-          <BasicWarning
-            text={error}
-            cancelButton={true}
-            buttonLeft="Ok"
-            onPressLeft={() => {
-              setError("");
-              setWarning(false);
-            }}
-            style="absolute"
-          />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={errorModal}
+            onRequestClose={() => setErrorModal(false)}
+          >
+            <View
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text={error}
+                cancelButton={true}
+                buttonLeft="Ok"
+                onPressLeft={() => {
+                  setError("");
+                  setWarning(false);
+                }}
+                style="absolute"
+              />
+            </View>
+          </Modal>
         )}
       </View>
     </View>

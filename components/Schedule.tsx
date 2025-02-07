@@ -17,20 +17,11 @@ interface ScheduleProps {
 }
 
 export default function Schedule({ schedule = [] }: ScheduleProps) {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const localServiceId = useLocalServiceIdStore(
     // eslint-disable-next-line prettier/prettier
     (state) => state.localServiceId
   );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const schedules = await getScheduleByServiceId(localServiceId);
-      setLoading(false);
-    };
-    fetchData();
-  }, [localServiceId]);
 
   const shifts: Shift[] = [
     { shiftOpen: "FirstShiftStart", shiftClose: "FirstShiftFinish" },

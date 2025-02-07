@@ -21,15 +21,7 @@ export default function ProductCrud() {
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
 
-  // const setLocal = useLocalIdStore((state) => state.setLocal);
-
-  // useEffect(() => {
-  //   const fetchLocals = async () => {
-  //     const local = await getLocalById(id as string);
-  //     setLocal(local);
-  //   };
-  //   fetchLocals();
-  // }, [id]);
+  const local = useLocalIdStore((state) => state.local);
 
   return (
     <>
@@ -65,6 +57,9 @@ export default function ProductCrud() {
             logo={<ReaderIcon />}
             text="Ver Local"
             style="mt-3"
+            params={{
+              id: local.id,
+            }}
           />
           <BasicSelectable
             href="/CRUD/LocalCRUD/DeleteLocal"

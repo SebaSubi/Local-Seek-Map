@@ -13,6 +13,7 @@ export default function ReadSchedule() {
   const [schedule, setSchedule] = useState([]);
 
   const local = useLocalIdStore((state) => state.local);
+
   const { name } = useLocalSearchParams();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function ReadSchedule() {
         </Text>
         <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
       </View>
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center">
+      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center overflow-hidden">
         {loading ? (
           <Text>Loading...</Text>
         ) : schedule.length ? (

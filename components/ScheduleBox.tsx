@@ -119,7 +119,7 @@ export default function ScheduleBox({
       {availableShifts.map((shift, index) => (
         <View key={index} className="rounded-lg mx-1">
           <Text className="text-base text-gray-700">
-            {shift?.includes("23:59") ? shift.replace("11:59", "00:00") : shift}
+            {shift?.includes("23:59") ? shift.replace("23:59", "00:00") : shift}
           </Text>
         </View>
       ))}

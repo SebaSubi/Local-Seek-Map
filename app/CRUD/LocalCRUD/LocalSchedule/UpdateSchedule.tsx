@@ -1,5 +1,5 @@
-import { Alert, ScrollView, Text, View } from "react-native";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Alert, Modal, ScrollView, Text, View } from "react-native";
+import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
@@ -22,19 +22,46 @@ import {
 } from "../../../../libs/localSchedule";
 import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
-import { bringDayName } from "../../../../libs/libs";
+import {
+  FirstShiftInputValidation,
+  bringDayName,
+  createDateWithTime,
+  scheduleInputValidation,
+} from "../../../../libs/libs";
+import BasicWarning from "../../../../components/BasicWarning";
 
 export default function UpdateSchedule() {
   const { id } = useLocalSearchParams();
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
   const [loaded, setLoaded] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
+  const [error, setError] = useState("");
+  const navigation = useNavigation();
 
-  const FirstShiftStartRef = useRef<any>(null);
-  const FirstShiftFinishRef = useRef<any>(null);
-  const SecondShiftStartRef = useRef<any>(null);
-  const SecondShiftFinishRef = useRef<any>(null);
-  const ThirdShiftStartRef = useRef<any>(null);
-  const ThirdShiftFinishRef = useRef<any>(null);
+  const FirstShiftStartRef = useRef<{
+    getTime: () => Date;
+    setTime: (time: Date) => void;
+  }>(null);
+  const FirstShiftFinishRef = useRef<{
+    getTime: () => Date;
+    setTime: (time: Date) => void;
+  }>(null);
+  const SecondShiftStartRef = useRef<{
+    getTime: () => Date;
+    setTime: (time: Date) => void;
+  }>(null);
+  const SecondShiftFinishRef = useRef<{
+    getTime: () => Date;
+    setTime: (time: Date) => void;
+  }>(null);
+  const ThirdShiftStartRef = useRef<{
+    getTime: () => Date;
+    setTime: (time: Date) => void;
+  }>(null);
+  const ThirdShiftFinishRef = useRef<{
+    getTime: () => Date;
+    setTime: (time: Date) => void;
+  }>(null);
   const localScheduleId = useLocalScheduleIdStore((state) => state.scheduleId);
 
   const { name } = useLocalSearchParams();
@@ -48,6 +75,70 @@ export default function UpdateSchedule() {
     fetchData();
   }, [localScheduleId]);
 
+  useEffect(() => {
+    if (schedule) {
+      if (schedule.FirstShiftStart) {
+        FirstShiftStartRef.current?.setTime(
+          createDateWithTime(schedule.FirstShiftStart)
+        );
+      }
+      if (schedule.FirstShiftFinish) {
+        FirstShiftFinishRef.current?.setTime(
+          createDateWithTime(schedule.FirstShiftFinish)
+        );
+      }
+      if (schedule.SecondShiftStart) {
+        SecondShiftStartRef.current?.setTime(
+          createDateWithTime(schedule.SecondShiftStart)
+        );
+      }
+      if (schedule.SecondShiftFinish) {
+        SecondShiftFinishRef.current?.setTime(
+          createDateWithTime(
+            schedule.SecondShiftFinish === "23:59"
+              ? "00:00"
+              : schedule.SecondShiftFinish
+          )
+        );
+      }
+      if (schedule.ThirdShiftStart) {
+        ThirdShiftStartRef.current?.setTime(
+          createDateWithTime(schedule.ThirdShiftStart)
+        );
+      }
+      if (schedule.ThirdShiftFinish) {
+        ThirdShiftFinishRef.current?.setTime(
+          createDateWithTime(
+            schedule.ThirdShiftFinish === "23:59"
+              ? "00:00"
+              : schedule.FirstShiftFinish
+          )
+        );
+      }
+    }
+  }, [schedule]);
+
+  const handleCreate = () => {
+    const localSchedule = createNewSchedule();
+
+    const validate = FirstShiftInputValidation(
+      FirstShiftStartRef.current?.getTime(),
+      FirstShiftFinishRef.current?.getTime()
+    );
+    if (validate !== "Correct") {
+      setError(validate);
+      setErrorModal(true);
+      return;
+    }
+
+    if (scheduleInputValidation(localSchedule) !== "Correct") {
+      setError(scheduleInputValidation(localSchedule) as string);
+      setErrorModal(true);
+    } else {
+      handleSubmit();
+    }
+  };
+
   function checkSchedule(hour: Date | undefined): string | null {
     if (hour === specificDate || undefined) {
       return null;
@@ -59,7 +150,7 @@ export default function UpdateSchedule() {
     });
   }
 
-  const handleSubmit = async () => {
+  const createNewSchedule = () => {
     const FirstShiftStart = FirstShiftStartRef.current
       ?.getTime()
       ?.toLocaleTimeString(undefined, {
@@ -67,13 +158,25 @@ export default function UpdateSchedule() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    const FirstShiftFinish = FirstShiftFinishRef.current
-      ?.getTime()
-      ?.toLocaleTimeString(undefined, {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+    const FirstShiftFinish = (): string | undefined => {
+      if (
+        FirstShiftFinishRef.current?.getTime()?.toLocaleTimeString(undefined, {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+        }) === "00:00"
+      ) {
+        return "23:59";
+      } else {
+        return FirstShiftFinishRef.current
+          ?.getTime()
+          .toLocaleTimeString(undefined, {
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+      }
+    };
     const SecondShiftStart = checkSchedule(
       SecondShiftStartRef.current?.getTime()
     );
@@ -88,19 +191,24 @@ export default function UpdateSchedule() {
     );
 
     const newSchedule: LocalSchedule = {
-      FirstShiftStart,
-      FirstShiftFinish,
+      FirstShiftStart: FirstShiftStart!, // these are validated before, they will never be null or undefined
+      FirstShiftFinish: FirstShiftFinish()!,
       SecondShiftStart,
       SecondShiftFinish,
       ThirdShiftStart,
       ThirdShiftFinish,
       dateFrom: new Date(),
     };
-    console.log(id);
+    return newSchedule;
+  };
+
+  async function handleSubmit() {
+    const newSchedule = createNewSchedule();
     if (JSON.stringify(schedule) === JSON.stringify(newSchedule)) return;
     updateSchedule(id as string, newSchedule);
     Alert.alert("Exito", "Horario actualizado con exito");
-  };
+    navigation.goBack();
+  }
 
   return loaded ? (
     <>
@@ -161,11 +269,35 @@ export default function UpdateSchedule() {
                 logo={<CreateLogo />}
                 text="Actualizar Horario"
                 style="mt-3"
-                onPress={handleSubmit}
+                onPress={handleCreate}
               />
             </View>
           </View>
         </ScrollView>
+        {error && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={errorModal}
+            onRequestClose={() => setErrorModal(false)}
+          >
+            <View
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text={error}
+                cancelButton={true}
+                buttonLeft="Ok"
+                onPressLeft={() => {
+                  setError("");
+                  setErrorModal(false);
+                }}
+                style="absolute"
+              />
+            </View>
+          </Modal>
+        )}
       </View>
     </>
   ) : (
