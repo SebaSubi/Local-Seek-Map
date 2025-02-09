@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   View,
   Alert,
@@ -66,14 +67,14 @@ export default function CreateProduct() {
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
     const brand = brandRef.current?.getValue();
-    const mesurement = measurementRef.current?.getValue();
+    const measurement = measurementRef.current?.getValue();
     const description = descriptionRef.current?.getValue();
     const productTypeId = selectedType?.id;
 
     if (
       !name ||
       !brand ||
-      !mesurement ||
+      !measurement ||
       !description ||
       !image ||
       !productTypeId
@@ -109,12 +110,12 @@ export default function CreateProduct() {
       setbrandError("La marca del produto es demasiado larga");
       setMeasurementError("");
       return;
-    } else if (mesurement.length < 2) {
+    } else if (measurement.length < 2) {
       setNameError("");
       setbrandError("");
       setMeasurementError("La medida del produto es demasiado corta");
       return;
-    } else if (mesurement.length >= 50) {
+    } else if (measurement.length >= 50) {
       setNameError("");
       setbrandError("");
       setMeasurementError("La medida del produto es demasiado larga");
@@ -141,7 +142,7 @@ export default function CreateProduct() {
       const newProduct: Product = {
         name,
         brand,
-        mesurement,
+        measurement,
         description,
         productTypeId,
         imgURL: uploadedImageUrl,

@@ -7,6 +7,8 @@ import React from "react";
 import BasicButton from "../../components/BasicButton";
 import { LocalIcon, ProductIcon, ServiceIcon } from "../../components/Logos";
 import ReadProductScreen from "../CRUD/ProductCRUD/ReadProduct";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 const avaliableItems = ["Locales", "Servicios", "Productos"];
 
@@ -16,13 +18,17 @@ export default function Search() {
   );
 
   return (
-    <>
+    <SafeAreaView
+      className="flex-1 pt-6 bg-[#1a253d]"
+      style={{ backgroundColor: "#1a253d" }}
+    >
+      <StatusBar style="light" backgroundColor="#1a253d" />
       <Stack.Screen
         options={{
           headerShown: false,
         }}
       />
-      <View className="flex flex-row items-center justify-center bg-[#1a253d] pt-[15%] z-10">
+      <View className="flex flex-row items-center justify-center bg-[#1a253d] z-10">
         <BasicButton
           text="Locales"
           style=" w-28 mr-2"
@@ -63,6 +69,6 @@ export default function Search() {
       >
         <ReadProductScreen />
       </View>
-    </>
+    </SafeAreaView>
   );
 }

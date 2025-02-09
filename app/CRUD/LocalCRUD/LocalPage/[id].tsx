@@ -1,3 +1,4 @@
+import React from "react";
 import { View, FlatList } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ import {
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import { getProductTypes } from "../../../../libs/productType";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
 // type Categories = Record<string, string[]>;
@@ -53,6 +55,7 @@ export default function LocalPage() {
       const localProducts = await getProductsOfLocalByNameAndCat(
         id as string,
         search,
+        // eslint-disable-next-line prettier/prettier
         selectedCategory
       );
       setLocalProducts(localProducts);
@@ -60,6 +63,7 @@ export default function LocalPage() {
     } else {
       const localProducts = await getProductsOfLocalByName(
         id as string,
+        // eslint-disable-next-line prettier/prettier
         search
       );
       setLocalProducts(localProducts);
@@ -80,6 +84,8 @@ export default function LocalPage() {
       setCategories(categories);
     }
   }
+
+  // console.log(id);
 
   async function fetchAndSetServices() {
     const localServices = await getServicesOfLocal(id as string);
@@ -135,7 +141,7 @@ export default function LocalPage() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-col items-start h-full justify-start bg-[#1a253d]">
+      <SafeAreaView className="flex flex-col items-start h-full justify-start bg-[#1a253d] pt-6">
         <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden">
           <View className="flex items-center w-full h-full">
             {local &&
@@ -282,7 +288,7 @@ export default function LocalPage() {
             }
           />
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
