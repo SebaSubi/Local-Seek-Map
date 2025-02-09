@@ -21,22 +21,10 @@ import ServiceInformation from "../../../../components/ServiceInformation";
 type Options = "Info" | "Schedule" | "Products";
 
 export default function ServicePage() {
-  const { id, localId, localCoordinates, name, image } = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
   const [schedule, setSchedule] = useState<LocalServiceSchedule[]>([]);
   const [service, setServices] = useState<Service>();
-  const [localProducts, setLocalProducts] = useState<any>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-
-  const setLocalServiceId = useLocalServiceIdStore(
-    (state) => state.setLocalServiceId
-  );
-
-  const local = useLocalIdStore((state) => state.local);
-
-  setLocalServiceId(id as string);
-  // setLocalId(localId as string);
 
   async function fetchAndSetServices() {
     const service = await getServicesById(id as string);
@@ -45,19 +33,11 @@ export default function ServicePage() {
     setSchedule(schedules);
   }
 
-  async function fetchAndSetProducts() {
-    setLoading(true);
-    const localProducts = await getProductsOfLocalByName(local.id!, search);
-    setLocalProducts(localProducts);
-    setLoading(false);
-  }
-
   useEffect(() => {
     const fetchLocals = async () => {
       await fetchAndSetServices();
     };
     fetchLocals();
-    fetchAndSetProducts();
   }, []);
 
   return (
@@ -96,52 +76,25 @@ export default function ServicePage() {
                     facebook={service.local.facebook}
                     location={service.local.address}
                     coordinates={service.local.location}
-                    webpage={service.local.webpage} // traete esto del localservice
+                    webpage={service.local.webpage}
                   />
                 ) : null
-              ) : (
-                localProducts.length > 0 && (
-                  <View className="mt-12 w-full h-full">
-                    <FlatList
-                      data={localProducts}
-                      horizontal={false}
-                      numColumns={2}
-                      renderItem={({ item }) => (
-                        <ProductContainer
-                          product={item.product}
-                          // productCategory={
-                          //   item.product.type.name ? item.product.type.name : ""
-                          // }
-                        />
-                      )}
-                      keyExtractor={(item) => item.product.id!.toString()}
-                      onRefresh={() => fetchAndSetProducts()}
-                      refreshing={loading}
-                    />
-                  </View>
-                )
-              ))}
+              ) : null)}
           </View>
         </View>
         <View className="w-full h-[10%] flex flex-row items-center justify-evenly">
           <BasicButton
             background={selectedOption === "Info" ? "white" : "#7e8592"}
             style="w-[28%] mb-2"
-            text="Info:"
+            text="Info"
             onPress={() => setSelectedOption("Info")}
           />
           <BasicButton
             background={selectedOption === "Schedule" ? "white" : "#7e8592"}
-            style="w-[28%] mb-2 "
+            style="w-[28%] mb-2"
             text="Horarios"
             onPress={() => setSelectedOption("Schedule")}
           />
-          {/* <BasicButton
-            background={selectedOption === "Products" ? "white" : "#7e8592"}
-            style="w-[28%] mb-2 "
-            text="Productos"
-            onPress={() => setSelectedOption("Products")}
-          /> */}
         </View>
       </View>
     </>

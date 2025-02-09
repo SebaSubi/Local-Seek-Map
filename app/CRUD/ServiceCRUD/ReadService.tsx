@@ -1,40 +1,50 @@
-import { View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { DisplayService, Service } from "../../../schema/GeneralSchema";
-
-import ServiceContainer from "../../../components/ServiceContainer";
+import { useEffect, useState } from "react";
+import { View, FlatList } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
-import { getDisplayServiceByLocalId } from "../../../libs/localService";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
+import { Service } from "../../../schema/GeneralSchema";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+import { getDisplayServicesByName } from "../../../libs/localService";
+import ServiceContainer from "../../../components/ServiceContainer";
 
 export default function ReadService() {
   const [services, setServices] = useState<Service[]>([]);
-
-  const localId = useLocalIdStore((state) => state.localId);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   async function fetchAndSetServices() {
-    const displaylocals = await getDisplayServiceByLocalId(localId);
-    setServices(displaylocals);
-  }
+    setLoading(true);
 
+    const services = await getDisplayServicesByName(search);
+    setServices(services);
+    setLoading(false);
+  }
   useEffect(() => {
-    const fetchServices = async () => {
-      await fetchAndSetServices();
-    };
-    fetchServices();
-  }, []); //podriamos agregar un boton para recargar la lista de locales y agregarlo al array de; useEffect
+    fetchAndSetServices();
+  }, [search]);
 
   return (
-    <View className="flex w-full items-center">
+    <View className="bg-[#1a253d] w-full h-full flex flex-col">
       <Stack.Screen
         options={{
-          header: () => <Header title="ABM Servicio" />,
+          headerShown: false,
         }}
       />
-      {services?.map((service) => (
-        <ServiceContainer key={service.id} service={service} />
-      ))}
+      <BasicSearchButton
+        placeholder="Buscar Servicio"
+        onSearch={setSearch}
+        style="mt-6"
+      />
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
+        <FlatList
+          data={services}
+          horizontal={false}
+          numColumns={2}
+          renderItem={({ item }) => <ServiceContainer service={item} />}
+          keyExtractor={(item) => item.id!.toString()}
+          onRefresh={() => fetchAndSetServices()}
+          refreshing={loading}
+        />
+      </View>
     </View>
   );
 }
