@@ -1,98 +1,128 @@
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import BasicSelectable from "../../../components/BasicSelectable";
 import {
-  CreateLogo,
-  DeleteLogo,
-  ReadLogo,
-  ScheduleIcon,
-  UpdateLogo,
-} from "../../../components/Logos";
-import { Stack } from "expo-router";
-import Header from "../../../components/Header";
-import { useEffect, useState } from "react";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
-import { getLocals } from "../../../libs/local";
-import { Local } from "../../../schema/GeneralSchema";
-import React from "react";
+  Pressable,
+  Text,
+  View,
+  Animated,
+  Dimensions,
+  FlatList,
+} from "react-native";
+import { Stack, useRouter } from "expo-router";
+import React, { useState, useRef, useEffect } from "react";
+import { CreateLogo, SearchIcon } from "../../../components/Logos";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+import {
+  deleteService,
+  getServicesByLocalIdAndName,
+} from "../../../libs/localService";
+import { useLocalIdStore } from "../../../libs/localZustang";
+import { Service } from "../../../schema/GeneralSchema";
+import ServiceContainer from "../../../components/ServiceContainer";
+import DeleteServiceComponent from "../../../components/DeleteServiceComponent";
+import BasicButton from "../../../components/BasicButton";
 
 export default function ProductCrud() {
-  const [screen, setScreen] = useState(false);
-  const [locals, setlocals] = useState<Local[]>([]);
+  const [expanded, setExpanded] = useState(false);
+  const [search, setSearch] = useState("");
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const widthAnim = useRef(new Animated.Value(48)).current; // Start from width 0
+  const screenWidth = Dimensions.get("screen").width;
 
-  const setLocalId = useLocalIdStore((state) => state.setLocalId);
+  const local = useLocalIdStore((state) => state.local);
 
-  useEffect(() => {
-    const fetchLocals = async () => {
-      const locals = await getLocals();
-      setlocals(locals);
-    };
-    fetchLocals();
-  }, []);
+  const toggleExpand = () => {
+    Animated.timing(widthAnim, {
+      toValue: expanded ? 48 : screenWidth * 0.9, // Expand to 100px height
+      duration: 400, // Smooth transition duration
+      useNativeDriver: false, // Needed for height animations
+    }).start();
 
-  function handlePress(id: string) {
-    setLocalId(id);
-    setScreen(true);
+    setExpanded(!expanded);
+  };
+
+  async function fetchAndSetServices() {
+    const services = await getServicesByLocalIdAndName(local.id!, search);
+    setServices(services);
+    setLoading(false);
   }
 
+  useEffect(() => {
+    fetchAndSetServices();
+  }, [search]);
+
+  const handleDelete = (id: string) => {
+    deleteService(id);
+    fetchAndSetServices();
+  };
+
   return (
-    <View className="flex justify-center items-center bg-white h-full">
+    <>
       <Stack.Screen
         options={{
-          header: () => <Header title="ABM Servicio" />,
+          headerShown: false,
         }}
       />
-      {screen ? (
-        <>
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/CreateService"
-            logo={<CreateLogo />}
-            text="Crear Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/DeleteService"
-            logo={<UpdateLogo />}
-            text="Actualizar/Borrar Servicio"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/ReadService"
-            logo={<ReadLogo />}
-            text="Leer Servicios"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/ServiceSchedule"
-            logo={<ScheduleIcon />}
-            text="AMB Horario"
-            style="mt-3"
-          />
-          <BasicSelectable
-            href="/CRUD/ServiceCRUD/ReadWS"
-            logo={<ScheduleIcon />}
-            text="Search"
-            style="mt-3"
-          />
-        </>
-      ) : (
-        <>
-          {locals === undefined ? (
-            <ActivityIndicator size="large" />
-          ) : locals.length === 0 ? (
-            <Text>No hay locales disponibles</Text>
-          ) : (
-            locals.map((local: Local) => (
-              <Pressable
-                key={local.id}
-                className="flex flex-row items-center justify-center bg-[#e1e8e8] w-5/6 h-10 mt-4 rounded-2xl"
-                onPress={() => handlePress(local.id!)}
-              >
-                <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
-              </Pressable>
-            ))
-          )}
-        </>
-      )}
-    </View>
+      <View className="flex justify-start items-center bg-defaultBlue h-full">
+        <View className="flex h-[90%] w-full items-center justify-start bg-white rounded-b-3xl">
+          <View className="flex flex-row justify-between items-center w-full mt-12 h-28">
+            {expanded ? null : (
+              <>
+                <Text className="ml-3 text-defaultBlue text-4xl font-bold">
+                  Servicios:
+                </Text>
+                <Pressable
+                  onPress={toggleExpand}
+                  className="flex items-center justify-center bg-defaultGray mr-5 w-12 h-14 rounded-3xl z-10"
+                >
+                  <SearchIcon />
+                </Pressable>
+              </>
+            )}
+
+            {/* Animated View */}
+            <Animated.View
+              className="flex items-center justify-center z-1 rounded-3xl h-14 bg-white"
+              style={{
+                overflow: "hidden",
+                width: widthAnim,
+                position: "absolute",
+                right: 20,
+                padding: 10,
+              }}
+            >
+              <BasicSearchButton
+                placeholder="Buscar Servicio"
+                onSearch={setSearch}
+                width="w-full"
+                style="rounded-2xl"
+                background="#f8f8f8"
+              />
+            </Animated.View>
+          </View>
+          <View className="items-center w-full h-full rounded-b-3xl ">
+            <FlatList
+              data={services}
+              renderItem={({ item }) => (
+                <DeleteServiceComponent
+                  service={item}
+                  onDelete={handleDelete}
+                />
+              )}
+              keyExtractor={(item) => item.id!.toString()}
+              onRefresh={() => fetchAndSetServices()}
+              refreshing={loading}
+            />
+          </View>
+        </View>
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear Servicio"
+          style="mt-4"
+          onPress={() => router.push("/CRUD/ServiceCRUD/CreateService")}
+          background="white"
+        />
+      </View>
+    </>
   );
 }

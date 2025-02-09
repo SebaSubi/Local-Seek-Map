@@ -23,9 +23,7 @@ export default function CreateProduct() {
   const [schedules, setSchedules] = useState<LocalServiceSchedule[]>([]);
   const [error, setError] = useState("");
 
-  const localServiceId = useLocalServiceIdStore(
-    (state) => state.localServiceId
-  );
+  const yes = useLocalServiceIdStore((state) => state.localServiceId);
   const setScheduleId = useLocalServiceIdStore(
     (state) => state.setServiceScheduleId
   );

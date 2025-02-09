@@ -46,7 +46,7 @@ export default function EditProduct() {
         <BasicSearchButton
           placeholder="Buscar"
           onSearch={setSearch}
-          style="mt-6 "
+          style="mt-16 mb-3"
         />
 
         <View className="flex items-center h-[90%] w-full bg-white rounded-3xl overflow-hidden">
