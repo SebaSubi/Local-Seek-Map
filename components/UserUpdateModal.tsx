@@ -1,13 +1,14 @@
 import { View, Text, Modal, Pressable } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { colors } from "../constants/colors";
-import { CloseCircle, Eye, EyeOff, Save } from "./Logos";
+import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "./Logos";
 import BasicButton from "./BasicButton";
 import BasicTextInput from "./BasicTextInput";
 import { checkEmail, checkUsername, EditUser } from "../libs/user";
 import { validateEmail } from "./Register";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AuthUser, useAuth } from "../app/context/AuthContext";
+import { AuthUser } from "../app/context/AuthContext";
+import UserDeleteModal from "./UserDeleteModal";
 
 const UserUpdateModal = ({
   isVisible,
@@ -41,6 +42,8 @@ const UserUpdateModal = ({
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [seePassword, setSeePassword] = useState(true);
+
+  const [seeDeleteModal, setSeeDeleteModal] = useState(false);
 
   return (
     <Modal
@@ -149,12 +152,17 @@ const UserUpdateModal = ({
               </Pressable>
             </View>
           </View>
-          <View className={`justify-end ${usernameError ? "mt-8" : "mt-12"}`}>
+          <View className={`justify-end ${usernameError ? "mt-2" : "mt-6"}`}>
             <BasicButton
               text="Guardar"
               background={colors.primary.blue}
               textStyle="text-white"
-              logo={<Save color={colors.primary.blue} />}
+              logo={
+                <View className="flex pl-2">
+                  <Save color="#fff" />
+                </View>
+              }
+              style="w-28 justify-evenly"
               onPress={async () => {
                 const userEditPetition = await handleUserChange(
                   email,
@@ -170,6 +178,22 @@ const UserUpdateModal = ({
                 );
                 userEditPetition === 200 ? setVisible(false) : "";
               }}
+            />
+            <Pressable
+              className="flex justify-center flex-row items-center mt-4"
+              onPress={() => {
+                setSeeDeleteModal(true);
+              }}
+            >
+              <Text className="text-sm pr-1" style={{ color: "#cc0000" }}>
+                Eliminar Cuenta
+              </Text>
+              <TrashIcon size={20} color="#cc0000" />
+            </Pressable>
+            <UserDeleteModal
+              isVisible={seeDeleteModal}
+              setVisible={setSeeDeleteModal}
+              setBeforeModalVisible={setVisible}
             />
           </View>
         </View>
