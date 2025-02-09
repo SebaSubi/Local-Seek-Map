@@ -183,3 +183,7 @@ export const ReadMore = ({ color = "black", size = 24 }) => {
 export const ReaderIcon = ({ color = "black", size = 24 }) => {
   return <Ionicons name="reader-outline" size={size} color={color} />;
 };
+
+export const TrashIcon = ({ color = "black", size = 24 }) => {
+  return <Fontisto name="trash" size={size} color={color} />;
+};
