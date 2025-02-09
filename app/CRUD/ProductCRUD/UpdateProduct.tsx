@@ -10,6 +10,7 @@ import {
   Modal,
   TextInput,
   Pressable,
+  Button,
 } from "react-native";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
@@ -18,6 +19,8 @@ import { getProductTypes } from "../../../libs/productType";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { CategorySelectButtonProducts } from "../../../components/CategorySelectButton";
 import { Product, ProductType } from "../../../schema/GeneralSchema";
+import { uploadImageToCloudinaryProducts } from "../../../libs/cloudinary";
+import * as ImagePicker from "expo-image-picker";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -28,7 +31,30 @@ const ReadProductScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchText, setSearchText] = useState<string>("");
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [error, setError] = useState<unknown>(null);
+  const [image, setImage] = useState<string | null>(null);
+
+  const handleImagePicker = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert("Error", "Se necesitan permisos para acceder a la galería.");
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!pickerResult.canceled) {
+      setImage(pickerResult.assets[0].uri);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -89,11 +115,11 @@ const ReadProductScreen = () => {
   const handleSaveChanges = async () => {
     if (!selectedProduct) return;
 
-    const { name, brand, mesurement, description } = selectedProduct;
+    const { name, brand, measurement, description, imgURL } = selectedProduct;
 
     const updatedProduct: Product = {
       ...selectedProduct,
-      productTypeId: selectedCategory,
+      productTypeId: selectedCategory ?? "",
     };
 
     try {
@@ -170,13 +196,18 @@ const ReadProductScreen = () => {
             return (
               <ProductItem
                 name={item.name}
-                imgURL={item.imgURL}
-                category={category ? category.name : "Sin categoría"}
+                imgURL={item.imgURL ?? "https://via.placeholder.com/150"}
+                category={
+                  category ? (category as ProductType).name : "Sin categoría"
+                }
                 onPress={() => handleProductPress(item)}
               />
             );
           }}
-          keyExtractor={(item) => item.id.toString()}
+          // keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) =>
+            item.id ? item.id.toString() : Math.random().toString()
+          }
           numColumns={3}
           contentContainerStyle={styles.listContent}
         />
@@ -231,9 +262,9 @@ const ReadProductScreen = () => {
 
               <TextInput
                 style={styles.input}
-                value={selectedProduct.mesurement || ""}
+                value={selectedProduct.measurement || ""}
                 onChangeText={(text) =>
-                  setSelectedProduct({ ...selectedProduct, mesurement: text })
+                  setSelectedProduct({ ...selectedProduct, measurement: text })
                 }
                 placeholder="Medida"
               />
@@ -245,6 +276,19 @@ const ReadProductScreen = () => {
                 }
                 selectedCategory={selectedCategory}
               />
+
+              <View style={{ marginTop: 20 }}>
+                <Button
+                  title="Seleccionar Imagen"
+                  onPress={handleImagePicker}
+                />
+              </View>
+              {image && (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 100, height: 100, marginTop: 10 }}
+                />
+              )}
 
               <View style={styles.buttonContainer}>
                 <Pressable

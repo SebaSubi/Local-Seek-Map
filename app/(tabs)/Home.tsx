@@ -5,21 +5,25 @@ import Header from "../../components/Header";
 import { LogOutIcon } from "../../components/Logos";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Tab() {
   return (
     // <View className="h-full">
-    <>
+    <SafeAreaView
+      className="flex-1 pt-2 bg-[#fffff]"
+      style={{ backgroundColor: "#1a253d" }}
+    >
       <Stack.Screen
         options={{
           header: () => <Header title="Principal" />,
         }}
       />
       <View className="h-full w-full">
-        <StatusBar style="auto" />
+        <StatusBar style="light" backgroundColor="#1a253d" />
         <SearchComponent />
       </View>
-    </>
+    </SafeAreaView>
     // {/* </View> */}
   );
 }

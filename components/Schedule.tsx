@@ -41,23 +41,31 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
 
   const allDays = Array.from({ length: 7 }, (_, index) => index + 1);
 
+  // const groupedSchedules = allDays.reduce(
+  //   (acc, day) => {
+  //     acc[day] = schedule.filter((item) => item.dayNumber === day) || [];
+  //     return acc;
+  //   },
+  //   // eslint-disable-next-line prettier/prettier
+  //   {} as Record<number, (LocalSchedule | LocalServiceSchedule)[]>
+  // );
+
   const groupedSchedules = allDays.reduce(
     (acc, day) => {
       acc[day] = schedule.filter((item) => item.dayNumber === day) || [];
       return acc;
     },
-    // eslint-disable-next-line prettier/prettier
     {} as Record<number, (LocalSchedule | LocalServiceSchedule)[]>
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <>
-          <View className="flex items-center mt-4 border-b">
-            <Text className="text-3xl font-bold mt-4 mb-4">HORARIOS</Text>
+          <View className="flex items-center border-b">
+            <Text className="text-3xl font-bold mb-4">HORARIOS</Text>
           </View>
           <View>
             {Object.keys(groupedSchedules).map((dayNumber) => {
@@ -67,7 +75,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
               return (
                 <View
                   key={dayNumber}
-                  className="flex flex-row items-center my-3 px-3 py-2"
+                  className="flex flex-row items-center my-3 px-3"
                 >
                   <Text className="text-lg font-bold w-1/4 text-center">
                     {

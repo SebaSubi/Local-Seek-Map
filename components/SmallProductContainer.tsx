@@ -21,7 +21,7 @@ export default function ProductContainer({
           brand: product.brand,
           image: product.imgURL ?? "https://via.placeholder.com/150",
           categoryId: product.productTypeId,
-          size: product.mesurement,
+          size: product.measurement,
         },
       }}
       asChild

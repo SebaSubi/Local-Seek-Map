@@ -30,6 +30,7 @@ import { Stack } from "expo-router";
 import { getLocalTypes } from "../libs/localType";
 import { getServiceTypes } from "../libs/serviceType";
 import { getProductTypes } from "../libs/productType";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const defaultImage = "https://via.placeholder.com/50";
 
@@ -38,7 +39,7 @@ const SearchComponent = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
 
-  const [productCategories, setProductCategories] = useState<ProductType[]>([]);
+  // const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
     // eslint-disable-next-line prettier/prettier
@@ -47,7 +48,7 @@ const SearchComponent = () => {
 
   useEffect(() => {
     fetchData();
-    fetchCategories();
+    // fetchCategories();
   }, []);
 
   const fetchData = async () => {
@@ -70,15 +71,15 @@ const SearchComponent = () => {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const data = await getProductTypes();
-      setProductCategories(data);
-    } catch (err) {
-      // console.error("Error fetching categories", err);
-      // Alert.alert("Error", "Fallo al cargar las categorías");
-    }
-  };
+  // const fetchCategories = async () => {
+  //   try {
+  //     const data = await getProductTypes();
+  //     setProductCategories(data);
+  //   } catch (err) {
+  //     // console.error("Error fetching categories", err);
+  //     // Alert.alert("Error", "Fallo al cargar las categorías");
+  //   }
+  // };
 
   return (
     <>
@@ -87,7 +88,7 @@ const SearchComponent = () => {
           headerShown: false,
         }}
       />
-      <View className="flex flex-col items-center justify-center bg-[#1a253d] pt-[23%] z-10 ">
+      <SafeAreaView className="flex flex-col items-center justify-center bg-[#1a253d] pt-6">
         {/* <BasicSearchButton /> */}
         <View className="flex flex-row items-center justify-center overflow-hidden ">
           <BasicButton
@@ -115,7 +116,7 @@ const SearchComponent = () => {
         {loading ? (
           <Text style={styles.loadingText}>Cargando datos...</Text>
         ) : (
-          <View className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
+          <SafeAreaView className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
             <View
               className="w-full h-full pb-14"
               style={{ display: viewType === "locals" ? "flex" : "none" }}
@@ -160,9 +161,9 @@ const SearchComponent = () => {
                 refreshing={loading}
               />
             </View>
-          </View>
+          </SafeAreaView>
         )}
-      </View>
+      </SafeAreaView>
     </>
   );
 };

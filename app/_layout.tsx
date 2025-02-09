@@ -2,6 +2,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Header from "../components/Header";
 import { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function AuthBasedLayout() {
   const { authState } = useAuth();

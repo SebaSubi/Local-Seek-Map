@@ -1,4 +1,4 @@
-import { Platform, Text, View } from "react-native";
+import { Platform, Text, View, Linking } from "react-native";
 import React from "react";
 import {
   InstagramIcon,
@@ -71,10 +71,51 @@ export default function LocalInformation({
               </View>
             </View>
           </Link>
-          {instagram ? (
+          {/* {instagram ? (
             <Link
               href={`instagram://user?username=${instagram}`}
               className="mt-3"
+            >
+              <View className="flex w-full items-start">
+                <View className="flex flex-row items center">
+                  <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
+                    Instagram
+                  </Text>
+                  <View className="ml-1 mt-4">
+                    <ArrowUpRightBox size={10} />
+                  </View>
+                </View>
+                <View className="flex flex-row items-center">
+                  <View className="ml-2">
+                    <InstagramIcon size={20} />
+                  </View>
+                  <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
+                    {instagram}
+                  </Text>
+                </View>
+              </View>
+            </Link>
+          ) : null} */}
+          {instagram ? (
+            <Link
+              href={`https://www.instagram.com/${instagram}`}
+              onPress={() => {
+                const instagramURL = `instagram://user?username=${instagram}`;
+                const webURL = `https://www.instagram.com/${instagram}`;
+
+                // Verifica si la app de Instagram está instalada
+                Linking.canOpenURL(instagramURL)
+                  .then((supported) => {
+                    if (supported) {
+                      Linking.openURL(instagramURL); // Abre la app si está instalada
+                    } else {
+                      Linking.openURL(webURL); // Si no, abre en el navegador
+                    }
+                  })
+                  .catch((err) =>
+                    console.error("Error al abrir Instagram:", err)
+                  );
+              }}
             >
               <View className="flex w-full items-start">
                 <View className="flex flex-row items center">
