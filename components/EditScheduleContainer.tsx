@@ -1,7 +1,6 @@
 import { Link } from "expo-router";
-import { LocalProduct, LocalSchedule, Product } from "../schema/GeneralSchema";
+import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 import {
-  StyleSheet,
   Text,
   View,
   PanResponder,
@@ -9,16 +8,22 @@ import {
   Animated,
 } from "react-native";
 import { bringDayName } from "../libs/libs";
+import { useLocalScheduleIdStore } from "../libs/scheduleZustang";
+import { useLocalServiceIdStore } from "../libs/localServiceZustang";
 
 export default function EditScheduleContainer({
   schedule,
   href,
   onDelete,
 }: {
-  schedule: LocalSchedule;
+  schedule: LocalSchedule | LocalServiceSchedule;
   href: string;
   onDelete: (id: string) => void;
 }) {
+  const setServiceSchedule = useLocalServiceIdStore(
+    (state) => state.setServiceSchedule
+  );
+
   const translateX = new Animated.Value(0);
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -49,6 +54,7 @@ export default function EditScheduleContainer({
   });
 
   function handleUpdate() {
+    setServiceSchedule(schedule);
     // console.log("yes"); For some reason if i dont do this it calls the delete function
   }
 

@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import { Service } from "../schema/GeneralSchema";
+import { LocalServiceSchedule, Service } from "../schema/GeneralSchema";
 
 interface ServiceSchedule {
   service: Service;
   localCoordinates: string;
-  serviceScheduleId: string;
+  serviceSchedule: LocalServiceSchedule;
   setService: (service: Service) => void;
-  setServiceScheduleId: (scheduleId: string) => void;
+  setServiceSchedule: (schedule: LocalServiceSchedule) => void;
   setLocalCoordinates: (localCoordinates: string) => void;
 }
 
@@ -28,15 +28,21 @@ export const useLocalServiceIdStore = create<ServiceSchedule>((set) => ({
     dateTo: null,
     schedule: null,
   },
-  serviceScheduleId: "",
+  serviceSchedule: {
+    dateFrom: new Date(),
+    dayNumber: undefined,
+    FirstShiftStart: "",
+    FirstShiftFinish: "",
+    localService: undefined,
+  },
   localCoordinates: "0, 0",
 
   setService: (service: Service) => {
     set({ service });
   },
 
-  setServiceScheduleId: (serviceScheduleId: string) => {
-    set({ serviceScheduleId });
+  setServiceSchedule: (serviceSchedule: LocalServiceSchedule) => {
+    set({ serviceSchedule });
   },
 
   setLocalCoordinates: (localCoordinates: string) => {

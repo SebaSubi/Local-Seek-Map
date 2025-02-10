@@ -19,12 +19,17 @@ const options: Intl.DateTimeFormatOptions = {
 interface TimeSelectProps {
   logo?: any;
   text?: string;
+  defaultTime?: Date;
 }
 
-const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
-  const [time, setTime] = useState(specificDate);
+const TimeSelect = forwardRef(({ text, defaultTime }: TimeSelectProps, ref) => {
+  const [time, setTime] = useState(
+    defaultTime && defaultTime !== specificDate ? defaultTime : specificDate
+  );
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const [textVisibility, setTextVisibility] = useState(false);
+  const [textVisibility, setTextVisibility] = useState(
+    defaultTime && defaultTime !== specificDate ? true : false
+  );
 
   const handleTimeChange = (e: any, selectedDate?: Date) => {
     if (selectedDate) {
@@ -56,16 +61,10 @@ const TimeSelect = forwardRef((props: TimeSelectProps, ref) => {
     setPickerVisible(false);
   };
 
-  console.log(time.toTimeString().toString());
-  console.log(specificDate.toTimeString().toString());
-  console.log(
-    time.toTimeString().toString() === specificDate.toTimeString().toString()
-  );
-
   return (
     <TouchableWithoutFeedback onPress={handleOutsideClick}>
       <View className={`w-3/4 mt-4`}>
-        <Text className="ml-2">{props.text}</Text>
+        <Text className="ml-2">{text}</Text>
 
         <Pressable
           className="flex flex-row items-center justify-between w-full bg-defaultGray h-12 rounded-2xl text-center"

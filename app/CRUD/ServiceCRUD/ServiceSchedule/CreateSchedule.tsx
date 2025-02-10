@@ -1,4 +1,4 @@
-import { Modal, ScrollView, Text, View } from "react-native";
+import { Alert, Modal, ScrollView, Text, View } from "react-native";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../../../components/Header";
@@ -20,14 +20,10 @@ import GoBackButton from "../../../../components/GoBackButton";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
-  const [schedules, setSchedules] = useState<LocalServiceSchedule[]>([]);
+  const [scheduleId, setScheduleId] = useState<string>();
   const [error, setError] = useState("");
 
-  const yes = useLocalServiceIdStore((state) => state.localServiceId);
-  const setScheduleId = useLocalServiceIdStore(
-    (state) => state.setServiceScheduleId
-  );
-  const scheduleId = useLocalServiceIdStore((state) => state.serviceScheduleId);
+  const service = useLocalServiceIdStore((state) => state.service);
 
   const dayNumberRef = useRef<any>(null);
 
@@ -52,7 +48,7 @@ export default function CreateProduct() {
   // }, []);
 
   const handleCreate = async () => {
-    const schedules = await getScheduleByLocalServiceId(localServiceId);
+    const schedules = await getScheduleByLocalServiceId(service.id!);
 
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
     let localWarning = false;
@@ -148,7 +144,7 @@ export default function CreateProduct() {
     );
 
     const newSchedule: LocalServiceSchedule = {
-      localServiceId,
+      localServiceId: service.id!,
       dayNumber,
       FirstShiftStart,
       FirstShiftFinish: FirstShiftFinish(),
@@ -158,7 +154,6 @@ export default function CreateProduct() {
       ThirdShiftFinish,
       dateFrom: new Date(),
     };
-    console.log(newSchedule);
 
     return newSchedule;
   }
@@ -170,8 +165,12 @@ export default function CreateProduct() {
 
   async function handleUpdate() {
     const newSchedule = createNewSchedule();
-    updateServiceSchedule(scheduleId, newSchedule);
-    setWarning(false);
+    if (scheduleId) {
+      updateServiceSchedule(scheduleId, newSchedule);
+      setWarning(false);
+    } else {
+      Alert.alert("Error", "Error actualizando horario");
+    }
   }
 
   return (

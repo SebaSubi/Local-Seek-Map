@@ -49,6 +49,7 @@ export default function DeleteServiceComponent({
 
   function handleUpdate() {
     setService(service);
+
     // console.log("yes"); For some reason if i dont do this it calls the delete function
   }
   return (

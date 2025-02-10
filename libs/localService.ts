@@ -328,10 +328,8 @@ export async function updateServiceSchedule(
     });
     if (!response.ok) {
       console.log("Error updating  service schedule");
-      // console.log(response);
     } else {
       const json = response.json();
-      Alert.alert("Éxito", "El horario fue actualizado con éxito");
       return json;
     }
   } catch (error) {

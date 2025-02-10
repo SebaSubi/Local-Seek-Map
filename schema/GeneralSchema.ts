@@ -134,10 +134,10 @@ export interface LocalServiceSchedule {
   dayNumber?: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
-  SecondShiftStart: string | null;
-  SecondShiftFinish: string | null;
-  ThirdShiftStart: string | null;
-  ThirdShiftFinish: string | null;
+  SecondShiftStart?: string | null;
+  SecondShiftFinish?: string | null;
+  ThirdShiftStart?: string | null;
+  ThirdShiftFinish?: string | null;
   localService?: Service;
 }
 

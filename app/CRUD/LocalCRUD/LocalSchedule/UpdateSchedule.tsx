@@ -1,6 +1,5 @@
 import { Alert, Modal, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
-import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
@@ -8,11 +7,6 @@ import {
   LocalSchedule,
   LocalServiceSchedule,
 } from "../../../../schema/GeneralSchema";
-import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
-import {
-  getServiceScheduleByScheduleId,
-  updateServiceSchedule,
-} from "../../../../libs/localService";
 import TimeSelect from "../../../../components/TimeSelect";
 import { specificDate } from "../../../../constants/consts";
 import { useLocalScheduleIdStore } from "../../../../libs/scheduleZustang";
