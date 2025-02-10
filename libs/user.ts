@@ -20,7 +20,7 @@ export async function EditUser(user: {
   email: string;
   password: string;
 }) {
-  return await axios.put(`${API_URL}/update-user`, user);
+  return await axios.patch(`${API_URL}/update-user`, user); // I changed all PUT to PATCH -Lucas  update: it works lmao
 }
 
 export type UserLocal = {

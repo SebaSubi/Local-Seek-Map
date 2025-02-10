@@ -8,7 +8,6 @@ import {
 import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
 import { useEffect, useState } from "react";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import { Local } from "../../../../schema/GeneralSchema";
 import { getLocals } from "../../../../libs/local";
 import React from "react";
@@ -16,8 +15,7 @@ import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
 
 export default function LocalSchedule() {
-  const { id, name, localCoordinates, image, localType } =
-    useLocalSearchParams();
+  const { name } = useLocalSearchParams();
   return (
     <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
       <Stack.Screen

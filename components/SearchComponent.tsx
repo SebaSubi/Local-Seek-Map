@@ -30,6 +30,7 @@ import { Stack } from "expo-router";
 import { getLocalTypes } from "../libs/localType";
 import { getServiceTypes } from "../libs/serviceType";
 import { getProductTypes } from "../libs/productType";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const defaultImage = "https://via.placeholder.com/50";
 
@@ -37,8 +38,6 @@ const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-
-  const [productCategories, setProductCategories] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
     // eslint-disable-next-line prettier/prettier
@@ -47,7 +46,6 @@ const SearchComponent = () => {
 
   useEffect(() => {
     fetchData();
-    fetchCategories();
   }, []);
 
   const fetchData = async () => {
@@ -69,17 +67,6 @@ const SearchComponent = () => {
       setLoading(false);
     }
   };
-
-  const fetchCategories = async () => {
-    try {
-      const data = await getProductTypes();
-      setProductCategories(data);
-    } catch (err) {
-      // console.error("Error fetching categories", err);
-      // Alert.alert("Error", "Fallo al cargar las categorías");
-    }
-  };
-
   return (
     <>
       <Stack.Screen
@@ -87,7 +74,7 @@ const SearchComponent = () => {
           headerShown: false,
         }}
       />
-      <View className="flex flex-col items-center justify-center bg-[#1a253d] pt-[23%] z-10 ">
+      <SafeAreaView className="flex flex-col items-center justify-center bg-[#1a253d] pt-6">
         {/* <BasicSearchButton /> */}
         <View className="flex flex-row items-center justify-center overflow-hidden ">
           <BasicButton
@@ -115,9 +102,9 @@ const SearchComponent = () => {
         {loading ? (
           <Text style={styles.loadingText}>Cargando datos...</Text>
         ) : (
-          <View className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
+          <SafeAreaView className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
             <View
-              className="w-full h-full"
+              className="w-full h-full pb-14"
               style={{ display: viewType === "locals" ? "flex" : "none" }}
             >
               <FlatList
@@ -125,13 +112,13 @@ const SearchComponent = () => {
                 horizontal={false}
                 numColumns={2}
                 renderItem={({ item }) => <LocalContainer local={item} />}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}
                 refreshing={loading}
               />
             </View>
             <View
-              className="w-full h-full "
+              className="w-full h-full pb-14"
               style={{ display: viewType === "products" ? "flex" : "none" }}
             >
               <FlatList
@@ -139,16 +126,7 @@ const SearchComponent = () => {
                 horizontal={false}
                 numColumns={2}
                 renderItem={({ item }) => {
-                  const category = productCategories.find(
-                    // eslint-disable-next-line prettier/prettier
-                    (category) => category.id === item.productTypeId
-                  );
-                  return (
-                    <ProductContainer
-                      product={item}
-                      productCategory={category ? category.name : ""}
-                    />
-                  );
+                  return <ProductContainer product={item} />;
                 }}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchData()}
@@ -156,7 +134,7 @@ const SearchComponent = () => {
               />
             </View>
             <View
-              className="w-full h-full"
+              className="w-full h-full pb-14"
               style={{ display: viewType === "services" ? "flex" : "none" }}
             >
               <FlatList
@@ -169,9 +147,9 @@ const SearchComponent = () => {
                 refreshing={loading}
               />
             </View>
-          </View>
+          </SafeAreaView>
         )}
-      </View>
+      </SafeAreaView>
     </>
   );
 };

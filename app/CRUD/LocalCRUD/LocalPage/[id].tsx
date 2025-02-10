@@ -1,25 +1,32 @@
-import { View, Text, Pressable, FlatList } from "react-native";
+import React from "react";
+import { View, FlatList } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Local,
-  LocalProduct,
+  LocalProductCategory,
   LocalSchedule,
-  Product,
-  ServiceType,
+  ProductType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
 import { getLocalById, getServicesOfLocal } from "../../../../libs/local";
-import Header from "../../../../components/Header";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
 import ProductContainer from "../../../../components/ProductContainer";
 import ServiceContainer from "../../../../components/ServiceContainer";
-import { getServiceTypes } from "../../../../libs/serviceType";
-import { getProductsOfLocal } from "../../../../libs/localProducts";
+import {
+  getLocalProductCategoriesOfLocal,
+  getProductsOfLocalByName,
+  getProductsOfLocalByNameAndCat,
+} from "../../../../libs/localProducts";
+import BasicSearchButton from "../../../../components/BasicSearchBar";
+import { getProductTypes } from "../../../../libs/productType";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type Options = "Info" | "Schedule" | "Products" | "Services";
+type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
+// type Categories = Record<string, string[]>;
+// const backEndCategories: Categories = {};
 
 export default function LocalPage() {
   const { id, name, localCoordinates, image, localType } =
@@ -28,10 +35,14 @@ export default function LocalPage() {
   const [schedules, setSchedules] = useState<LocalSchedule[]>([]);
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
   const [localProducts, setLocalProducts] = useState<any>([]);
+  const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState<
+    ProductType[] | LocalProductCategory[]
+  >([]);
+  const [subCategories, setSubCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [loading, setLoading] = useState(true);
-
-  // console.log(localType);
-  // console.log(selectedOption);
 
   async function fetchAndSetLocals() {
     const searchLocal = await getLocalById(id as string);
@@ -40,26 +51,88 @@ export default function LocalPage() {
 
   async function fetchAndSetProducts() {
     setLoading(true);
-    if (localType !== "Servicio") {
-      const localProducts = await getProductsOfLocal(id as string);
+    if (selectedCategory !== "") {
+      const localProducts = await getProductsOfLocalByNameAndCat(
+        id as string,
+        search,
+        // eslint-disable-next-line prettier/prettier
+        selectedCategory
+      );
       setLocalProducts(localProducts);
       setLoading(false);
     } else {
-      const localServices = await getServicesOfLocal(id as string);
-      setLocalProducts(localServices);
+      const localProducts = await getProductsOfLocalByName(
+        id as string,
+        // eslint-disable-next-line prettier/prettier
+        search
+      );
+      setLocalProducts(localProducts);
       setLoading(false);
     }
   }
 
+  const handleCategorySelection = (cat: string) => {
+    setSelectedCategory(cat);
+  };
+
+  async function fetchAndSetCategories() {
+    if (localType !== "Restaurante") {
+      const categories = await getProductTypes(); // This needs to change to types of the local products
+      setCategories(categories);
+    } else {
+      const categories = await getLocalProductCategoriesOfLocal(id as string);
+      setCategories(categories);
+    }
+  }
+
+  // console.log(id);
+
+  async function fetchAndSetServices() {
+    const localServices = await getServicesOfLocal(id as string);
+    setLocalProducts(localServices);
+    setLoading(false);
+  }
+
   useEffect(() => {
     const fetchAll = async () => {
-      await fetchAndSetLocals();
-      await fetchAndSetProducts();
       const schedules = await getSchedulesByLocalId(id as string);
       setSchedules(schedules);
     };
     fetchAll();
+    fetchAndSetCategories();
+    fetchAndSetLocals();
   }, [id]);
+
+  // async function getAndSetSubCategories() {
+  //   if (backEndCategories[selectedCategory]) {
+  //     setSubCategories(backEndCategories[selectedCategory]);
+  //   } else {
+  //     console.log(selectedCategory);
+  //     const subCategories = await getLocalProductSubCategoriesOfLocal(
+  //       id as string,
+  //       selectedCategory
+  //     );
+
+  //     backEndCategories[selectedCategory] = subCategories;
+  //     setSubCategories(subCategories);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   if (selectedCategory) {
+  //     getAndSetSubCategories();
+  //   }
+  // }, [selectedCategory]);
+
+  useEffect(() => {
+    if (localType !== "Servicio") {
+      fetchAndSetProducts();
+    } else {
+      fetchAndSetServices();
+    }
+  }, [search, selectedCategory]);
+
+  // console.log(subCategories);
 
   return (
     <>
@@ -68,7 +141,7 @@ export default function LocalPage() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-col items-start h-full justify-start bg-[#1a253d]">
+      <SafeAreaView className="flex flex-col items-start h-full justify-start bg-[#1a253d] pt-6">
         <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden">
           <View className="flex items-center w-full h-full">
             {local &&
@@ -88,43 +161,91 @@ export default function LocalPage() {
                     facebook={local.facebook}
                     location={local.address}
                     coordinates={local.location}
-                    webpage={local.webpage} // traete esto del localservice
+                    webpage={local.webpage}
                   />
                 ) : null
-              ) : localType !== "Servicio" ? (
-                localProducts.length > 0 && (
-                  <View className="mt-12 w-full h-full">
+              ) : (
+                <View className=" w-full h-full">
+                  <BasicSearchButton
+                    placeholder="Buscar"
+                    background="#f8f8f8"
+                    selectedColor="#1a253d"
+                    selectedCatTextStyle="text-white"
+                    onSearch={setSearch}
+                    categories={categories}
+                    selectedCategory={handleCategorySelection}
+                    style="mt-14"
+                  />
+                  {/* {subCategories && selectedCategory !== "" ? (
+                    <View>
+                      <ScrollView className="mb-3 w-full" horizontal={true}>
+                        {subCategories.map((category, index) => (
+                          <BasicButton
+                            text={category}
+                            key={index}
+                            style="ml-2"
+                            background={
+                              selectedSubCategory === category
+                                ? "#1a253d"
+                                : "#ffffff"
+                            }
+                            onPress={() => {
+                              selectedSubCategory === category
+                                ? setSelectedSubCategory("")
+                                : setSelectedSubCategory(category);
+                            }}
+                          />
+                        ))}
+                      </ScrollView>
+                    </View>
+                  ) : null} */}
+                  {localType === "Restaurante" ? (
+                    localProducts.length > 0 && (
+                      <FlatList
+                        data={localProducts}
+                        horizontal={false}
+                        numColumns={2}
+                        renderItem={({ item }) => (
+                          <ProductContainer
+                            menuItem={true}
+                            product={item.product}
+                          />
+                        )}
+                        keyExtractor={(item) => item.product.id!.toString()}
+                        onRefresh={() => fetchAndSetProducts()}
+                        refreshing={loading}
+                      />
+                    )
+                  ) : localType === "Servicio" ? (
                     <FlatList
                       data={localProducts}
                       horizontal={false}
                       numColumns={2}
                       renderItem={({ item }) => (
-                        <ProductContainer
-                          product={item.product}
-                          productCategory={
-                            item.product.type.name ? item.product.type.name : ""
-                          }
-                        />
+                        <ServiceContainer service={item} />
                       )}
-                      keyExtractor={(item) => item.product.id!.toString()}
+                      keyExtractor={(item) => item.id!.toString()}
                       onRefresh={() => fetchAndSetProducts()}
                       refreshing={loading}
                     />
-                  </View>
-                )
-              ) : (
-                <View className="mt-12 w-full h-full">
-                  <FlatList
-                    data={localProducts}
-                    horizontal={false}
-                    numColumns={2}
-                    renderItem={({ item }) => (
-                      <ServiceContainer service={item} />
-                    )}
-                    keyExtractor={(item) => item.id!.toString()}
-                    onRefresh={() => fetchAndSetProducts()}
-                    refreshing={loading}
-                  />
+                  ) : (
+                    localProducts.length > 0 && (
+                      <FlatList
+                        data={localProducts}
+                        horizontal={false}
+                        numColumns={2}
+                        renderItem={({ item }) => (
+                          <ProductContainer
+                            menuItem={true}
+                            product={item.product}
+                          />
+                        )}
+                        keyExtractor={(item) => item.product.id!.toString()}
+                        onRefresh={() => fetchAndSetProducts()}
+                        refreshing={loading}
+                      />
+                    )
+                  )}
                 </View>
               ))}
           </View>
@@ -138,26 +259,36 @@ export default function LocalPage() {
           />
           <BasicButton
             background={selectedOption === "Schedule" ? "white" : "#7e8592"}
-            style="w-[28%] mb-2 "
+            style="w-[28%] mb-2"
             text="Horarios"
             onPress={() => setSelectedOption("Schedule")}
           />
           <BasicButton
             background={
-              selectedOption === "Products" || selectedOption === "Services"
+              selectedOption === "Products" ||
+              selectedOption === "Services" ||
+              selectedOption === "Menu"
                 ? "white"
                 : "#7e8592"
             }
-            style="w-[28%] mb-2 "
-            text={localType !== "Servicio" ? "Productos" : "Servicios"}
+            style="w-[28%] mb-2"
+            text={
+              localType === "Servicio"
+                ? "Servicios"
+                : localType === "Restaurante"
+                  ? "Menu"
+                  : "Productos"
+            }
             onPress={() =>
-              localType !== "Servicio"
-                ? setSelectedOption("Products")
-                : setSelectedOption("Services")
+              localType === "Servicio"
+                ? setSelectedOption("Services")
+                : localType === "Restaurante"
+                  ? setSelectedOption("Menu")
+                  : setSelectedOption("Products")
             }
           />
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }

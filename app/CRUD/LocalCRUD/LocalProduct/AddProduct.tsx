@@ -29,7 +29,6 @@ import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import {
   createLocalProduct,
@@ -37,6 +36,7 @@ import {
   getProductOfLocal,
   reactivateLocalProduct,
 } from "../../../../libs/localProducts";
+import { useLocalIdStore } from "../../../../libs/localZustang";
 
 export default function AddProduct() {
   const priceRef = useRef<any>(null);
@@ -58,10 +58,10 @@ export default function AddProduct() {
   const [productId, setProductId] = useState("");
   const [localPrducts, setLocalProducts] = useState<LocalProduct[]>([]);
 
-  const localId = useLocalIdStore((state) => state.localId);
+  const local = useLocalIdStore((state) => state.local);
 
   async function fetchAndSetLocalProducts() {
-    const localProd = await getProductIdsOfLocal(localId);
+    const localProd = await getProductIdsOfLocal(local.id!);
     setLocalProducts(localProd);
   }
 
@@ -75,7 +75,7 @@ export default function AddProduct() {
     let price = priceRef.current?.getValue();
     const localProductCategoryId = selectedProductCategory?.id;
     const localProductSubCategoryId = selectedProductSubCategory?.id;
-    const localProductDecription = subDescriptionRef.current?.getValue();
+    const localProductDescription = subDescriptionRef.current?.getValue();
 
     for (const lp of localPrducts) {
       if (lp.productId === productId && lp.dateTo !== null) {
@@ -104,10 +104,10 @@ export default function AddProduct() {
       }
 
       const newProduct: LocalProduct = {
-        localId,
+        localId: local.id,
         productId,
         price,
-        localProductDecription,
+        localProductDescription,
         localProductCategoryId,
         localProductSubCategoryId,
         dateFrom: new Date(),

@@ -72,7 +72,7 @@ export default function EditProductContainer({
           </TouchableOpacity>
         </Link>
         <View
-          className="flex items-center justify-center w-72 h-20 bg-[#f6f6f6] mt-2 "
+          className="flex items-center justify-center w-72 h-20 bg-defaultGray mt-2 "
           {...panResponder.panHandlers}
         >
           <Text>{product.product!.name}</Text>

@@ -24,11 +24,11 @@ import {
 } from "../../../libs/serviceType";
 import { createService } from "../../../libs/localService";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import * as ImagePicker from "expo-image-picker";
 import BigTextInput from "../../../components/BigTextInput";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import BasicSelectable from "../../../components/BasicSelectable";
+import { useLocalIdStore } from "../../../libs/localZustang";
 
 export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -43,12 +43,29 @@ export default function CreateService() {
   const [createdService, setCreatedService] = useState<Service | null>(null);
   const [goSchedule, setGoSchedule] = useState(false);
 
-  const localId = useLocalIdStore((state) => state.localId);
+  const local = useLocalIdStore((state) => state.local);
   const router = useRouter();
 
-  const nameRef = useRef<any>(null);
-  const descriptionRef = useRef<any>(null);
-  const URLRef = useRef<any>(null);
+  const nameRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const descriptionRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const URLRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const addressRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const locationRef = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
   const typeRef = useRef<any>(null);
 
   async function fetchServiceTypes() {
@@ -84,13 +101,24 @@ export default function CreateService() {
   const handleSubmit = async (schedule: boolean) => {
     const name = nameRef.current?.getValue();
     const description = descriptionRef.current?.getValue();
-    const reservationURL = URLRef.current.getValue();
+    const reservationURL = URLRef.current?.getValue();
     const serviceTypeId = selectedType.id!;
+    const location = locationRef.current?.getValue();
+    const address = addressRef.current?.getValue();
 
-    if (!name || !description || !reservationURL || serviceTypeId === "0000") {
+    if (
+      !name ||
+      !description ||
+      !reservationURL ||
+      serviceTypeId === "0000" ||
+      !location ||
+      !address
+    ) {
       Alert.alert("Por favor rellenar los campos obligatorios");
       return;
     }
+
+    console.log(local.id);
 
     try {
       // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
@@ -101,9 +129,11 @@ export default function CreateService() {
 
       const newService: Service = {
         name,
-        localId,
+        localId: local.id!,
         description,
         reservationURL,
+        location,
+        address,
         // imgURL: uploadedImageUrl,
         serviceTypeId,
         dateFrom: new Date(),
@@ -191,6 +221,55 @@ export default function CreateService() {
             ref={URLRef}
           />
 
+          <BasicTextInput
+            inputType="text"
+            value=""
+            placeholder="Ej: 25 de Mayo 99, Libertador San Martin, Entre Rios"
+            textStyle="mt-4"
+            title="Dirección"
+            ref={addressRef}
+          />
+
+          <Pressable
+            style={({ pressed }) => [
+              { backgroundColor: pressed ? "#f8f8f8" : "white" },
+              { marginTop: 6 },
+              { padding: 6 },
+              { borderRadius: 16 },
+            ]}
+            onPress={() => {
+              addressRef.current?.setValue(local.address!);
+            }}
+          >
+            <Text className="text-defaultBlue text-sm font-light">
+              Utilizar la misma dirección de Local?
+            </Text>
+          </Pressable>
+
+          <BasicTextInput
+            inputType="text"
+            value=""
+            placeholder="Ej: -1.000, -2.000"
+            textStyle="mt-4"
+            title="Coordenadas"
+            ref={locationRef}
+          />
+
+          <Pressable
+            style={({ pressed }) => [
+              { backgroundColor: pressed ? "#f8f8f8" : "white" },
+              { marginTop: 6 },
+              { padding: 6 },
+              { borderRadius: 16 },
+            ]}
+            onPress={() => {
+              locationRef.current?.setValue(local.location!);
+            }}
+          >
+            <Text className="text-defaultBlue text-sm font-light">
+              Utilizar las mismas coordenadas del local?
+            </Text>
+          </Pressable>
           <Modal
             animationType="slide"
             transparent={true}

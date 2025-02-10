@@ -6,6 +6,7 @@ import { Redirect } from "expo-router";
 import { z } from "zod";
 import { checkEmail, checkUsername } from "../libs/user";
 import { colors } from "../constants/colors"; // Archivo para colores personalizados
+import { StatusBar } from "expo-status-bar";
 
 interface RegProps {
   setReg: Dispatch<SetStateAction<boolean>>;
@@ -49,7 +50,7 @@ const Register = ({ setReg }: RegProps) => {
       setPasswordError("");
       setEmailError("");
       setUsernameError(
-        "El nombre de usuario debe tener al menos 2 caracteres.",
+        "El nombre de usuario debe tener al menos 2 caracteres."
       );
     } else if (password.current.length < 8) {
       setPasswordError("La contraseña debe tener al menos 8 caracteres.");
@@ -57,7 +58,7 @@ const Register = ({ setReg }: RegProps) => {
       setUsernameError("");
     } else if (secondPassword.current.length < 8) {
       setPasswordError(
-        "La contraseña de confirmación debe tener al menos 8 caracteres.",
+        "La contraseña de confirmación debe tener al menos 8 caracteres."
       );
       setEmailError("");
       setUsernameError("");
@@ -85,6 +86,8 @@ const Register = ({ setReg }: RegProps) => {
       className="flex-1 py-20 justify-start bg-gray-100 px-6"
       style={{ backgroundColor: colors.primary.white }}
     >
+      <StatusBar style="auto" />
+
       <Text className="text-2xl font-bold text-gray-800 mb-6">Registro</Text>
 
       {/* Campo de Email */}

@@ -38,7 +38,7 @@ export interface LocalProduct {
   productId?: string;
   price?: number | null;
   imgURL?: string | null;
-  localProductDecription?: string | null;
+  localProductDescription?: string | null;
   localProductCategory?: LocalProductCategory | null;
   localProductCategoryId?: string | null;
   localProductSubCategory?: LocalProductSubCategory | null;
@@ -113,6 +113,9 @@ export interface Service {
   local?: Local | null;
   localId: string;
   name: string;
+  location: string;
+  address: string;
+  reservationNumber?: string;
   serviceType?: ServiceType | null;
   serviceTypeId: string;
   description: string;
@@ -131,10 +134,10 @@ export interface LocalServiceSchedule {
   dayNumber?: number;
   FirstShiftStart: string;
   FirstShiftFinish: string;
-  SecondShiftStart: string | null;
-  SecondShiftFinish: string | null;
-  ThirdShiftStart: string | null;
-  ThirdShiftFinish: string | null;
+  SecondShiftStart?: string | null;
+  SecondShiftFinish?: string | null;
+  ThirdShiftStart?: string | null;
+  ThirdShiftFinish?: string | null;
   localService?: Service;
 }
 

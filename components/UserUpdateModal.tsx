@@ -1,13 +1,14 @@
 import { View, Text, Modal, Pressable } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { colors } from "../constants/colors";
-import { CloseCircle, Eye, EyeOff, Save } from "./Logos";
+import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "./Logos";
 import BasicButton from "./BasicButton";
 import BasicTextInput from "./BasicTextInput";
 import { checkEmail, checkUsername, EditUser } from "../libs/user";
 import { validateEmail } from "./Register";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AuthUser, useAuth } from "../app/context/AuthContext";
+import { AuthUser } from "../app/context/AuthContext";
+import UserDeleteModal from "./UserDeleteModal";
 
 const UserUpdateModal = ({
   isVisible,
@@ -20,15 +21,29 @@ const UserUpdateModal = ({
   user: AuthUser;
   onLogin: ((email: string, password: string) => Promise<any>) | undefined;
 }) => {
-  const email = useRef<{ getValue: () => string }>(null);
-  const username = useRef<{ getValue: () => string }>(null);
-  const password = useRef<{ getValue: () => string }>(null);
-  const secondPassword = useRef<{ getValue: () => string }>(null);
+  const email = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const username = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const password = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
+  const secondPassword = useRef<{
+    getValue: () => string;
+    setValue: (value: string) => void;
+  }>(null);
 
   const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [seePassword, setSeePassword] = useState(true);
+
+  const [seeDeleteModal, setSeeDeleteModal] = useState(false);
 
   return (
     <Modal
@@ -95,7 +110,7 @@ const UserUpdateModal = ({
                 ref={username}
               />
             </View>
-            <View className="w-full flex items-start ml-4 mt-2 h-4">
+            <View className="w-10/12 flex items-start ml-4 mt-2 h-8 justify-end">
               {passwordError === "" ? null : (
                 <Text className="text-red-800">{passwordError}</Text>
               )}
@@ -131,21 +146,25 @@ const UserUpdateModal = ({
                 className="mt-11 ml-5"
                 onPress={() => {
                   setSeePassword(!seePassword);
-                  setVisible(false);
                 }}
               >
                 {seePassword ? <EyeOff /> : <Eye />}
               </Pressable>
             </View>
           </View>
-          <View className={`justify-end ${usernameError ? "mt-8" : "mt-12"}`}>
+          <View className={`justify-end ${usernameError ? "mt-2" : "mt-6"}`}>
             <BasicButton
               text="Guardar"
               background={colors.primary.blue}
               textStyle="text-white"
-              logo={<Save color={colors.primary.blue} />}
-              onPress={() =>
-                handleUserChange(
+              logo={
+                <View className="flex pl-2">
+                  <Save color="#fff" />
+                </View>
+              }
+              style="w-28 justify-evenly"
+              onPress={async () => {
+                const userEditPetition = await handleUserChange(
                   email,
                   username,
                   password,
@@ -156,8 +175,25 @@ const UserUpdateModal = ({
                   user,
                   // eslint-disable-next-line prettier/prettier
                   onLogin
-                )
-              }
+                );
+                userEditPetition === 200 ? setVisible(false) : "";
+              }}
+            />
+            <Pressable
+              className="flex justify-center flex-row items-center mt-4"
+              onPress={() => {
+                setSeeDeleteModal(true);
+              }}
+            >
+              <Text className="text-sm pr-1" style={{ color: "#cc0000" }}>
+                Eliminar Cuenta
+              </Text>
+              <TrashIcon size={20} color="#cc0000" />
+            </Pressable>
+            <UserDeleteModal
+              isVisible={seeDeleteModal}
+              setVisible={setSeeDeleteModal}
+              setBeforeModalVisible={setVisible}
             />
           </View>
         </View>
@@ -251,20 +287,25 @@ const handleUserChange = async (
     setEmailError("");
     setUsernameError("");
   } else {
-    console.log("Making Changes"); //FIXME: we have to put the method than changes the User
     const editUser = async () => {
       if (
         email.current !== null &&
         username.current !== null &&
         password.current !== null
       ) {
-        await EditUser({
+        const petition = await EditUser({
           id: user.id,
           email: email.current.getValue(),
           username: username.current.getValue(),
           password: password.current.getValue(),
         });
-        onLogin!(email.current.getValue(), password.current.getValue());
+        console.log(petition.status);
+        if (petition.status === 200) {
+          onLogin!(email.current.getValue(), password.current.getValue());
+          return 200;
+        } else {
+          setEmailError("Error, intente mas tarde nuevamente");
+        }
         // console.log(
         //   email.current.getValue(),
         //   username.current.getValue(),
@@ -276,7 +317,7 @@ const handleUserChange = async (
         setUsernameError("Los campos no deben estar vacios");
       }
     };
-    editUser();
+    return editUser();
   }
 };
 

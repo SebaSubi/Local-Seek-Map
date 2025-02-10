@@ -2,13 +2,14 @@ import React from "react";
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { Product, ProductType } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
+import { getPlaceholders } from "../libs/libs";
 
 export default function ProductContainer({
   product,
-  productCategory,
+  menuItem,
 }: {
   product: Product;
-  productCategory: string;
+  menuItem?: boolean;
 }) {
   return (
     <Link
@@ -20,14 +21,14 @@ export default function ProductContainer({
           description: product.description,
           brand: product.brand,
           image: product.imgURL ?? "https://via.placeholder.com/150",
-          categoryId: product.productTypeId,
-          size: product.mesurement,
+          categoryName: product.type?.name,
+          size: product.measurement,
         },
       }}
       asChild
     >
       <Pressable
-        className="flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3 overflow-hidden"
+        className={`flex flex-col items-center mt-3 w-[45%] bg-[#f8f8f8] ${menuItem ? "h-64" : "h-72"} rounded-3xl ml-3 overflow-hidden`}
         key={product.id}
       >
         {/* <View className="mt-3">
@@ -36,7 +37,9 @@ export default function ProductContainer({
         <View className="w-[70%] h-[48%] flex items-center justify-center rounded-3xl overflow-hidden mt-6 bg-white">
           <Image
             source={{
-              uri: product.imgURL || "https://via.placeholder.com/150",
+              uri: product.imgURL
+                ? product.imgURL
+                : getPlaceholders(product.type!.name),
             }}
             style={{
               height: "100%",
@@ -47,19 +50,33 @@ export default function ProductContainer({
           />
         </View>
         <View className="w-full mt-1 flex flex-col">
-          <Text className="text-lg font-semibold ml-2">{product.name}</Text>
-          <Text className="text-sm font-thin ml-2">
-            Categoría: {productCategory}
+          <Text
+            className="text-lg font-semibold ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {product.name}
           </Text>
           <Text
-            className={`text-sm ml-2 ${product.brand ? "font-thin" : "font-black"}`}
+            className="text-sm font-thin ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
-            Marca: {product.brand ? product.brand : "No tiene"}
+            Categoría: {product.type?.name}
+          </Text>
+          <Text
+            className={`text-sm ml-2 font-thin`}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {product.brand ? `Marca: ${product.brand}` : "---"}
           </Text>
           <Text className="text-sm font-thin ml-2">
-            Cantidad: {product.mesurement}
+            Cantidad: {product.measurement}
           </Text>
-          <Text className="text-sm font-thin ml-2">Disponible en -{">"}</Text>
+          {menuItem ? null : (
+            <Text className="text-sm font-thin ml-2">Disponible en -{">"}</Text>
+          )}
           {/* <Text style={styles.text}>Precio: ${product.price !== undefined ? product.price.toFixed(2) : 'N/A'}</Text> */}
           {/* <Text style={styles.text}>Descripción: {product.description}</Text> */}
         </View>
@@ -85,3 +102,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+// {
+//               uri: product.imgURL || "https://via.placeholder.com/150",
+//             }

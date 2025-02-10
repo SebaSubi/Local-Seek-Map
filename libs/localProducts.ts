@@ -20,17 +20,35 @@ export async function getLocalsOfProduct(id: string) {
   }
 }
 
-export async function getProductsOfLocal(id: string) {
-  const url = `${API_URL}/local/${id}`;
+export async function getProductsOfLocalByName(id: string, name: string) {
+  const url = `${API_URL}/local/${id}?name=${name}`;
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {
-      throw new Error("Failed to fetch Stores");
+      throw new Error("Failed to fetch local products by name");
     }
     const json = await rawData.json();
     return json;
   } catch (error) {
-    console.log("Error getting store products", error);
+    console.log("Error getting local products by name", error);
+  }
+}
+
+export async function getProductsOfLocalByNameAndCat(
+  id: string,
+  name: string,
+  category: string
+) {
+  const url = `${API_URL}/local/${id}/${category}?name=${name}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch local products by name and cat");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting store local products by name and cat", error);
   }
 }
 
@@ -158,5 +176,74 @@ export async function updateLocalProduct(
   } catch (error) {
     console.log("Error: ", error);
     Alert.alert("Error: ", (error as any).message.data.msg);
+  }
+}
+
+// category - name - search;
+
+// ------------------------------------ Categories ------------------------------------
+
+export async function getLocalProductCategories() {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-categories`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product categories");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting product of local");
+    } else {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error("Error getting local product categories", error);
+  }
+}
+
+export async function getLocalProductCategoriesOfLocal(id: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product/lp-categories/${id}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product categories");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting product of local");
+    } else {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error("Error getting local product categories", error);
+  }
+}
+
+// ------------------------------------ Sub Categories ------------------------------------
+
+export async function getLocalProductSubCategoriesOfLocal(
+  localId: string,
+  catName: string
+) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/local-product-sub-categories/sub-cats/${localId}/${catName}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting local product sub categories by category");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting local product sub categories by category");
+    } else {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error(
+      "Error getting local product sub categories by category",
+      error
+    );
   }
 }

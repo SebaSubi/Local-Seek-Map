@@ -76,6 +76,24 @@ export async function getServicesByLocalId(id: string) {
   }
 }
 
+export async function getServicesByLocalIdAndName(
+  localId: string,
+  name: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/local-service-name/${localId}?name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch ServicesById");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting ServicesById", error);
+  }
+}
+
 export async function getOpenServices() {
   try {
     const rawData = await fetch(`${API_URL}/service/open-services`);
@@ -196,7 +214,7 @@ export async function updateService(id: string, data: Service) {
   console.log(`${API_URL}/service/update/${id}`);
   try {
     const response = await fetch(`${API_URL}/service/update/${id}`, {
-      method: "PUT",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "Content-Type": "application/json",
       },
@@ -224,9 +242,9 @@ export async function deleteService(id: string) {
     });
 
     if (!response.ok) {
-      Alert.alert("Error", "Failed to create Service");
+      Alert.alert("Error", "Failed to delete service");
     } else {
-      console.log("Service succesfully added to dataBase");
+      console.log("Service succesfully deleted");
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -302,7 +320,7 @@ export async function updateServiceSchedule(
 ) {
   try {
     const response = await fetch(`${API_URL}/service-schedule/update/${id}`, {
-      method: "PUT",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "content-Type": "application/json",
       },
@@ -310,10 +328,8 @@ export async function updateServiceSchedule(
     });
     if (!response.ok) {
       console.log("Error updating  service schedule");
-      // console.log(response);
     } else {
       const json = response.json();
-      Alert.alert("Éxito", "El horario fue actualizado con éxito");
       return json;
     }
   } catch (error) {

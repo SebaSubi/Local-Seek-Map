@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Product, ProductType } from "../../../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import * as ImagePicker from "expo-image-picker";
 import {
   Alert,

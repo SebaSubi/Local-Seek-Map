@@ -29,9 +29,9 @@ export async function getProducts() {
   }
 }
 
-export async function getProductsByCategory(categroyId: string) {
+export async function getProductsByCategory(categroyName: string) {
   try {
-    const rawData = await fetch(`${API_URL}/category/${categroyId}`);
+    const rawData = await fetch(`${API_URL}/category/${categroyName}`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Products");
     }
@@ -76,7 +76,7 @@ export async function getActiveProducts() {
 export async function updateProduct(product: Product) {
   try {
     const response = await fetch(API_URL, {
-      method: "PUT",
+      method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "Content-Type": "application/json",
       },
@@ -195,11 +195,14 @@ export async function deleteProduct(id: string) {
 
 //------------------------------------------------------- LocalProduct Category ---------------------------------------------------
 
+const API_URL_2 =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-product-categories"
+    : "http://localhost:3000/local-product-categories";
+
 export async function getLocalProductCategories() {
   try {
-    const response = await fetch(
-      `http://localhost:3000/local-product-categories`
-    );
+    const response = await fetch(`${API_URL_2}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories");
@@ -216,9 +219,7 @@ export async function getLocalProductCategories() {
 
 export async function getLocalProductCategoriesByName(name: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/local-product-categories/search-name?name=${name}`
-    );
+    const response = await fetch(`${API_URL_2}/search-name?name=${name}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories by name");
@@ -237,16 +238,13 @@ export async function createLocalProductCategory(
   localProductCategory: LocalProductCategory
 ) {
   try {
-    const response = await fetch(
-      "http://localhost:3000/local-product-categories/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(localProductCategory),
-      }
-    );
+    const response = await fetch(`${API_URL_2}/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(localProductCategory),
+    });
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Local Product Category");
@@ -260,13 +258,34 @@ export async function createLocalProductCategory(
   }
 }
 
+export async function getLPByNameAndCategory(category: string, name: string) {
+  try {
+    const response = await fetch(
+      `${API_URL}/lp-category-name-search/${category}?name=${name}`
+    );
+
+    if (!response.ok) {
+      console.error("Error getting product of local by cat 1");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting product of local by cat 2");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting product of local by cat 3", error);
+  }
+}
+
 //------------------------------------------------------- LocalProduct SubCategory ---------------------------------------------------
+
+const API_URL_3 =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-product-sub-categories"
+    : "http://localhost:3000/local-product-sub-categories";
 
 export async function getLocalProductSubCategoriesByName(name: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/local-product-sub-categories/search-name?name=${name}`
-    );
+    const response = await fetch(`${API_URL_3}/search-name?name=${name}`);
 
     if (!response.ok) {
       console.error("Error getting local product sub categories by name");
@@ -285,16 +304,13 @@ export async function createLocalProductSubCategory(
   localProductSubCategory: LocalProductSubCategory
 ) {
   try {
-    const response = await fetch(
-      "http://localhost:3000/local-product-sub-categories/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(localProductSubCategory),
-      }
-    );
+    const response = await fetch(`${API_URL_3}/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(localProductSubCategory),
+    });
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Local Product Category");

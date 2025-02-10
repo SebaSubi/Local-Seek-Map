@@ -67,9 +67,9 @@ export default function UserScreen() {
               <BasicButton
                 text="Editar Perfil"
                 background={colors.primary.blue}
-                logo={<UpdateLogo />}
-                textStyle="text-white"
-                style="h-11 mb-4"
+                logo={<UpdateLogo color="#fff" />}
+                textStyle="text-white ml-2"
+                style="h-11 mb-4 justify-center"
                 onPress={() => setModalVisible(!isModalVisible)}
               />
             </>
@@ -77,51 +77,53 @@ export default function UserScreen() {
             ""
           )}
 
-          <Text className="text-2xl font-bold">Mi Local</Text>
           {authState?.user?.username !== "guest" && locals.length >= 1 ? (
-            <View className="w-full h-[60%]">
-              <FlatList
-                data={locals}
-                horizontal={false}
-                numColumns={2}
-                renderItem={({ item }) => (
-                  <EditLocalContainer
-                    local={{
-                      id: item.id,
-                      address: item.address,
-                      dateFrom: new Date(),
-                      dateTo: null,
-                      facebook: item.facebook,
-                      imgURL: item.imgURL,
-                      instagram: item.instagram,
-                      localTypeID: item.localTypes.id,
-                      localTypes: item.localTypes as LocalTypes,
-                      location: item.location,
-                      name: item.name,
-                      product: [],
-                      schedule: [],
-                      services: [],
-                      users: [],
-                      viewLocal: [],
-                      webpage: item.webpage,
-                      whatsapp: item.whatsapp,
-                      // whatsapp: null,
-                    }}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
-                onRefresh={() => fetchData()}
-                // refreshing={loading}
-                refreshing={false}
-              />
-              <BasicButton
-                text="Registrar mi local"
-                background={colors.primary.lightGray}
-                textStyle={`font-bold text-[#1A253D] text-base`}
-                style="h-11 mt-3"
-                logo={<Checkbox color={colors.primary.blue} />}
-              />
-            </View>
+            <>
+              <Text className="text-2xl font-bold">Mi Local</Text>
+              <View className="w-full h-[60%]">
+                <FlatList
+                  data={locals}
+                  horizontal={false}
+                  numColumns={2}
+                  renderItem={({ item }) => (
+                    <EditLocalContainer
+                      local={{
+                        id: item.id,
+                        address: item.address,
+                        dateFrom: new Date(),
+                        dateTo: null,
+                        facebook: item.facebook,
+                        imgURL: item.imgURL,
+                        instagram: item.instagram,
+                        localTypeID: item.localTypes.id,
+                        localTypes: item.localTypes as LocalTypes,
+                        location: item.location,
+                        name: item.name,
+                        product: [],
+                        schedule: [],
+                        services: [],
+                        users: [],
+                        viewLocal: [],
+                        webpage: item.webpage,
+                        whatsapp: item.whatsapp,
+                        // whatsapp: null,
+                      }}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id}
+                  onRefresh={() => fetchData()}
+                  // refreshing={loading}
+                  refreshing={false}
+                />
+                <BasicButton
+                  text="Registrar mi local"
+                  background={colors.primary.lightGray}
+                  textStyle={`font-bold text-[#1A253D] text-base ml-2`}
+                  style="h-11 mt-3 justify-center"
+                  logo={<Checkbox color={colors.primary.blue} />}
+                />
+              </View>
+            </>
           ) : (
             ""
           )}
@@ -129,9 +131,9 @@ export default function UserScreen() {
           <BasicButton
             text="Cerrar sesion"
             background={colors.primary.orange}
-            textStyle={`font-bold text-[#fff] text-base`}
-            style="h-11 mt-3"
-            logo={<LogOutIcon color={colors.primary.blue} />}
+            textStyle={`font-bold text-[#fff] text-base ml-1`}
+            style="h-11 mt-3 justify-center"
+            logo={<LogOutIcon color={"#fff"} />}
             onPress={onLogout}
           />
         </View>

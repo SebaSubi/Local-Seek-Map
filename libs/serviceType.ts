@@ -59,7 +59,7 @@ export async function createServiceType(serviceType: ServiceType) {
     if (!response.ok) {
       Alert.alert("Error", "Error al crear tipo de servicio");
     } else {
-      console.log("Product succesfully added to dataBase");
+      // console.log("Product succesfully added to dataBase");
       return response.json();
     }
   } catch (error) {

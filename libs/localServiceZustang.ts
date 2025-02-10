@@ -1,28 +1,51 @@
 import { create } from "zustand";
+import { LocalServiceSchedule, Service } from "../schema/GeneralSchema";
 
 interface ServiceSchedule {
-  localServiceId: string;
+  service: Service;
   localCoordinates: string;
-  serviceScheduleId: string;
-  setLocalServiceId: (localId: string) => void;
-  setServiceScheduleId: (scheduleId: string) => void;
+  serviceSchedule: LocalServiceSchedule;
+  setService: (service: Service) => void;
+  setServiceSchedule: (schedule: LocalServiceSchedule) => void;
   setLocalCoordinates: (localCoordinates: string) => void;
 }
 
-export const useLocalServiceIdStore = create<ServiceSchedule>((set, get) => ({
-  localServiceId: "",
-  serviceScheduleId: "",
+export const useLocalServiceIdStore = create<ServiceSchedule>((set) => ({
+  service: {
+    id: null,
+    local: null,
+    localId: "",
+    name: "",
+    location: "",
+    address: "",
+    reservationNumber: "",
+    serviceType: null,
+    serviceTypeId: "",
+    description: "",
+    imgURL: null,
+    reservationURL: null,
+    dateFrom: new Date(),
+    dateTo: null,
+    schedule: null,
+  },
+  serviceSchedule: {
+    dateFrom: new Date(),
+    dayNumber: undefined,
+    FirstShiftStart: "",
+    FirstShiftFinish: "",
+    localService: undefined,
+  },
   localCoordinates: "0, 0",
 
-  setLocalServiceId: async (localServiceId: string) => {
-    set({ localServiceId: localServiceId });
+  setService: (service: Service) => {
+    set({ service });
   },
 
-  setServiceScheduleId: (serviceScheduleId: string) => {
-    set({ serviceScheduleId: serviceScheduleId });
+  setServiceSchedule: (serviceSchedule: LocalServiceSchedule) => {
+    set({ serviceSchedule });
   },
 
   setLocalCoordinates: (localCoordinates: string) => {
-    set({ localCoordinates: localCoordinates });
+    set({ localCoordinates });
   },
 }));

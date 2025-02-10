@@ -1,21 +1,8 @@
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  DeleteLogo,
-  ReloadIcon,
-  UpdateLogo,
-} from "../../../../components/Logos";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
-import BasicButton from "../../../../components/BasicButton";
-import { days } from "../../../../schema/generalConst";
-import Header from "../../../../components/Header";
-import { deleteServiceSchedule } from "../../../../libs/localService";
-import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
-import {
-  LocalSchedule,
-  LocalServiceSchedule,
-} from "../../../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
+
+import { Stack, useLocalSearchParams } from "expo-router";
+import { LocalSchedule } from "../../../../schema/GeneralSchema";
 import {
   deleteSchedule,
   getSchedulesByLocalId,
@@ -23,19 +10,20 @@ import {
 import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
 import EditScheduleContainer from "../../../../components/EditScheduleContainer";
+import { useLocalIdStore } from "../../../../libs/localZustang";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState<LocalSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
-  const localId = useLocalIdStore((state) => state.localId);
+  const local = useLocalIdStore((state) => state.local);
 
   const { name } = useLocalSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const schedules = await getSchedulesByLocalId(localId);
+        const schedules = await getSchedulesByLocalId(local.id!);
         setSchedule(schedules || []);
       } catch (error) {
         console.error("Error fetching schedules:", error);
@@ -45,7 +33,7 @@ export default function DeleteSchedule() {
       }
     };
     fetchData();
-  }, [localId, refresh]);
+  }, [local, refresh]);
 
   function handleDelete(id: string) {
     deleteSchedule(id);

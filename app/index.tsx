@@ -6,6 +6,7 @@ import Register from "../components/Register";
 import { validateEmail } from "../components/Register";
 import { colors } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 
 export default function Login() {
   const emailRef = useRef("");
@@ -59,6 +60,7 @@ export default function Login() {
           className="flex-1 py-20 justify-start bg-gray-100 px-6"
           style={{ backgroundColor: colors.primary.white }}
         >
+          <StatusBar style="auto" />
           <Text className="text-2xl font-bold text-gray-800 mb-6">
             Iniciar Sesión
           </Text>
@@ -118,8 +120,8 @@ export default function Login() {
           <View className="w-full items-center ">
             <TouchableOpacity onPress={onGuestInPress}>
               <Text
-                className="mt-4 text-center"
-                style={{ color: colors.primary.black }}
+                className="mt-8 text-center"
+                style={{ color: colors.secondary.black }}
               >
                 ¿No quieres iniciar sesión?{" "}
                 <Text style={{ color: colors.primary.orange }}>

@@ -3,26 +3,27 @@ import { Text, View } from "react-native";
 import Schedule from "../../../../components/Schedule";
 import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
+import { useLocalIdStore } from "../../../../libs/localZustang";
 
 export default function ReadSchedule() {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState([]);
 
-  const localId = useLocalIdStore((state) => state.localId);
+  const local = useLocalIdStore((state) => state.local);
+
   const { name } = useLocalSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getSchedulesByLocalId(localId);
+      const schedules = await getSchedulesByLocalId(local.id!);
       setSchedule(schedules);
       setLoading(false);
     };
     fetchData();
-  }, [localId]);
+  }, [local]);
 
   return (
     <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
@@ -38,7 +39,7 @@ export default function ReadSchedule() {
         </Text>
         <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
       </View>
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center">
+      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center overflow-hidden">
         {loading ? (
           <Text>Loading...</Text>
         ) : schedule.length ? (

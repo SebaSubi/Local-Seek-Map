@@ -26,12 +26,18 @@ export default function BasicSearchButton({
   selectedCategory,
   style,
   background,
+  selectedColor = "#ff6c3d",
+  selectedCatTextStyle,
+  width,
   // typeOfSearch,
 }: {
   placeholder: string;
   filters?: string[];
   style?: string;
   background?: string;
+  selectedColor?: string;
+  selectedCatTextStyle?: string;
+  width?: string;
   // typeOfSearch: "Locals" | "Services" | "Products" | "All";
   selectedFilters?: (type: string) => void;
   categories?: LocalTypes[] | ProductType[] | ServiceType[];
@@ -77,13 +83,13 @@ export default function BasicSearchButton({
   };
 
   return (
-    <View style={styles.container} className={`${style} h-[14%]`}>
-      <View className="flex flex-row items-center">
+    <View style={styles.container} className={`${style} h-fit`}>
+      <View className="flex flex-row items-center ">
         <TextInput
-          className="text-center text-black w-[70%] h-12 rounded-2xl mr-1"
+          className={`text-center text-black ${width ? width : " w-[70%] "}  h-12 rounded-2xl mr-1`}
           style={{
             backgroundColor: background ? background : "#ffffff",
-            marginLeft: categories ? 32 : 1,
+            marginLeft: filters ? 32 : 1,
           }}
           onChangeText={(text) => setText(text)}
           value={text}
@@ -142,14 +148,17 @@ export default function BasicSearchButton({
         )}
       </View>
       {categories && categories.length !== 0 && categories ? (
-        <ScrollView className="mt-3 w-full" horizontal={true}>
+        <ScrollView className="mt-3 w-full mb-3" horizontal={true}>
           {categories.map((category, index) => (
             <BasicButton
               text={category.name}
               key={index}
               style="ml-2"
+              textStyle={
+                categorySelected === category.name ? selectedCatTextStyle : ""
+              }
               background={
-                categorySelected === category.name ? "#ff6c3d" : "#ffffff"
+                categorySelected === category.name ? selectedColor : "#ffffff"
               }
               onPress={() => handleCategorySelection(category.name)}
             />

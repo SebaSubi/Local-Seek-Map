@@ -7,43 +7,22 @@ import {
   ProductIcon,
   ReaderIcon,
   ReadLogo,
+  ServiceIcon,
   UpdateLogo,
 } from "../../../components/Logos";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../schema/GeneralSchema";
-import { useLocalIdStore } from "../../../libs/scheduleZustang";
 import { getLocalById, getLocals } from "../../../libs/local";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
+import { useLocalIdStore } from "../../../libs/localZustang";
 
 export default function ProductCrud() {
-  const [screen, setScreen] = useState(false);
-  const [locals, setLocals] = useState<Local[]>([]);
-  const [local, setLocal] = useState<Local>();
-  const setLocalId = useLocalIdStore((state) => state.setLocalId);
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
 
-  useEffect(() => {
-    const fetchLocals = async () => {
-      if (id) {
-        setLocalId(id as string);
-        setScreen(true);
-      } else {
-        const fetchedLocals = await getLocals();
-        setLocals(fetchedLocals);
-      }
-    };
-    fetchLocals();
-  }, [id]);
-
-  async function handlePress(id: string) {
-    setLocalId(id);
-    setScreen(true);
-    const local = await getLocalById(id);
-    setLocal(local);
-  }
+  const local = useLocalIdStore((state) => state.local);
 
   return (
     <>
@@ -53,116 +32,78 @@ export default function ProductCrud() {
         }}
       />
       <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
-        {screen ? (
-          <>
-            <View className="flex flex-row justify-between w-full">
-              <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3" />
-              <Text className="text-white font-semibold text-xl mt-1">
-                {`Editar ${name as string}`}
-              </Text>
-              <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
-            </View>
-            <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
-              {/* <BasicSelectable
+        <View className="flex flex-row justify-between w-full">
+          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3" />
+          <Text className="text-white font-semibold text-xl mt-1">
+            {`Editar ${name as string}`}
+          </Text>
+          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        </View>
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+          {/* <BasicSelectable
                 href="/CRUD/LocalCRUD/CreateLocal"
                 logo={<CreateLogo />}
                 text="Crear Local"
                 style="mt-3"
               /> */}
 
-              <BasicSelectable
-                href="/CRUD/LocalCRUD/NewUpdateLocal"
-                logo={<UpdateLogo />}
-                text="Actualizar Local"
-                style="mt-3"
-                params={{
-                  id: local?.id,
-                  name: local?.name,
-                  location: local?.location,
-                  address: local?.address,
-                  wpp: local?.whatsapp,
-                  instagram: local?.instagram,
-                  facebook: local?.facebook,
-                  webpage: local?.webpage,
-                  image: local?.imgURL,
-                  localType: local?.localTypes,
-                }}
-              />
-              <BasicSelectable
-                href="CRUD/LocalCRUD/LocalPage/[id]"
-                params={{
-                  id: local?.id,
-                  name: local?.name,
-                  localCoordinates: local?.location,
-                  image: local?.imgURL,
-                  localType: local?.localTypes,
-                }}
-                logo={<ReaderIcon />}
-                text="Ver Local"
-                style="mt-3"
-              />
-              <BasicSelectable
-                href="/CRUD/LocalCRUD/DeleteLocal"
-                logo={<DeleteLogo />}
-                text="Borrar Local"
-                style="mt-3"
-              />
-              <BasicSelectable
-                href="/CRUD/LocalCRUD/LocalSchedule/"
-                logo={<ClockLogo />}
-                text="Horarios Local"
-                style="mt-3"
-                params={{
-                  id: id,
-                  name: name,
-                  localCoordinates: localCoordinates,
-                  image: image,
-                  localType: localType,
-                }}
-              />
-              <BasicSelectable
-                href="/CRUD/LocalCRUD/LocalProduct/AddProduct"
-                logo={<ProductIcon />}
-                text="Agregar Producto"
-                style="mt-3"
-                params={{
-                  name: name,
-                }}
-              />
-              <BasicSelectable
-                href="/CRUD/LocalCRUD/LocalProduct/EditProduct"
-                logo={<UpdateLogo />}
-                text="Editar Productos"
-                style="mt-3"
-              />
-            </View>
-          </>
-        ) : (
-          <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
-            {locals === undefined ? (
-              <ActivityIndicator size="large" />
-            ) : locals.length === 0 ? (
-              <Text className="text-white mt-4">
-                No hay locales disponibles
-              </Text>
-            ) : (
-              locals.map((local) => (
-                <Pressable
-                  key={local.id}
-                  className="flex flex-row items-center justify-center bg-[#f6f6f6] w-5/6 h-10 mt-4 rounded-2xl"
-                  onPress={() => handlePress(local.id!)}
-                >
-                  <Text className="mt-1 ml-1 font-bold">{local.name}</Text>
-                </Pressable>
-              ))
-            )}
-          </View>
-        )}
+          <BasicSelectable
+            href="/CRUD/LocalCRUD/NewUpdateLocal"
+            logo={<UpdateLogo />}
+            text="Actualizar Local"
+            style="mt-3"
+          />
+          <BasicSelectable
+            href="CRUD/LocalCRUD/LocalPage/[id]"
+            logo={<ReaderIcon />}
+            text="Ver Local"
+            style="mt-3"
+            params={{
+              id: local.id,
+            }}
+          />
+          <BasicSelectable
+            href="/CRUD/LocalCRUD/DeleteLocal"
+            logo={<DeleteLogo />}
+            text="Borrar Local"
+            style="mt-3"
+          />
+          <BasicSelectable
+            href="/CRUD/LocalCRUD/LocalSchedule/"
+            logo={<ClockLogo />}
+            text="Horarios Local"
+            style="mt-3"
+          />
+          <BasicSelectable
+            href="/CRUD/LocalCRUD/LocalProduct/AddProduct"
+            logo={<ProductIcon />}
+            text="Agregar Producto"
+            style="mt-3"
+            params={{
+              name: name,
+            }}
+          />
+          <BasicSelectable
+            href="/CRUD/LocalCRUD/LocalProduct/EditProduct"
+            logo={<UpdateLogo />}
+            text="Editar Productos"
+            style="mt-3"
+          />
+          {local.localTypes?.name === "Servicio" && (
+            <BasicSelectable
+              href="/CRUD/ServiceCRUD"
+              logo={<ServiceIcon />}
+              text="Servicios"
+              style="mt-3"
+            />
+          )}
+        </View>
       </View>
     </>
   );
 }
-
+{
+  /* 
 //por si alguien extraña el viejo codigo esta aca
 
 // import { ActivityIndicator, Pressable, Text, View } from "react-native";
@@ -287,4 +228,5 @@ export default function ProductCrud() {
 //       </View>
 //     </>
 //   );
-// }
+// } */
+}

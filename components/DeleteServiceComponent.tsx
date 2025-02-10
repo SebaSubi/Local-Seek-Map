@@ -1,29 +1,23 @@
 import { Link } from "expo-router";
-import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
+import { LocalProduct, Service } from "../schema/GeneralSchema";
 import {
   Text,
   View,
   PanResponder,
   TouchableOpacity,
   Animated,
+  Image,
 } from "react-native";
-import { bringDayName } from "../libs/libs";
-import { useLocalScheduleIdStore } from "../libs/scheduleZustang";
 import { useLocalServiceIdStore } from "../libs/localServiceZustang";
 
-export default function EditScheduleContainer({
-  schedule,
-  href,
+export default function DeleteServiceComponent({
+  service,
   onDelete,
 }: {
-  schedule: LocalSchedule | LocalServiceSchedule;
-  href: string;
+  service: Service;
   onDelete: (id: string) => void;
 }) {
-  const setServiceSchedule = useLocalServiceIdStore(
-    (state) => state.setServiceSchedule
-  );
-
+  const setService = useLocalServiceIdStore((state) => state.setService);
   const translateX = new Animated.Value(0);
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -54,12 +48,12 @@ export default function EditScheduleContainer({
   });
 
   function handleUpdate() {
-    setServiceSchedule(schedule);
+    setService(service);
+
     // console.log("yes"); For some reason if i dont do this it calls the delete function
   }
-
   return (
-    <View style={{ flex: 1 }} className="flex-row ">
+    <View className="flex-row rounded-2xl overflow-hidden mt-2">
       <Animated.View
         style={{
           transform: [{ translateX: translateX }],
@@ -67,36 +61,50 @@ export default function EditScheduleContainer({
       >
         <Link
           href={{
-            pathname: href,
+            pathname: "CRUD/ServiceCRUD/UpdateIndex",
             params: {
-              id: schedule.id,
+              serviceId: service.id,
             },
           }}
           asChild
         >
           <TouchableOpacity
-            className="w-20 h-20 bg-[#1a253d] justify-center items-center  mt-2 absolute left-[-80px] z-[-1]"
+            className="w-24 h-24 bg-[#1a253d] justify-center items-end absolute left-[-80px] z-[-1] rounded-2xl"
             onPress={handleUpdate}
           >
-            <Text className="text-white font-bold">Actualizar</Text>
+            <Text className="text-white font-bold mr-5">Actualizar</Text>
           </TouchableOpacity>
         </Link>
         <View
-          className="flex items-center justify-center w-72 h-20 bg-[#f6f6f6] mt-2 "
+          className="flex flex-row items-center justify-between w-72 h-24 bg-defaultGray  rounded-2xl "
           {...panResponder.panHandlers}
         >
-          <Text>
-            {schedule.dayNumber ? bringDayName(schedule.dayNumber) : null}
-          </Text>
-          <Text>
-            {schedule.FirstShiftStart} - {schedule.FirstShiftFinish}...
-          </Text>
+          <View className="w-20 ">
+            <Image
+              style={{
+                height: "100%",
+                width: "100%",
+                borderRadius: 4,
+                resizeMode: "contain",
+                backgroundColor: "white",
+              }}
+              source={{
+                uri: service.imgURL ?? "https://via.placeholder.com/150",
+              }}
+            />
+          </View>
+          <View className="flex-1  h-full items-center justify-center">
+            <Text className="font-light text-base">{service.name}</Text>
+            <Text className="font-thin text-sm">
+              {service.serviceType?.name}
+            </Text>
+          </View>
         </View>
         <TouchableOpacity
-          onPress={() => onDelete(schedule.id!)}
-          className="w-20 h-20 bg-[#ff6c3d] justify-center items-center  mt-2 absolute right-[-80px] z-[-1]"
+          onPress={() => onDelete(service.id!)}
+          className="w-32 h-24 bg-[#ff6c3d] justify-center items-end absolute right-[-80px] z-[-1] rounded-2xl"
         >
-          <Text className="text-white font-bold">Borrar</Text>
+          <Text className="text-white font-bold mr-4">Borrar</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>

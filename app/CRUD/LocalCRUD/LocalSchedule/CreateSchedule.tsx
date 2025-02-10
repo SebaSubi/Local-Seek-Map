@@ -1,41 +1,41 @@
-import { ScrollView, View, Text, Alert } from "react-native";
+import { ScrollView, View, Text, Modal, ViewComponent } from "react-native";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import { Stack, useLocalSearchParams } from "expo-router";
-import Header from "../../../../components/Header";
 import { CreateLogo } from "../../../../components/Logos";
 import BasicButton from "../../../../components/BasicButton";
-import { useEffect, useRef, useState } from "react";
-import {
-  LocalSchedule,
-  LocalServiceSchedule,
-} from "../../../../schema/GeneralSchema";
+import { useRef, useState } from "react";
+import { LocalSchedule } from "../../../../schema/GeneralSchema";
 import BasicWarning from "../../../../components/BasicWarning";
 import TimeSelect from "../../../../components/TimeSelect";
 import { scheduleInputValidation } from "../../../../libs/libs";
 import { specificDate } from "../../../../constants/consts";
-import { useLocalIdStore } from "../../../../libs/scheduleZustang";
 import {
   createSchedule,
   getSchedulesByLocalId,
   updateSchedule,
 } from "../../../../libs/localSchedule";
-import { colors } from "../../../../constants/colors";
 import GoBackButton from "../../../../components/GoBackButton";
+import { useLocalScheduleIdStore } from "../../../../libs/scheduleZustang";
+import { useLocalIdStore } from "../../../../libs/localZustang";
 
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [error, setError] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
 
-  const localId = useLocalIdStore((state) => state.localId);
-  const setScheduleId = useLocalIdStore((state) => state.setScheduleId);
+  // const localId = useLocalScheduleIdStore((state) => state.localId);
+  const local = useLocalIdStore((state) => state.local);
+  const setScheduleId = useLocalScheduleIdStore((state) => state.setScheduleId);
 
-  const scheduleId = useLocalIdStore((state) => state.scheduleId);
+  const scheduleId = useLocalScheduleIdStore((state) => state.scheduleId);
 
   const dayNumberRef = useRef<any>(null);
 
   const { name } = useLocalSearchParams();
 
-  // Create refs for each TimeSelect component
+  // console.log("hello?");
+  // console.log(local);
+
   const FirstShiftStartRef = useRef<any>(null);
   const FirstShiftFinishRef = useRef<any>(null);
   const SecondShiftStartRef = useRef<any>(null);
@@ -44,7 +44,7 @@ export default function CreateProduct() {
   const ThirdShiftFinishRef = useRef<any>(null);
 
   const handleCreate = async () => {
-    const schedulest = await getSchedulesByLocalId(localId);
+    const schedulest = await getSchedulesByLocalId(local.id!);
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
     let localWarning = false;
 
@@ -66,6 +66,7 @@ export default function CreateProduct() {
 
     if (scheduleInputValidation(localSchedule) !== "Correct") {
       setError(scheduleInputValidation(localSchedule) as string);
+      setErrorModal(true);
     } else {
       handleSubmit();
     }
@@ -124,27 +125,23 @@ export default function CreateProduct() {
     };
 
     const SecondShiftStart = checkSchedule(
-      // eslint-disable-next-line prettier/prettier
       SecondShiftStartRef.current?.getTime()
     );
 
     const SecondShiftFinish = checkSchedule(
-      // eslint-disable-next-line prettier/prettier
       SecondShiftFinishRef.current?.getTime()
     );
 
     const ThirdShiftStart = checkSchedule(
-      // eslint-disable-next-line prettier/prettier
       ThirdShiftStartRef.current?.getTime()
     );
 
     const ThirdShiftFinish = checkSchedule(
-      // eslint-disable-next-line prettier/prettier
       ThirdShiftFinishRef.current?.getTime()
     );
 
     const newSchedule: LocalSchedule = {
-      localId,
+      localId: local.id,
       dayNumber,
       FirstShiftStart,
       FirstShiftFinish: FirstShiftFinish(),
@@ -189,7 +186,7 @@ export default function CreateProduct() {
           className="w-full h-full"
         >
           <View
-            className={`flex justify-center items-center bg-white h-full w-full mb-8 ${warning ? "opacity-25" : "opacity-100"}`}
+            className={`flex justify-center items-center bg-white h-full w-full mb-8`}
           >
             <BasicTextInput
               inputType="text"
@@ -237,29 +234,55 @@ export default function CreateProduct() {
         </ScrollView>
 
         {warning && (
-          <BasicWarning
-            text="El dia que indicaste ya existe dentro de este horario, desea actualizarlo con los nuevo datos?"
-            cancelButton={false}
-            buttonLeft="Cancelar"
-            buttonRight="Reemplazar"
-            onPressRight={() => {
-              handleUpdate();
-            }}
-            onPressLeft={() => setWarning(false)}
-            style="absolute"
-          />
+          // <View className="w-full h-full flex items-center justify-center">
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={warning}
+            onRequestClose={() => setWarning(false)}
+          >
+            <View
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text="El dia que indicaste ya existe dentro de este horario, desea actualizarlo con los nuevo datos?"
+                cancelButton={false}
+                buttonLeft="Cancelar"
+                buttonRight="Reemplazar"
+                onPressRight={() => {
+                  handleUpdate();
+                }}
+                onPressLeft={() => setWarning(false)}
+                // style="absolute"
+              />
+            </View>
+          </Modal>
+          // </View>
         )}
         {error && (
-          <BasicWarning
-            text={error}
-            cancelButton={true}
-            buttonLeft="Ok"
-            onPressLeft={() => {
-              setError("");
-              setWarning(false);
-            }}
-            style="absolute"
-          />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={errorModal}
+            onRequestClose={() => setErrorModal(false)}
+          >
+            <View
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text={error}
+                cancelButton={true}
+                buttonLeft="Ok"
+                onPressLeft={() => {
+                  setError("");
+                  setWarning(false);
+                }}
+                style="absolute"
+              />
+            </View>
+          </Modal>
         )}
       </View>
     </View>

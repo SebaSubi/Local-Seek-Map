@@ -93,7 +93,7 @@ export default function ReadWS() {
         selectedFilters={handleSearchFilter}
         style="mt-16"
       />
-      <View className="w-full h-full bg-white rounded-t-3xl pb-60">
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
         <FlatList
           data={services}
           horizontal={false}

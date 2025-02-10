@@ -47,7 +47,7 @@ export async function getSchedulesByLocalId(id: string) {
   try {
     const response = await fetch(`${API_URL}/schedule/local/${id}`);
     if (!response.ok) {
-      console.log("Error fetching schedule");
+      console.log("Error fetching schedule 1");
       console.log(response);
     } else {
       const json = response.json();
