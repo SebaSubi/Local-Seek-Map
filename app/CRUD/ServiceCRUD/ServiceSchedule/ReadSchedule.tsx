@@ -1,8 +1,5 @@
-import { FlatList, Text, View } from "react-native";
-import ScheduleBox from "../../../../components/ScheduleBox";
-import { shift } from "../../../../constants/consts";
+import { Text, View } from "react-native";
 import { Stack } from "expo-router";
-import Header from "../../../../components/Header";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
 import { useEffect, useState } from "react";
 import { getScheduleByLocalServiceId } from "../../../../libs/localService";
@@ -11,24 +8,19 @@ import GoBackButton from "../../../../components/GoBackButton";
 import Schedule from "../../../../components/Schedule";
 import { colors } from "../../../../constants/colors";
 
-type Shift = {
-  shiftOpen: shift;
-  shiftClose: shift;
-};
-
 export default function ReadSchedule() {
   const [loading, setLoading] = useState(true);
   const [schedules, setSchedule] = useState<LocalServiceSchedule[]>();
-  const localId = useLocalServiceIdStore((state) => state.localServiceId);
+  const service = useLocalServiceIdStore((state) => state.service);
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getScheduleByLocalServiceId(localId);
+      const schedules = await getScheduleByLocalServiceId(service.id!);
       setSchedule(schedules);
       setLoading(false);
     };
     fetchData();
-  }, [localId]);
+  }, [service]);
 
   return (
     <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
@@ -39,12 +31,12 @@ export default function ReadSchedule() {
       />
       <View className="flex flex-row justify-between w-full items-center mb-2">
         <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
-        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
-          Leer Horarios
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center ">
+          Horarios: {service.name}
         </Text>
         <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
       </View>
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center">
+      <View className="bg-white h-[89%] w-full rounded-3xl overflow-hidden flex items-center">
         {loading ? (
           <Text>Loading...</Text>
         ) : schedules?.length ? (
