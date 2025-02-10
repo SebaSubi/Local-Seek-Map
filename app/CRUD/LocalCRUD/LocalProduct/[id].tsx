@@ -7,7 +7,6 @@ import {
   ScrollView,
   Pressable,
   Modal,
-  StyleSheet,
   Text,
 } from "react-native";
 
@@ -17,25 +16,17 @@ import {
   LocalProduct,
   LocalProductCategory,
   LocalProductSubCategory,
-  Product,
-  ProductType,
 } from "../../../../schema/GeneralSchema";
-import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 import {
   createLocalProductCategory,
   createLocalProductSubCategory,
-  createProduct,
   getLocalProductCategoriesByName,
   getLocalProductSubCategoriesByName,
-  getProductById,
 } from "../../../../libs/product";
-import { getProductTypes } from "../../../../libs/productType";
-import Header from "../../../../components/Header";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
-import { useLocalScheduleIdStore } from "../../../../libs/scheduleZustang";
 import {
   getProductOfLocal,
   updateLocalProduct,

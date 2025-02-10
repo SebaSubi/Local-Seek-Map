@@ -1,4 +1,4 @@
-import { Platform, Text, View, Linking } from "react-native";
+import { Platform, Text, View, Linking, ScrollView } from "react-native";
 import React from "react";
 import {
   InstagramIcon,
@@ -33,11 +33,17 @@ export default function LocalInformation({
   const wppNumber = whatsapp?.replaceAll("+", "");
 
   return (
-    <View className="flex flex-col justify-start items-center w-full h-full">
+    <ScrollView
+      className="flex flex-col w-full h-full"
+      contentContainerStyle={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       {location ? (
         <>
           <View
-            className="flex w-full h-[40%] overflow-hidden mb-4"
+            className="flex w-full h-72 overflow-hidden mb-4"
             style={{
               borderRadius: 20,
               backgroundColor: colors.primary.lightGray,
@@ -211,7 +217,7 @@ export default function LocalInformation({
           ) : null}
         </>
       ) : null}
-    </View>
+    </ScrollView>
   );
 }
 

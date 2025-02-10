@@ -19,6 +19,19 @@ export async function getProductTypes() {
   }
 }
 
+export async function getProductTypesOfLocal(localId: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/local-product-types/${localId}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch Product Types of local");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting Types", error);
+  }
+}
+
 export async function getProductTypesByName(name: string) {
   try {
     const rawData = await fetch(`${API_URL}/name-search?name=${name}`);

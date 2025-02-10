@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, Platform, Text } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -18,11 +18,17 @@ import ServiceContainer from "../../../../components/ServiceContainer";
 import {
   getLocalProductCategoriesOfLocal,
   getProductsOfLocalByName,
+  getMenuProductsOfLocalByNameAndCat,
   getProductsOfLocalByNameAndCat,
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
-import { getProductTypes } from "../../../../libs/productType";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  getProductTypes,
+  getProductTypesOfLocal,
+} from "../../../../libs/productType";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import GoBackButton from "../../../../components/GoBackButton";
+import { BlurView } from "expo-blur";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
 // type Categories = Record<string, string[]>;
@@ -39,10 +45,11 @@ export default function LocalPage() {
   const [categories, setCategories] = useState<
     ProductType[] | LocalProductCategory[]
   >([]);
-  const [subCategories, setSubCategories] = useState<string[]>([]);
+
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const insets = useSafeAreaInsets();
 
   async function fetchAndSetLocals() {
     const searchLocal = await getLocalById(id as string);
@@ -51,7 +58,18 @@ export default function LocalPage() {
 
   async function fetchAndSetProducts() {
     setLoading(true);
-    if (selectedCategory !== "") {
+    if (selectedCategory !== "" && localType === "Restaurante") {
+      // console.log("We are here");
+      const localProducts = await getMenuProductsOfLocalByNameAndCat(
+        id as string,
+        search,
+        // eslint-disable-next-line prettier/prettier
+        selectedCategory
+      );
+      setLocalProducts(localProducts);
+      setLoading(false);
+    } else if (selectedCategory !== "" && localType !== "Restaurante") {
+      // console.log("We are here");
       const localProducts = await getProductsOfLocalByNameAndCat(
         id as string,
         search,
@@ -71,13 +89,15 @@ export default function LocalPage() {
     }
   }
 
+  // console.log(selectedCategory);
+
   const handleCategorySelection = (cat: string) => {
     setSelectedCategory(cat);
   };
 
   async function fetchAndSetCategories() {
     if (localType !== "Restaurante") {
-      const categories = await getProductTypes(); // This needs to change to types of the local products
+      const categories = await getProductTypesOfLocal(id as string); // This needs to change to types of the local products
       setCategories(categories);
     } else {
       const categories = await getLocalProductCategoriesOfLocal(id as string);
@@ -141,12 +161,29 @@ export default function LocalPage() {
           headerShown: false,
         }}
       />
-      <SafeAreaView className="flex flex-col items-start h-full justify-start bg-[#1a253d] pt-6">
-        <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden">
-          <View className="flex items-center w-full h-full">
+      <View
+        className="flex flex-col items-start h-full justify-end bg-[#1a253d]"
+        style={{
+          paddingTop: Platform.OS === "android" ? insets.top + 6 : insets.top,
+        }}
+      >
+        {selectedOption === "Info" ? (
+          <View className="flex flex-row items-center justify-between mb-3 w-full">
+            <GoBackButton style="border border-white ml-4" iconColor="white" />
+            <Text className="text-4xl text-white font-medium ml-[-16px]">
+              {name}
+            </Text>
+            <GoBackButton
+              style="border border-white opacity-0"
+              iconColor="white"
+            />
+          </View>
+        ) : null}
+        <View className="flex-1 flex-col bg-white h-full w-full rounded-3xl overflow-hidden">
+          <View className="flex-1 items-center w-full h-full">
             {local &&
               (selectedOption === "Schedule" ? (
-                <View className="w-full h-full">
+                <View className="w-full h-full ">
                   <Schedule schedule={schedules} />
                 </View>
               ) : selectedOption === "Info" ? (
@@ -164,41 +201,18 @@ export default function LocalPage() {
                     webpage={local.webpage}
                   />
                 ) : null
-              ) : (
-                <View className=" w-full h-full">
+              ) : localProducts ? (
+                <View className=" w-full h-full pb-20">
                   <BasicSearchButton
                     placeholder="Buscar"
                     background="#f8f8f8"
                     selectedColor="#1a253d"
                     selectedCatTextStyle="text-white"
+                    style="mt-3"
                     onSearch={setSearch}
                     categories={categories}
                     selectedCategory={handleCategorySelection}
-                    style="mt-14"
                   />
-                  {/* {subCategories && selectedCategory !== "" ? (
-                    <View>
-                      <ScrollView className="mb-3 w-full" horizontal={true}>
-                        {subCategories.map((category, index) => (
-                          <BasicButton
-                            text={category}
-                            key={index}
-                            style="ml-2"
-                            background={
-                              selectedSubCategory === category
-                                ? "#1a253d"
-                                : "#ffffff"
-                            }
-                            onPress={() => {
-                              selectedSubCategory === category
-                                ? setSelectedSubCategory("")
-                                : setSelectedSubCategory(category);
-                            }}
-                          />
-                        ))}
-                      </ScrollView>
-                    </View>
-                  ) : null} */}
                   {localType === "Restaurante" ? (
                     localProducts.length > 0 && (
                       <FlatList
@@ -247,48 +261,62 @@ export default function LocalPage() {
                     )
                   )}
                 </View>
+              ) : (
+                <BasicButton
+                  text="Recargar"
+                  onPress={() => fetchAndSetProducts()}
+                />
               ))}
           </View>
+          <View className="absolute w-full h-20 flex flex-row items-center justify-evenly bottom-0 bg-defaultGray rounded-lg">
+            <BasicButton
+              textStyle={selectedOption === "Info" ? "text-white" : ""}
+              background={selectedOption === "Info" ? "#1a253d" : "white"}
+              style="w-[28%] mb-2"
+              text="Info:"
+              onPress={() => setSelectedOption("Info")}
+            />
+            <BasicButton
+              textStyle={selectedOption === "Schedule" ? "text-white" : ""}
+              background={selectedOption === "Schedule" ? "#1a253d" : "white"}
+              style="w-[28%] mb-2"
+              text="Horarios"
+              onPress={() => setSelectedOption("Schedule")}
+            />
+            <BasicButton
+              textStyle={
+                selectedOption === "Products" ||
+                selectedOption === "Services" ||
+                selectedOption === "Menu"
+                  ? "text-white"
+                  : ""
+              }
+              background={
+                selectedOption === "Products" ||
+                selectedOption === "Services" ||
+                selectedOption === "Menu"
+                  ? "#1a253d"
+                  : "white"
+              }
+              style="w-[28%] mb-2"
+              text={
+                localType === "Servicio"
+                  ? "Servicios"
+                  : localType === "Restaurante"
+                    ? "Menu"
+                    : "Productos"
+              }
+              onPress={() =>
+                localType === "Servicio"
+                  ? setSelectedOption("Services")
+                  : localType === "Restaurante"
+                    ? setSelectedOption("Menu")
+                    : setSelectedOption("Products")
+              }
+            />
+          </View>
         </View>
-        <View className="w-full h-[10%] flex flex-row items-center justify-evenly">
-          <BasicButton
-            background={selectedOption === "Info" ? "white" : "#7e8592"}
-            style="w-[28%] mb-2"
-            text="Info:"
-            onPress={() => setSelectedOption("Info")}
-          />
-          <BasicButton
-            background={selectedOption === "Schedule" ? "white" : "#7e8592"}
-            style="w-[28%] mb-2"
-            text="Horarios"
-            onPress={() => setSelectedOption("Schedule")}
-          />
-          <BasicButton
-            background={
-              selectedOption === "Products" ||
-              selectedOption === "Services" ||
-              selectedOption === "Menu"
-                ? "white"
-                : "#7e8592"
-            }
-            style="w-[28%] mb-2"
-            text={
-              localType === "Servicio"
-                ? "Servicios"
-                : localType === "Restaurante"
-                  ? "Menu"
-                  : "Productos"
-            }
-            onPress={() =>
-              localType === "Servicio"
-                ? setSelectedOption("Services")
-                : localType === "Restaurante"
-                  ? setSelectedOption("Menu")
-                  : setSelectedOption("Products")
-            }
-          />
-        </View>
-      </SafeAreaView>
+      </View>
     </>
   );
 }

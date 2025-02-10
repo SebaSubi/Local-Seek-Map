@@ -19,10 +19,6 @@ interface ScheduleProps {
 
 export default function Schedule({ schedule = [] }: ScheduleProps) {
   const [loading, setLoading] = useState(false);
-  const localServiceId = useLocalServiceIdStore(
-    // eslint-disable-next-line prettier/prettier
-    (state) => state.localServiceId
-  );
 
   const shifts: Shift[] = [
     { shiftOpen: "FirstShiftStart", shiftClose: "FirstShiftFinish" },
@@ -50,13 +46,15 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
   );
 
   return (
-    <SafeAreaView>
+    <>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <>
-          <View className="flex items-center border-b">
-            <Text className="text-3xl font-bold mb-4">HORARIOS</Text>
+          <View className="flex items-center border-b ">
+            <Text className="text-3xl font-bold mb-4 text-defaultBlue">
+              HORARIOS
+            </Text>
           </View>
           <View>
             {Object.keys(groupedSchedules).map((dayNumber) => {
@@ -130,7 +128,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
           </View>
         </>
       )}
-    </SafeAreaView>
+    </>
   );
 }
 

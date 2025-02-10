@@ -34,12 +34,36 @@ export async function getProductsOfLocalByName(id: string, name: string) {
   }
 }
 
+export async function getMenuProductsOfLocalByNameAndCat(
+  id: string,
+  name: string,
+  category: string
+) {
+  const url = `${API_URL}/localMenu/${id}/${category}?name=${name}`;
+
+  console.log(url);
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch local menu products by name and cat");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log(
+      "Error getting store local menu products by name and cat",
+      error
+    );
+  }
+}
+
 export async function getProductsOfLocalByNameAndCat(
   id: string,
   name: string,
   category: string
 ) {
   const url = `${API_URL}/local/${id}/${category}?name=${name}`;
+
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {

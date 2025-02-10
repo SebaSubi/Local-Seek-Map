@@ -19,7 +19,7 @@ const GoBackButton = ({
   const navigation = useNavigation();
   return (
     <Pressable
-      className={`flex flex-row items-center rounded-3xl p-1 ${style}`}
+      className={`flex flex-row items-center justify-center rounded-3xl h-12 w-10 ${style}`}
       onPress={() => navigation.goBack()}
     >
       <ArrowLeft color={iconColor} size={iconSize} />
