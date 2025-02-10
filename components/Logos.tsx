@@ -187,3 +187,7 @@ export const ReaderIcon = ({ color = "black", size = 24 }) => {
 export const TrashIcon = ({ color = "black", size = 24 }) => {
   return <Fontisto name="trash" size={size} color={color} />;
 };
+
+export const EmailIcon = ({ color = "black", size = 24 }) => {
+  return <Fontisto name="email" size={size} color={color} />;
+};

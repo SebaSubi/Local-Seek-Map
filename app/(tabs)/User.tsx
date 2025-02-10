@@ -5,7 +5,7 @@ import { colors } from "../../constants/colors";
 import BasicButton from "../../components/BasicButton";
 import { Checkbox, LogOutIcon, UpdateLogo } from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
-import UserUpdateModal from "../../components/UserUpdateModal";
+import UserUpdateModal from "../../components/modals/UserUpdateModal";
 import LocalContainer from "../../components/LocalContainer";
 import { getUserLocals, UserLocal } from "../../libs/user";
 import { LocalTypes } from "../../schema/GeneralSchema";

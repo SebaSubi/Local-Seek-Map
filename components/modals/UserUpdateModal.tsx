@@ -1,13 +1,13 @@
 import { View, Text, Modal, Pressable } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { colors } from "../constants/colors";
-import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "./Logos";
-import BasicButton from "./BasicButton";
-import BasicTextInput from "./BasicTextInput";
-import { checkEmail, checkUsername, EditUser } from "../libs/user";
-import { validateEmail } from "./Register";
+import { colors } from "../../constants/colors";
+import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "../Logos";
+import BasicButton from "../BasicButton";
+import BasicTextInput from "../BasicTextInput";
+import { checkEmail, checkUsername, EditUser } from "../../libs/user";
+import { validateEmail } from "../Register";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AuthUser } from "../app/context/AuthContext";
+import { AuthUser } from "../../app/context/AuthContext";
 import UserDeleteModal from "./UserDeleteModal";
 
 const UserUpdateModal = ({

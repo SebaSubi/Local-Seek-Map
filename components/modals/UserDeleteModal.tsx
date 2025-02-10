@@ -1,10 +1,11 @@
 import { View, Text, Modal, Pressable } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { colors } from "../constants/colors";
-import { CloseCircle, TrashIcon, WarningIcon } from "./Logos";
-import { useAuth } from "../app/context/AuthContext";
-import BasicButton from "./BasicButton";
-import BasicTextInput from "./BasicTextInput";
+import { colors } from "../../constants/colors";
+import { CloseCircle, TrashIcon, WarningIcon } from "../Logos";
+import { useAuth } from "../../app/context/AuthContext";
+import BasicButton from "../BasicButton";
+import BasicTextInput from "../BasicTextInput";
+import { deleteUser } from "../../libs/user";
 
 const UserDeleteModal = ({
   isVisible,
@@ -24,10 +25,17 @@ const UserDeleteModal = ({
   }>(null);
 
   const DeleteAccount = async () => {
-    //TODO: aca va el metodo para la db
-    setVisible(false);
-    setBeforeModalVisible(false);
-    onLogout;
+    if (DeleteText.current?.getValue() === wordToCheck) {
+      if (authState?.user?.id) {
+        const response = await deleteUser(authState.user.id);
+        // console.log(response);
+        if (response.status === 200) {
+          onLogout;
+          setVisible(false);
+          setBeforeModalVisible(false);
+        }
+      }
+    }
   };
   return (
     <Modal
@@ -85,6 +93,7 @@ const UserDeleteModal = ({
                 <TrashIcon color="#fff" size={21} />
               </View>
             }
+            onPress={DeleteAccount}
           />
         </View>
       </View>

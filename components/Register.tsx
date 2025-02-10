@@ -10,6 +10,7 @@ import { StatusBar } from "expo-status-bar";
 
 interface RegProps {
   setReg: Dispatch<SetStateAction<boolean>>;
+  setModalVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 export const validateEmail = (email: string): boolean => {
@@ -22,7 +23,7 @@ export const validateEmail = (email: string): boolean => {
   }
 };
 
-const Register = ({ setReg }: RegProps) => {
+const Register = ({ setReg, setModalVisible }: RegProps) => {
   const { onRegister, authState } = useAuth();
 
   const email = useRef("");
@@ -75,7 +76,18 @@ const Register = ({ setReg }: RegProps) => {
       setEmailError("");
       setUsernameError("Este Nombre de Usuario no está disponible.");
     } else {
-      onRegister!(email.current, password.current, username.current);
+      const request = await onRegister!(
+        email.current,
+        password.current,
+        username.current
+      );
+      // console.log(request);
+      if (request.status === 200) {
+        setModalVisible(true);
+        setReg(true);
+      } else {
+        setEmailError("Hubo un error, intentelo de vuelta mas tarde");
+      }
     }
   };
 
@@ -177,7 +189,7 @@ const Register = ({ setReg }: RegProps) => {
       >
         <Text className="text-white font-bold">Registrarse</Text>
       </TouchableOpacity>
-      <View className="w-full items-center py-4">
+      <View className="w-full items-center ">
         <TouchableOpacity onPress={() => setReg(true)}>
           <Text className="text-center mt-4">
             ¿Ya tienes cuenta?

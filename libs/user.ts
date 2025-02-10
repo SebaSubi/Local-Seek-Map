@@ -45,3 +45,11 @@ export async function getUserLocals(userId: string) {
     },
   });
 }
+
+export async function deleteUser(userId: string) {
+  return await axios.patch(`${API_URL}/delete-user`, {
+    params: {
+      userId: userId,
+    },
+  });
+}

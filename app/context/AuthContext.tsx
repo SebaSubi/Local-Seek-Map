@@ -31,7 +31,7 @@ interface AuthProps {
   onRegister?: (
     email: string,
     password: string,
-    username: string,
+    username: string
   ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -120,45 +120,51 @@ export const AuthProvider = ({ children }: any) => {
   const register = async (
     email: string,
     password: string,
-    username: string,
+    username: string
   ) => {
     try {
       const hashedPassword = await hashPassword(password);
-      const result = await axios.post(`${API_URL}/register`, {
+      const result = await axios.post(`${API_URL}/mail-register`, {
         email,
         password: hashedPassword,
         username,
       });
-
-      if (result?.data.accessToken) {
-        const user = {
-          id: result.data.userId,
-          email: email,
-          username: result.data.username,
-          password: password,
-          role: getRole(result.data.role),
-        };
-
-        setAuthState({
-          token: result.data.accessToken,
-          authenticated: true,
-          user: user,
-        });
-
-        axios.defaults.headers.common["Authorization"] =
-          `Bearer ${result.data.accessToken}`;
-        // console.log(result.data.accessToken);
-        await Promise.all([
-          SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken),
-          SecureStore.setItemAsync(USER_ID, user.id),
-          SecureStore.setItemAsync(USERNAME, user.username),
-          SecureStore.setItemAsync(EMAIL, email),
-          SecureStore.setItemAsync(PASSWORD, password),
-          SecureStore.setItemAsync(ROLE, user.role),
-        ]);
-      }
-
       return result;
+      // const result = await axios.post(`${API_URL}/register`, {
+      //   email,
+      //   password: hashedPassword,
+      //   username,
+      // });
+
+      // if (result?.data.accessToken) {
+      //   const user = {
+      //     id: result.data.userId,
+      //     email: email,
+      //     username: result.data.username,
+      //     password: password,
+      //     role: getRole(result.data.role),
+      //   };
+
+      //   setAuthState({
+      //     token: result.data.accessToken,
+      //     authenticated: true,
+      //     user: user,
+      //   });
+
+      //   axios.defaults.headers.common["Authorization"] =
+      //     `Bearer ${result.data.accessToken}`;
+      //   // console.log(result.data.accessToken);
+      //   await Promise.all([
+      //     SecureStore.setItemAsync(TOKEN_KEY, result.data.accessToken),
+      //     SecureStore.setItemAsync(USER_ID, user.id),
+      //     SecureStore.setItemAsync(USERNAME, user.username),
+      //     SecureStore.setItemAsync(EMAIL, email),
+      //     SecureStore.setItemAsync(PASSWORD, password),
+      //     SecureStore.setItemAsync(ROLE, user.role),
+      //   ]);
+      // }
+
+      // return result;
     } catch (error) {
       return { error: true, msg: error as any };
     }
