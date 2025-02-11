@@ -11,17 +11,8 @@ import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";
 
 export default function UpdateLocal() {
-  const {
-    id,
-    name,
-    location,
-
-    wpp,
-    instagram,
-    facebook,
-    webpage,
-    image,
-  } = useLocalSearchParams();
+  const { id, name, location, wpp, instagram, facebook, webpage, image } =
+    useLocalSearchParams();
 
   const nameRef = useRef<{
     getValue: () => string;
@@ -297,7 +288,7 @@ export default function UpdateLocal() {
       <View className="flex flex-row justify-between w-full items-center mb-2">
         <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
-          {`Actualizar/Borrar Horarios ${name === undefined ? "" : (name as string)}`}
+          {`Actualizar Local ${name === undefined ? "" : (name as string)}`}
         </Text>
         <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
       </View>
