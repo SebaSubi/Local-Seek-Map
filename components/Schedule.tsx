@@ -51,11 +51,6 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
         <Text>Loading...</Text>
       ) : (
         <>
-          <View className="flex items-center border-b ">
-            <Text className="text-3xl font-bold mb-4 text-defaultBlue">
-              HORARIOS
-            </Text>
-          </View>
           <View>
             {Object.keys(groupedSchedules).map((dayNumber) => {
               const daySchedules = groupedSchedules[parseInt(dayNumber)];
@@ -66,7 +61,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
                   key={dayNumber}
                   className="flex flex-row items-center my-3 px-3"
                 >
-                  <Text className="text-lg font-bold w-1/4 text-center">
+                  <Text className="text-xl font-light w-1/4 text-center">
                     {
                       [
                         "Domingo",

@@ -159,7 +159,7 @@ export default function LocalInformation({
                     <WhatsAppIcon size={20} />
                   </View>
                   <Text className="text-base font-bold text-[#1a253d] ml-2 mt-1">
-                    {instagram}
+                    {whatsapp}
                   </Text>
                   <View className="ml-1">
                     <ArrowUpRightBox size={10} />

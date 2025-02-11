@@ -10,7 +10,9 @@ import { View } from "react-native";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
 
 export default function UpdateIndex() {
-  const service = useLocalServiceIdStore((state) => state.service);
+  const localService = useLocalServiceIdStore((state) => state.localService);
+
+  // console.log(localService);
 
   return (
     <View className="justify-end w-full h-full bg-defaultBlue">
@@ -24,10 +26,28 @@ export default function UpdateIndex() {
         <BasicSelectable
           href="/CRUD/ServiceCRUD/UpdateService"
           params={{
-            id: service.id,
+            id: localService.id,
           }}
           logo={<UpdateLogo />}
           text="Actualizar Servicio"
+          style="mt-3"
+        />
+
+        <BasicSelectable
+          href="/CRUD/ServiceCRUD/ServicePage/ReadLocalService"
+          params={{
+            id: localService.id,
+            name: localService.service?.name,
+            category: localService.localServiceCategory?.name,
+            imgURL: localService.imgURL,
+            serviceImgURL: localService.service?.imgURL,
+            coordinates: localService.location,
+            address: localService.address,
+            reservationURL: localService.reservationURL,
+            reservationNumber: localService.reservationNumber,
+          }}
+          logo={<ReadLogo />}
+          text="Ver Servicio"
           style="mt-3"
         />
 
@@ -48,7 +68,7 @@ export default function UpdateIndex() {
         <BasicSelectable
           href="/CRUD/ServiceCRUD/ServiceSchedule/ReadSchedule"
           logo={<ReadLogo />}
-          text="Leer horario"
+          text="Ver horario"
           style="mt-3"
         />
       </View>

@@ -1,6 +1,5 @@
 import {
   Alert,
-  Button,
   Modal,
   Pressable,
   ScrollView,
@@ -12,47 +11,50 @@ import {
   FlatList,
 } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import Header from "../../../components/Header";
+import { Stack, useRouter } from "expo-router";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
 import {
   createServiceType,
   getAllTypesByName,
-  getServiceTypes,
 } from "../../../libs/serviceType";
 import {
+  createLocalService,
+  createLocalServiceCategory,
   createService,
   getLocalServiceCatsByName,
-  updateService,
+  getServices,
+  getServicesByName,
 } from "../../../libs/localService";
 import {
   LocalService,
-  LocalServiceCategory,
   Service,
   ServiceType,
 } from "../../../schema/GeneralSchema";
 import * as ImagePicker from "expo-image-picker";
 import BigTextInput from "../../../components/BigTextInput";
 import BasicSearchButton from "../../../components/BasicSearchBar";
-import BasicSelectable from "../../../components/BasicSelectable";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
 
-export default function UpdateService() {
-  const [serviceTypes, setServiceTypes] = useState<LocalServiceCategory[]>([]);
-  const [selectedType, setSelectedType] = useState<LocalServiceCategory>({
+export default function CreateService() {
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
+  const [selectedType, setSelectedType] = useState<ServiceType>({
     id: "0000",
     name: "default",
   });
+  const [services, setServices] = useState<Service[]>([]);
+  const [serviceModal, setServiceModal] = useState(true);
+  const [selectedServiceId, setSelectedServiceId] = useState<string>();
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [createType, setCreateType] = useState(false);
 
-  const localService = useLocalServiceIdStore((state) => state.localService);
-
+  const setLocalService = useLocalServiceIdStore(
+    (state) => state.setLocalService
+  );
   const local = useLocalIdStore((state) => state.local);
   const router = useRouter();
 
@@ -76,43 +78,25 @@ export default function UpdateService() {
     getValue: () => string;
     setValue: (value: string) => void;
   }>(null);
-  const typeRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>(null);
+  const typeRef = useRef<any>(null);
 
   async function fetchServiceTypes() {
     const serviceTypes = await getLocalServiceCatsByName(search);
     setServiceTypes(serviceTypes);
   }
 
-  useEffect(() => {
-    if (localService.service) {
-      if (localService.reservationNumber) {
-        reservationNumberRef.current?.setValue(localService.reservationNumber);
-      }
-      if (localService.description) {
-        descriptionRef.current?.setValue(localService.description);
-      }
-      if (localService.reservationURL) {
-        URLRef.current?.setValue(localService.reservationURL);
-      }
-      if (localService.address) {
-        addressRef.current?.setValue(localService.address);
-      }
-      if (localService.location) {
-        locationRef.current?.setValue(localService.location);
-      }
-      if (localService.localServiceCategory) {
-        typeRef.current?.setValue(localService.localServiceCategory.name!);
-        setSelectedType(localService.localServiceCategory);
-      }
-    }
-  }, []);
+  async function fetchAndSetServices() {
+    const services = await getServicesByName(search);
+    setServices(services);
+  }
 
   useEffect(() => {
-    fetchServiceTypes();
-  }, [search]);
+    if (serviceModal) {
+      fetchAndSetServices();
+    } else {
+      fetchServiceTypes();
+    }
+  }, [search, serviceModal, typeModalVisibility]);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -136,20 +120,25 @@ export default function UpdateService() {
   };
 
   const handleSubmit = async (schedule: boolean) => {
-    const reservationNumber = reservationNumberRef.current?.getValue();
+    const serviceId = selectedServiceId;
     const description = descriptionRef.current?.getValue();
     const reservationURL = URLRef.current?.getValue();
-    const localServiceCategoryId = selectedType.id!;
+    const reservationNumber = reservationNumberRef.current?.getValue();
+    const serviceTypeId = selectedType.id!;
     const location = locationRef.current?.getValue();
     const address = addressRef.current?.getValue();
 
     if (
+      !serviceId ||
       !description ||
       !reservationURL ||
-      localServiceCategoryId === "0000" ||
+      serviceTypeId === "0000" ||
       !location ||
       !address
     ) {
+      Alert.alert("Por favor rellenar los campos obligatorios");
+      return;
+    } else if (!reservationURL && !reservationNumber) {
       Alert.alert("Por favor rellenar los campos obligatorios");
       return;
     }
@@ -162,44 +151,129 @@ export default function UpdateService() {
       // }
 
       const newService: LocalService = {
-        reservationNumber,
+        serviceId,
+        localId: local.id!,
         description,
         reservationURL,
+        reservationNumber,
         location,
         address,
+        localServiceCategoryId: selectedType.id!,
         // imgURL: uploadedImageUrl,
-        localServiceCategoryId,
+        // serviceTypeId,
         dateFrom: new Date(),
+        dateTo: null,
       };
 
-      const updatedService = await updateService(localService.id!, newService);
+      const service = await createLocalService(newService);
       if (schedule) {
+        setLocalService(service);
         router.push({
-          pathname: "/CRUD/ServiceCRUD/ServiceSchedule",
+          pathname: "/CRUD/ServiceCRUD/ServiceSchedule/",
           params: {
-            id: localService.id,
+            id: service.id,
+            create: "true",
           },
         });
       }
       setImage(null);
     } catch (error) {
       console.log(error);
-      Alert.alert("Error", "No se pudo actualizar el servicio.");
+      Alert.alert("Error", "No se pudo crear el local.");
     }
   };
 
   async function handleCreateType() {
     const name = typeRef.current?.getValue();
-    if (name) {
-      const newType = await createServiceType({ name });
-      setSelectedType(newType);
-    } else {
-      Alert.alert("Error", "Error creando el nuevo tipo");
-    }
+    const newType = await createLocalServiceCategory({ name });
+    setSelectedType(newType);
   }
+
+  // function handleCreatePlusSchedule() {
+  //   console.log(createdService);
+  //   if (createdService) {
+  //     router.push({
+  //       pathname: "/CRUD/ServiceCRUD/ServiceSchedule/CreateSchedule",
+  //       params: {
+  //         id: createdService.id,
+  //       },
+  //     });
+  //   } else {
+  //     Alert.alert(
+  //       "Error",
+  //       "El servicio fue creado con exito, pero no se pudo navegar a crear horario"
+  //     );
+  //   }
+  // }
 
   return (
     <View className="w-full h-full bg-defaultBlue">
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={serviceModal}
+        onRequestClose={() => setServiceModal(false)}
+      >
+        <View
+          className="flex items-center justify-center w-full h-full "
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+            <Text className="font-thin text-base mt-4">
+              Seleccione el servicio que desea cargar:
+            </Text>
+            <Pressable
+              onPress={() => {
+                router.replace("/CRUD/ServiceCRUD/CreateService");
+                setServiceModal(false);
+              }}
+              className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2  rounded-2xl overflow-hidden mb-2"
+            >
+              <Text className="font-light text-sm">
+                No encuentra el servicio?
+              </Text>
+            </Pressable>
+            <BasicSearchButton
+              placeholder="Buscar Servicio"
+              onSearch={setSearch}
+              background="#f8f8f8"
+            />
+            <FlatList
+              data={services}
+              horizontal={false}
+              numColumns={2}
+              renderItem={({ item, index }) => (
+                <Pressable
+                  className="flex items-center justify-start w-32 bg-[#f8f8f8] h-40 m-3 rounded-2xl overflow-hidden"
+                  onPress={() => {
+                    setSelectedServiceId(item.id!);
+                    setServiceModal(false);
+                  }}
+                >
+                  <View className="w-28 h-20 flex items-center justify-center  mt-3  ">
+                    <Image
+                      source={{
+                        uri: item.imgURL || "https://via.placeholder.com/150",
+                      }}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        // borderRadius: 20,
+                        resizeMode: "contain",
+                      }}
+                    />
+                  </View>
+                  <Text className="font-light text-sm mt-2">{item.name}</Text>
+                  <Text className="font-light text-sm">
+                    Tipo: {item.serviceType?.name}
+                  </Text>
+                </Pressable>
+              )}
+              keyExtractor={(item) => item.id!.toString()}
+            />
+          </View>
+        </View>
+      </Modal>
       <View className="w-full h-[90%] rounded-3xl overflow-hidden bg-white">
         <ScrollView
           contentContainerStyle={{
@@ -214,6 +288,7 @@ export default function UpdateService() {
               headerShown: false,
             }}
           />
+
           <BigTextInput
             inputType="text"
             value=""
@@ -303,7 +378,7 @@ export default function UpdateService() {
                   text="No encunetra la categoría?"
                   onPress={() => setCreateType(true)}
                   background="#f8f8f8"
-                  style="mt-4"
+                  style="mt-4 mb-4"
                 />
                 {createType ? (
                   <View className="w-full h-full flex items-center justify-center">
@@ -355,7 +430,10 @@ export default function UpdateService() {
           </Modal>
 
           <Pressable
-            onPress={() => setTypeModalVisibility(true)}
+            onPress={() => {
+              setTypeModalVisibility(true);
+              fetchServiceTypes();
+            }}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
             <Text className="text-sm font-light">
@@ -385,9 +463,16 @@ export default function UpdateService() {
       <View className="flex flex-row justify-evenly items-center w-full">
         <BasicButton
           logo={<CreateLogo />}
-          text="Actualizar Servicio"
+          text="Crear Servicio"
           style="mt-4"
           onPress={() => handleSubmit(false)}
+          background="white"
+        />
+        <BasicButton
+          logo={<CreateLogo />}
+          text="Crear + Horario"
+          style="mt-4"
+          onPress={() => handleSubmit(true)}
           background="white"
         />
       </View>

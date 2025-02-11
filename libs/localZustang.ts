@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Local } from "../schema/GeneralSchema";
+import { Local, LocalSchedule } from "../schema/GeneralSchema";
 
 interface LocalStore {
   local: Local;

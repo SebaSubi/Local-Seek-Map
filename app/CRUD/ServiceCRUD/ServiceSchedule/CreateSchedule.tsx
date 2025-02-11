@@ -23,7 +23,7 @@ export default function CreateProduct() {
   const [scheduleId, setScheduleId] = useState<string>();
   const [error, setError] = useState("");
 
-  const service = useLocalServiceIdStore((state) => state.service);
+  const localService = useLocalServiceIdStore((state) => state.localService);
 
   const dayNumberRef = useRef<any>(null);
 
@@ -48,7 +48,7 @@ export default function CreateProduct() {
   // }, []);
 
   const handleCreate = async () => {
-    const schedules = await getScheduleByLocalServiceId(service.id!);
+    const schedules = await getScheduleByLocalServiceId(localService.id!);
 
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
     let localWarning = false;
@@ -144,7 +144,7 @@ export default function CreateProduct() {
     );
 
     const newSchedule: LocalServiceSchedule = {
-      localServiceId: service.id!,
+      localServiceId: localService.id!,
       dayNumber,
       FirstShiftStart,
       FirstShiftFinish: FirstShiftFinish(),
