@@ -25,6 +25,9 @@ import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
+import { colors } from "../../../../constants/colors";
+import GoBackButton from "../../../../components/GoBackButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
@@ -188,8 +191,15 @@ export default function CreateProduct() {
           headerShown: false,
         }}
       />
-      <View className="bg-[#1a253d] w-full h-full flex items-center">
-        <View className=" h-[90%] w-full flex items-center">
+      <SafeAreaView className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+        <View className="flex flex-row justify-between w-full items-center">
+          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3 h-9" />
+          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+            {`Crear Producto`}
+          </Text>
+          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        </View>
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -336,7 +346,7 @@ export default function CreateProduct() {
             background="#ffffff"
           />
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }

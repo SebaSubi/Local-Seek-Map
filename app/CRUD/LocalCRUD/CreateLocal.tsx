@@ -16,13 +16,20 @@ import Header from "../../../components/Header";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useRef, useState, useEffect } from "react";
-import { checkLocalName, createLocal } from "../../../libs/local";
+import {
+  checkLocalName,
+  createLocal,
+  createLocalAndAddOwner,
+} from "../../../libs/local";
 // import { CategorySelectButtonLocals } from "../../../components/CategorySelectButton";
 import { getLocalTypes } from "../../../libs/localType";
 import { Local, LocalTypes } from "../../../schema/GeneralSchema";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 import { z } from "zod";
+import { useAuth } from "../../context/AuthContext";
+import GoBackButton from "../../../components/GoBackButton";
+import { colors } from "../../../constants/colors";
 
 export const verifyUrl = (url: string): boolean => {
   const urlSchema = z.string().url();
@@ -37,6 +44,7 @@ export const verifyUrl = (url: string): boolean => {
 export default function CreateLocal() {
   const nameRef = useRef<any>(null);
   const locationRef = useRef<any>(null);
+  const addressRef = useRef<any>(null);
   const whatsappRef = useRef<any>(null);
   const instagramRef = useRef<any>(null);
   const facebookRef = useRef<any>(null);
@@ -49,11 +57,14 @@ export default function CreateLocal() {
 
   //errorHandlers
   const [nameError, setNameError] = useState("");
+  const [addressError, setAddressError] = useState("");
   const [locationError, setLocationError] = useState("");
   const [whatsappError, setWhatsappError] = useState("");
   const [instagramError, setInstagramError] = useState("");
   const [facebookError, setFacebookError] = useState("");
   const [webpageError, setWebpageError] = useState("");
+
+  const { authState } = useAuth();
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -79,13 +90,14 @@ export default function CreateLocal() {
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
     const location = locationRef.current?.getValue();
+    const address = addressRef.current?.getValue();
     const whatsapp = whatsappRef.current?.getValue();
     const instagram = instagramRef.current?.getValue();
     const facebook = facebookRef.current?.getValue();
     const webpage = webpageRef.current?.getValue();
     const localTypeID = selectedType?.id;
 
-    if (!name || !location || !image) {
+    if (!name || !location || !image || !location || !address) {
       Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
       return;
     }
@@ -96,6 +108,7 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (name.length >= 40) {
@@ -105,6 +118,7 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if ((await checkLocalName(name)) === "true") {
@@ -114,10 +128,11 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
 
-    if (location.length < 5) {
+    if (address.length < 5) {
       setNameError("");
       setLocationError(
         // eslint-disable-next-line prettier/prettier
@@ -127,15 +142,40 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
-    if (location.length >= 50) {
+    if (address.length >= 120) {
       setNameError("");
       setLocationError("La ubicacion del Local tiene demasiados caracteres");
       setWhatsappError("");
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
+      return;
+    }
+    if (location.length < 5) {
+      setNameError("");
+      setLocationError(
+        // eslint-disable-next-line prettier/prettier
+        "Las coordenadas del Local requieren minimamente 23 caracteres"
+      );
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      setAddressError("");
+      return;
+    }
+    if (location.length >= 120) {
+      setNameError("");
+      setLocationError("Las coordenadas del Local tiene demasiados caracteres");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("");
+      setAddressError("");
       return;
     }
     if (whatsapp && whatsapp.length < 8) {
@@ -148,6 +188,7 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (whatsapp && whatsapp.length > 18) {
@@ -161,6 +202,7 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (instagram && instagram.length < 1) {
@@ -173,6 +215,7 @@ export default function CreateLocal() {
       );
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (instagram && instagram.length >= 30) {
@@ -185,6 +228,7 @@ export default function CreateLocal() {
       );
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (instagram && instagram.includes(",")) {
@@ -194,6 +238,7 @@ export default function CreateLocal() {
       setInstagramError("un usuario de instagram no puede tener comas ','");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (instagram && instagram.includes(" ")) {
@@ -203,6 +248,7 @@ export default function CreateLocal() {
       setInstagramError("un usuario de instagram no puede tener espacios");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (instagram && (instagram.includes("__") || instagram.includes(".."))) {
@@ -212,6 +258,7 @@ export default function CreateLocal() {
       setInstagramError("un usuario de instagram no puede tener este caracter");
       setFacebookError("");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (facebook && facebook.length < 5) {
@@ -224,6 +271,7 @@ export default function CreateLocal() {
         "un usuario de Facebook debe tener como minimo 5 caracteres"
       );
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (facebook && facebook.length > 50) {
@@ -236,6 +284,7 @@ export default function CreateLocal() {
         "un usuario de Facebook debe tener como maximo 50 caracteres"
       );
       setWebpageError("");
+      setAddressError("");
       return;
     }
     if (
@@ -251,6 +300,7 @@ export default function CreateLocal() {
       setInstagramError("");
       setFacebookError("Un usuario de Facebook no permite estos caracteres");
       setWebpageError("");
+      setAddressError("");
       return;
     }
     // if (webpage && !verifyUrl(webpage)) {
@@ -272,18 +322,19 @@ export default function CreateLocal() {
       const newLocal: Local = {
         name,
         location,
+        address,
         whatsapp,
         instagram,
         facebook,
         webpage,
         localTypeID,
         imgURL: uploadedImageUrl,
-        dateFrom: new Date(),
       };
 
-      await createLocal(newLocal);
+      await createLocalAndAddOwner(newLocal, authState!.user!.id);
       Alert.alert("Éxito", "Local creado exitosamente");
       nameRef.current.setValue("");
+      addressRef.current.setValue("");
       locationRef.current.setValue("");
       whatsappRef.current.setValue("");
       instagramRef.current.setValue("");
@@ -298,8 +349,9 @@ export default function CreateLocal() {
   const fetchCategories = async () => {
     try {
       const data = await getLocalTypes();
-      if (data.allCategories) {
-        setLocalTypes(data.allCategories);
+      // console.log(data);
+      if (data) {
+        setLocalTypes(data);
       } else {
         console.warn("No se encontró 'allCategories' en la respuesta");
         setLocalTypes([]);
@@ -325,158 +377,189 @@ export default function CreateLocal() {
     >
       <Stack.Screen
         options={{
-          header: () => <Header title="Crear Local" />,
+          headerShown: false,
         }}
       />
-      {nameError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{nameError}</Text>
+      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+        <View className="flex flex-row justify-between w-full items-center">
+          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3 h-9" />
+          <Text className="text-white font-semibold text-xl mt-1 w-[75%] text-center">
+            Crear Local
+          </Text>
+          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
         </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="Nombre"
-        textStyle="mt-4"
-        title="Nombre de Local: "
-        ref={nameRef}
-        value=""
-      />
-      {/* <CategorySelectButtonLocals
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+          {nameError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{nameError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="text"
+            placeholder="Nombre"
+            textStyle="mt-4"
+            title="Nombre de Local: "
+            ref={nameRef}
+            value=""
+          />
+          {/* <CategorySelectButtonLocals
         title="Categoría del Local:"
         placeholder="Seleccione una categoría"
         onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
         selectedCategory={selectedCategory}
       /> */}
-      {locationError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{locationError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="Direccion"
-        textStyle="mt-4"
-        title="Direccion del Local: "
-        ref={locationRef}
-        value=""
-      />
-      {whatsappError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{whatsappError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="number"
-        placeholder="Número de WhatsApp"
-        textStyle="mt-4"
-        title="Número de WhatsApp: "
-        ref={whatsappRef}
-        value=""
-      />
-      {instagramError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{instagramError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="@Instagram"
-        textStyle="mt-4"
-        title="Instagram: "
-        ref={instagramRef}
-        value=""
-      />
-      {facebookError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{facebookError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="@Facebook"
-        textStyle="mt-4"
-        title="Facebook: "
-        ref={facebookRef}
-        value=""
-      />
-      {webpageError === "" ? null : (
-        <View className="w-full flex items-start ml-28">
-          <Text className="text-red-800">{webpageError}</Text>
-        </View>
-      )}
-      <BasicTextInput
-        inputType="text"
-        placeholder="Página Web"
-        textStyle="mt-4"
-        title="Página Web: "
-        ref={webpageRef}
-        value=""
-      />
+          {addressError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{addressError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="text"
+            placeholder="Dirección"
+            textStyle="mt-4"
+            title="Direccion del Local: "
+            ref={addressRef}
+            value=""
+          />
+          {locationError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{locationError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="text"
+            placeholder="Coordenadas"
+            textStyle="mt-4"
+            title="Coordenadas del Local: "
+            ref={locationRef}
+            value=""
+          />
+          {whatsappError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{whatsappError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="number"
+            placeholder="Número de WhatsApp"
+            textStyle="mt-4"
+            title="Número de WhatsApp: "
+            ref={whatsappRef}
+            value=""
+          />
+          {instagramError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{instagramError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="text"
+            placeholder="@Instagram"
+            textStyle="mt-4"
+            title="Instagram: "
+            ref={instagramRef}
+            value=""
+          />
+          {facebookError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{facebookError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="text"
+            placeholder="@Facebook"
+            textStyle="mt-4"
+            title="Facebook: "
+            ref={facebookRef}
+            value=""
+          />
+          {webpageError === "" ? null : (
+            <View className="w-full flex items-start ml-28">
+              <Text className="text-red-800">{webpageError}</Text>
+            </View>
+          )}
+          <BasicTextInput
+            inputType="text"
+            placeholder="Página Web"
+            textStyle="mt-4"
+            title="Página Web: "
+            ref={webpageRef}
+            value=""
+          />
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={typeModalVisibility}
-        onRequestClose={() => setTypeModalVisibility(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Selecciona el tipo de producto
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={typeModalVisibility}
+            onRequestClose={() => setTypeModalVisibility(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  Selecciona el tipo de producto
+                </Text>
+                <ScrollView style={styles.scrollView}>
+                  {localTypes.length === 0 ? (
+                    <Text>No hay tipos disponibles</Text>
+                  ) : (
+                    localTypes.map((category, index) => (
+                      <Pressable
+                        key={index}
+                        onPress={() => {
+                          setSelectedType(category);
+                          setTypeModalVisibility(false);
+                        }}
+                        style={styles.modalOption}
+                      >
+                        <Text style={styles.modalOptionText}>
+                          {category.name}
+                        </Text>
+                      </Pressable>
+                    ))
+                  )}
+                </ScrollView>
+                <Pressable
+                  onPress={() => setTypeModalVisibility(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>Cerrar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+
+          <Pressable
+            onPress={() => {
+              setTypeModalVisibility(true);
+              fetchCategories();
+            }}
+            style={styles.typeButton}
+          >
+            <Text style={styles.typeButtonText}>
+              {selectedType
+                ? selectedType.name
+                : "Seleccionar categoria del Local"}
             </Text>
-            <ScrollView style={styles.scrollView}>
-              {localTypes.length === 0 ? (
-                <Text>No hay tipos disponibles</Text>
-              ) : (
-                localTypes.map((category, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => {
-                      setSelectedType(category);
-                      setTypeModalVisibility(false);
-                    }}
-                    style={styles.modalOption}
-                  >
-                    <Text style={styles.modalOptionText}>{category.name}</Text>
-                  </Pressable>
-                ))
-              )}
-            </ScrollView>
-            <Pressable
-              onPress={() => setTypeModalVisibility(false)}
-              style={styles.closeButton}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </Pressable>
+          </Pressable>
+
+          <View style={{ marginTop: 20 }}>
+            <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+          </View>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100, marginTop: 10 }}
+            />
+          )}
+          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            <BasicButton
+              logo={<CreateLogo />}
+              text="Crear Local"
+              style="mt-3 mb-4"
+              onPress={handleSubmit}
+            />
           </View>
         </View>
-      </Modal>
-
-      <Pressable
-        onPress={() => setTypeModalVisibility(true)}
-        style={styles.typeButton}
-      >
-        <Text style={styles.typeButtonText}>
-          {selectedType ? selectedType.name : "Seleccionar Tipo de Producto"}
-        </Text>
-      </Pressable>
-
-      <View style={{ marginTop: 20 }}>
-        <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
-      </View>
-      {image && (
-        <Image
-          source={{ uri: image }}
-          style={{ width: 100, height: 100, marginTop: 10 }}
-        />
-      )}
-      <View className="flex flex-col justify-center items-center w-3/4 mt-3">
-        <BasicButton
-          logo={<CreateLogo />}
-          text="Crear Local"
-          style="mt-3"
-          onPress={handleSubmit}
-        />
       </View>
     </ScrollView>
   );

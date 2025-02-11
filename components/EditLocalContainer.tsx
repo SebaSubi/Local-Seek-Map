@@ -71,7 +71,9 @@ export default function EditLocalContainer({ local }: { local: Local }) {
           />
         </View>
         <View className="w-full mt-1 flex flex-col">
-          <Text className="text-lg font-semibold ml-2">{local.name}</Text>
+          <Text className="text-lg font-semibold ml-2">
+            {local.name!.length > 16 ? local.name?.slice(0, 16) : local.name}
+          </Text>
           <Text className="text-sm font-thin ml-2">
             {local.localTypes?.name}
           </Text>

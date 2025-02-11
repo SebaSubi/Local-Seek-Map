@@ -143,6 +143,7 @@ const UserPermissionModal = ({
                   <Pressable
                     className="flex flex-row items-center rounded-full h-10"
                     style={{ backgroundColor: colors.primary.blue }}
+                    onPress={() => setVisible(false)}
                   >
                     <View className="ml-2 bg-white rounded-full mr-1">
                       <CreateLogo />
