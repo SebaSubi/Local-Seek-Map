@@ -7,6 +7,7 @@ import { validateEmail } from "../components/Register";
 import { colors } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import UserEmailRegisterModal from "../components/modals/UserEmailRegisterModal";
 
 export default function Login() {
   const emailRef = useRef("");
@@ -14,6 +15,7 @@ export default function Login() {
   const [login, setLogin] = useState(true);
   const [loginError, setLoginError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { onLogin, authState } = useAuth();
 
@@ -41,7 +43,7 @@ export default function Login() {
     }
 
     const result = await onLogin!(email, password);
-    if (result.status !== 200) {
+    if (result.error) {
       setLoginError("Correo o contraseña incorrectos.");
     }
   };
@@ -125,23 +127,29 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
 
-            {/* Agregar la opción de iniciar como invitado */}
-            <TouchableOpacity onPress={onGuestInPress}>
-              <Text
-                className="mt-8 text-center"
-                style={{ color: colors.secondary.black }}
-              >
-                ¿No quieres iniciar sesión?{" "}
-                <Text style={{ color: colors.primary.orange }}>
-                  Continuar como invitado
+            {/* TODO: hay que ver si esto se mantiene en la mayoria de los dispositivos*/}
+            <View className="justify-end h-4/5">
+              <TouchableOpacity onPress={onGuestInPress}>
+                <Text
+                  className="text-center"
+                  style={{ color: colors.secondary.black }}
+                >
+                  ¿No quieres iniciar sesión?{" "}
+                  <Text style={{ color: colors.primary.orange }}>
+                    Continuar como invitado
+                  </Text>
                 </Text>
-              </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
+        <UserEmailRegisterModal
+          isVisible={modalVisible}
+          setVisible={setModalVisible}
+        />
       </>
     );
   } else {
-    return <Register setReg={setLogin} />;
+    return <Register setReg={setLogin} setModalVisible={setModalVisible} />;
   }
 }

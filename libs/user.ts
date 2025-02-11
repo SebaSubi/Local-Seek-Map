@@ -45,3 +45,40 @@ export async function getUserLocals(userId: string) {
     },
   });
 }
+
+export async function deleteUser(userId: string) {
+  return await axios.patch(`${API_URL}/delete-user`, {
+    params: {
+      userId: userId,
+    },
+  });
+}
+
+export async function requestStoreOwner(
+  userEmail: string,
+  optionalEmail: string | null,
+  userId: string
+) {
+  // axios.defaults.headers.head;
+  return await axios.post(
+    `${API_URL}/request-store-owner`,
+    {
+      emails: [userEmail, optionalEmail],
+      userId: userId,
+    },
+    {
+      headers: {
+        "Request-Store-Owner":
+          "d6b1d6f4e0c3a6b3f9264a53d9bb1e4fae3a7d21477f0e9a98f4c3219bb17964",
+      },
+    }
+  );
+}
+
+export async function getStoreOwnerRequests(userId: string) {
+  return await axios.get(`${API_URL}/store-owner-requests`, {
+    params: {
+      userId: userId,
+    },
+  });
+}
