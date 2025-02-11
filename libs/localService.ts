@@ -36,9 +36,9 @@ export async function getDisplayServices() {
   }
 }
 
-export async function getDisplayServicesByName(name: string) {
+export async function getServicesByName(name: string) {
   try {
-    const rawData = await fetch(`${API_URL}/service/name-search?name=${name}`);
+    const rawData = await fetch(`${API_URL}/service/service-name?name=${name}`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Services by name");
     }
@@ -47,6 +47,36 @@ export async function getDisplayServicesByName(name: string) {
     return json;
   } catch (error) {
     console.log("Error getting Services by name", error);
+  }
+}
+
+export async function getLocalsByServiceId(serviceId: string) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/service/locals-by-service/${serviceId}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch locals by service Id");
+    }
+    const json = await rawData.json();
+    // console.log(json);
+    return json;
+  } catch (error) {
+    console.log("Error getting locals by service Id", error);
+  }
+}
+
+export async function getSimilarServices(category: string) {
+  try {
+    const rawData = await fetch(`${API_URL}/service/similar/${category}`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch similar services");
+    }
+    const json = await rawData.json();
+    // console.log(json);
+    return json;
+  } catch (error) {
+    console.log("Error getting similar services", error);
   }
 }
 
@@ -176,7 +206,7 @@ export async function getServicesByCategoryAndName(
   //nestJS automatically changes the spaces to %20 so this isnt necessary in the end
   try {
     const rawData = await fetch(
-      `${API_URL}/service/category-name?category=${category}&name=${name}`
+      `${API_URL}/service/name-category/${category}?name=${name}`
     );
     if (!rawData.ok) {
       throw new Error("Failed to fetch services by category and name");

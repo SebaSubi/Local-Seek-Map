@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList, Platform, Text } from "react-native";
+import { View, FlatList, Platform, Text, Image } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -22,17 +22,11 @@ import {
   getProductsOfLocalByNameAndCat,
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
-import {
-  getProductTypes,
-  getProductTypesOfLocal,
-} from "../../../../libs/productType";
+import { getProductTypesOfLocal } from "../../../../libs/productType";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GoBackButton from "../../../../components/GoBackButton";
-import { BlurView } from "expo-blur";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
-// type Categories = Record<string, string[]>;
-// const backEndCategories: Categories = {};
 
 export default function LocalPage() {
   const { id, name, localCoordinates, image, localType } =
@@ -89,8 +83,6 @@ export default function LocalPage() {
     }
   }
 
-  // console.log(selectedCategory);
-
   const handleCategorySelection = (cat: string) => {
     setSelectedCategory(cat);
   };
@@ -123,27 +115,6 @@ export default function LocalPage() {
     fetchAndSetLocals();
   }, [id]);
 
-  // async function getAndSetSubCategories() {
-  //   if (backEndCategories[selectedCategory]) {
-  //     setSubCategories(backEndCategories[selectedCategory]);
-  //   } else {
-  //     console.log(selectedCategory);
-  //     const subCategories = await getLocalProductSubCategoriesOfLocal(
-  //       id as string,
-  //       selectedCategory
-  //     );
-
-  //     backEndCategories[selectedCategory] = subCategories;
-  //     setSubCategories(subCategories);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (selectedCategory) {
-  //     getAndSetSubCategories();
-  //   }
-  // }, [selectedCategory]);
-
   useEffect(() => {
     if (localType !== "Servicio") {
       fetchAndSetProducts();
@@ -151,8 +122,6 @@ export default function LocalPage() {
       fetchAndSetServices();
     }
   }, [search, selectedCategory]);
-
-  // console.log(subCategories);
 
   return (
     <>
@@ -168,9 +137,9 @@ export default function LocalPage() {
         }}
       >
         {selectedOption === "Info" ? (
-          <View className="flex flex-row items-center justify-between mb-3 w-full">
-            <GoBackButton style="border border-white ml-4" iconColor="white" />
-            <Text className="text-4xl text-white font-medium ml-[-16px]">
+          <View className="flex flex-row items-center justify-between  w-full ">
+            <GoBackButton style="ml-4" iconColor="white" />
+            <Text className="text-3xl text-white font-normal ml-[-16px]">
               {name}
             </Text>
             <GoBackButton
@@ -180,7 +149,7 @@ export default function LocalPage() {
           </View>
         ) : null}
         <View className="flex-1 flex-col bg-white h-full w-full rounded-3xl overflow-hidden">
-          <View className="flex-1 items-center w-full h-full">
+          <View className="flex-1 items-center justify-center w-full h-full">
             {local &&
               (selectedOption === "Schedule" ? (
                 <View className="w-full h-full ">
@@ -201,7 +170,7 @@ export default function LocalPage() {
                     webpage={local.webpage}
                   />
                 ) : null
-              ) : localProducts ? (
+              ) : localProducts && localProducts.length > 0 ? (
                 <View className=" w-full h-full pb-20">
                   <BasicSearchButton
                     placeholder="Buscar"
@@ -214,22 +183,20 @@ export default function LocalPage() {
                     selectedCategory={handleCategorySelection}
                   />
                   {localType === "Restaurante" ? (
-                    localProducts.length > 0 && (
-                      <FlatList
-                        data={localProducts}
-                        horizontal={false}
-                        numColumns={2}
-                        renderItem={({ item }) => (
-                          <ProductContainer
-                            menuItem={true}
-                            product={item.product}
-                          />
-                        )}
-                        keyExtractor={(item) => item.product.id!.toString()}
-                        onRefresh={() => fetchAndSetProducts()}
-                        refreshing={loading}
-                      />
-                    )
+                    <FlatList
+                      data={localProducts}
+                      horizontal={false}
+                      numColumns={2}
+                      renderItem={({ item }) => (
+                        <ProductContainer
+                          menuItem={true}
+                          product={item.product}
+                        />
+                      )}
+                      keyExtractor={(item) => item.product.id!.toString()}
+                      onRefresh={() => fetchAndSetProducts()}
+                      refreshing={loading}
+                    />
                   ) : localType === "Servicio" ? (
                     <FlatList
                       data={localProducts}
@@ -243,29 +210,52 @@ export default function LocalPage() {
                       refreshing={loading}
                     />
                   ) : (
-                    localProducts.length > 0 && (
-                      <FlatList
-                        data={localProducts}
-                        horizontal={false}
-                        numColumns={2}
-                        renderItem={({ item }) => (
-                          <ProductContainer
-                            menuItem={true}
-                            product={item.product}
-                          />
-                        )}
-                        keyExtractor={(item) => item.product.id!.toString()}
-                        onRefresh={() => fetchAndSetProducts()}
-                        refreshing={loading}
-                      />
-                    )
+                    <FlatList
+                      data={localProducts}
+                      horizontal={false}
+                      numColumns={2}
+                      renderItem={({ item }) => (
+                        <ProductContainer
+                          menuItem={true}
+                          product={item.product}
+                        />
+                      )}
+                      keyExtractor={(item) => item.product.id!.toString()}
+                      onRefresh={() => fetchAndSetProducts()}
+                      refreshing={loading}
+                    />
                   )}
                 </View>
               ) : (
-                <BasicButton
-                  text="Recargar"
-                  onPress={() => fetchAndSetProducts()}
-                />
+                <>
+                  <View className="w-24 h-24">
+                    <Image
+                      source={{
+                        uri: "https://static.wikia.nocookie.net/henrystickmin/images/3/3c/CtM_Charles%27_Plan_Icon.PNG/revision/latest?cb=20240208180155",
+                      }}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        // borderRadius: 20,
+                        resizeMode: "contain",
+                      }}
+                    />
+                  </View>
+                  <View className="w-3/4 flex flex-wrap ">
+                    <Text
+                      className="mt-5 text-center font-light"
+                      style={{ width: "100%" }}
+                    >
+                      No se encontraron productos en este local, desea recargar?
+                    </Text>
+                  </View>
+                  <View className="w-1/2 h-24 mt-4">
+                    <BasicButton
+                      text="Recargar"
+                      onPress={() => fetchAndSetProducts()}
+                    />
+                  </View>
+                </>
               ))}
           </View>
           <View className="absolute w-full h-20 flex flex-row items-center justify-evenly bottom-0 bg-defaultGray rounded-lg">

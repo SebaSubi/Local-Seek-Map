@@ -4,10 +4,10 @@ import { Stack } from "expo-router";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import {
-  getDisplayServicesByName,
   getOpenServicesByName,
   getOpenServicesByNameAndCategory,
   getServicesByCategoryAndName,
+  getServicesByName,
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
 import { getServiceTypes } from "../../../libs/serviceType";
@@ -39,24 +39,31 @@ export default function ReadWS() {
       );
       setServices(services);
       setLoading(false);
-    } else if (selectedCategory !== "" && searchFilter === "Apertura") {
-      const services = await getOpenServicesByNameAndCategory(
-        search,
-        selectedCategory
-      );
-      setServices(services);
-      setLoading(false);
-    } else if (searchFilter === "Apertura") {
-      const locals = await getOpenServicesByName(search);
-      setServices(locals);
-      setLoading(false);
     } else {
-      const services = await getDisplayServicesByName(search);
+      const services = await getServicesByName(search);
       // console.log("we are in");
       setServices(services);
       setLoading(false);
     }
   }
+
+  // console.log(services);
+
+  // else if (selectedCategory !== "" && searchFilter === "Apertura") {
+  //     const services = await getOpenServicesByNameAndCategory(
+  //       search,
+  //       selectedCategory
+  //     );
+  //     setServices(services);
+  //     setLoading(false);
+
+  //   }
+
+  // else if (searchFilter === "Apertura") {
+  //     const locals = await getOpenServicesByName(search);
+  //     setServices(locals);
+  //     setLoading(false);
+  // }
   // async function fetchAndSetServices() {
   //   const services = await getDisplayServices();
   //   setServices(services);
