@@ -191,3 +191,11 @@ export const TrashIcon = ({ color = "black", size = 24 }) => {
 export const EmailIcon = ({ color = "black", size = 24 }) => {
   return <Fontisto name="email" size={size} color={color} />;
 };
+
+export const StoreIcon = ({ color = "black", size = 24 }) => {
+  return <FontAwesome5 name="store" size={size} color={color} />;
+};
+
+export const CircleCheckIcon = ({ color = "black", size = 24 }) => {
+  return <AntDesign name="checkcircleo" size={size} color={color} />;
+};

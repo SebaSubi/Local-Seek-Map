@@ -243,6 +243,13 @@ const handleUserChange = async (
     setPasswordError("La contraseña debe tener al menos 8 caracteres");
     setEmailError("");
     setUsernameError("");
+  } else if (
+    (secondPassword.current?.getValue().length ?? 0) > 64 ||
+    (password.current?.getValue().length ?? 0) > 64
+  ) {
+    setPasswordError("La contraseña no debe tener mas de 64 caracteres.");
+    setEmailError("");
+    setUsernameError("");
   } else if ((secondPassword.current?.getValue().length ?? 0) < 8) {
     //handle no second Password
     setPasswordError("La contraseña debe tener al menos 8 caracteres");

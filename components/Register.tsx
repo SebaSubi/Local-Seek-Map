@@ -63,6 +63,13 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
       );
       setEmailError("");
       setUsernameError("");
+    } else if (
+      secondPassword.current.length > 64 ||
+      password.current.length > 64
+    ) {
+      setPasswordError("La contraseña no debe tener mas de 64 caracteres.");
+      setEmailError("");
+      setUsernameError("");
     } else if (secondPassword.current !== password.current) {
       setPasswordError("Las contraseñas no coinciden.");
       setEmailError("");

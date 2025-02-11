@@ -11,11 +11,13 @@ import { getUserLocals, UserLocal } from "../../libs/user";
 import { LocalTypes } from "../../schema/GeneralSchema";
 import GoBackButton from "../../components/GoBackButton";
 import EditLocalContainer from "../../components/EditLocalContainer";
+import UserPermissionModal from "../../components/modals/UserPermissionModal";
 
 export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
   const [locals, setLocals] = useState<UserLocal[]>([]);
+  const [isPermissionModalVisible, setPermissionModalVisible] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -25,7 +27,7 @@ export default function UserScreen() {
     if (
       authState?.user?.username &&
       authState.user.username !== "Admin" &&
-      authState.user.username !== "guest"
+      authState.user.username !== Role.USER
     ) {
       const fetchedLocals = await getUserLocals(authState.user.id);
       // console.log(fetchedLocals.data);
@@ -79,41 +81,52 @@ export default function UserScreen() {
 
           {authState?.user?.username !== "guest" && locals.length >= 1 ? (
             <>
-              <Text className="text-2xl font-bold">Mi Local</Text>
-              <View className="w-full h-[60%]">
-                <FlatList
-                  data={locals}
-                  horizontal={false}
-                  numColumns={2}
-                  renderItem={({ item }) => (
-                    <EditLocalContainer
-                      local={{
-                        id: item.id,
-                        address: item.address,
-                        dateFrom: new Date(),
-                        dateTo: null,
-                        facebook: item.facebook,
-                        imgURL: item.imgURL,
-                        instagram: item.instagram,
-                        localTypeID: item.localTypes.id,
-                        localTypes: item.localTypes as LocalTypes,
-                        location: item.location,
-                        name: item.name,
-                        product: [],
-                        schedule: [],
-                        services: [],
-                        users: [],
-                        viewLocal: [],
-                        webpage: item.webpage,
-                        whatsapp: item.whatsapp,
-                        // whatsapp: null,
-                      }}
+              {authState?.user?.role !== Role.USER ? (
+                <>
+                  <Text className="text-2xl font-bold">Mi Local</Text>
+                  <View className="w-full h-[50%]">
+                    <FlatList
+                      data={locals}
+                      horizontal={false}
+                      numColumns={2}
+                      renderItem={({ item }) => (
+                        <EditLocalContainer
+                          local={{
+                            id: item.id,
+                            address: item.address,
+                            dateFrom: new Date(),
+                            dateTo: null,
+                            facebook: item.facebook,
+                            imgURL: item.imgURL,
+                            instagram: item.instagram,
+                            localTypeID: item.localTypes.id,
+                            localTypes: item.localTypes as LocalTypes,
+                            location: item.location,
+                            name: item.name,
+                            product: [],
+                            schedule: [],
+                            services: [],
+                            users: [],
+                            viewLocal: [],
+                            webpage: item.webpage,
+                            whatsapp: item.whatsapp,
+                          }}
+                        />
+                      )}
+                      keyExtractor={(item) => item.id}
+                      onRefresh={() => fetchData()}
+                      // refreshing={loading}
+                      refreshing={false}
                     />
-                  )}
-                  keyExtractor={(item) => item.id}
-                  onRefresh={() => fetchData()}
-                  // refreshing={loading}
-                  refreshing={false}
+                  </View>
+                </>
+              ) : (
+                <></>
+              )}
+              <View className="w-full">
+                <UserPermissionModal
+                  isVisible={isPermissionModalVisible}
+                  setVisible={setPermissionModalVisible}
                 />
                 <BasicButton
                   text="Registrar mi local"
@@ -121,6 +134,9 @@ export default function UserScreen() {
                   textStyle={`font-bold text-[#1A253D] text-base ml-2`}
                   style="h-11 mt-3 justify-center"
                   logo={<Checkbox color={colors.primary.blue} />}
+                  onPress={() =>
+                    setPermissionModalVisible(!isPermissionModalVisible)
+                  }
                 />
               </View>
             </>
