@@ -110,20 +110,12 @@ export interface ProductType {
 
 export interface Service {
   id?: string | null;
-  local?: Local | null;
-  localId: string;
   name: string;
-  location: string;
-  address: string;
-  reservationNumber?: string;
   serviceType?: ServiceType | null;
   serviceTypeId: string;
-  description: string;
   imgURL?: string | null;
-  reservationURL: string | null;
   dateFrom: Date;
   dateTo?: Date | null;
-  schedule?: LocalServiceSchedule[] | null;
 }
 
 export interface LocalServiceCategory {
@@ -135,12 +127,12 @@ export interface LocalServiceCategory {
 export interface LocalService {
   id?: string;
   local?: Local; // Assuming you have a `Local` interface defined
-  localId: string;
+  localId?: string;
   service?: Service; // Assuming you have a `Service` interface defined
-  serviceId: string;
+  serviceId?: string;
   location: string; // Consider changing to `number` if you switch to REAL in the database
   address: string;
-  reservationNumber: string;
+  reservationNumber?: string;
   instagram?: string; // Optional field
   facebook?: string; // Optional field
   webpage?: string; // Optional field
@@ -151,7 +143,7 @@ export interface LocalService {
   localServiceCategory?: LocalServiceCategory; // Assuming you have a `LocalServiceCategory` interface defined
   localServiceCategoryId: string;
   dateFrom: Date; // Defaults to `now()`, mapped to "date_from" in the database
-  dateTo?: Date; // Optional field, mapped to "date_to" in the database
+  dateTo?: Date | null; // Optional field, mapped to "date_to" in the database
 }
 
 export interface LocalServiceSchedule {

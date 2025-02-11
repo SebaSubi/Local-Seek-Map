@@ -1,7 +1,12 @@
 // import { Alert } from "react-native";
 // import { Service } from "../schema/GeneralSchema";
 import { Alert, Platform } from "react-native";
-import { LocalServiceSchedule, Service } from "../schema/GeneralSchema";
+import {
+  LocalService,
+  LocalServiceCategory,
+  LocalServiceSchedule,
+  Service,
+} from "../schema/GeneralSchema";
 
 const API_URL =
   Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
@@ -112,7 +117,7 @@ export async function getServicesByLocalIdAndName(
 ) {
   try {
     const rawData = await fetch(
-      `${API_URL}/service/local-service-name/${localId}?name=${name}`
+      `${API_URL}/local-service/local-service-name/${localId}?name=${name}`
     );
     if (!rawData.ok) {
       throw new Error("Failed to fetch ServicesById");
@@ -218,6 +223,28 @@ export async function getServicesByCategoryAndName(
   }
 }
 
+export async function createLocalService(data: LocalService) {
+  try {
+    const response = await fetch(`${API_URL}/local-service/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      Alert.alert("Error", "Error creando servicio");
+    } else {
+      Alert.alert("Éxito", "servicio creado con éxito");
+
+      return response.json();
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
 export async function createService(data: Service) {
   try {
     const response = await fetch(`${API_URL}/service/create`, {
@@ -240,10 +267,10 @@ export async function createService(data: Service) {
   }
 }
 
-export async function updateService(id: string, data: Service) {
-  console.log(`${API_URL}/service/update/${id}`);
+export async function updateService(id: string, data: LocalService) {
+  console.log(data);
   try {
-    const response = await fetch(`${API_URL}/service/update/${id}`, {
+    const response = await fetch(`${API_URL}/local-service/update/${id}`, {
       method: "PATCH", // I changed all PUT to PATCH -Lucas  TODO: check if it worked
       headers: {
         "Content-Type": "application/json",
@@ -264,7 +291,7 @@ export async function updateService(id: string, data: Service) {
 
 export async function deleteService(id: string) {
   try {
-    const response = await fetch(`${API_URL}/service/delete/${id}`, {
+    const response = await fetch(`${API_URL}/local-service/delete/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -385,5 +412,46 @@ export async function deleteServiceSchedule(id: string) {
     }
   } catch (error) {
     console.log(error);
+  }
+}
+
+//------------------------------------ Local Service Categories ------------------------------------//
+
+export async function getLocalServiceCatsByName(name: string) {
+  // This is not working
+  try {
+    const rawData = await fetch(
+      `${API_URL}/local-service-category/service-cat-name?name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch schedule by scheduleId");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting schedule by scheduleId", error);
+  }
+}
+
+export async function createLocalServiceCategory(data: LocalServiceCategory) {
+  try {
+    const response = await fetch(`${API_URL}/local-service-category/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(JSON.stringify(data));
+
+    if (!response.ok) {
+      Alert.alert("Error", "No se a podido crear la cateogria");
+    } else {
+      Alert.alert("Éxito", "El la categoría fue creada con éxito!");
+      console.log("");
+      return response.json();
+    }
+  } catch (error) {
+    console.log("Error: ", error);
   }
 }

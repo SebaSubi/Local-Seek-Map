@@ -25,16 +25,16 @@ export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState<LocalServiceSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
-  const service = useLocalServiceIdStore((state) => state.service);
+  const localService = useLocalServiceIdStore((state) => state.localService);
 
   useEffect(() => {
     const fetchData = async () => {
-      const schedules = await getScheduleByLocalServiceId(service.id!);
+      const schedules = await getScheduleByLocalServiceId(localService.id!);
       setSchedule(schedules);
       setLoading(false);
     };
     fetchData();
-  }, [service, refresh]);
+  }, [localService, refresh]);
 
   function handleDelete(id: string) {
     deleteServiceSchedule(id);
@@ -66,6 +66,7 @@ export default function DeleteSchedule() {
               data={schedule}
               renderItem={({ item }) => (
                 <EditScheduleContainer
+                  local={false}
                   href="CRUD/ServiceCRUD/ServiceSchedule/UpdateSchedule"
                   schedule={item}
                   onDelete={handleDelete}

@@ -146,7 +146,7 @@ export default function UpdateSchedule() {
       ThirdShiftFinishRef.current?.getTime()
     );
 
-    const newSchedule: LocalSchedule = {
+    const newSchedule: LocalServiceSchedule = {
       FirstShiftStart: FirstShiftStart!, // these are validated before, they will never be null or undefined
       FirstShiftFinish: FirstShiftFinish()!,
       SecondShiftStart,
@@ -166,7 +166,7 @@ export default function UpdateSchedule() {
       Alert.alert("Exito", "Horario actualizado con exito");
       navigation.goBack();
     } else {
-      Alert.alert("Exito", "Horario actualizado con exito");
+      Alert.alert("Érror", "Intentalo de nuevo mas tarde");
     }
   }
 

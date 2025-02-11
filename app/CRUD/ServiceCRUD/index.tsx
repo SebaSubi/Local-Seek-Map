@@ -15,7 +15,7 @@ import {
   getServicesByLocalIdAndName,
 } from "../../../libs/localService";
 import { useLocalIdStore } from "../../../libs/localZustang";
-import { Service } from "../../../schema/GeneralSchema";
+import { LocalService, Service } from "../../../schema/GeneralSchema";
 import ServiceContainer from "../../../components/ServiceContainer";
 import DeleteServiceComponent from "../../../components/DeleteServiceComponent";
 import BasicButton from "../../../components/BasicButton";
@@ -23,7 +23,7 @@ import BasicButton from "../../../components/BasicButton";
 export default function ProductCrud() {
   const [expanded, setExpanded] = useState(false);
   const [search, setSearch] = useState("");
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<LocalService[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const widthAnim = useRef(new Animated.Value(48)).current; // Start from width 0
@@ -119,7 +119,7 @@ export default function ProductCrud() {
           logo={<CreateLogo />}
           text="Crear Servicio"
           style="mt-4"
-          onPress={() => router.push("/CRUD/ServiceCRUD/CreateService")}
+          onPress={() => router.push("/CRUD/ServiceCRUD/AddService")}
           background="white"
         />
       </View>

@@ -16,7 +16,6 @@ import {
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
 import ServiceInformation from "../../../../components/ServiceInformation";
-import GeneralServiceInformation from "../../../../components/GeneralServiceInformation";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import { getPlaceholders } from "../../../../libs/libs";
