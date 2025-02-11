@@ -267,6 +267,24 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
   }
 }
 
+export async function deleteLocalv2(localId: string, userId: string) {
+  try {
+    const payload = { userId: userId, storeId: localId };
+    const response = await axios.patch(
+      `${API_URL_2}/auth-v2/store_owner/delete-store`,
+      payload
+    );
+    if (!response.status) {
+      Alert.alert("Error", "Failed to delete Local");
+    } else {
+      console.log("Local succesfully deleted from dataBase");
+      return response;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
 //----------------------------------------------------------------Local User----------------------------------------------------------------
 
 export async function getLocalsOfUser(userEmail: string) {

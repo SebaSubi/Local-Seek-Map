@@ -17,12 +17,16 @@ import { getLocalById, getLocals } from "../../../libs/local";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";
+import BasicButton from "../../../components/BasicButton";
+import LocalDeleteModal from "../../../components/modals/LocalDeleteModal";
 
 export default function ProductCrud() {
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
 
   const local = useLocalIdStore((state) => state.local);
+
+  const [isVisible, setVisible] = useState(false);
 
   return (
     <>
@@ -62,12 +66,25 @@ export default function ProductCrud() {
               id: local.id,
             }}
           />
-          <BasicSelectable
+          {/* <BasicSelectable
             href="/CRUD/LocalCRUD/DeleteLocal"
             logo={<DeleteLogo />}
             text="Borrar Local"
             style="mt-3"
-          />
+          /> */}
+          <LocalDeleteModal isVisible={isVisible} setVisible={setVisible} />
+          <View className="mt-3">
+            <BasicButton
+              text="Borrar Local"
+              background="#fff"
+              logo={
+                <View className="p-2 mr-1">
+                  <DeleteLogo />
+                </View>
+              }
+              onPress={() => setVisible(!isVisible)}
+            />
+          </View>
           <BasicSelectable
             href="/CRUD/LocalCRUD/LocalSchedule/"
             logo={<ClockLogo />}
