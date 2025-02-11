@@ -31,14 +31,16 @@ export default function EditLocalContainer({ local }: { local: Local }) {
           id: local.id,
           name: local.name,
           localCoordinates: local.location,
-          image: local.imgURL ?? "https://via.placeholder.com/150",
+          image: local.imgURL
+            ? local.imgURL
+            : "https://via.placeholder.com/150", //FIXME: add a placeholderImage
           localType: local.localTypes?.name,
         },
       }}
       asChild
     >
       <Pressable
-        className="flex flex-col items-center  mt-3 w-[45%] bg-[#f8f8f8] h-72 rounded-3xl ml-3"
+        className="flex flex-col items-center  mt-3 w-[45%] bg-[#f8f8f8] h-64 rounded-3xl ml-3"
         key={local.id}
         onPress={() => {
           setLocal(local);
@@ -69,7 +71,9 @@ export default function EditLocalContainer({ local }: { local: Local }) {
           />
         </View>
         <View className="w-full mt-1 flex flex-col">
-          <Text className="text-lg font-semibold ml-2">{local.name}</Text>
+          <Text className="text-lg font-semibold ml-2">
+            {local.name!.length > 16 ? local.name?.slice(0, 16) : local.name}
+          </Text>
           <Text className="text-sm font-thin ml-2">
             {local.localTypes?.name}
           </Text>
@@ -78,7 +82,6 @@ export default function EditLocalContainer({ local }: { local: Local }) {
           >
             {isOpen ? "Abierto" : "Cerrado"}
           </Text>
-          <Text className="text-base font-thin ml-2">Ver productos -{">"}</Text>
         </View>
       </Pressable>
     </Link>

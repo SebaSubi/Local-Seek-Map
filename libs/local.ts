@@ -239,6 +239,33 @@ export async function deleteLocal(id: string) {
     console.error("Error en deleteProduct:", error);
   }
 }
+const API_URL_2 =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000"
+    : process.env.EXPO_PUBLIC_API_ROUTE;
+
+export async function createLocalAndAddOwner(local: Local, userId: string) {
+  try {
+    const payload = {
+      store: local,
+      userId: userId,
+    };
+    const response = await axios.post(
+      `${API_URL_2}/auth-v2/store_owner/craete-and-add-store`,
+      payload
+    );
+
+    // console.log(JSON.stringify(local));
+
+    if (!response.status) {
+      Alert.alert("Error", "Failed to create Local");
+    } else {
+      console.log("Product succesfully added to dataBase");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
 
 //----------------------------------------------------------------Local User----------------------------------------------------------------
 

@@ -16,6 +16,11 @@ import {
 } from "../../../schema/GeneralSchema";
 import ProductContainer from "../../../components/ProductContainer";
 import BasicButton from "../../../components/BasicButton";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]); //this are the products in display
@@ -29,6 +34,8 @@ const ReadProductScreen = () => {
   >([]);
   const [selectedLocalProductCategory, setSelectedLocalProductCateogry] =
     useState<string>();
+  const tabBarHeight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
 
   async function fetchAndSetProducts() {
     setLoading(true); // To show the user that it is in fact loading
@@ -104,12 +111,18 @@ const ReadProductScreen = () => {
   };
 
   return (
-    <View className="bg-[#1a253d] w-full h-full flex flex-col">
+    <View
+      className="bg-defaultBlue w-full h-full flex flex-col"
+      style={{
+        paddingBottom: tabBarHeight + insets.bottom + 12,
+      }}
+    >
       <Stack.Screen
         options={{
           headerShown: false,
         }}
       />
+
       <BasicSearchButton
         placeholder="Buscar"
         onSearch={setSearchText}
@@ -144,12 +157,7 @@ const ReadProductScreen = () => {
         </View>
       ) : null}
 
-      <View
-        className="w-full h-full bg-white rounded-t-3xl overflow-hidden"
-        style={{
-          paddingBottom: selectedLocalProductCategory ? 272 : 220,
-        }}
-      >
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden">
         <FlatList
           data={products}
           horizontal={false}

@@ -1,38 +1,20 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Pressable,
-  Modal,
-  Image,
-  Alert,
-} from "react-native";
+import { View, Text, FlatList, StyleSheet, Platform } from "react-native";
 import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
 import { getProducts } from "../libs/product";
-import {
-  Local,
-  LocalTypes,
-  Product,
-  ProductType,
-  Service,
-  ServiceType,
-} from "../schema/GeneralSchema";
+import { Local, Product, Service } from "../schema/GeneralSchema";
 import { getDisplayServices } from "../libs/localService";
 import ServiceContainer from "./ServiceContainer";
 import BasicButton from "./BasicButton";
 import { LocalIcon, ProductIcon, ServiceIcon } from "./Logos";
-import BasicSearchButton from "./BasicSearchBar";
 import { Stack } from "expo-router";
 import { getLocalTypes } from "../libs/localType";
 import { getServiceTypes } from "../libs/serviceType";
-import { getProductTypes } from "../libs/productType";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const defaultImage = "https://via.placeholder.com/50";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SearchComponent = () => {
   const [locals, setLocals] = useState<Local[]>([]);
@@ -43,6 +25,9 @@ const SearchComponent = () => {
     // eslint-disable-next-line prettier/prettier
     "locals"
   );
+
+  const tabBarHeight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     fetchData();
@@ -67,6 +52,10 @@ const SearchComponent = () => {
       setLoading(false);
     }
   };
+
+  // SafeAreaView
+  //       className="flex flex-col items-center w-full h-full justify-center bg-[#1a253d]"
+
   return (
     <>
       <Stack.Screen
@@ -74,9 +63,14 @@ const SearchComponent = () => {
           headerShown: false,
         }}
       />
-      <SafeAreaView className="flex flex-col items-center justify-center bg-[#1a253d] pt-6">
-        {/* <BasicSearchButton /> */}
-        <View className="flex flex-row items-center justify-center overflow-hidden ">
+      <SafeAreaView
+        className="bg-defaultBlue "
+        style={{
+          paddingBottom: tabBarHeight - 13, // Dont ask why it doesnt get the correct Tab height
+          paddingTop: Platform.OS === "android" ? 6 : 0,
+        }}
+      >
+        <View className="flex flex-row items-center justify-center overflow-hidden mb-3">
           <BasicButton
             text="Locales"
             style=" w-28 mr-2"
@@ -99,56 +93,53 @@ const SearchComponent = () => {
             background={viewType === "products" ? "#ff6c3d" : "#ffffff"}
           />
         </View>
-        {loading ? (
-          <Text style={styles.loadingText}>Cargando datos...</Text>
-        ) : (
-          <SafeAreaView className="w-full h-full bg-white rounded-t-3xl mt-4 overflow-hidden">
-            <View
-              className="w-full h-full pb-14"
-              style={{ display: viewType === "locals" ? "flex" : "none" }}
-            >
-              <FlatList
-                data={locals}
-                horizontal={false}
-                numColumns={2}
-                renderItem={({ item }) => <LocalContainer local={item} />}
-                keyExtractor={(item) => item.id!.toString()}
-                onRefresh={() => fetchData()}
-                refreshing={loading}
-              />
-            </View>
-            <View
-              className="w-full h-full pb-14"
-              style={{ display: viewType === "products" ? "flex" : "none" }}
-            >
-              <FlatList
-                data={products}
-                horizontal={false}
-                numColumns={2}
-                renderItem={({ item }) => {
-                  return <ProductContainer product={item} />;
-                }}
-                keyExtractor={(item) => item.id!.toString()}
-                onRefresh={() => fetchData()}
-                refreshing={loading}
-              />
-            </View>
-            <View
-              className="w-full h-full pb-14"
-              style={{ display: viewType === "services" ? "flex" : "none" }}
-            >
-              <FlatList
-                data={services}
-                horizontal={false}
-                numColumns={2}
-                renderItem={({ item }) => <ServiceContainer service={item} />}
-                keyExtractor={(item) => item.id!.toString()}
-                onRefresh={() => fetchData()}
-                refreshing={loading}
-              />
-            </View>
-          </SafeAreaView>
-        )}
+
+        <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden">
+          <View
+            className="w-full h-full"
+            style={{ display: viewType === "locals" ? "flex" : "none" }}
+          >
+            <FlatList
+              data={locals}
+              horizontal={false}
+              numColumns={2}
+              renderItem={({ item }) => <LocalContainer local={item} />}
+              keyExtractor={(item) => item.id!.toString()}
+              onRefresh={() => fetchData()}
+              refreshing={loading}
+            />
+          </View>
+          <View
+            className="w-full h-full"
+            style={{ display: viewType === "products" ? "flex" : "none" }}
+          >
+            <FlatList
+              data={products}
+              horizontal={false}
+              numColumns={2}
+              renderItem={({ item }) => {
+                return <ProductContainer product={item} />;
+              }}
+              keyExtractor={(item) => item.id!.toString()}
+              onRefresh={() => fetchData()}
+              refreshing={loading}
+            />
+          </View>
+          <View
+            className="w-full h-full"
+            style={{ display: viewType === "services" ? "flex" : "none" }}
+          >
+            <FlatList
+              data={services}
+              horizontal={false}
+              numColumns={2}
+              renderItem={({ item }) => <ServiceContainer service={item} />}
+              keyExtractor={(item) => item.id!.toString()}
+              onRefresh={() => fetchData()}
+              refreshing={loading}
+            />
+          </View>
+        </View>
       </SafeAreaView>
     </>
   );

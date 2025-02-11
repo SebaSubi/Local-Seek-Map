@@ -15,6 +15,8 @@ import {
 import LocalContainer from "../../../components/LocalContainer";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { getLocalTypes } from "../../../libs/localType";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const localFilters = ["Ubicación", "Quitar", "Apertura"];
 
@@ -25,6 +27,8 @@ export default function ReadLocal() {
   const [selectedCategory, setStoreCategories] = useState("");
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<LocalTypes[]>([]);
+  const tabBarHeight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
 
   async function fetchAndSetLocals() {
     setLoading(true);
@@ -73,7 +77,12 @@ export default function ReadLocal() {
   };
 
   return (
-    <View className="bg-[#1a253d] w-full h-full flex flex-col">
+    <View
+      className="bg-[#1a253d] w-full h-full flex flex-col"
+      style={{
+        paddingBottom: tabBarHeight + insets.bottom + 12,
+      }}
+    >
       <Stack.Screen
         options={{
           headerShown: false,
@@ -89,7 +98,7 @@ export default function ReadLocal() {
         selectedCategory={handleCategorySelection}
         style="mt-16"
       />
-      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden">
         <FlatList
           data={locals}
           horizontal={false}

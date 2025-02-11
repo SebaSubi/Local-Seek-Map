@@ -12,16 +12,22 @@ import { useLocalScheduleIdStore } from "../libs/scheduleZustang";
 import { useLocalServiceIdStore } from "../libs/localServiceZustang";
 
 export default function EditScheduleContainer({
+  local,
   schedule,
   href,
   onDelete,
 }: {
+  local: boolean;
   schedule: LocalSchedule | LocalServiceSchedule;
   href: string;
   onDelete: (id: string) => void;
 }) {
   const setServiceSchedule = useLocalServiceIdStore(
     (state) => state.setServiceSchedule
+  );
+
+  const setLocalScheduleId = useLocalScheduleIdStore(
+    (state) => state.setScheduleId
   );
 
   const translateX = new Animated.Value(0);
@@ -54,7 +60,12 @@ export default function EditScheduleContainer({
   });
 
   function handleUpdate() {
-    setServiceSchedule(schedule);
+    if (local) {
+      setLocalScheduleId(schedule.id!);
+    } else {
+      setServiceSchedule(schedule as LocalServiceSchedule);
+    }
+
     // console.log("yes"); For some reason if i dont do this it calls the delete function
   }
 

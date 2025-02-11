@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { LocalProduct, Service } from "../schema/GeneralSchema";
+import { LocalProduct, LocalService, Service } from "../schema/GeneralSchema";
 import {
   Text,
   View,
@@ -14,10 +14,12 @@ export default function DeleteServiceComponent({
   service,
   onDelete,
 }: {
-  service: Service;
+  service: LocalService;
   onDelete: (id: string) => void;
 }) {
-  const setService = useLocalServiceIdStore((state) => state.setService);
+  const setLocalService = useLocalServiceIdStore(
+    (state) => state.setLocalService
+  );
   const translateX = new Animated.Value(0);
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -48,7 +50,7 @@ export default function DeleteServiceComponent({
   });
 
   function handleUpdate() {
-    setService(service);
+    setLocalService(service);
 
     // console.log("yes"); For some reason if i dont do this it calls the delete function
   }
@@ -69,24 +71,23 @@ export default function DeleteServiceComponent({
           asChild
         >
           <TouchableOpacity
-            className="w-24 h-24 bg-[#1a253d] justify-center items-end absolute left-[-80px] z-[-1] rounded-2xl"
+            className="w-28 h-24 bg-[#1a253d] justify-center items-end absolute left-[-80px] z-[-1] rounded-2xl"
             onPress={handleUpdate}
           >
-            <Text className="text-white font-bold mr-5">Actualizar</Text>
+            <Text className="text-white font-bold mr-9">Actualizar</Text>
           </TouchableOpacity>
         </Link>
         <View
-          className="flex flex-row items-center justify-between w-72 h-24 bg-defaultGray  rounded-2xl "
+          className="flex flex-row items-center justify-between w-72 h-24 bg-defaultGray  rounded-2xl overflow-hidden "
           {...panResponder.panHandlers}
         >
-          <View className="w-20 ">
+          <View className="w-32  ">
             <Image
               style={{
                 height: "100%",
                 width: "100%",
                 borderRadius: 4,
                 resizeMode: "contain",
-                backgroundColor: "white",
               }}
               source={{
                 uri: service.imgURL ?? "https://via.placeholder.com/150",
@@ -94,9 +95,11 @@ export default function DeleteServiceComponent({
             />
           </View>
           <View className="flex-1  h-full items-center justify-center">
-            <Text className="font-light text-base">{service.name}</Text>
+            <Text className="font-light text-base">
+              {service.service?.name}
+            </Text>
             <Text className="font-thin text-sm">
-              {service.serviceType?.name}
+              {service.localServiceCategory?.name}
             </Text>
           </View>
         </View>

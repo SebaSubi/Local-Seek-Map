@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { useEffect, useState } from "react";
 import ReadWS from "../CRUD/ServiceCRUD/ReadWS";
 import ReadLocal from "../CRUD/LocalCRUD/ReadLocal";
@@ -10,8 +10,6 @@ import ReadProductScreen from "../CRUD/ProductCRUD/ReadProduct";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
-const avaliableItems = ["Locales", "Servicios", "Productos"];
-
 export default function Search() {
   const [viewType, setViewType] = useState<"locals" | "products" | "services">(
     "locals"
@@ -19,8 +17,8 @@ export default function Search() {
 
   return (
     <SafeAreaView
-      className="flex-1 pt-6 bg-[#1a253d]"
-      style={{ backgroundColor: "#1a253d" }}
+      className="flex-1 bg-defaultBlue"
+      style={{ paddingTop: Platform.OS === "android" ? 15 : 0 }}
     >
       <StatusBar style="light" backgroundColor="#1a253d" />
       <Stack.Screen

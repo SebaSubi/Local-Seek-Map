@@ -4,13 +4,15 @@ import { Stack } from "expo-router";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import {
-  getDisplayServicesByName,
   getOpenServicesByName,
   getOpenServicesByNameAndCategory,
   getServicesByCategoryAndName,
+  getServicesByName,
 } from "../../../libs/localService";
 import ServiceContainer from "../../../components/ServiceContainer";
 import { getServiceTypes } from "../../../libs/serviceType";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const filters = ["Apertura", "Quitar"];
 
@@ -21,6 +23,9 @@ export default function ReadWS() {
   const [serviceCateogries, setServiceCategories] = useState<ServiceType[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const tabBarHeight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
 
   async function fetchAndSetServices() {
     setLoading(true);
@@ -34,24 +39,31 @@ export default function ReadWS() {
       );
       setServices(services);
       setLoading(false);
-    } else if (selectedCategory !== "" && searchFilter === "Apertura") {
-      const services = await getOpenServicesByNameAndCategory(
-        search,
-        selectedCategory
-      );
-      setServices(services);
-      setLoading(false);
-    } else if (searchFilter === "Apertura") {
-      const locals = await getOpenServicesByName(search);
-      setServices(locals);
-      setLoading(false);
     } else {
-      const services = await getDisplayServicesByName(search);
+      const services = await getServicesByName(search);
       // console.log("we are in");
       setServices(services);
       setLoading(false);
     }
   }
+
+  // console.log(services);
+
+  // else if (selectedCategory !== "" && searchFilter === "Apertura") {
+  //     const services = await getOpenServicesByNameAndCategory(
+  //       search,
+  //       selectedCategory
+  //     );
+  //     setServices(services);
+  //     setLoading(false);
+
+  //   }
+
+  // else if (searchFilter === "Apertura") {
+  //     const locals = await getOpenServicesByName(search);
+  //     setServices(locals);
+  //     setLoading(false);
+  // }
   // async function fetchAndSetServices() {
   //   const services = await getDisplayServices();
   //   setServices(services);
@@ -78,7 +90,12 @@ export default function ReadWS() {
   };
 
   return (
-    <View className="bg-[#1a253d] w-full h-full flex flex-col">
+    <View
+      className="bg-[#1a253d] w-full h-full flex flex-col"
+      style={{
+        paddingBottom: tabBarHeight + insets.bottom + 12,
+      }}
+    >
       <Stack.Screen
         options={{
           headerShown: false,
@@ -93,7 +110,7 @@ export default function ReadWS() {
         selectedFilters={handleSearchFilter}
         style="mt-16"
       />
-      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden pb-[220px]">
+      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden">
         <FlatList
           data={services}
           horizontal={false}

@@ -1,13 +1,13 @@
 import { View, Text, Modal, Pressable } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { colors } from "../constants/colors";
-import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "./Logos";
-import BasicButton from "./BasicButton";
-import BasicTextInput from "./BasicTextInput";
-import { checkEmail, checkUsername, EditUser } from "../libs/user";
-import { validateEmail } from "./Register";
+import { colors } from "../../constants/colors";
+import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "../Logos";
+import BasicButton from "../BasicButton";
+import BasicTextInput from "../BasicTextInput";
+import { checkEmail, checkUsername, EditUser } from "../../libs/user";
+import { validateEmail } from "../Register";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AuthUser } from "../app/context/AuthContext";
+import { AuthUser } from "../../app/context/AuthContext";
 import UserDeleteModal from "./UserDeleteModal";
 
 const UserUpdateModal = ({
@@ -241,6 +241,13 @@ const handleUserChange = async (
   } else if ((password.current?.getValue().length ?? 0) < 8) {
     //handle no first Password
     setPasswordError("La contraseña debe tener al menos 8 caracteres");
+    setEmailError("");
+    setUsernameError("");
+  } else if (
+    (secondPassword.current?.getValue().length ?? 0) > 64 ||
+    (password.current?.getValue().length ?? 0) > 64
+  ) {
+    setPasswordError("La contraseña no debe tener mas de 64 caracteres.");
     setEmailError("");
     setUsernameError("");
   } else if ((secondPassword.current?.getValue().length ?? 0) < 8) {
