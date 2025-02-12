@@ -34,8 +34,13 @@ import {
   updateLocalProduct,
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
+import GoBackButton from "../../../../components/GoBackButton";
+import { isNumeric } from "../../../../libs/libs";
 
 export default function EditProductPage() {
   const { id } = useLocalSearchParams();
@@ -79,7 +84,10 @@ export default function EditProductPage() {
   const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
 
+  const insets = useSafeAreaInsets();
+
   //errorHandlers
+  const [priceError, setPriceError] = useState(false);
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -215,25 +223,26 @@ export default function EditProductPage() {
     console.log("image:", image);
 
     try {
-      if (!image) {
-        Alert.alert(
-          "Error",
-          "Por favor, seleccione una imagen para el producto."
-        );
-        return;
-      }
-
-      const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen");
-        return;
+      let uploadedImageUrl = null;
+      if (image) {
+        const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+        if (!uploadedImageUrl) {
+          Alert.alert("Error", "No se pudo cargar la imagen");
+          setPriceError(true);
+        }
       }
 
       if (price === "") {
         price = null;
       } else {
-        price = parseInt(price);
-      } // This is horrible i know
+        price = parseFloat(price);
+      }
+
+      if (!isNumeric(price) && price !== null) {
+        Alert.alert("Error", "El precio solo puede tener numeros");
+        setPriceError(true);
+        return;
+      }
 
       const newProduct: LocalProduct = {
         price,
@@ -329,8 +338,16 @@ export default function EditProductPage() {
         className="flex items-center justify-start h-full w-full bg-[#1a253d]"
         style={{
           paddingTop: Platform.OS === "android" ? 24 : 0,
+          paddingBottom: insets.bottom,
         }}
       >
+        <View className="flex flex-row justify-between w-full items-center">
+          <GoBackButton style="ml-2" iconColor="white" />
+          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+            {`Actualizar Producto`}
+          </Text>
+          <GoBackButton style="opacity-0" />
+        </View>
         <View className="bg-white w-full h-[90%] rounded-3xl overflow-hidden">
           <ScrollView
             contentContainerStyle={{
@@ -344,6 +361,7 @@ export default function EditProductPage() {
               inputType="text"
               placeholder="Precio"
               title="Precio"
+              textStyle={priceError ? "text-defaultOrange" : ""}
               ref={priceRef}
               value=""
             />

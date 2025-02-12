@@ -1,4 +1,4 @@
-import { Alert, Button, Text, View, Image } from "react-native";
+import { Alert, Button, Text, View, Image, ScrollView } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function UpdateLocal() {
   // const { id, name, location, wpp, instagram, facebook, webpage, image } =
@@ -58,6 +59,8 @@ export default function UpdateLocal() {
   const [webpageError, setWebpageError] = useState("");
   const [image, setImage] = useState<string | null>(null);
 
+  const insets = useSafeAreaInsets();
+
   const local = useLocalIdStore((state) => state.local);
 
   const handleImagePicker = async () => {
@@ -97,6 +100,8 @@ export default function UpdateLocal() {
     if (local) {
       if (nameRef.current)
         nameRef.current.setValue(local.name ? local.name : "");
+      if (addressRef.current)
+        addressRef.current.setValue(local.address ? local.address : "");
       if (locationRef.current)
         locationRef.current.setValue(local.location ? local.location : "");
       if (wppNumberRef.current)
@@ -359,6 +364,7 @@ export default function UpdateLocal() {
     const newLocal: Local = {
       name,
       location,
+      address,
       whatsapp,
       instagram,
       facebook,
@@ -366,27 +372,39 @@ export default function UpdateLocal() {
       imgURL: uploadedImageUrl,
       dateFrom: new Date(),
     };
-    console.log(newLocal);
+
     if (local.id) {
       await updateLocal(local.id, newLocal);
+      Alert.alert("Actualizando...", "Actualizando local");
     }
   };
 
   return (
-    <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+    <View
+      className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
       <Stack.Screen
         options={{
           headerShown: false,
         }}
       />
       <View className="flex flex-row justify-between w-full items-center mb-2">
-        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+        <GoBackButton style="ml-2" iconColor="white" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
           {`Actualizar Local ${local.name === undefined ? "" : (local.name as string)}`}
         </Text>
-        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        <GoBackButton style="opacity-0" />
       </View>
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+      <ScrollView
+        className="bg-white h-full w-full rounded-3xl flex-1"
+        contentContainerStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         {nameError === "" ? null : (
           <View className="w-full flex items-start ml-28">
             <Text className="text-red-800">{nameError}</Text>
@@ -471,13 +489,7 @@ export default function UpdateLocal() {
           textStyle="mt-4"
           ref={paginaWebRef}
         />
-        {/* <BasicTextInput
-          placeholder="Imagen"
-          inputType="text"
-          title="Esto tenemos que definir" //We have to see hoe we are gonna do the logic for this.
-          textStyle="mt-4"
-          ref={imgURLRef}
-        /> */}
+
         <View style={{ marginTop: 20 }}>
           <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
         </View>
@@ -489,10 +501,10 @@ export default function UpdateLocal() {
         )}
         <BasicButton
           text="Actualizar Local"
-          style="mt-4"
+          style="mt-4 mb-4"
           onPress={handlePress}
         />
-      </View>
+      </ScrollView>
     </View>
   );
 }

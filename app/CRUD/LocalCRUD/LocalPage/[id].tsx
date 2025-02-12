@@ -35,6 +35,7 @@ import {
 import LocalServiceContainer from "../../../../components/LocalServiceContainer";
 import { ArrowLeft } from "../../../../components/Logos";
 import LocalProductContainer from "../../../../components/LocalProductContainer";
+import { useLocalIdStore } from "../../../../libs/localZustang";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
 type SerProdOption = "Products" | "Services";
@@ -54,7 +55,8 @@ export default function LocalPage() {
   const [loading, setLoading] = useState(true);
   const [serviceWithProducts, setServiceWithProducts] = useState(false);
   const [productsServices, setProductsServices] = useState(false);
-  const [serProdOption, setSerProdOption] = useState<SerProdOption>("Services");
+
+  const editlocal = useLocalIdStore((state) => state.local);
 
   const insets = useSafeAreaInsets();
 
@@ -190,7 +192,7 @@ export default function LocalPage() {
           <View className="flex flex-row items-center justify-between w-full">
             <GoBackButton style="ml-4" iconColor="white" />
             <Text className="text-3xl text-white font-normal ml-[-16px]">
-              {name}
+              {name ? name : editlocal.name}
             </Text>
             <GoBackButton
               style="border border-white opacity-0"

@@ -15,6 +15,10 @@ export function bringDayName(dayNumber: number) {
   return days[dayNumber - 1];
 }
 
+export function isNumeric(str: string) {
+  return !isNaN(parseFloat(str)) && isFinite(Number(str));
+}
+
 export function getPlaceholders(category: string): string {
   // console.log(category);
   switch (category) {

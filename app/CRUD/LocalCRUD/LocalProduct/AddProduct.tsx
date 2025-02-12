@@ -33,10 +33,11 @@ import BasicSearchButton from "../../../../components/BasicSearchBar";
 import {
   createLocalProduct,
   getProductIdsOfLocal,
-  getProductOfLocal,
   reactivateLocalProduct,
 } from "../../../../libs/localProducts";
 import { useLocalIdStore } from "../../../../libs/localZustang";
+import GoBackButton from "../../../../components/GoBackButton";
+import { isNumeric } from "../../../../libs/libs";
 
 export default function AddProduct() {
   const priceRef = useRef<any>(null);
@@ -57,6 +58,7 @@ export default function AddProduct() {
   const [products, setProducts] = useState<Product[]>([]);
   const [productId, setProductId] = useState("");
   const [localPrducts, setLocalProducts] = useState<LocalProduct[]>([]);
+  const [priceError, setPriceError] = useState(false);
 
   const local = useLocalIdStore((state) => state.local);
 
@@ -103,6 +105,12 @@ export default function AddProduct() {
         price = parseFloat(price);
       }
 
+      if (!isNumeric(price) && price !== null) {
+        Alert.alert("Error", "El precio solo puede tener numeros");
+        setPriceError(true);
+        return;
+      }
+
       const newProduct: LocalProduct = {
         localId: local.id,
         productId,
@@ -134,8 +142,10 @@ export default function AddProduct() {
   }
 
   async function getAndSetCategories() {
-    const localProductCategories =
-      await getLocalProductCategoriesByName(search);
+    const localProductCategories = await getLocalProductCategoriesByName(
+      local.id!,
+      search
+    );
     setLocalProductCategories(localProductCategories);
   }
 
@@ -260,12 +270,19 @@ export default function AddProduct() {
             className=" bg-white w-full rounded-3xl overflow-hidden"
           >
             <>
+              <BasicButton
+                text="Seleccionar otro producto?"
+                onPress={() => setProductModalVisibility(true)}
+                background="#f8f8f8"
+                style="mt-4 mb-2"
+              />
               <Text className="font-light text-lg mb-4">
                 *Los siguientes campos son opcionales
               </Text>
               <BasicTextInput
                 inputType="text"
                 placeholder="Precio"
+                textStyle={priceError ? "text-defaultOrange" : ""}
                 title="Precio: "
                 value=""
                 ref={priceRef}
@@ -437,13 +454,18 @@ export default function AddProduct() {
             </>
           </ScrollView>
         </View>
-        <View style={{ marginTop: 20, alignItems: "center", width: "80%" }}>
+        <View
+          className="w-full flex flex-row justify-between"
+          style={{ marginTop: 20, alignItems: "center" }}
+        >
+          <GoBackButton style="ml-4" iconColor="white" iconSize={30} />
           <BasicButton
             logo={<CreateLogo />}
             text="Agregar Producto"
             onPress={handleSubmit}
             background="#ffffff"
           />
+          <GoBackButton style="opacity-0 mr-4" />
         </View>
       </View>
     </>

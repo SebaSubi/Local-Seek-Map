@@ -30,7 +30,10 @@ import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
 import { colors } from "../../../../constants/colors";
 import GoBackButton from "../../../../components/GoBackButton";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 
 export default function CreateProduct() {
@@ -51,6 +54,8 @@ export default function CreateProduct() {
   const [nameError, setNameError] = useState("");
   const [brandError, setbrandError] = useState("");
   const [measurementError, setMeasurementError] = useState("");
+
+  const insets = useSafeAreaInsets();
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -158,11 +163,11 @@ export default function CreateProduct() {
       //   return;
       // }
 
-      console.log("Imagen antes de subir:", image);
+      // console.log("Imagen antes de subir:", image);
 
       const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
 
-      console.log("URL de imagen subida:", uploadedImageUrl);
+      // console.log("URL de imagen subida:", uploadedImageUrl);
 
       if (!uploadedImageUrl) {
         Alert.alert("Error", "No se pudo cargar la imagen");
@@ -215,20 +220,20 @@ export default function CreateProduct() {
         }}
       >
         <View className="flex flex-row justify-between w-full items-center">
-          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3 h-9" />
+          <GoBackButton style="ml-2" iconColor="white" />
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
             {`Crear Producto`}
           </Text>
-          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+          <GoBackButton style="opacity-0" />
         </View>
-        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+        <View className="flex-1 bg-white h-full w-full rounded-3xl flex items-center justify-center">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
               alignItems: "center",
               justifyContent: "center",
             }}
-            className=" bg-white w-full rounded-3xl overflow-hidden pt-6"
+            className=" bg-white w-full rounded-3xl overflow-hidden pt-3"
           >
             {nameError === "" ? null : (
               <View className="w-full flex items-start ml-28">
@@ -288,7 +293,7 @@ export default function CreateProduct() {
                     text="No encunetra la categoría?"
                     onPress={() => setCreateType(true)}
                     background="#f8f8f8"
-                    style="mt-4"
+                    style="mt-4 mb-2"
                   />
                   {createType ? (
                     <View className="w-full h-full flex items-center justify-center">

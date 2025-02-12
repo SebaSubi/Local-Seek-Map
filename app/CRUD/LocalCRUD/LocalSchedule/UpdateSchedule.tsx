@@ -23,6 +23,7 @@ import {
   scheduleInputValidation,
 } from "../../../../libs/libs";
 import BasicWarning from "../../../../components/BasicWarning";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function UpdateSchedule() {
   const { id } = useLocalSearchParams();
@@ -31,6 +32,7 @@ export default function UpdateSchedule() {
   const [errorModal, setErrorModal] = useState(false);
   const [error, setError] = useState("");
   const navigation = useNavigation();
+  const insents = useSafeAreaInsets();
 
   const FirstShiftStartRef = useRef<{
     getTime: () => Date;
@@ -206,7 +208,12 @@ export default function UpdateSchedule() {
 
   return loaded ? (
     <>
-      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+      <View
+        className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+        style={{
+          paddingTop: insents.top,
+        }}
+      >
         <Stack.Screen
           options={{
             headerShown: false,
@@ -217,7 +224,7 @@ export default function UpdateSchedule() {
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
             {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
           </Text>
-          <GoBackButton style="mr-2 opacity-0" />
+          <GoBackButton style="opacity-0" />
         </View>
         <ScrollView
           className="bg-white h-[89%] w-full rounded-3xl"
@@ -262,7 +269,12 @@ export default function UpdateSchedule() {
               ref={ThirdShiftFinishRef}
             />
 
-            <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            <View
+              className="flex flex-col justify-center items-center w-3/4 mt-3"
+              style={{
+                paddingBottom: insents.bottom,
+              }}
+            >
               <BasicButton
                 logo={<CreateLogo />}
                 text="Actualizar Horario"
