@@ -19,6 +19,7 @@ import { LocalService, Service } from "../../../schema/GeneralSchema";
 import ServiceContainer from "../../../components/ServiceContainer";
 import DeleteServiceComponent from "../../../components/DeleteServiceComponent";
 import BasicButton from "../../../components/BasicButton";
+import GoBackButton from "../../../components/GoBackButton";
 
 export default function ProductCrud() {
   const [expanded, setExpanded] = useState(false);

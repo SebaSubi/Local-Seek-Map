@@ -6,8 +6,9 @@ import {
   ScheduleIcon,
   UpdateLogo,
 } from "../../../components/Logos";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
+import GoBackButton from "../../../components/GoBackButton";
 
 export default function UpdateIndex() {
   const localService = useLocalServiceIdStore((state) => state.localService);
@@ -16,6 +17,13 @@ export default function UpdateIndex() {
 
   return (
     <View className="justify-end w-full h-full bg-defaultBlue">
+      <View className="flex flex-row items-center justify-between w-full ">
+        <GoBackButton iconColor="white" style="ml-1" />
+        <Text className="text-white font-semibold text-xl mt-1">
+          {`Modificar Servicio`}
+        </Text>
+        <GoBackButton iconColor="white" style="ml-1 opacity-0" />
+      </View>
       <View className="items-center justify-center w-full h-[90%] bg-white rounded-3xl">
         <Stack.Screen
           options={{
@@ -34,7 +42,7 @@ export default function UpdateIndex() {
         />
 
         <BasicSelectable
-          href="/CRUD/ServiceCRUD/ServicePage/ReadLocalService"
+          href="/CRUD/LocalCRUD/LocalService/LocalServicePage"
           params={{
             id: localService.id,
             name: localService.service?.name,

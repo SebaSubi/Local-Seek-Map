@@ -61,7 +61,7 @@ export default function ServicePage() {
           <GoBackButton iconColor="white" style="ml-2" />
         </View>
         <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden ">
-          {selectedOption === "Locals" && locals && (
+          {selectedOption === "Locals" && locals && locals.length > 0 && (
             <>
               <View className="w-full h-[40%] rounded-3xl overflow-hidden">
                 <ProductMap locals={locals} />
@@ -77,6 +77,32 @@ export default function ServicePage() {
               />
             </>
           )}
+          {selectedOption === "Locals" && (!locals || locals.length === 0) ? (
+            <View className="flex-1 w-full h-full items-center justify-center">
+              <View className="w-24 h-24">
+                <Image
+                  source={{
+                    uri: "https://img.poki-cdn.com/cdn-cgi/image/quality=78,width=1200,height=1200,fit=cover,f=png/0dc045701d81d54357156c4f2731cd71.png",
+                  }}
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    // borderRadius: 20,
+                    resizeMode: "contain",
+                  }}
+                />
+              </View>
+              <View className="w-3/4 flex flex-wrap ">
+                <Text
+                  className="mt-5 text-center font-light"
+                  style={{ width: "100%" }}
+                >
+                  Este servicio no se encuentra disponible en ningun local en
+                  este momento
+                </Text>
+              </View>
+            </View>
+          ) : null}
           {selectedOption === "Info" && (
             <ScrollView>
               <View className="flex items-center justify-end bg-back w-full h-[262px] rounded-3xl  overflow-hidden">

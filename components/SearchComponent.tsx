@@ -27,7 +27,6 @@ const SearchComponent = () => {
   );
 
   const tabBarHeight = useBottomTabBarHeight();
-  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     fetchData();
@@ -52,9 +51,6 @@ const SearchComponent = () => {
       setLoading(false);
     }
   };
-
-  // SafeAreaView
-  //       className="flex flex-col items-center w-full h-full justify-center bg-[#1a253d]"
 
   return (
     <>

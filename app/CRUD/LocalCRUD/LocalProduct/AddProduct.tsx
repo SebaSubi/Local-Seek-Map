@@ -201,7 +201,7 @@ export default function AddProduct() {
                     );
                     setProductModalVisibility(false);
                   }}
-                  className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 mb-[-10px] rounded-2xl overflow-hidden"
+                  className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2  rounded-2xl overflow-hidden mb-2"
                 >
                   <Text className="font-light text-sm">
                     No encuentra el producto?
@@ -319,7 +319,7 @@ export default function AddProduct() {
                       text="No encunetra la categoría?"
                       onPress={() => setCreateCategory(true)}
                       background="#f8f8f8"
-                      style="mt-4"
+                      style="mt-4 mb-2"
                     />
                     {createCategory ? (
                       <View className="w-full h-full flex items-center justify-center">
@@ -384,7 +384,7 @@ export default function AddProduct() {
                       text="No encunetra la sub categoría?"
                       onPress={() => setCreateSubCategory(true)}
                       background="#f8f8f8"
-                      style="mt-4"
+                      style="mt-4 mb-2"
                     />
                     {createSubCategory ? (
                       <View className="w-full h-full flex items-center justify-center">

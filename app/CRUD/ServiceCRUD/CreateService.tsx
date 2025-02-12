@@ -130,7 +130,6 @@ export default function CreateService() {
       setImage(null);
       router.replace("/CRUD/ServiceCRUD/AddService");
     } catch (error) {
-      console.log(error);
       Alert.alert("Error", "No se pudo crear el local.");
     }
   };

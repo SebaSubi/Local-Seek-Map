@@ -212,12 +212,16 @@ export default function CreateProduct() {
               text="Hora de Cerrada Segundo Turno:"
               ref={SecondShiftFinishRef}
             />
+            <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
+              *Los horarios nocturnos son aquellos que empiezan en un día y
+              terminan en otro
+            </Text>
             <TimeSelect
-              text="Hora de Apertura Tercer Turno:"
+              text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
             />
             <TimeSelect
-              text="Hora de Cerrada Tercer Turno:"
+              text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
             />
             <View className="flex flex-col justify-center items-center w-3/4 mt-3">
