@@ -314,6 +314,8 @@ export default function CreateLocal() {
     fetchCategories();
   }, []);
 
+  const defaultImage = "https://via.placeholder.com/150";
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -466,7 +468,7 @@ export default function CreateLocal() {
       </View>
       {image && (
         <Image
-          source={{ uri: image }}
+          source={{ uri: image || defaultImage }}
           style={{ width: 100, height: 100, marginTop: 10 }}
         />
       )}

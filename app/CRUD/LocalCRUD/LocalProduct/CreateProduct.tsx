@@ -1,5 +1,7 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Product, ProductType } from "../../../../schema/GeneralSchema";
+// import * as ImagePicker from "expo-image-picker";
 import * as ImagePicker from "expo-image-picker";
 import {
   Alert,
@@ -25,6 +27,9 @@ import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
+import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
+
+// console.log(ImagePicker);
 
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
@@ -56,7 +61,7 @@ export default function CreateProduct() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -98,7 +103,7 @@ export default function CreateProduct() {
       !brand ||
       !measurement ||
       !description ||
-      // !image ||
+      !image ||
       !productTypeId
     ) {
       Alert.alert("Error", "Por favor complete todos los campos");
@@ -144,12 +149,23 @@ export default function CreateProduct() {
     }
 
     try {
-      const uploadedImageUrl = "";
+      // const uploadedImageUrl = "";
       // await uploadImageToCloudinaryProducts(image);
       // if (!uploadedImageUrl) {
       //   Alert.alert("Error", "No se pudo cargar la imagen");
       //   return;
       // }
+
+      console.log("Imagen antes de subir:", image);
+
+      const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+
+      console.log("URL de imagen subida:", uploadedImageUrl);
+
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen");
+        return;
+      }
 
       const newProduct: Product = {
         name,
@@ -160,6 +176,8 @@ export default function CreateProduct() {
         imgURL: uploadedImageUrl,
         dateFrom: new Date(),
       };
+
+      console.log("Nuevo producto:", newProduct);
 
       const createdProduct = await createProduct(newProduct);
       router.replace("/CRUD/LocalCRUD/LocalProduct/AddProduct");
@@ -322,7 +340,9 @@ export default function CreateProduct() {
             </View>
             {image && (
               <Image
-                source={{ uri: image }}
+                source={{
+                  uri: image || "https://example.com/default-image.png",
+                }}
                 style={{ width: 100, height: 100, marginTop: 10 }}
               />
             )}

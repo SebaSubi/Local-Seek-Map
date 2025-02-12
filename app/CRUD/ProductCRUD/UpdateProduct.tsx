@@ -174,6 +174,8 @@ const ReadProductScreen = () => {
   //     );
   // };
 
+  const defaultImage = "https://via.placeholder.com/50";
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -285,7 +287,7 @@ const ReadProductScreen = () => {
               </View>
               {image && (
                 <Image
-                  source={{ uri: image }}
+                  source={{ uri: image || defaultImage }}
                   style={{ width: 100, height: 100, marginTop: 10 }}
                 />
               )}

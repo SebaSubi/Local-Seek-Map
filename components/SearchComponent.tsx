@@ -4,10 +4,10 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  Pressable,
-  Modal,
-  Image,
-  Alert,
+  // Pressable,
+  // Modal,
+  // Image,
+  // Alert,
 } from "react-native";
 import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
@@ -15,23 +15,24 @@ import { getLocals } from "../libs/local";
 import { getProducts } from "../libs/product";
 import {
   Local,
-  LocalTypes,
+  // LocalTypes,
   Product,
-  ProductType,
+  // ProductType,
   Service,
-  ServiceType,
+  // ServiceType,
 } from "../schema/GeneralSchema";
 import { getDisplayServices } from "../libs/localService";
 import ServiceContainer from "./ServiceContainer";
 import BasicButton from "./BasicButton";
 import { LocalIcon, ProductIcon, ServiceIcon } from "./Logos";
-import BasicSearchButton from "./BasicSearchBar";
+// import BasicSearchButton from "./BasicSearchBar";
 import { Stack } from "expo-router";
 import { getLocalTypes } from "../libs/localType";
 import { getServiceTypes } from "../libs/serviceType";
-import { getProductTypes } from "../libs/productType";
+// import { getProductTypes } from "../libs/productType";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const defaultImage = "https://via.placeholder.com/50";
 
 const SearchComponent = () => {

@@ -1,7 +1,12 @@
 import { Alert } from "react-native";
 import { LocalProduct } from "../schema/GeneralSchema";
+import { Platform } from "react-native";
 
-const API_URL = "http://localhost:3000/local-product";
+// const API_URL = "http://localhost:3000/local-product";
+const API_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-product"
+    : "http://localhost:3000/local-product";
 
 export async function getLocalsOfProduct(id: string) {
   try {
@@ -159,6 +164,22 @@ export async function updateLocalProduct(
   localProduct: LocalProduct
 ) {
   try {
+    // const response = await fetch(`${API_URL}/update/${id}`, {
+    //   method: "PATCH",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(localProduct),
+    // });
+
+    // if (!response.ok) {
+    //   Alert.alert("Error", "Failed to update local Product");
+    // } else {
+    //   const data: LocalProduct = await response.json();
+    //   return data;
+    // }
+
+    // const response = await fetch(`${API_URL}/update/${id}`,
     const response = await fetch(`${API_URL}/update/${id}`, {
       method: "PATCH",
       headers: {
@@ -167,15 +188,25 @@ export async function updateLocalProduct(
       body: JSON.stringify(localProduct),
     });
 
+    console.log("Response Status: ", response.status);
+    const responseBody = await response.text(); // Leer la respuesta como texto
+    console.log("Response Body: ", responseBody); // Ver qué está devolviendo el servidor
+
     if (!response.ok) {
       Alert.alert("Error", "Failed to update local Product");
     } else {
-      const data: LocalProduct = await response.json();
+      const data: LocalProduct = JSON.parse(responseBody); // Parsear manualmente el JSON
       return data;
     }
   } catch (error) {
+    // console.log("Error: ", error);
+    // Alert.alert("Error: ", (error as any).message.data.msg);
     console.log("Error: ", error);
-    Alert.alert("Error: ", (error as any).message.data.msg);
+    if (error instanceof Error) {
+      Alert.alert("Error", error.message || "Unknown error");
+    } else {
+      Alert.alert("Error", "Unknown error");
+    }
   }
 }
 
@@ -183,29 +214,52 @@ export async function updateLocalProduct(
 
 // ------------------------------------ Categories ------------------------------------
 
-export async function getLocalProductCategories() {
+// export async function getLocalProductCategories() {
+//   try {
+//     const response = await fetch(
+//       `http://localhost:3000/local-product-categories`
+//     );
+
+//     if (!response.ok) {
+//       console.error("Error getting local product categories");
+//       const errorResponse = await response.json();
+//       console.error(errorResponse);
+//       throw new Error("Error getting product of local");
+//     } else {
+//       return await response.json();
+//     }
+//   } catch (error) {
+//     console.error("Error getting local product categories", error);
+//   }
+// }
+
+const API_URL_2 =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-product"
+    : "http://localhost:3000/local-product";
+
+export async function getLocalProductCategories(localId: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/local-product-categories`
-    );
+    const response = await fetch(`${API_URL_2}/lp-categories/${localId}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories");
       const errorResponse = await response.json();
       console.error(errorResponse);
-      throw new Error("Error getting product of local");
-    } else {
-      return await response.json();
+      throw new Error("Error getting local product categories");
     }
+
+    return await response.json();
   } catch (error) {
     console.error("Error getting local product categories", error);
   }
 }
 
-export async function getLocalProductCategoriesOfLocal(id: string) {
+export async function getLocalProductCategoriesOfLocal(localId: string) {
   try {
     const response = await fetch(
-      `http://localhost:3000/local-product/lp-categories/${id}`
+      // `http://localhost:3000/local-product/lp-categories/${id}`
+      `${API_URL_2}/lp-categories/${localId}`
     );
 
     if (!response.ok) {

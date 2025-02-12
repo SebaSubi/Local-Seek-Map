@@ -13,7 +13,7 @@ import { getPlaceholders } from "../../../../libs/libs";
 
 type Options = "Info" | "Locals";
 
-export default function ProductPage() {
+export default function LocalProductPage() {
   const { id, name, image, description, brand, categoryName, size } =
     useLocalSearchParams();
   const [locals, setLocals] = useState<any>([]);

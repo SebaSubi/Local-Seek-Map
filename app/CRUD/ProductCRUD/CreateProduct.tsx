@@ -131,9 +131,20 @@ export default function CreateProduct() {
 
       // Alert.alert("Cargando...", "Subiendo imagen...");
 
+      // const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+
+      // // Verifica si hubo un error al subir la imagen
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen");
+      //   return;
+      // }
+
+      console.log("Imagen antes de subir:", image);
+
       const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
 
-      // Verifica si hubo un error al subir la imagen
+      console.log("URL de imagen subida:", uploadedImageUrl);
+
       if (!uploadedImageUrl) {
         Alert.alert("Error", "No se pudo cargar la imagen");
         return;
@@ -283,6 +294,8 @@ export default function CreateProduct() {
     fetchCategories();
   }, []);
 
+  const defaultImage = "https://via.placeholder.com/150";
+
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View
@@ -398,7 +411,7 @@ export default function CreateProduct() {
         </View>
         {image && (
           <Image
-            source={{ uri: image }}
+            source={{ uri: image || defaultImage }}
             style={{ width: 100, height: 100, marginTop: 10 }}
           />
         )}

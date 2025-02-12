@@ -23,6 +23,7 @@ import {
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import { getProductTypes } from "../../../../libs/productType";
 import { SafeAreaView } from "react-native-safe-area-context";
+import LocalProductContainer from "../../../../components/LocalProductContainer";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
 // type Categories = Record<string, string[]>;
@@ -206,9 +207,9 @@ export default function LocalPage() {
                         horizontal={false}
                         numColumns={2}
                         renderItem={({ item }) => (
-                          <ProductContainer
+                          <LocalProductContainer
                             menuItem={true}
-                            product={item.product}
+                            localProduct={item.product}
                           />
                         )}
                         keyExtractor={(item) => item.product.id!.toString()}
