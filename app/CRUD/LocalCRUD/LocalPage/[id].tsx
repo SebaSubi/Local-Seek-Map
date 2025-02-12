@@ -203,7 +203,7 @@ export default function LocalPage() {
           <View className="flex-1 items-center justify-center w-full h-full">
             {local ? (
               selectedOption === "Schedule" ? (
-                <View className="w-full h-full">
+                <View className="w-full h-full ">
                   <Schedule schedule={schedules} />
                 </View>
               ) : selectedOption === "Info" ? (

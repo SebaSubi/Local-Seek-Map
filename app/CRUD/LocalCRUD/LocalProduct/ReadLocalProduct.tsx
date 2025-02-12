@@ -91,7 +91,9 @@ export default function LocalProductPage() {
                 data={locals}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => <LocalContainer local={item} />}
+                renderItem={({ item }) => (
+                  <LocalContainer local={item} shouldReplace={true} />
+                )}
                 keyExtractor={(item) => item.id!.toString()}
                 onRefresh={() => fetchAndSetAll()}
                 refreshing={loading}

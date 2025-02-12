@@ -6,7 +6,13 @@ import { colors } from "../constants/colors";
 import { getIfLocalOpen } from "../libs/local";
 import { useFonts } from "expo-font";
 
-export default function LocalContainer({ local }: { local: Local }) {
+export default function LocalContainer({
+  local,
+  shouldReplace,
+}: {
+  local: Local;
+  shouldReplace?: boolean;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -30,6 +36,7 @@ export default function LocalContainer({ local }: { local: Local }) {
           localType: local.localTypes?.name,
         },
       }}
+      {...(shouldReplace ? { replace: true } : {})}
       asChild
     >
       <Pressable
