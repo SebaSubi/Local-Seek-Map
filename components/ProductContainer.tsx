@@ -85,24 +85,6 @@ export default function ProductContainer({
   );
 }
 
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  text: {
-    fontSize: 16,
-    color: "#132E4A",
-    fontWeight: "bold",
-  },
-  categoryText: {
-    fontSize: 18,
-    color: "#666",
-    fontWeight: "bold",
-  },
-});
-
 // {
 //               uri: product.imgURL || "https://via.placeholder.com/150",
 //             }

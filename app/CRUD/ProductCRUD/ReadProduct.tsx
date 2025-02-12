@@ -94,7 +94,7 @@ const ReadProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      const localProductCat = await getLocalProductCategories();
+      const localProductCat = await getProductTypes();
       setCategories(data);
       setLocalProductCateogries(localProductCat);
     } catch (err) {

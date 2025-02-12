@@ -30,11 +30,12 @@ import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
 import {
-  getProductOfLocal,
+  getProductsOfLocalByName,
   updateLocalProduct,
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 
 export default function EditProductPage() {
   const { id } = useLocalSearchParams();
@@ -189,7 +190,6 @@ export default function EditProductPage() {
   const handleSubmit = async () => {
     let price: any = priceRef.current?.getValue();
     const localProductDescription = descriptionRef.current?.getValue();
-    const localProductDescription = descriptionRef.current?.getValue();
     let localProductCategoryId;
     let localProductSubCategoryId;
 
@@ -271,7 +271,7 @@ export default function EditProductPage() {
   // Función para obtener los tipos de producto
   const fetchAndSetProduct = async () => {
     try {
-      const product = await getProductOfLocal(id as string);
+      const product = await getProductsOfLocalByName(id as string, search);
       setProduct(product);
     } catch (error) {
       console.error("Error fetching product", error);
