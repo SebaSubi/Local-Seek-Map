@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, Platform } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Platform,
+  Image,
+  Pressable,
+} from "react-native";
 import LocalContainer from "../components/LocalContainer";
 import ProductContainer from "../components/ProductContainer";
 import { getLocals } from "../libs/local";
@@ -95,45 +103,117 @@ const SearchComponent = () => {
             className="w-full h-full"
             style={{ display: viewType === "locals" ? "flex" : "none" }}
           >
-            <FlatList
-              data={locals}
-              horizontal={false}
-              numColumns={2}
-              renderItem={({ item }) => <LocalContainer local={item} />}
-              keyExtractor={(item) => item.id!.toString()}
-              onRefresh={() => fetchData()}
-              refreshing={loading}
-            />
+            {locals && locals.length > 0 ? (
+              <FlatList
+                data={locals}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => <LocalContainer local={item} />}
+                keyExtractor={(item) => item.id!.toString()}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+              />
+            ) : (
+              <View className="flex-1 w-full h-full items-center justify-center">
+                <Image
+                  source={{
+                    uri: "https://static.wikia.nocookie.net/henrystickmin/images/d/dd/TedSupportingCharacterNAV.png/revision/latest/scale-to-width-down/90?cb=20240323083045",
+                  }}
+                  style={{
+                    height: 96,
+                    width: 96,
+                    resizeMode: "contain",
+                  }}
+                />
+                <Text className="ml-5 mr-5 text-center mt-2 text-sm font-light">
+                  No se encuentran locales en este momento, desea recargar?
+                </Text>
+                <Pressable
+                  className="bg-defaultGray w-1/3 h-8 mt-2 rounded-2xl items-center justify-center"
+                  onPress={() => fetchData()}
+                >
+                  <Text className="text-sm font-light">Recargar</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
           <View
             className="w-full h-full"
             style={{ display: viewType === "products" ? "flex" : "none" }}
           >
-            <FlatList
-              data={products}
-              horizontal={false}
-              numColumns={2}
-              renderItem={({ item }) => {
-                return <ProductContainer product={item} />;
-              }}
-              keyExtractor={(item) => item.id!.toString()}
-              onRefresh={() => fetchData()}
-              refreshing={loading}
-            />
+            {products && products.length > 0 ? (
+              <FlatList
+                data={products}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => {
+                  return <ProductContainer product={item} />;
+                }}
+                keyExtractor={(item) => item.id!.toString()}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+              />
+            ) : (
+              <View className="flex-1 w-full h-full items-center justify-center">
+                <Image
+                  source={{
+                    uri: "https://static.wikia.nocookie.net/henrystickmin/images/5/59/WinstonSupportingCharacterNAV.png/revision/latest/scale-to-width-down/90?cb=20240322173423",
+                  }}
+                  style={{
+                    height: 96,
+                    width: 96,
+                    resizeMode: "contain",
+                  }}
+                />
+                <Text className="ml-5 mr-5 text-center mt-2 text-sm font-light">
+                  No se encuentran locales en este momento, desea recargar?
+                </Text>
+                <Pressable
+                  className="bg-defaultGray w-1/3 h-8 mt-2 rounded-2xl items-center justify-center"
+                  onPress={() => fetchData()}
+                >
+                  <Text className="text-sm font-light">Recargar</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
           <View
             className="w-full h-full"
             style={{ display: viewType === "services" ? "flex" : "none" }}
           >
-            <FlatList
-              data={services}
-              horizontal={false}
-              numColumns={2}
-              renderItem={({ item }) => <ServiceContainer service={item} />}
-              keyExtractor={(item) => item.id!.toString()}
-              onRefresh={() => fetchData()}
-              refreshing={loading}
-            />
+            {services && services.length > 0 ? (
+              <FlatList
+                data={services}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => <ServiceContainer service={item} />}
+                keyExtractor={(item) => item.id!.toString()}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+              />
+            ) : (
+              <View className="flex-1 w-full h-full items-center justify-center">
+                <Image
+                  source={{
+                    uri: "https://static.wikia.nocookie.net/henrystickmin/images/0/04/SvenSupportingCharacterNAV.png/revision/latest/scale-to-width-down/90?cb=20240322135430",
+                  }}
+                  style={{
+                    height: 96,
+                    width: 96,
+                    resizeMode: "contain",
+                  }}
+                />
+                <Text className="ml-5 mr-5 text-center mt-2 text-sm font-light">
+                  No se encuentran locales en este momento, desea recargar?
+                </Text>
+                <Pressable
+                  className="bg-defaultGray w-1/3 h-8 mt-2 rounded-2xl items-center justify-center"
+                  onPress={() => fetchData()}
+                >
+                  <Text className="text-sm font-light">Recargar</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
         </View>
       </SafeAreaView>
