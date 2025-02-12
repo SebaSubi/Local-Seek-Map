@@ -28,7 +28,23 @@ export async function getLocalsOfProduct(id: string) {
 }
 
 export async function getProductsOfLocalByName(id: string, name: string) {
+  // console.log(`${API_URL}/local/${id}?name=${name}`);
   const url = `${API_URL}/local/${id}?name=${name}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch local products by name");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting local products by name", error);
+  }
+}
+
+export async function getSimilarLocalProducts(id: string, category: string) {
+  // console.log(`${API_URL}/local/${id}?name=${name}`);
+  const url = `${API_URL}/similar/${id}/${category}`;
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {
@@ -285,27 +301,27 @@ export async function getLocalProductCategoriesOfLocal(localId: string) {
 
 // ------------------------------------ Sub Categories ------------------------------------
 
-export async function getLocalProductSubCategoriesOfLocal(
-  localId: string,
-  catName: string
-) {
-  try {
-    const response = await fetch(
-      `${API_URL}/local-product-sub-categories/sub-cats/${localId}/${catName}`
-    );
+// export async function getLocalProductSubCategoriesOfLocal(
+//   localId: string,
+//   catName: string
+// ) {
+//   try {
+//     const response = await fetch(
+//       `${BASE_API_URL}/local-product-sub-categories/sub-cats/${localId}/${catName}`
+//     );
 
-    if (!response.ok) {
-      console.error("Error getting local product sub categories by category");
-      const errorResponse = await response.json();
-      console.error(errorResponse);
-      throw new Error("Error getting local product sub categories by category");
-    } else {
-      return await response.json();
-    }
-  } catch (error) {
-    console.error(
-      "Error getting local product sub categories by category",
-      error
-    );
-  }
-}
+//     if (!response.ok) {
+//       console.error("Error getting local product sub categories by category");
+//       const errorResponse = await response.json();
+//       console.error(errorResponse);
+//       throw new Error("Error getting local product sub categories by category");
+//     } else {
+//       return await response.json();
+//     }
+//   } catch (error) {
+//     console.error(
+//       "Error getting local product sub categories by category",
+//       error
+//     );
+//   }
+// }

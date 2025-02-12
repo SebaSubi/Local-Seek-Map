@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Local,
+  LocalProduct,
   LocalProductCategory,
   LocalSchedule,
   LocalService,
@@ -33,6 +34,7 @@ import {
 } from "../../../../libs/localService";
 import LocalServiceContainer from "../../../../components/LocalServiceContainer";
 import { ArrowLeft } from "../../../../components/Logos";
+import LocalProductContainer from "../../../../components/LocalProductContainer";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
 type SerProdOption = "Products" | "Services";
@@ -82,11 +84,13 @@ export default function LocalPage() {
       setLocalProducts(localProducts);
       setLoading(false);
     } else {
+      // console.log("We are in here");
       const localProducts = await getProductsOfLocalByName(
         id as string,
         // eslint-disable-next-line prettier/prettier
         search
       );
+      // console.log(localProducts);
       setLocalProducts(localProducts);
       setLoading(false);
     }
@@ -219,7 +223,6 @@ export default function LocalPage() {
                 ) : null
               ) : (
                 <View className="w-full h-full pb-20">
-                  {/* Always render the search bar */}
                   <BasicSearchButton
                     placeholder="Buscar"
                     background="#f8f8f8"
@@ -238,12 +241,13 @@ export default function LocalPage() {
                         horizontal={false}
                         numColumns={2}
                         renderItem={({ item }) => (
-                          <ProductContainer
+                          <LocalProductContainer
+                            localId={id as string}
+                            localProduct={item}
                             menuItem={true}
-                            product={item.product}
                           />
                         )}
-                        keyExtractor={(item) => item.product.id!.toString()}
+                        keyExtractor={(item) => item.id!.toString()}
                         onRefresh={() => fetchAndSetProducts()}
                         refreshing={loading}
                       />
@@ -269,9 +273,10 @@ export default function LocalPage() {
                           horizontal={false}
                           numColumns={2}
                           renderItem={({ item }) => (
-                            <ProductContainer
-                              menuItem={true}
-                              product={item.product}
+                            <LocalProductContainer
+                              localId={id as string}
+                              menuItem={false}
+                              localProduct={item}
                             />
                           )}
                           keyExtractor={(item) => item.product.id!.toString()}
@@ -320,7 +325,41 @@ export default function LocalPage() {
                   )}
                 </View>
               )
-            ) : null}
+            ) : (
+              <View className="w-full h-full flex-1 items-center justify-center">
+                <View className="w-24 h-24">
+                  <Image
+                    source={{
+                      uri: "https://static.wikia.nocookie.net/henrystickmin/images/3/3c/CtM_Charles%27_Plan_Icon.PNG/revision/latest?cb=20240208180155",
+                    }}
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      resizeMode: "contain",
+                    }}
+                  />
+                </View>
+                <View className="w-3/4 flex flex-wrap">
+                  <Text
+                    className="mt-5 text-center font-light"
+                    style={{ width: "100%" }}
+                  >
+                    No se encuentra el local disponible en este momento,
+                    intentalo mas tarde.
+                  </Text>
+                </View>
+                <View className="w-1/2 h-24 mt-4">
+                  {search === "" ? (
+                    <BasicButton
+                      text="Recargar"
+                      onPress={() => {
+                        fetchAndSetLocals();
+                      }}
+                    />
+                  ) : null}
+                </View>
+              </View>
+            )}
           </View>
 
           <View className="absolute w-full h-20 flex flex-row items-center justify-evenly bottom-0 bg-defaultGray rounded-lg">

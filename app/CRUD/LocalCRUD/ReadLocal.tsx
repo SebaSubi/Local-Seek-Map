@@ -107,7 +107,7 @@ export default function ReadLocal() {
         style="mt-16"
       />
       <View
-        className="w-full h-[800px] bg-white rounded-t-3xl overflow-hidden"
+        className="w-full h-full bg-white rounded-t-3xl overflow-hidden"
         style={{
           marginTop: locals && locals.length > 0 ? 0 : 14,
         }}

@@ -30,7 +30,7 @@ import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
 import {
-  getProductIdsOfLocal,
+  getProductsOfLocalByName,
   updateLocalProduct,
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
@@ -257,8 +257,10 @@ export default function EditProductPage() {
   };
 
   async function getAndSetCategories() {
-    const localProductCategories =
-      await getLocalProductCategoriesByName(search);
+    const localProductCategories = await getLocalProductCategoriesByName(
+      search,
+      id as string
+    );
     setLocalProductCategories(localProductCategories);
   }
 
@@ -271,7 +273,7 @@ export default function EditProductPage() {
   // Función para obtener los tipos de producto
   const fetchAndSetProduct = async () => {
     try {
-      const product = await getProductIdsOfLocal(id as string);
+      const product = await getProductsOfLocalByName(id as string, search);
       setProduct(product);
     } catch (error) {
       console.error("Error fetching product", error);
