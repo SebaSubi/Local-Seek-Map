@@ -41,6 +41,7 @@ import { useLocalIdStore } from "../../../libs/localZustang";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
+import { verifyUrl } from "../LocalCRUD/CreateLocal";
 
 export default function UpdateService() {
   const [serviceTypes, setServiceTypes] = useState<LocalServiceCategory[]>([]);
@@ -57,6 +58,10 @@ export default function UpdateService() {
 
   const local = useLocalIdStore((state) => state.local);
   const router = useRouter();
+
+  //Error handlers
+  const [whatsappError, setWhatsappError] = useState("");
+  const [webpageError, setWebpageError] = useState("");
 
   const reservationNumberRef = useRef<{
     getValue: () => string;
@@ -145,10 +150,32 @@ export default function UpdateService() {
     const location = locationRef.current?.getValue();
     const address = addressRef.current?.getValue();
 
+    if (reservationNumber && reservationNumber.length < 8) {
+      setWhatsappError(
+        // eslint-disable-next-line prettier/prettier
+        "La longitud minima de un numero es de 8"
+      );
+      setWebpageError("");
+      return;
+    }
+    if (reservationNumber && reservationNumber.length > 18) {
+      //checkear esto y agregar que wpp no pueda ser negativo.
+      setWhatsappError(
+        // eslint-disable-next-line prettier/prettier
+        "La longitud maxima de un numero es de 18 "
+      );
+      setWebpageError("");
+      return;
+    }
+    if (reservationURL && !verifyUrl(reservationURL)) {
+      setWhatsappError("");
+      setWebpageError("URL no valida");
+      return;
+    }
+
     if (
       !description ||
-      !reservationURL ||
-      localServiceCategoryId === "0000" ||
+      (!reservationURL && localServiceCategoryId === "0000") ||
       !location ||
       !address
     ) {
@@ -157,20 +184,14 @@ export default function UpdateService() {
     }
 
     try {
-      console.log("image:", image);
+      let uploadedImageUrl = null;
 
-      if (!image) {
-        Alert.alert(
-          "Error",
-          "Por favor, seleccione una imagen para el producto."
-        );
-        return;
-      }
-
-      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen");
-        return;
+      if (image) {
+        const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+        if (!uploadedImageUrl) {
+          Alert.alert("Error", "No se pudo cargar la imagen");
+          return;
+        }
       }
 
       const newService: LocalService = {
@@ -194,6 +215,8 @@ export default function UpdateService() {
         });
       }
       setImage(null);
+      Alert.alert("Éxito", "Servicio actualizado con éxito");
+      router.back();
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "No se pudo actualizar el servicio.");
@@ -243,6 +266,11 @@ export default function UpdateService() {
             title="URL Reservas"
             ref={URLRef}
           />
+          {webpageError && (
+            <Text className="text-defaultOrange text-sm font-light">
+              *{webpageError}
+            </Text>
+          )}
           <BasicTextInput
             inputType="text"
             value=""
@@ -251,6 +279,11 @@ export default function UpdateService() {
             title="Numero de Reservas"
             ref={reservationNumberRef}
           />
+          {whatsappError && (
+            <Text className="text-defaultOrange text-sm font-light">
+              *{whatsappError}
+            </Text>
+          )}
           <BasicTextInput
             inputType="text"
             value=""

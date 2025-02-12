@@ -22,6 +22,7 @@ export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [scheduleId, setScheduleId] = useState<string>();
   const [error, setError] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
 
   const localService = useLocalServiceIdStore((state) => state.localService);
 
@@ -71,6 +72,7 @@ export default function CreateProduct() {
 
     if (scheduleInputValidation(localSchedule) !== "Correct") {
       setError(scheduleInputValidation(localSchedule) as string);
+      setErrorModal(true);
     } else {
       handleSubmit();
     }
@@ -183,7 +185,7 @@ export default function CreateProduct() {
       <View className="flex flex-row justify-between w-full items-center mb-2">
         <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
-          Crear Horario
+          {`Crear Horarios `}
         </Text>
         <GoBackButton style="bg-white w-12 h-8 justify-center opacity-0" />
       </View>
@@ -219,12 +221,16 @@ export default function CreateProduct() {
               text="Hora de Cerrada Segundo Turno:"
               ref={SecondShiftFinishRef}
             />
+            <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
+              *Los horarios nocturnos pueden ser aquellos que empiezan en un día
+              y terminan en otro
+            </Text>
             <TimeSelect
-              text="Hora de Apertura Tercer Turno:"
+              text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
             />
             <TimeSelect
-              text="Hora de Cerrada Tercer Turno:"
+              text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
             />
             <View className="flex flex-col justify-center items-center w-3/4 mt-3">
@@ -263,18 +269,28 @@ export default function CreateProduct() {
             />
           </View>
         </Modal>
-        {error && (
-          <BasicWarning
-            text={error}
-            cancelButton={true}
-            buttonLeft="Ok"
-            onPressLeft={() => {
-              setError("");
-              setWarning(false);
-            }}
-            style="absolute"
-          />
-        )}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={errorModal}
+          onRequestClose={() => setErrorModal(false)}
+        >
+          <View
+            className="flex items-center justify-center w-full h-full"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          >
+            <BasicWarning
+              text={error}
+              cancelButton={true}
+              buttonLeft="Ok"
+              onPressLeft={() => {
+                setError("");
+                setErrorModal(false);
+              }}
+              style="absolute"
+            />
+          </View>
+        </Modal>
       </View>
     </View>
   );

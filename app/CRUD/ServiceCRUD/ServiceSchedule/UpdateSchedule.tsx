@@ -229,8 +229,12 @@ export default function UpdateSchedule() {
                   : specificDate
               }
             />
+            <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
+              *Los horarios nocturnos pueden ser aquellos que empiezan en un día
+              y terminan en otro
+            </Text>
             <TimeSelect
-              text="Hora de Apertura Tercer Turno:"
+              text="Hora de Apertura Turno Nocturno:"
               ref={ThirdShiftStartRef}
               defaultTime={
                 serviceSchedule.ThirdShiftStart
@@ -239,7 +243,7 @@ export default function UpdateSchedule() {
               }
             />
             <TimeSelect
-              text="Hora de Cerrada Tercer Turno:"
+              text="Hora de Cerrada Turno Nocturno:"
               ref={ThirdShiftFinishRef}
               defaultTime={
                 serviceSchedule.ThirdShiftFinish

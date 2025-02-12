@@ -3,7 +3,7 @@ import { LocalProduct, Product } from "../../../../schema/GeneralSchema";
 import { deleteProduct, getProducts } from "../../../../libs/product";
 import {} from "../../../../libs/local";
 import { Stack } from "expo-router";
-import { FlatList, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import EditProductContainer from "../../../../components/EditProductContainer";
 import {
   deleteProductOfLocal,
@@ -50,6 +50,10 @@ export default function EditProduct() {
         />
 
         <View className="flex items-center h-[90%] w-full bg-white rounded-3xl overflow-hidden">
+          <Text className="ml-2 mr-2 text-sm font-light">
+            *Deslizar para la derecha para actualizar, hacía la izquierda para
+            borrar
+          </Text>
           <FlatList
             data={products}
             renderItem={({ item }) => (
