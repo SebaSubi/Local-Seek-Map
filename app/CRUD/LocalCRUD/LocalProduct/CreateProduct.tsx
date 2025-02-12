@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -207,7 +208,12 @@ export default function CreateProduct() {
           headerShown: false,
         }}
       />
-      <SafeAreaView className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+      <SafeAreaView
+        className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+        style={{
+          paddingTop: Platform.OS === "android" ? 24 : 0,
+        }}
+      >
         <View className="flex flex-row justify-between w-full items-center">
           <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3 h-9" />
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
