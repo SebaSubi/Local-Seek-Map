@@ -76,9 +76,9 @@ export async function getProductsOfLocalByNameAndCat(
   }
 }
 
-export async function getProductOfLocal(id: string) {
+export async function getProductByLocalId(id: string) {
   try {
-    const response = await fetch(`${API_URL}/${id}`);
+    const response = await fetch(`${API_URL}/localId/${id}`);
 
     if (!response.ok) {
       console.error("Error getting product of local");
@@ -202,8 +202,6 @@ export async function updateLocalProduct(
     Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }
-
-// category - name - search;
 
 // ------------------------------------ Categories ------------------------------------
 

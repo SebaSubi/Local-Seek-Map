@@ -32,7 +32,7 @@ export async function getDisplayServices() {
   // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";
 
   try {
-    const rawData = await fetch(`${API_URL}/service/display`);
+    const rawData = await fetch(`${API_URL}/service`);
     if (!rawData.ok) {
       throw new Error("Failed to fetch Services");
     }
@@ -120,6 +120,25 @@ export async function getServicesByLocalIdAndName(
   try {
     const rawData = await fetch(
       `${API_URL}/local-service/local-service-name/${localId}?name=${name}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch ServicesById");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting ServicesById", error);
+  }
+}
+
+export async function getServicesByLocalIdNameAndCat(
+  localId: string,
+  category: string,
+  name: string
+) {
+  try {
+    const rawData = await fetch(
+      `${API_URL}/local-service/local-service-cat-name/${localId}/${category}?name=${name}`
     );
     if (!rawData.ok) {
       throw new Error("Failed to fetch ServicesById");
@@ -418,6 +437,22 @@ export async function deleteServiceSchedule(id: string) {
 }
 
 //------------------------------------ Local Service Categories ------------------------------------//
+
+export async function getCategoriesOfLocal(localId: string) {
+  // This is not working
+  try {
+    const rawData = await fetch(
+      `${API_URL}/local-service-category/local-cats/${localId}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch schedule by scheduleId");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting schedule by scheduleId", error);
+  }
+}
 
 export async function getLocalServiceCatsByName(name: string) {
   // This is not working

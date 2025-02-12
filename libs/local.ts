@@ -302,17 +302,3 @@ export async function getLocalsOfUser(userEmail: string) {
 }
 
 //----------------------------------------------------------------Local Services----------------------------------------------------------------
-
-export async function getServicesOfLocal(id: string) {
-  const url = `http://localhost:3000/service/service-localid/${id}`;
-  try {
-    const rawData = await fetch(url);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch store services");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting store services", error);
-  }
-}

@@ -63,13 +63,14 @@ export function scheduleInputValidation(
 
   if (schedule.ThirdShiftFinish === "00:00") {
     return "Correct";
-  } else if (
-    schedule.ThirdShiftStart &&
-    schedule.ThirdShiftFinish &&
-    schedule.ThirdShiftStart > schedule.ThirdShiftFinish
-  ) {
-    return "La hora inicial no puede ser mayor a la hora final (Tercer turno)";
   }
+  // else if (
+  //   schedule.ThirdShiftStart &&
+  //   schedule.ThirdShiftFinish &&
+  //   schedule.ThirdShiftStart > schedule.ThirdShiftFinish
+  // ) {
+  //   return "La hora inicial no puede ser mayor a la hora final (Tercer turno)";
+  // }
   if (schedule.dayNumber === null || schedule.dayNumber === 0)
     return "El día no puede estar vacío o ser 0";
 
@@ -88,7 +89,7 @@ export function scheduleInputValidation(
     schedule.SecondShiftFinish &&
     schedule.ThirdShiftStart < schedule.SecondShiftFinish
   ) {
-    return "El horario de comienzo del tercer turno no puede ser menor al cierre del segundo";
+    return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
   }
 
   return "Correct";
