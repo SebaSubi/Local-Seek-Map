@@ -10,7 +10,7 @@ import { Platform } from "react-native";
 const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/product"
-    : "http://localhost:3000/product";
+    : `${process.env.EXPO_PUBLIC_API_ROUTE}/product`;
 
 // const API_URL =
 //   Platform.OS === "android" ? "http://192.168.0.135:3000/product" : "";
@@ -198,7 +198,7 @@ export async function deleteProduct(id: string) {
 const API_URL_2 =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/local-product-categories"
-    : "http://localhost:3000/local-product-categories";
+    : `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product-categories`;
 
 export async function getLocalProductCategories() {
   try {
@@ -281,7 +281,7 @@ export async function getLPByNameAndCategory(category: string, name: string) {
 const API_URL_3 =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/local-product-sub-categories"
-    : "http://localhost:3000/local-product-sub-categories";
+    : `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product-sub-categories`;
 
 export async function getLocalProductSubCategoriesByName(name: string) {
   try {

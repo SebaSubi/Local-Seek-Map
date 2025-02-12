@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 import { LocalProduct } from "../schema/GeneralSchema";
-
-const API_URL = "http://localhost:3000/local-product";
+const BASE_API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
+const API_URL = `${BASE_API_URL}/local-product`;
 
 export async function getLocalsOfProduct(id: string) {
   try {
@@ -209,9 +209,7 @@ export async function updateLocalProduct(
 
 export async function getLocalProductCategories() {
   try {
-    const response = await fetch(
-      `http://localhost:3000/local-product-categories`
-    );
+    const response = await fetch(`${BASE_API_URL}/local-product-categories`);
 
     if (!response.ok) {
       console.error("Error getting local product categories");
@@ -229,7 +227,7 @@ export async function getLocalProductCategories() {
 export async function getLocalProductCategoriesOfLocal(id: string) {
   try {
     const response = await fetch(
-      `http://localhost:3000/local-product/lp-categories/${id}`
+      `${BASE_API_URL}/local-product/lp-categories/${id}`
     );
 
     if (!response.ok) {
@@ -253,7 +251,7 @@ export async function getLocalProductSubCategoriesOfLocal(
 ) {
   try {
     const response = await fetch(
-      `http://localhost:3000/local-product-sub-categories/sub-cats/${localId}/${catName}`
+      `${BASE_API_URL}/local-product-sub-categories/sub-cats/${localId}/${catName}`
     );
 
     if (!response.ok) {

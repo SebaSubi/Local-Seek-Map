@@ -4,7 +4,7 @@ import { ServiceType } from "../schema/GeneralSchema";
 const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/service-type"
-    : "http://localhost:3000/service-type";
+    : `${process.env.EXPO_PUBLIC_API_ROUTE}/service-type`;
 
 export async function getServiceTypeNames() {
   // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store"
