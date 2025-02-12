@@ -148,6 +148,7 @@ export const uploadImageToCloudinaryProducts = async (
   }
 };
 
+// comente esto por las dudas
 // export const uploadImageToCloudinaryProducts = async (
 //   imageUri: string
 // ): Promise<string | null> => {
@@ -196,6 +197,7 @@ export const uploadImageToCloudinaryProducts = async (
 //   }
 // };
 
+// comente esto por las dudas
 // export const uploadImageToCloudinaryProducts = async (
 //   imageUri: string
 // ): Promise<string | null> => {
@@ -238,6 +240,57 @@ export const uploadImageToCloudinaryProducts = async (
 //   }
 // };
 
+// comente esto por las dudas
+// export const uploadImageToCloudinaryLocals1 = async (
+//   // eslint-disable-next-line prettier/prettier
+//   imageUri: string
+// ): Promise<string | null> => {
+//   const cloudName = "local-seek-map";
+//   const uploadPreset = "locals_upload";
+
+//   const fileExtension = imageUri.split(".").pop()?.toLowerCase();
+//   const imageType =
+//     fileExtension === "jpg" || fileExtension === "jpeg"
+//       ? "image/jpeg"
+//       : "image/png";
+
+//   const formData = new FormData();
+//   formData.append("file", {
+//     uri: imageUri,
+//     type: imageType,
+//     name: `image.${fileExtension}`,
+//   } as any);
+//   formData.append("upload_preset", uploadPreset);
+
+//   try {
+//     const response = await fetch(
+//       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+//       {
+//         method: "POST",
+//         body: formData,
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//         // eslint-disable-next-line prettier/prettier
+//       }
+//     );
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(
+//         // eslint-disable-next-line prettier/prettier
+//         `Error subiendo imagen: ${errorData.message || response.statusText}`
+//       );
+//     }
+
+//     const data = await response.json();
+//     return data.secure_url;
+//   } catch (error) {
+//     console.error("Error subiendo imagen a Cloudinary:", error);
+//     return null;
+//   }
+// };
+
 export const uploadImageToCloudinaryLocals = async (
   // eslint-disable-next-line prettier/prettier
   imageUri: string
@@ -246,14 +299,18 @@ export const uploadImageToCloudinaryLocals = async (
   const uploadPreset = "locals_upload";
 
   const fileExtension = imageUri.split(".").pop()?.toLowerCase();
-  const imageType =
+  const imageType: "image/jpeg" | "image/png" =
     fileExtension === "jpg" || fileExtension === "jpeg"
       ? "image/jpeg"
       : "image/png";
 
+  // const cleanUri = imageUri.replace("file://", "file:///");
+
+  // Crear el FormData
   const formData = new FormData();
   formData.append("file", {
     uri: imageUri,
+    // uri: cleanUri,
     type: imageType,
     name: `image.${fileExtension}`,
   } as any);
@@ -265,10 +322,10 @@ export const uploadImageToCloudinaryLocals = async (
       {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // eslint-disable-next-line prettier/prettier
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        // // eslint-disable-next-line prettier/prettier
       }
     );
 
@@ -288,6 +345,57 @@ export const uploadImageToCloudinaryLocals = async (
   }
 };
 
+// comente esto por las dudas
+// export const uploadImageToCloudinaryServices1 = async (
+//   // eslint-disable-next-line prettier/prettier
+//   imageUri: string
+// ): Promise<string | null> => {
+//   const cloudName = "local-seek-map";
+//   const uploadPreset = "services_upload";
+
+//   const fileExtension = imageUri.split(".").pop()?.toLowerCase();
+//   const imageType =
+//     fileExtension === "jpg" || fileExtension === "jpeg"
+//       ? "image/jpeg"
+//       : "image/png";
+
+//   const formData = new FormData();
+//   formData.append("file", {
+//     uri: imageUri,
+//     type: imageType, // para que se pueda cargar jpg o png
+//     name: `image.${fileExtension}`,
+//   } as any);
+//   formData.append("upload_preset", uploadPreset);
+
+//   try {
+//     const response = await fetch(
+//       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+//       {
+//         method: "POST",
+//         body: formData,
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//         // eslint-disable-next-line prettier/prettier
+//       }
+//     );
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(
+//         // eslint-disable-next-line prettier/prettier
+//         `Error subiendo imagen: ${errorData.message || response.statusText}`
+//       );
+//     }
+
+//     const data = await response.json();
+//     return data.secure_url;
+//   } catch (error) {
+//     console.error("Error subiendo imagen a Cloudinary:", error);
+//     return null;
+//   }
+// };
+
 export const uploadImageToCloudinaryServices = async (
   // eslint-disable-next-line prettier/prettier
   imageUri: string
@@ -296,15 +404,19 @@ export const uploadImageToCloudinaryServices = async (
   const uploadPreset = "services_upload";
 
   const fileExtension = imageUri.split(".").pop()?.toLowerCase();
-  const imageType =
+  const imageType: "image/jpeg" | "image/png" =
     fileExtension === "jpg" || fileExtension === "jpeg"
       ? "image/jpeg"
       : "image/png";
 
+  // const cleanUri = imageUri.replace("file://", "file:///");
+
+  // Crear el FormData
   const formData = new FormData();
   formData.append("file", {
     uri: imageUri,
-    type: imageType, // para que se pueda cargar jpg o png
+    // uri: cleanUri,
+    type: imageType,
     name: `image.${fileExtension}`,
   } as any);
   formData.append("upload_preset", uploadPreset);
@@ -315,10 +427,10 @@ export const uploadImageToCloudinaryServices = async (
       {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // eslint-disable-next-line prettier/prettier
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        // // eslint-disable-next-line prettier/prettier
       }
     );
 

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   FlatList,
   Image,
@@ -146,7 +147,11 @@ export default function ServicePage() {
                         <View className="ml-2">
                           <WebIcon size={20} />
                         </View>
-                        <Text className="flex-wrap text-base font-bold text-[#1a253d] ml-2 mr-4 mt-1">
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          className="flex-wrap text-base font-bold text-[#1a253d] ml-2 mr-4 mt-1"
+                        >
                           {reservationURL}
                         </Text>
                       </View>

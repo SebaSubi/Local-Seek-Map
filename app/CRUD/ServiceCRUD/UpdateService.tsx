@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Alert,
   Button,
@@ -33,12 +34,13 @@ import {
   Service,
   ServiceType,
 } from "../../../schema/GeneralSchema";
-import * as ImagePicker from "expo-image-picker";
 import BigTextInput from "../../../components/BigTextInput";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import BasicSelectable from "../../../components/BasicSelectable";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
 
 export default function UpdateService() {
   const [serviceTypes, setServiceTypes] = useState<LocalServiceCategory[]>([]);
@@ -155,11 +157,21 @@ export default function UpdateService() {
     }
 
     try {
-      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      // if (!uploadedImageUrl) {
-      //   Alert.alert("Error", "No se pudo cargar la imagen.");
-      //   return;
-      // }
+      console.log("image:", image);
+
+      if (!image) {
+        Alert.alert(
+          "Error",
+          "Por favor, seleccione una imagen para el producto."
+        );
+        return;
+      }
+
+      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen");
+        return;
+      }
 
       const newService: LocalService = {
         reservationNumber,
@@ -167,7 +179,7 @@ export default function UpdateService() {
         reservationURL,
         location,
         address,
-        // imgURL: uploadedImageUrl,
+        imgURL: uploadedImageUrl,
         localServiceCategoryId,
         dateFrom: new Date(),
       };
@@ -364,7 +376,18 @@ export default function UpdateService() {
                 : "Seleccionar Tipo de Servicio"}
             </Text>
           </Pressable>
-          <TouchableOpacity
+
+          <View style={{ marginTop: 20 }}>
+            <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+          </View>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100, marginTop: 10 }}
+            />
+          )}
+
+          {/* <TouchableOpacity
             onPress={handleImagePicker}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
@@ -375,7 +398,7 @@ export default function UpdateService() {
               source={{ uri: image }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )}
+          )} */}
 
           <Text className="text-red-600 mt-4">
             *No te olvides de agregale un horario a tu Servicio!
