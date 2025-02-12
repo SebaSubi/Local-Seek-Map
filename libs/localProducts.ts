@@ -2,8 +2,8 @@ import { Alert } from "react-native";
 import { LocalProduct } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 
-const BASE_API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
-const API_URL_1 = `${BASE_API_URL}/local-product`;
+// const BASE_API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
+// const API_URL_1 = `${BASE_API_URL}/local-product`;
 
 const API_URL =
   Platform.OS === "android"
