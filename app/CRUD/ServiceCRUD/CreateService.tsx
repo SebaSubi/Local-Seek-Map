@@ -25,11 +25,12 @@ import {
 } from "../../../libs/serviceType";
 import { createService } from "../../../libs/localService";
 import { Service, ServiceType } from "../../../schema/GeneralSchema";
-import * as ImagePicker from "expo-image-picker";
 import BigTextInput from "../../../components/BigTextInput";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import BasicSelectable from "../../../components/BasicSelectable";
 import { useLocalIdStore } from "../../../libs/localZustang";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
 
 export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -38,11 +39,11 @@ export default function CreateService() {
     name: "default",
   });
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
-  const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [createType, setCreateType] = useState(false);
   const [createdService, setCreatedService] = useState<Service | null>(null);
   const [goSchedule, setGoSchedule] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
 
   const local = useLocalIdStore((state) => state.local);
   const router = useRouter();
@@ -114,15 +115,25 @@ export default function CreateService() {
     console.log(local.id);
 
     try {
-      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      // if (!uploadedImageUrl) {
-      //   Alert.alert("Error", "No se pudo cargar la imagen.");
-      //   return;
-      // }
+      console.log("image:", image);
+
+      if (!image) {
+        Alert.alert(
+          "Error",
+          "Por favor, seleccione una imagen para el producto."
+        );
+        return;
+      }
+
+      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen");
+        return;
+      }
 
       const newService: Service = {
         name,
-        imgURL: "",
+        imgURL: uploadedImageUrl,
         serviceTypeId,
         dateFrom: new Date(),
       };
@@ -260,18 +271,30 @@ export default function CreateService() {
                 : "Seleccionar Tipo de Servicio"}
             </Text>
           </Pressable>
-          <TouchableOpacity
+
+          <View style={{ marginTop: 20 }}>
+            <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+          </View>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100, marginTop: 10 }}
+            />
+          )}
+
+          {/* <TouchableOpacity
             onPress={handleImagePicker}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
             <Text className="text-sm font-light">Seleccionar Imagen</Text>
-          </TouchableOpacity>
-          {image && (
+          </TouchableOpacity> */}
+
+          {/* {image && (
             <Image
               source={{ uri: image || defaultImage }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )}
+          )} */}
         </ScrollView>
       </View>
       <View className="flex flex-row justify-evenly items-center w-full">

@@ -257,8 +257,10 @@ export default function EditProductPage() {
   };
 
   async function getAndSetCategories() {
-    const localProductCategories =
-      await getLocalProductCategoriesByName(search);
+    const localProductCategories = await getLocalProductCategoriesByName(
+      search,
+      id as string
+    );
     setLocalProductCategories(localProductCategories);
   }
 

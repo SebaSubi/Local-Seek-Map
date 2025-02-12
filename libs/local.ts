@@ -16,6 +16,7 @@ const API_URL =
 // // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
 export async function getLocals() {
+  // console.log(API_URL);
   try {
     const rawData = await fetch(API_URL);
     if (!rawData.ok) {

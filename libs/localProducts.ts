@@ -3,7 +3,7 @@ import { LocalProduct } from "../schema/GeneralSchema";
 import { Platform } from "react-native";
 
 // const BASE_API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
-// const API_URL_1 = `${BASE_API_URL}/local-product`;
+// const API_URL = `${BASE_API_URL}/local-product`;
 
 const API_URL =
   Platform.OS === "android"
@@ -257,11 +257,13 @@ const API_URL_2 =
     ? "http://10.0.2.2:3000/local-product"
     : "http://localhost:3000/local-product";
 
-export async function getLocalProductCategories() {
+export async function getLocalProductCategories(localId: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/local-product-categories`
-    );
+    // const response = await fetch(
+    //   // `http://localhost:3000/local-product-categories`
+    //   `${API_URL_2}/local-product-categories`
+    // );
+    const response = await fetch(`${API_URL_2}/lp-categories/${localId}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories");
@@ -281,7 +283,7 @@ export async function getLocalProductCategoriesOfLocal(localId: string) {
     const response = await fetch(
       // `http://localhost:3000/local-product/lp-categories/${id}`
       `${API_URL_2}/lp-categories/${localId}`
-      // `${BASE_API_URL}/local-product/lp-categories/${id}`
+      // `${BASE_API_URL}/local-product/lp-categories/${localId}`
     );
 
     if (!response.ok) {

@@ -1,4 +1,4 @@
-import { Alert, Text, View } from "react-native";
+import { Alert, Button, Text, View, Image } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import BasicButton from "../../../components/BasicButton";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +9,8 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 
 export default function UpdateLocal() {
   // const { id, name, location, wpp, instagram, facebook, webpage, image } =
@@ -54,8 +56,30 @@ export default function UpdateLocal() {
   const [instagramError, setInstagramError] = useState("");
   const [facebookError, setFacebookError] = useState("");
   const [webpageError, setWebpageError] = useState("");
+  const [image, setImage] = useState<string | null>(null);
 
   const local = useLocalIdStore((state) => state.local);
+
+  const handleImagePicker = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert("Error", "Se necesitan permisos para acceder a la galería.");
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!pickerResult.canceled) {
+      setImage(pickerResult.assets[0].uri);
+    }
+  };
 
   // async function getSpecificLocal(id: string) {
   //   const fetchLocal = async () => {
@@ -96,9 +120,9 @@ export default function UpdateLocal() {
     const instagram = instagramRef.current?.getValue();
     const facebook = facebookRef.current?.getValue();
     const webpage = paginaWebRef.current?.getValue();
-    const image = imgURLRef.current?.getValue();
+    // const image = imgURLRef.current?.getValue();
 
-    if (!name || !location || !image || !location || !address) {
+    if (!name || !location || !location || !address) {
       Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
       return;
     }
@@ -261,19 +285,19 @@ export default function UpdateLocal() {
       setAddressError("");
       return;
     }
-    if (facebook && facebook.length < 5) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError(
-        // eslint-disable-next-line prettier/prettier
-        "un usuario de Facebook debe tener como minimo 5 caracteres"
-      );
-      setWebpageError("");
-      setAddressError("");
-      return;
-    }
+    // if (facebook && facebook.length < 5) {
+    //   setNameError("");
+    //   setLocationError("");
+    //   setWhatsappError("");
+    //   setInstagramError("");
+    //   setFacebookError(
+    //     // eslint-disable-next-line prettier/prettier
+    //     "un usuario de Facebook debe tener como minimo 5 caracteres"
+    //   );
+    //   setWebpageError("");
+    //   setAddressError("");
+    //   return;
+    // }
     if (facebook && facebook.length > 50) {
       setNameError("");
       setLocationError("");
@@ -303,13 +327,31 @@ export default function UpdateLocal() {
       setAddressError("");
       return;
     }
-    if ((webpage && !verifyUrl(webpage)) || !verifyUrl(`https://${webpage}`)) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("URL no valida");
+    // if ((webpage && !verifyUrl(webpage)) || !verifyUrl(`https://${webpage}`)) {
+    //   setNameError("");
+    //   setLocationError("");
+    //   setWhatsappError("");
+    //   setInstagramError("");
+    //   setFacebookError("");
+    //   setWebpageError("URL no valida");
+    //   return;
+    // }
+
+    console.log("image:", image);
+
+    if (!image) {
+      Alert.alert(
+        "Error",
+        "Por favor, seleccione una imagen para el producto."
+      );
+      return;
+    }
+
+    // console.log("Image from ref:", imgURLRef.current?.getValue());
+
+    const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
+    if (!uploadedImageUrl) {
+      Alert.alert("Error", "No se pudo cargar la imagen");
       return;
     }
 
@@ -321,7 +363,7 @@ export default function UpdateLocal() {
       instagram,
       facebook,
       webpage,
-      imgURL: image,
+      imgURL: uploadedImageUrl,
       dateFrom: new Date(),
     };
     console.log(newLocal);
@@ -429,13 +471,22 @@ export default function UpdateLocal() {
           textStyle="mt-4"
           ref={paginaWebRef}
         />
-        <BasicTextInput
+        {/* <BasicTextInput
           placeholder="Imagen"
           inputType="text"
           title="Esto tenemos que definir" //We have to see hoe we are gonna do the logic for this.
           textStyle="mt-4"
           ref={imgURLRef}
-        />
+        /> */}
+        <View style={{ marginTop: 20 }}>
+          <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+        </View>
+        {image && (
+          <Image
+            source={{ uri: image }}
+            style={{ width: 100, height: 100, marginTop: 10 }}
+          />
+        )}
         <BasicButton
           text="Actualizar Local"
           style="mt-4"
