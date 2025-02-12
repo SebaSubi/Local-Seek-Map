@@ -13,6 +13,8 @@ import ServiceContainer from "../../../components/ServiceContainer";
 import { getServiceTypes } from "../../../libs/serviceType";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Image } from "react-native";
+import { Text } from "react-native";
 
 const filters = ["Apertura", "Quitar"];
 
@@ -93,7 +95,10 @@ export default function ReadWS() {
     <View
       className="bg-[#1a253d] w-full h-full flex flex-col"
       style={{
-        paddingBottom: tabBarHeight + insets.bottom + 12,
+        paddingBottom:
+          services && services.length > 0
+            ? tabBarHeight + insets.bottom + 12
+            : 0,
       }}
     >
       <Stack.Screen
@@ -107,10 +112,14 @@ export default function ReadWS() {
         categories={serviceCateogries}
         selectedCategory={handleStoreCateory}
         filters={filters}
-        selectedFilters={handleSearchFilter}
         style="mt-16"
       />
-      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden">
+      <View
+        className="w-full h-full bg-white rounded-t-3xl overflow-hidden"
+        style={{
+          marginTop: services && services.length > 0 ? 0 : 14,
+        }}
+      >
         <FlatList
           data={services}
           horizontal={false}
@@ -119,6 +128,24 @@ export default function ReadWS() {
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchAndSetServices()}
           refreshing={loading}
+          ListEmptyComponent={
+            <View className="flex-1 w-full h-full items-center justify-center mt-5">
+              <Image
+                source={{
+                  uri: "https://static.wikia.nocookie.net/henrystickmin/images/0/04/SvenSupportingCharacterNAV.png/revision/latest/scale-to-width-down/90?cb=20240322135430",
+                }}
+                style={{
+                  height: 96,
+                  width: 96,
+                  resizeMode: "contain",
+                }}
+              />
+              <Text className="ml-5 mr-5 text-center mt-2 text-sm font-light">
+                No se encuentran locales en este momento, deslice hacía abajo
+                para recargar?
+              </Text>
+            </View>
+          }
         />
       </View>
     </View>
