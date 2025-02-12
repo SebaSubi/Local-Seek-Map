@@ -84,13 +84,13 @@ export function scheduleInputValidation(
     return "El horario de comienzo de segundo turno no puede ser menor al cierre del primero";
   }
 
-  if (
-    schedule.ThirdShiftStart &&
-    schedule.SecondShiftFinish &&
-    schedule.ThirdShiftStart < schedule.SecondShiftFinish
-  ) {
-    return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
-  }
+  // if (
+  //   schedule.ThirdShiftStart &&
+  //   schedule.SecondShiftFinish &&
+  //   schedule.ThirdShiftStart < schedule.SecondShiftFinish
+  // ) {
+  //   return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
+  // }
 
   return "Correct";
 }
