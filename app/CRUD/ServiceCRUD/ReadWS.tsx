@@ -111,7 +111,6 @@ export default function ReadWS() {
         onSearch={setSearch}
         categories={serviceCateogries}
         selectedCategory={handleStoreCateory}
-        filters={filters}
         style="mt-16"
       />
       <View

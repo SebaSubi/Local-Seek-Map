@@ -132,8 +132,6 @@ const ReadProductScreen = () => {
         onSearch={setSearchText}
         selectedCategory={handleSelectedCategory}
         categories={categories}
-        selectedFilters={setSelectedFilter}
-        filters={[]}
         style="mt-16"
       />
 
@@ -190,7 +188,7 @@ const ReadProductScreen = () => {
                 }}
               />
               <Text className="ml-5 mr-5 text-center mt-2 text-sm font-light">
-                No se encuentran locales en este momento, deslice hacía abajo
+                No se encuentran Prouctos en este momento, deslice hacía abajo
                 para recargar
               </Text>
             </View>
