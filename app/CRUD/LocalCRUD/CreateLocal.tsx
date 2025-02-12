@@ -365,6 +365,8 @@ export default function CreateLocal() {
     fetchCategories();
   }, []);
 
+  const defaultImage = "https://via.placeholder.com/150";
+
   return (
     <ScrollView
       contentContainerStyle={{

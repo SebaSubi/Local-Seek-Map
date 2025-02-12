@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { FlatList, View } from "react-native";
+import { FlatList, Platform, View } from "react-native";
 import {
   Alert,
   Image,
@@ -32,6 +34,7 @@ import {
   updateLocalProduct,
 } from "../../../../libs/localProducts";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditProductPage() {
   const { id } = useLocalSearchParams();
@@ -88,7 +91,8 @@ export default function EditProductPage() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      // mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -99,11 +103,103 @@ export default function EditProductPage() {
     }
   };
 
+  // const handleSubmit = async () => {
+  //   let price: any = priceRef.current?.getValue();
+  //   const localProductDescription = descriptionRef.current?.getValue();
+  //   let localProductCategoryId;
+  //   let localProductSubCategoryId;
+
+  //   console.log("Descripción capturada:", localProductDescription);
+
+  //   if (descriptionRef.current) {
+  //     console.log("Descripción capturada:", descriptionRef.current.getValue());
+  //   } else {
+  //     console.log("El ref aún no está disponible.");
+  //   }
+
+  //   selectedProductCategory
+  //     ? (localProductCategoryId = selectedProductCategory.id)
+  //     : (localProductCategoryId = null);
+  //   selectedProductSubCategory
+  //     ? (localProductSubCategoryId = selectedProductSubCategory.id)
+  //     : (localProductSubCategoryId = null);
+
+  //   console.log("localProductDescription:", localProductDescription);
+  //   console.log("localProductCategoryId:", localProductCategoryId);
+  //   console.log("localProductSubCategoryId:", localProductSubCategoryId);
+  //   console.log("price:", price);
+  //   console.log("image:", image);
+
+  //   try {
+  //     // const uploadedImageUrl = "";
+  //     // // await uploadImageToCloudinaryProducts(image);
+  //     // // if (!uploadedImageUrl) {
+  //     // //   Alert.alert("Error", "No se pudo cargar la imagen");
+  //     // //   return;
+  //     // // }
+
+  //     if (!image) {
+  //       Alert.alert(
+  //         "Error",
+  //         "Por favor, seleccione una imagen para el producto."
+  //       );
+  //       return;
+  //     }
+
+  //     console.log("Imagen antes de subir:", image);
+
+  //     const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+
+  //     console.log("URL de imagen subida:", uploadedImageUrl);
+
+  //     if (!uploadedImageUrl) {
+  //       Alert.alert("Error", "No se pudo cargar la imagen");
+  //       return;
+  //     }
+
+  //     if (price === "") {
+  //       price = null;
+  //     } else {
+  //       price = parseInt(price);
+  //     } // This is horrible i know
+
+  //     const newProduct: LocalProduct = {
+  //       price,
+  //       localProductDescription,
+  //       localProductCategoryId,
+  //       localProductSubCategoryId,
+  //       imgURL: uploadedImageUrl,
+  //       dateFrom: new Date(),
+  //     };
+
+  //     console.log("Nuevo producto:", newProduct);
+
+  //     const createdProduct = await updateLocalProduct(id as string, newProduct);
+  //     console.log("Producto actualizado:", createdProduct);
+  //     // await createProductOfLocal(createdProduct?.id!, localId);
+  //     Alert.alert("Éxito", "Producto actualizado exitosamente");
+  //     // price.current.setValue("");
+  //     setImage(null);
+  //   } catch (error) {
+  //     Alert.alert("Error");
+  //     console.log(error);
+  //   }
+  // };
+
   const handleSubmit = async () => {
     let price: any = priceRef.current?.getValue();
     const localProductDescription = descriptionRef.current?.getValue();
+    const localProductDescription = descriptionRef.current?.getValue();
     let localProductCategoryId;
     let localProductSubCategoryId;
+
+    // console.log("Descripción capturada:", localProductDescription);
+
+    // if (descriptionRef.current) {
+    //   console.log("Descripción capturada:", descriptionRef.current.getValue());
+    // } else {
+    //   console.log("El ref aún no está disponible.");
+    // }
 
     selectedProductCategory
       ? (localProductCategoryId = selectedProductCategory.id)
@@ -112,13 +208,27 @@ export default function EditProductPage() {
       ? (localProductSubCategoryId = selectedProductSubCategory.id)
       : (localProductSubCategoryId = null);
 
+    // console.log("localProductDescription:", localProductDescription);
+    // console.log("localProductCategoryId:", localProductCategoryId);
+    // console.log("localProductSubCategoryId:", localProductSubCategoryId);
+    // console.log("price:", price);
+    console.log("image:", image);
+
     try {
-      const uploadedImageUrl = "";
-      // await uploadImageToCloudinaryProducts(image);
-      // if (!uploadedImageUrl) {
-      //   Alert.alert("Error", "No se pudo cargar la imagen");
-      //   return;
-      // }
+      if (!image) {
+        Alert.alert(
+          "Error",
+          "Por favor, seleccione una imagen para el producto."
+        );
+        return;
+      }
+
+      const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen");
+        return;
+      }
+
       if (price === "") {
         price = null;
       } else {
@@ -134,16 +244,14 @@ export default function EditProductPage() {
         dateFrom: new Date(),
       };
 
-      const createdProduct = await updateLocalProduct(id as string, newProduct);
-      // await createProductOfLocal(createdProduct?.id!, localId);
-      Alert.alert("Éxito", "Producto creado exitosamente");
-      // nameRef.current.setValue("");
-      // brandRef.current.setValue("");
-      // measurementRef.current.setValue("");
-      // descriptionRef.current.setValue("");
-      setImage(null);
+      await updateLocalProduct(id as string, newProduct);
+
+      Alert.alert("Éxito", "Producto actualizado exitosamente");
+
+      // Recargar el producto para reflejar cambios en el frontend
+      fetchAndSetProduct();
     } catch (error) {
-      Alert.alert("Error");
+      Alert.alert("Error", "No se pudo actualizar el producto");
       console.log(error);
     }
   };
@@ -171,7 +279,7 @@ export default function EditProductPage() {
     }
   };
 
-  console.log(product);
+  // console.log(product);
 
   useEffect(() => {
     fetchAndSetProduct();
@@ -181,8 +289,10 @@ export default function EditProductPage() {
     if (product) {
       priceRef.current?.setValue(product.price?.toString() || "");
       descriptionRef.current?.setValue(product.localProductDescription || "");
+      descriptionRef.current?.setValue(product.localProductDescription || "");
       setSelectedProductCategory(product.localProductCategory!);
       setSelectedProductSubCategory(product.localProductSubCategory!);
+      setImage(product.imgURL ?? null);
     }
   }, [product]);
 
@@ -204,6 +314,8 @@ export default function EditProductPage() {
     setCreateSubCategory(false);
   }
 
+  const defaultImage = "https://via.placeholder.com/150";
+
   return (
     <>
       <Stack.Screen
@@ -211,7 +323,12 @@ export default function EditProductPage() {
           headerShown: false,
         }}
       />
-      <View className="flex items-center justify-start h-full w-full bg-[#1a253d]">
+      <SafeAreaView
+        className="flex items-center justify-start h-full w-full bg-[#1a253d]"
+        style={{
+          paddingTop: Platform.OS === "android" ? 24 : 0,
+        }}
+      >
         <View className="bg-white w-full h-[90%] rounded-3xl overflow-hidden">
           <ScrollView
             contentContainerStyle={{
@@ -223,17 +340,17 @@ export default function EditProductPage() {
           >
             <BasicTextInput
               inputType="text"
-              placeholder="Nombre"
+              placeholder="Precio"
               title="Precio"
-              value=""
               ref={priceRef}
+              value=""
             />
             <BigTextInput
               inputType="text"
               placeholder="Descripción"
               title="Descripción: "
-              value=""
               ref={descriptionRef}
+              value=""
             />
             <Pressable
               className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
@@ -266,7 +383,7 @@ export default function EditProductPage() {
             </View>
             {image && (
               <Image
-                source={{ uri: image }}
+                source={{ uri: image || defaultImage }}
                 style={{ width: 100, height: 100, marginTop: 10 }}
               />
             )}
@@ -410,7 +527,7 @@ export default function EditProductPage() {
             background="#ffffff"
           />
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }

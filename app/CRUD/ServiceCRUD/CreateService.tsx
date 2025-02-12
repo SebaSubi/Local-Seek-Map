@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Alert,
   Button,
@@ -157,6 +158,8 @@ export default function CreateService() {
   //   }
   // }
 
+  const defaultImage = "https://via.placeholder.com/150";
+
   return (
     <View className="w-full h-full bg-defaultBlue">
       <View className="w-full h-[90%] rounded-3xl overflow-hidden bg-white">
@@ -265,7 +268,7 @@ export default function CreateService() {
           </TouchableOpacity>
           {image && (
             <Image
-              source={{ uri: image }}
+              source={{ uri: image || defaultImage }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
           )}
