@@ -15,6 +15,10 @@ export function bringDayName(dayNumber: number) {
   return days[dayNumber - 1];
 }
 
+export function isNumeric(str: string) {
+  return !isNaN(parseFloat(str)) && isFinite(Number(str));
+}
+
 export function getPlaceholders(category: string): string {
   // console.log(category);
   switch (category) {
@@ -84,13 +88,13 @@ export function scheduleInputValidation(
     return "El horario de comienzo de segundo turno no puede ser menor al cierre del primero";
   }
 
-  if (
-    schedule.ThirdShiftStart &&
-    schedule.SecondShiftFinish &&
-    schedule.ThirdShiftStart < schedule.SecondShiftFinish
-  ) {
-    return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
-  }
+  // if (
+  //   schedule.ThirdShiftStart &&
+  //   schedule.SecondShiftFinish &&
+  //   schedule.ThirdShiftStart < schedule.SecondShiftFinish
+  // ) {
+  //   return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
+  // }
 
   return "Correct";
 }

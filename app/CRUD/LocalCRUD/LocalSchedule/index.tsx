@@ -23,12 +23,12 @@ export default function LocalSchedule() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-row justify-between w-full">
-        <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3" />
+      <View className="flex flex-row justify-between w-full items-center">
+        <GoBackButton style="ml-2" iconColor="white" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
           {`Editar Horarios ${name === undefined ? "" : (name as string)}`}
         </Text>
-        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        <GoBackButton style="ml-2 opacity-0" iconColor="white" />
       </View>
       <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
         <BasicSelectable

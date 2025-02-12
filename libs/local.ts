@@ -8,10 +8,7 @@ import { validateEmail } from "../components/Register";
 //   Platform.OS === "android"
 //     ? "http://10.0.2.2:3000/store"
 //     : "http://192.168.155.114:3000/store";
-const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/store"
-    : `${process.env.EXPO_PUBLIC_API_ROUTE}/store`;
+const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/store`;
 //   Platform.OS === "android" ? "http://192.168.0.135:3000/store" : "";
 // // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
@@ -240,10 +237,7 @@ export async function deleteLocal(id: string) {
     console.error("Error en deleteProduct:", error);
   }
 }
-const API_URL_2 =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000"
-    : process.env.EXPO_PUBLIC_API_ROUTE;
+const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
 
 export async function createLocalAndAddOwner(local: Local, userId: string) {
   try {
@@ -287,9 +281,10 @@ export async function deleteLocalv2(localId: string, userId: string) {
 }
 
 //----------------------------------------------------------------Local User----------------------------------------------------------------
+const API_URL_LU = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-user`;
 
 export async function getLocalsOfUser(userEmail: string) {
-  const url = `http://localhost:3000/local-user/locals/${userEmail}`;
+  const url = `${API_URL_LU}/locals/${userEmail}`;
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {
