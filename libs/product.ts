@@ -7,12 +7,12 @@ import {
 import { Alert } from "react-native";
 import { Platform } from "react-native";
 
-// const API_URL =
-//   Platform.OS === "android"
-//     ? "http://10.0.2.2:3000/product"
-//     : `${process.env.EXPO_PUBLIC_API_ROUTE}/product`;
+const API_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/product"
+    : "http://localhost:3000/product";
 
-const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/product`;
+// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/product`;
 // Platform.OS === "android"
 //   ? "http://10.0.2.2:3000/product"
 //   : "http://localhost:3000/product";
@@ -102,7 +102,6 @@ export async function updateProduct(product: Product) {
 }
 
 export async function getProductById(productId: string) {
-  console.log(productId);
   const url = `${API_URL}/${productId}`;
 
   try {
@@ -200,12 +199,12 @@ export async function deleteProduct(id: string) {
 
 //------------------------------------------------------- LocalProduct Category ---------------------------------------------------
 
-// const API_URL_2 =
-//   Platform.OS === "android"
-//     ? "http://10.0.2.2:3000/local-product-categories"
-//     : "http://localhost:3000/local-product-categories";
+const API_URL_2 =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-product-categories"
+    : "http://localhost:3000/local-product-categories";
 
-const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
+// const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
 // Platform.OS === "android"
 // ? "http://10.0.2.2:3000/local-product-categories"
 // : "http://localhost:3000/local-product-categories";
@@ -320,10 +319,11 @@ export async function getLPByNameAndCategory(category: string, name: string) {
 
 //------------------------------------------------------- LocalProduct SubCategory ---------------------------------------------------
 
-const API_URL_3 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product-sub-categories`;
-// Platform.OS === "android"
-//   ? "http://10.0.2.2:3000/local-product-sub-categories"
-//   : ;
+// const API_URL_3 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product-sub-categories`;
+const API_URL_3 =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-product-sub-categories"
+    : "http://localhost:3000/local-product-sub-categories";
 
 export async function getLocalProductSubCategoriesByName(name: string) {
   try {

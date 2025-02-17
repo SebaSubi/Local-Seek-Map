@@ -1,7 +1,11 @@
 import { Alert, Platform } from "react-native";
 import { ServiceType } from "../schema/GeneralSchema";
 
-const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/service-type`;
+// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/service-type`;
+const API_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/service-type"
+    : "http://localhost:3000/service-type";
 // Platform.OS === "android"
 //   ? "http://10.0.2.2:3000/service-type"
 //   :

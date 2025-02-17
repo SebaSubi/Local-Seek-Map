@@ -115,20 +115,13 @@ export default function CreateService() {
     console.log(local.id);
 
     try {
-      console.log("image:", image);
-
-      if (!image) {
-        Alert.alert(
-          "Error",
-          "Por favor, seleccione una imagen para el producto."
-        );
-        return;
-      }
-
-      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen");
-        return;
+      let uploadedImageUrl = null;
+      if (image) {
+        uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+        if (!uploadedImageUrl) {
+          Alert.alert("Error", "No se pudo cargar la imagen");
+          return;
+        }
       }
 
       const newService: Service = {

@@ -134,7 +134,6 @@ export default function CreateService() {
     if (
       !serviceId ||
       !description ||
-      (!reservationURL && reservationNumber) ||
       selectedType.id === "0000" ||
       !location ||
       !address
