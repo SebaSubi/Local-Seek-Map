@@ -11,12 +11,15 @@ import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
 import EditScheduleContainer from "../../../../components/EditScheduleContainer";
 import { useLocalIdStore } from "../../../../libs/localZustang";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState<LocalSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const local = useLocalIdStore((state) => state.local);
+
+  const insest = useSafeAreaInsets();
 
   const { name } = useLocalSearchParams();
 
@@ -45,41 +48,45 @@ export default function DeleteSchedule() {
   };
 
   return (
-    <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+    <View
+      className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+      style={{
+        paddingTop: insest.top,
+      }}
+    >
       <Stack.Screen options={{ headerShown: false }} />
 
-      <View className="flex flex-row justify-between w-full items-center mb-2">
-        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
-        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
-          {`Actualizar/Borrar Horarios ${name === undefined ? "" : (name as string)}`}
+      <View className="flex flex-row justify-between w-full items-center h-8">
+        <GoBackButton style="ml-2" iconColor="white" />
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
+          {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
         </Text>
-        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        <GoBackButton style="opacity-0" />
       </View>
 
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center ">
-        {loading ? (
-          <Text>Loading...</Text>
-        ) : schedule.length ? (
-          <View className="flex items-center h-[90%] w-full bg-white rounded-3xl overflow-hidden">
-            <FlatList
-              data={schedule}
-              renderItem={({ item }) => (
-                <EditScheduleContainer
-                  href="CRUD/LocalCRUD/LocalSchedule/UpdateSchedule"
-                  schedule={item}
-                  onDelete={handleDelete}
-                />
-              )}
-              keyExtractor={(item) => item.id!}
-              onRefresh={() => setRefresh(!refresh)}
-              refreshing={loading}
-              className="mt-5"
-            />
-          </View>
-        ) : (
-          <Text>No hay Horarios disponibles</Text>
-        )}
-      </View>
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : schedule.length ? (
+        <View className="flex-1 items-center h-full w-full bg-white rounded-3xl overflow-hidden">
+          <FlatList
+            data={schedule}
+            renderItem={({ item }) => (
+              <EditScheduleContainer
+                local={true}
+                href="CRUD/LocalCRUD/LocalSchedule/UpdateSchedule"
+                schedule={item}
+                onDelete={handleDelete}
+              />
+            )}
+            keyExtractor={(item) => item.id!}
+            onRefresh={() => setRefresh(!refresh)}
+            refreshing={loading}
+            className="mt-5"
+          />
+        </View>
+      ) : (
+        <Text>No hay Horarios disponibles</Text>
+      )}
     </View>
   );
 }

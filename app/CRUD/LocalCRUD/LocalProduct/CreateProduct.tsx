@@ -1,5 +1,7 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Product, ProductType } from "../../../../schema/GeneralSchema";
+// import * as ImagePicker from "expo-image-picker";
 import * as ImagePicker from "expo-image-picker";
 import {
   Alert,
@@ -7,6 +9,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -27,7 +30,11 @@ import BasicButton from "../../../../components/BasicButton";
 import { CreateLogo } from "../../../../components/Logos";
 import { colors } from "../../../../constants/colors";
 import GoBackButton from "../../../../components/GoBackButton";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
@@ -48,6 +55,8 @@ export default function CreateProduct() {
   const [brandError, setbrandError] = useState("");
   const [measurementError, setMeasurementError] = useState("");
 
+  const insets = useSafeAreaInsets();
+
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
     const permissionResult =
@@ -59,7 +68,7 @@ export default function CreateProduct() {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -101,7 +110,7 @@ export default function CreateProduct() {
       !brand ||
       !measurement ||
       !description ||
-      // !image ||
+      !image ||
       !productTypeId
     ) {
       Alert.alert("Error", "Por favor complete todos los campos");
@@ -147,12 +156,23 @@ export default function CreateProduct() {
     }
 
     try {
-      const uploadedImageUrl = "";
+      // const uploadedImageUrl = "";
       // await uploadImageToCloudinaryProducts(image);
       // if (!uploadedImageUrl) {
       //   Alert.alert("Error", "No se pudo cargar la imagen");
       //   return;
       // }
+
+      // console.log("Imagen antes de subir:", image);
+
+      const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+
+      // console.log("URL de imagen subida:", uploadedImageUrl);
+
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen");
+        return;
+      }
 
       const newProduct: Product = {
         name,
@@ -163,6 +183,8 @@ export default function CreateProduct() {
         imgURL: uploadedImageUrl,
         dateFrom: new Date(),
       };
+
+      console.log("Nuevo producto:", newProduct);
 
       const createdProduct = await createProduct(newProduct);
       router.replace("/CRUD/LocalCRUD/LocalProduct/AddProduct");
@@ -191,22 +213,27 @@ export default function CreateProduct() {
           headerShown: false,
         }}
       />
-      <SafeAreaView className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+      <SafeAreaView
+        className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+        style={{
+          paddingTop: Platform.OS === "android" ? 24 : 0,
+        }}
+      >
         <View className="flex flex-row justify-between w-full items-center">
-          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3 h-9" />
+          <GoBackButton style="ml-2" iconColor="white" />
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
             {`Crear Producto`}
           </Text>
-          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+          <GoBackButton style="opacity-0" />
         </View>
-        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+        <View className="flex-1 bg-white h-full w-full rounded-3xl flex items-center justify-center">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
               alignItems: "center",
               justifyContent: "center",
             }}
-            className=" bg-white w-full rounded-3xl overflow-hidden pt-6"
+            className=" bg-white w-full rounded-3xl overflow-hidden pt-3"
           >
             {nameError === "" ? null : (
               <View className="w-full flex items-start ml-28">
@@ -266,7 +293,7 @@ export default function CreateProduct() {
                     text="No encunetra la categoría?"
                     onPress={() => setCreateType(true)}
                     background="#f8f8f8"
-                    style="mt-4"
+                    style="mt-4 mb-2"
                   />
                   {createType ? (
                     <View className="w-full h-full flex items-center justify-center">
@@ -332,7 +359,9 @@ export default function CreateProduct() {
             </View>
             {image && (
               <Image
-                source={{ uri: image }}
+                source={{
+                  uri: image || "https://example.com/default-image.png",
+                }}
                 style={{ width: 100, height: 100, marginTop: 10 }}
               />
             )}

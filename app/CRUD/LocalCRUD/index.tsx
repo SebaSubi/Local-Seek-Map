@@ -17,12 +17,16 @@ import { getLocalById, getLocals } from "../../../libs/local";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";
+import BasicButton from "../../../components/BasicButton";
+import LocalDeleteModal from "../../../components/modals/LocalDeleteModal";
 
 export default function ProductCrud() {
   const { id, name, localCoordinates, image, localType } =
     useLocalSearchParams();
 
   const local = useLocalIdStore((state) => state.local);
+
+  const [isVisible, setVisible] = useState(false);
 
   return (
     <>
@@ -32,12 +36,12 @@ export default function ProductCrud() {
         }}
       />
       <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
-        <View className="flex flex-row justify-between w-full">
-          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3" />
+        <View className="flex flex-row items-center justify-between w-full ">
+          <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
             {`Editar ${name as string}`}
           </Text>
-          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+          <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
         <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
           {/* <BasicSelectable
@@ -62,12 +66,25 @@ export default function ProductCrud() {
               id: local.id,
             }}
           />
-          <BasicSelectable
+          {/* <BasicSelectable
             href="/CRUD/LocalCRUD/DeleteLocal"
             logo={<DeleteLogo />}
             text="Borrar Local"
             style="mt-3"
-          />
+          /> */}
+          <LocalDeleteModal isVisible={isVisible} setVisible={setVisible} />
+          <View className="mt-3">
+            <BasicButton
+              text="Borrar Local"
+              background="#fff"
+              logo={
+                <View className="p-2 mr-1">
+                  <DeleteLogo />
+                </View>
+              }
+              onPress={() => setVisible(!isVisible)}
+            />
+          </View>
           <BasicSelectable
             href="/CRUD/LocalCRUD/LocalSchedule/"
             logo={<ClockLogo />}

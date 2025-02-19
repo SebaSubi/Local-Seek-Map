@@ -5,24 +5,20 @@ import { Link } from "expo-router";
 
 export default function ProductContainer({
   product,
+  href,
+  params,
   productCategory,
 }: {
   product: Product;
+  href: string;
+  params: any;
   productCategory: string;
 }) {
   return (
     <Link
       href={{
-        pathname: "CRUD/ProductCRUD/ProductPage/[id]",
-        params: {
-          id: product.id,
-          name: product.name,
-          description: product.description,
-          brand: product.brand,
-          image: product.imgURL ?? "https://via.placeholder.com/150",
-          categoryName: productCategory,
-          size: product.measurement,
-        },
+        pathname: href,
+        params: params,
       }}
       asChild
     >
@@ -44,7 +40,13 @@ export default function ProductContainer({
           />
         </View>
         <View className="w-full mt-2 flex flex-col">
-          <Text className="text-md font-semibold ml-2">{product.name}</Text>
+          <Text
+            className="text-md font-semibold ml-2"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {product.name}
+          </Text>
           <Text className="text-sm font-thin ml-2">Marca: {product.brand}</Text>
           <Text className="text-sm font-thin ml-2">Mas Info -{">"}</Text>
         </View>

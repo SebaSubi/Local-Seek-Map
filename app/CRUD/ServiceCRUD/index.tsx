@@ -19,6 +19,7 @@ import { LocalService, Service } from "../../../schema/GeneralSchema";
 import ServiceContainer from "../../../components/ServiceContainer";
 import DeleteServiceComponent from "../../../components/DeleteServiceComponent";
 import BasicButton from "../../../components/BasicButton";
+import GoBackButton from "../../../components/GoBackButton";
 
 export default function ProductCrud() {
   const [expanded, setExpanded] = useState(false);
@@ -101,6 +102,10 @@ export default function ProductCrud() {
             </Animated.View>
           </View>
           <View className="items-center w-full h-full rounded-b-3xl ">
+            <Text className="ml-2 mr-2 text-sm font-light">
+              *Deslizar para la derecha para actualizar, hacía la izquierda para
+              borrar
+            </Text>
             <FlatList
               data={services}
               renderItem={({ item }) => (

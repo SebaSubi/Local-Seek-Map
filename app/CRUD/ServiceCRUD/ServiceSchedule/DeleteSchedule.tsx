@@ -62,6 +62,10 @@ export default function DeleteSchedule() {
           <Text>Loading...</Text>
         ) : schedule.length ? (
           <View className="flex items-center h-[90%] w-full bg-white rounded-3xl overflow-hidden">
+            <Text className="ml-2 mr-2 text-sm font-light">
+              *Deslizar para la derecha para actualizar, hacía la izquierda para
+              borrar
+            </Text>
             <FlatList
               data={schedule}
               renderItem={({ item }) => (

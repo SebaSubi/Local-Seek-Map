@@ -6,33 +6,33 @@ import { useAuth } from "../../app/context/AuthContext";
 import BasicButton from "../BasicButton";
 import BasicTextInput from "../BasicTextInput";
 import { deleteUser } from "../../libs/user";
+import { useLocalIdStore } from "../../libs/localZustang";
+import { deleteLocalv2 } from "../../libs/local";
 
-const UserDeleteModal = ({
+const LocalDeleteModal = ({
   isVisible,
   setVisible,
-  setBeforeModalVisible,
 }: {
   isVisible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
-  setBeforeModalVisible: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { onLogout, authState } = useAuth();
-  const wordToCheck = authState?.user?.username ?? "cuenta";
+  const { authState } = useAuth();
+  const local = useLocalIdStore((state) => state.local);
+  const wordToCheck = local.name ?? "Borrar Local";
 
   const DeleteText = useRef<{
     getValue: () => string;
     setValue: (value: string) => void;
   }>(null);
 
-  const DeleteAccount = async () => {
+  const DeleteLocal = async () => {
     if (DeleteText.current?.getValue() === wordToCheck) {
-      if (authState?.user?.id) {
-        const response = await deleteUser(authState.user.id);
-        // console.log(response);
-        if (response.status === 200) {
-          onLogout;
+      if (authState?.user?.id && local.id) {
+        const response = await deleteLocalv2(local.id, authState.user.id);
+        console.log(response);
+        if (response?.status === 200) {
           setVisible(false);
-          setBeforeModalVisible(false);
+          //   onLogout; FIXME: en vez de logout que recargue la parte de user
         }
       }
     }
@@ -55,7 +55,7 @@ const UserDeleteModal = ({
         <View
           style={{
             width: "80%",
-            height: "45%",
+            height: "48%",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
             borderWidth: 2,
@@ -70,13 +70,13 @@ const UserDeleteModal = ({
               <CloseCircle color="#cc0000" />
             </Pressable>
           </View>
-          <Text className="font-bold text-3xl">Eliminar Cuenta</Text>
+          <Text className="font-bold text-3xl">Eliminar Local</Text>
           <WarningIcon size={100} color="#cc0000" />
           <Text className="font-thin text-xl text-center">
-            Una vez que eliminas tu cuenta no se podra volver a recuperar
+            Una vez que eliminas tu local no se podra volver a recuperar
           </Text>
           <Text className=" text-base text-center my-2">
-            {`indroduce "${wordToCheck}" para eliminar la cuenta`}
+            {`indroduce "${wordToCheck}" para eliminar el local`}
           </Text>
           <BasicTextInput
             inputType="text"
@@ -93,12 +93,11 @@ const UserDeleteModal = ({
                 <TrashIcon color="#fff" size={21} />
               </View>
             }
-            onPress={DeleteAccount}
+            onPress={DeleteLocal}
           />
         </View>
       </View>
     </Modal>
   );
 };
-
-export default UserDeleteModal;
+export default LocalDeleteModal;

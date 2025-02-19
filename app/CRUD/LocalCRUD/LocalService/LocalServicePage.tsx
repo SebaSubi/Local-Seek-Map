@@ -1,4 +1,3 @@
-import React from "react";
 import {
   FlatList,
   Image,
@@ -37,7 +36,7 @@ import {
 
 type Options = "Info" | "Horarios";
 
-export default function ServicePage() {
+export default function LocalServicePage() {
   const {
     id,
     name,
@@ -137,7 +136,7 @@ export default function ServicePage() {
                     <View className="flex w-full items-start">
                       <View className="flex flex-row items center">
                         <Text className="text-2xl font-bold text-[#1a253d] ml-2 mt-3">
-                          Pagina Web
+                          Pagina de Reserva
                         </Text>
                         <View className="ml-1 mt-4">
                           <ArrowUpRightBox size={10} />
@@ -147,11 +146,7 @@ export default function ServicePage() {
                         <View className="ml-2">
                           <WebIcon size={20} />
                         </View>
-                        <Text
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          className="flex-wrap text-base font-bold text-[#1a253d] ml-2 mr-4 mt-1"
-                        >
+                        <Text className="flex-wrap text-base font-bold text-[#1a253d] ml-2 mr-4 mt-1">
                           {reservationURL}
                         </Text>
                       </View>

@@ -12,6 +12,11 @@ const API_URL =
     ? "http://10.0.2.2:3000/product"
     : "http://localhost:3000/product";
 
+// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/product`;
+// Platform.OS === "android"
+//   ? "http://10.0.2.2:3000/product"
+//   : "http://localhost:3000/product";
+
 // const API_URL =
 //   Platform.OS === "android" ? "http://192.168.0.135:3000/product" : "";
 // // Platform.OS === "android" ? "http://192.168.130.1:3000/product" : "";
@@ -97,7 +102,6 @@ export async function updateProduct(product: Product) {
 }
 
 export async function getProductById(productId: string) {
-  console.log(productId);
   const url = `${API_URL}/${productId}`;
 
   try {
@@ -200,9 +204,18 @@ const API_URL_2 =
     ? "http://10.0.2.2:3000/local-product-categories"
     : "http://localhost:3000/local-product-categories";
 
-export async function getLocalProductCategories() {
+// const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
+// Platform.OS === "android"
+// ? "http://10.0.2.2:3000/local-product-categories"
+// : "http://localhost:3000/local-product-categories";
+// ? "http://10.0.2.2:3000/local-product-categories"
+// : `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product-categories`;
+//   "http://10.0.2.2:3000/local-product"
+//  "http://localhost:3000/local-product";
+
+export async function getLocalProductCategories(localId: string) {
   try {
-    const response = await fetch(`${API_URL_2}`);
+    const response = await fetch(`${API_URL_2}/lp-categories/${localId}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories");
@@ -217,20 +230,48 @@ export async function getLocalProductCategories() {
   }
 }
 
-export async function getLocalProductCategoriesByName(name: string) {
+// export async function getLocalProductCategoriesByName(name: string) {
+//   try {
+//     const response = await fetch(`${API_URL_2}/search-name?name=${name}`);
+
+//     if (!response.ok) {
+//       console.error("Error getting local product categories by name");
+//       const errorResponse = await response.json();
+//       console.error(errorResponse);
+//       throw new Error("Error getting local product categories by name");
+//     }
+
+//     return await response.json();
+//   } catch (error) {
+//     console.error("Error getting local product categories by name", error);
+//   }
+// }
+
+export async function getLocalProductCategoriesByName(
+  name: string,
+  id: string
+) {
   try {
-    const response = await fetch(`${API_URL_2}/search-name?name=${name}`);
+    // const response = await fetch(`${API_URL_2}/local/search-name?name=${name}`);
+    const response = await fetch(`${API_URL_2}/local/${id}?name=${name}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories by name");
-      const errorResponse = await response.json();
-      console.error(errorResponse);
-      throw new Error("Error getting local product categories by name");
+      return [];
     }
 
-    return await response.json();
+    const text = await response.text();
+    console.log("Raw response:", text);
+
+    if (!text) {
+      console.warn("Empty response body");
+      return [];
+    }
+
+    return JSON.parse(text);
   } catch (error) {
     console.error("Error getting local product categories by name", error);
+    return [];
   }
 }
 
@@ -278,6 +319,7 @@ export async function getLPByNameAndCategory(category: string, name: string) {
 
 //------------------------------------------------------- LocalProduct SubCategory ---------------------------------------------------
 
+// const API_URL_3 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product-sub-categories`;
 const API_URL_3 =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/local-product-sub-categories"

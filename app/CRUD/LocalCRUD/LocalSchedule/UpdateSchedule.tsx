@@ -23,6 +23,7 @@ import {
   scheduleInputValidation,
 } from "../../../../libs/libs";
 import BasicWarning from "../../../../components/BasicWarning";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function UpdateSchedule() {
   const { id } = useLocalSearchParams();
@@ -31,6 +32,7 @@ export default function UpdateSchedule() {
   const [errorModal, setErrorModal] = useState(false);
   const [error, setError] = useState("");
   const navigation = useNavigation();
+  const insents = useSafeAreaInsets();
 
   const FirstShiftStartRef = useRef<{
     getTime: () => Date;
@@ -206,18 +208,23 @@ export default function UpdateSchedule() {
 
   return loaded ? (
     <>
-      <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
+      <View
+        className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+        style={{
+          paddingTop: insents.top,
+        }}
+      >
         <Stack.Screen
           options={{
             headerShown: false,
           }}
         />
-        <View className="flex flex-row justify-between w-full items-center mb-2 mt-14">
-          <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
-          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
-            {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
+        <View className="flex flex-row justify-between w-full items-center">
+          <GoBackButton style="ml-2" iconColor="white" />
+          <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
+            {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
           </Text>
-          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+          <GoBackButton style="opacity-0" />
         </View>
         <ScrollView
           className="bg-white h-[89%] w-full rounded-3xl"
@@ -249,16 +256,25 @@ export default function UpdateSchedule() {
               text="Hora de Cerrada Segundo Turno:"
               ref={SecondShiftFinishRef}
             />
+            <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
+              *Los horarios nocturnos pueden ser aquellos que empiezan en un día
+              y terminan en otro
+            </Text>
             <TimeSelect
-              text="Hora de Apertura Tercer Turno:"
+              text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
             />
             <TimeSelect
-              text="Hora de Cerrada Tercer Turno:"
+              text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
             />
 
-            <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            <View
+              className="flex flex-col justify-center items-center w-3/4 mt-3"
+              style={{
+                paddingBottom: insents.bottom,
+              }}
+            >
               <BasicButton
                 logo={<CreateLogo />}
                 text="Actualizar Horario"

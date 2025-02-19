@@ -173,12 +173,12 @@ export default function CreateProduct() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-row justify-between w-full items-center mb-2">
-        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+      <View className="flex flex-row justify-between w-full items-center">
+        <GoBackButton style="ml-2" iconColor="white" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
           {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
         </Text>
-        <GoBackButton style="bg-white w-12 h-8 justify-center opacity-0" />
+        <GoBackButton style="mr-2 opacity-0" />
       </View>
       <View className="bg-white h-[89%] w-full rounded-3xl overflow-hidden flex items-center">
         <ScrollView
@@ -212,12 +212,16 @@ export default function CreateProduct() {
               text="Hora de Cerrada Segundo Turno:"
               ref={SecondShiftFinishRef}
             />
+            <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
+              *Los horarios nocturnos pueden ser aquellos que empiezan en un día
+              y terminan en otro
+            </Text>
             <TimeSelect
-              text="Hora de Apertura Tercer Turno:"
+              text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
             />
             <TimeSelect
-              text="Hora de Cerrada Tercer Turno:"
+              text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
             />
             <View className="flex flex-col justify-center items-center w-3/4 mt-3">

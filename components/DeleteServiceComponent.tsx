@@ -90,7 +90,11 @@ export default function DeleteServiceComponent({
                 resizeMode: "contain",
               }}
               source={{
-                uri: service.imgURL ?? "https://via.placeholder.com/150",
+                uri: service.imgURL
+                  ? service.imgURL
+                  : service.service?.imgURL
+                    ? service.service?.imgURL
+                    : "https://sanantoniosports.org/wp-content/uploads/2022/07/placeholder-image.jpeg",
               }}
             />
           </View>

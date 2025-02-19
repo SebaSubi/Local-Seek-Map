@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Alert,
   Modal,
@@ -9,6 +10,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  Button,
 } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack, useRouter } from "expo-router";
@@ -32,11 +34,12 @@ import {
   Service,
   ServiceType,
 } from "../../../schema/GeneralSchema";
-import * as ImagePicker from "expo-image-picker";
 import BigTextInput from "../../../components/BigTextInput";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
 
 export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -131,8 +134,7 @@ export default function CreateService() {
     if (
       !serviceId ||
       !description ||
-      !reservationURL ||
-      serviceTypeId === "0000" ||
+      selectedType.id === "0000" ||
       !location ||
       !address
     ) {
@@ -144,11 +146,21 @@ export default function CreateService() {
     }
 
     try {
-      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      // if (!uploadedImageUrl) {
-      //   Alert.alert("Error", "No se pudo cargar la imagen.");
-      //   return;
-      // }
+      console.log("image:", image);
+
+      if (!image) {
+        Alert.alert(
+          "Error",
+          "Por favor, seleccione una imagen para el producto."
+        );
+        return;
+      }
+
+      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      if (!uploadedImageUrl) {
+        Alert.alert("Error", "No se pudo cargar la imagen");
+        return;
+      }
 
       const newService: LocalService = {
         serviceId,
@@ -159,8 +171,7 @@ export default function CreateService() {
         location,
         address,
         localServiceCategoryId: selectedType.id!,
-        // imgURL: uploadedImageUrl,
-        // serviceTypeId,
+        imgURL: uploadedImageUrl,
         dateFrom: new Date(),
         dateTo: null,
       };
@@ -442,7 +453,18 @@ export default function CreateService() {
                 : "Seleccionar Tipo de Servicio"}
             </Text>
           </Pressable>
-          <TouchableOpacity
+
+          <View style={{ marginTop: 20 }}>
+            <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+          </View>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100, marginTop: 10 }}
+            />
+          )}
+
+          {/* <TouchableOpacity
             onPress={handleImagePicker}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
@@ -453,7 +475,7 @@ export default function CreateService() {
               source={{ uri: image }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )}
+          )} */}
 
           <Text className="text-red-600 mt-4">
             *No te olvides de agregale un horario a tu Servicio!

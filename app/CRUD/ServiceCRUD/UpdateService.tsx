@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Alert,
   Button,
@@ -33,12 +34,14 @@ import {
   Service,
   ServiceType,
 } from "../../../schema/GeneralSchema";
-import * as ImagePicker from "expo-image-picker";
 import BigTextInput from "../../../components/BigTextInput";
 import BasicSearchButton from "../../../components/BasicSearchBar";
 import BasicSelectable from "../../../components/BasicSelectable";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
+import { verifyUrl } from "../LocalCRUD/CreateLocal";
 
 export default function UpdateService() {
   const [serviceTypes, setServiceTypes] = useState<LocalServiceCategory[]>([]);
@@ -55,6 +58,10 @@ export default function UpdateService() {
 
   const local = useLocalIdStore((state) => state.local);
   const router = useRouter();
+
+  //Error handlers
+  const [whatsappError, setWhatsappError] = useState("");
+  const [webpageError, setWebpageError] = useState("");
 
   const reservationNumberRef = useRef<{
     getValue: () => string;
@@ -143,10 +150,32 @@ export default function UpdateService() {
     const location = locationRef.current?.getValue();
     const address = addressRef.current?.getValue();
 
+    if (reservationNumber && reservationNumber.length < 8) {
+      setWhatsappError(
+        // eslint-disable-next-line prettier/prettier
+        "La longitud minima de un numero es de 8"
+      );
+      setWebpageError("");
+      return;
+    }
+    if (reservationNumber && reservationNumber.length > 18) {
+      //checkear esto y agregar que wpp no pueda ser negativo.
+      setWhatsappError(
+        // eslint-disable-next-line prettier/prettier
+        "La longitud maxima de un numero es de 18 "
+      );
+      setWebpageError("");
+      return;
+    }
+    if (reservationURL && !verifyUrl(reservationURL)) {
+      setWhatsappError("");
+      setWebpageError("URL no valida");
+      return;
+    }
+
     if (
       !description ||
-      !reservationURL ||
-      localServiceCategoryId === "0000" ||
+      (!reservationURL && localServiceCategoryId === "0000") ||
       !location ||
       !address
     ) {
@@ -155,11 +184,15 @@ export default function UpdateService() {
     }
 
     try {
-      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      // if (!uploadedImageUrl) {
-      //   Alert.alert("Error", "No se pudo cargar la imagen.");
-      //   return;
-      // }
+      let uploadedImageUrl = null;
+
+      if (image) {
+        const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+        if (!uploadedImageUrl) {
+          Alert.alert("Error", "No se pudo cargar la imagen");
+          return;
+        }
+      }
 
       const newService: LocalService = {
         reservationNumber,
@@ -167,7 +200,7 @@ export default function UpdateService() {
         reservationURL,
         location,
         address,
-        // imgURL: uploadedImageUrl,
+        imgURL: uploadedImageUrl,
         localServiceCategoryId,
         dateFrom: new Date(),
       };
@@ -182,6 +215,8 @@ export default function UpdateService() {
         });
       }
       setImage(null);
+      Alert.alert("Éxito", "Servicio actualizado con éxito");
+      router.back();
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "No se pudo actualizar el servicio.");
@@ -231,6 +266,11 @@ export default function UpdateService() {
             title="URL Reservas"
             ref={URLRef}
           />
+          {webpageError && (
+            <Text className="text-defaultOrange text-sm font-light">
+              *{webpageError}
+            </Text>
+          )}
           <BasicTextInput
             inputType="text"
             value=""
@@ -239,6 +279,11 @@ export default function UpdateService() {
             title="Numero de Reservas"
             ref={reservationNumberRef}
           />
+          {whatsappError && (
+            <Text className="text-defaultOrange text-sm font-light">
+              *{whatsappError}
+            </Text>
+          )}
           <BasicTextInput
             inputType="text"
             value=""
@@ -364,7 +409,18 @@ export default function UpdateService() {
                 : "Seleccionar Tipo de Servicio"}
             </Text>
           </Pressable>
-          <TouchableOpacity
+
+          <View style={{ marginTop: 20 }}>
+            <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+          </View>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100, marginTop: 10 }}
+            />
+          )}
+
+          {/* <TouchableOpacity
             onPress={handleImagePicker}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
@@ -375,7 +431,7 @@ export default function UpdateService() {
               source={{ uri: image }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )}
+          )} */}
 
           <Text className="text-red-600 mt-4">
             *No te olvides de agregale un horario a tu Servicio!

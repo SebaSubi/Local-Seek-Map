@@ -4,18 +4,16 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { validateEmail } from "../components/Register";
 
-// const API_URL =
-//   Platform.OS === "android"
-//     ? "http://10.0.2.2:3000/store"
-//     : "http://192.168.155.114:3000/store";
 const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/store"
     : "http://localhost:3000/store";
+// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/store`;
 //   Platform.OS === "android" ? "http://192.168.0.135:3000/store" : "";
 // // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
 export async function getLocals() {
+  // console.log(API_URL);
   try {
     const rawData = await fetch(API_URL);
     if (!rawData.ok) {
@@ -239,10 +237,11 @@ export async function deleteLocal(id: string) {
     console.error("Error en deleteProduct:", error);
   }
 }
+// const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
 const API_URL_2 =
   Platform.OS === "android"
-    ? "http://10.0.2.2:3000"
-    : process.env.EXPO_PUBLIC_API_ROUTE;
+    ? "http://10.0.2.2:3000/store"
+    : "http://localhost:3000/store";
 
 export async function createLocalAndAddOwner(local: Local, userId: string) {
   try {
@@ -267,10 +266,33 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
   }
 }
 
+export async function deleteLocalv2(localId: string, userId: string) {
+  try {
+    const payload = { userId: userId, storeId: localId };
+    const response = await axios.patch(
+      `${API_URL_2}/auth-v2/store_owner/delete-store`,
+      payload
+    );
+    if (!response.status) {
+      Alert.alert("Error", "Failed to delete Local");
+    } else {
+      console.log("Local succesfully deleted from dataBase");
+      return response;
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
 //----------------------------------------------------------------Local User----------------------------------------------------------------
+// const API_URL_LU = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-user`
+const API_URL_LU =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/local-user"
+    : "http://localhost:3000/local-user";
 
 export async function getLocalsOfUser(userEmail: string) {
-  const url = `http://localhost:3000/local-user/locals/${userEmail}`;
+  const url = `${API_URL_LU}/locals/${userEmail}`;
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {
@@ -284,17 +306,3 @@ export async function getLocalsOfUser(userEmail: string) {
 }
 
 //----------------------------------------------------------------Local Services----------------------------------------------------------------
-
-export async function getServicesOfLocal(id: string) {
-  const url = `http://localhost:3000/service/service-localid/${id}`;
-  try {
-    const rawData = await fetch(url);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch store services");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting store services", error);
-  }
-}

@@ -102,14 +102,14 @@ export default function Login() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={() => setLogin(false)}>
+          {/* <TouchableOpacity onPress={() => setLogin(false)}>
             <Text
               className="w-full text-center mb-4"
               style={{ color: colors.primary.orange }}
             >
               ¿Olvidaste tu contraseña?
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             className="w-full py-4 rounded-3xl items-center"

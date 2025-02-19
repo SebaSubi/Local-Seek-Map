@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Alert, ScrollView } from "react-native";
+import { View, FlatList, Alert, ScrollView, Image, Text } from "react-native";
 import { Stack } from "expo-router";
 import {
   getLPByNameAndCategory,
@@ -21,6 +21,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { ProductIcon } from "../../../components/Logos";
 
 const ReadProductScreen = () => {
   const [products, setProducts] = useState<Product[]>([]); //this are the products in display
@@ -93,7 +94,7 @@ const ReadProductScreen = () => {
   const fetchCategories = async () => {
     try {
       const data = await getProductTypes();
-      const localProductCat = await getLocalProductCategories();
+      const localProductCat = await getProductTypes();
       setCategories(data);
       setLocalProductCateogries(localProductCat);
     } catch (err) {
@@ -114,7 +115,10 @@ const ReadProductScreen = () => {
     <View
       className="bg-defaultBlue w-full h-full flex flex-col"
       style={{
-        paddingBottom: tabBarHeight + insets.bottom + 12,
+        paddingBottom:
+          products && products.length > 0
+            ? tabBarHeight + insets.bottom + 12
+            : 0,
       }}
     >
       <Stack.Screen
@@ -128,8 +132,6 @@ const ReadProductScreen = () => {
         onSearch={setSearchText}
         selectedCategory={handleSelectedCategory}
         categories={categories}
-        selectedFilters={setSelectedFilter}
-        filters={[]}
         style="mt-16"
       />
 
@@ -157,7 +159,12 @@ const ReadProductScreen = () => {
         </View>
       ) : null}
 
-      <View className="w-full h-full bg-white rounded-t-3xl overflow-hidden">
+      <View
+        className="w-full h-full bg-white rounded-t-3xl overflow-hidden"
+        style={{
+          marginTop: products && products.length > 0 ? 0 : 14,
+        }}
+      >
         <FlatList
           data={products}
           horizontal={false}
@@ -168,6 +175,24 @@ const ReadProductScreen = () => {
           keyExtractor={(item) => item.id!.toString()}
           onRefresh={() => fetchAndSetProducts()}
           refreshing={loading}
+          ListEmptyComponent={
+            <View className="flex-1 w-full h-full items-center justify-center">
+              <Image
+                source={{
+                  uri: "https://static.wikia.nocookie.net/henrystickmin/images/5/59/WinstonSupportingCharacterNAV.png/revision/latest/scale-to-width-down/90?cb=20240322173423",
+                }}
+                style={{
+                  height: 96,
+                  width: 96,
+                  resizeMode: "contain",
+                }}
+              />
+              <Text className="ml-5 mr-5 text-center mt-2 text-sm font-light">
+                No se encuentran Prouctos en este momento, deslice hacía abajo
+                para recargar
+              </Text>
+            </View>
+          }
         />
       </View>
     </View>

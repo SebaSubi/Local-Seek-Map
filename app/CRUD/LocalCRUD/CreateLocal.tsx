@@ -135,7 +135,6 @@ export default function CreateLocal() {
     if (address.length < 5) {
       setNameError("");
       setLocationError(
-        // eslint-disable-next-line prettier/prettier
         "La ubicacion del Local requiere minimamente 5 caracteres"
       );
       setWhatsappError("");
@@ -303,15 +302,15 @@ export default function CreateLocal() {
       setAddressError("");
       return;
     }
-    // if (webpage && !verifyUrl(webpage)) {
-    //   setNameError("");
-    //   setLocationError("");
-    //   setWhatsappError("");
-    //   setInstagramError("");
-    //   setFacebookError("");
-    //   setWebpageError("URL no valida");
-    //   return;
-    // }
+    if (webpage && !verifyUrl(webpage)) {
+      setNameError("");
+      setLocationError("");
+      setWhatsappError("");
+      setInstagramError("");
+      setFacebookError("");
+      setWebpageError("URL no valida");
+      return;
+    }
     try {
       const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
       if (!uploadedImageUrl) {
@@ -366,6 +365,8 @@ export default function CreateLocal() {
     fetchCategories();
   }, []);
 
+  const defaultImage = "https://via.placeholder.com/150";
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -397,7 +398,7 @@ export default function CreateLocal() {
           <BasicTextInput
             inputType="text"
             placeholder="Nombre"
-            textStyle="mt-4"
+            textStyle="mt-10"
             title="Nombre de Local: "
             ref={nameRef}
             value=""
@@ -551,11 +552,11 @@ export default function CreateLocal() {
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
           )}
-          <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+          <View className="flex flex-col justify-center items-center w-3/4 mt-3 pb-10">
             <BasicButton
               logo={<CreateLogo />}
               text="Crear Local"
-              style="mt-3 mb-4"
+              style="mt-3"
               onPress={handleSubmit}
             />
           </View>

@@ -15,6 +15,10 @@ export function bringDayName(dayNumber: number) {
   return days[dayNumber - 1];
 }
 
+export function isNumeric(str: string) {
+  return !isNaN(parseFloat(str)) && isFinite(Number(str));
+}
+
 export function getPlaceholders(category: string): string {
   // console.log(category);
   switch (category) {
@@ -63,13 +67,14 @@ export function scheduleInputValidation(
 
   if (schedule.ThirdShiftFinish === "00:00") {
     return "Correct";
-  } else if (
-    schedule.ThirdShiftStart &&
-    schedule.ThirdShiftFinish &&
-    schedule.ThirdShiftStart > schedule.ThirdShiftFinish
-  ) {
-    return "La hora inicial no puede ser mayor a la hora final (Tercer turno)";
   }
+  // else if (
+  //   schedule.ThirdShiftStart &&
+  //   schedule.ThirdShiftFinish &&
+  //   schedule.ThirdShiftStart > schedule.ThirdShiftFinish
+  // ) {
+  //   return "La hora inicial no puede ser mayor a la hora final (Tercer turno)";
+  // }
   if (schedule.dayNumber === null || schedule.dayNumber === 0)
     return "El día no puede estar vacío o ser 0";
 
@@ -83,13 +88,13 @@ export function scheduleInputValidation(
     return "El horario de comienzo de segundo turno no puede ser menor al cierre del primero";
   }
 
-  if (
-    schedule.ThirdShiftStart &&
-    schedule.SecondShiftFinish &&
-    schedule.ThirdShiftStart < schedule.SecondShiftFinish
-  ) {
-    return "El horario de comienzo del tercer turno no puede ser menor al cierre del segundo";
-  }
+  // if (
+  //   schedule.ThirdShiftStart &&
+  //   schedule.SecondShiftFinish &&
+  //   schedule.ThirdShiftStart < schedule.SecondShiftFinish
+  // ) {
+  //   return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
+  // }
 
   return "Correct";
 }
