@@ -183,10 +183,23 @@ export default function LocalPage() {
       <View
         className="flex flex-col items-start h-full justify-end bg-[#1a253d]"
         style={{
-          paddingTop: Platform.OS === "android" ? insets.top + 6 : insets.top,
+          paddingTop: Platform.OS === "android" ? insets.top + 18 : insets.top,
         }}
       >
         {selectedOption === "Info" ? (
+          <View className="flex flex-row items-center justify-between w-full">
+            <GoBackButton style="ml-4" iconColor="white" />
+            <Text className="text-3xl text-white font-normal ml-[-16px]">
+              {name}
+            </Text>
+            <GoBackButton
+              style="border border-white opacity-0"
+              iconColor="white"
+            />
+          </View>
+        ) : null}
+
+        {selectedOption === "Schedule" ? (
           <View className="flex flex-row items-center justify-between w-full">
             <GoBackButton style="ml-4" iconColor="white" />
             <Text className="text-3xl text-white font-normal ml-[-16px]">

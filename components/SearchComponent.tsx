@@ -70,8 +70,8 @@ const SearchComponent = () => {
       <SafeAreaView
         className="bg-defaultBlue "
         style={{
-          paddingBottom: tabBarHeight - 13, // Dont ask why it doesnt get the correct Tab height
-          paddingTop: Platform.OS === "android" ? 6 : 0,
+          paddingBottom: Platform.OS === "android" ? 99 : tabBarHeight - 13, // Dont ask why it doesnt get the correct Tab height
+          paddingTop: Platform.OS === "android" ? 18 : 0,
         }}
       >
         <View className="flex flex-row items-center justify-center overflow-hidden mb-3">
