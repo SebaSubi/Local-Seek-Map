@@ -196,11 +196,7 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
       >
         <Text className="text-white font-bold">Registrarse</Text>
       </TouchableOpacity>
-<<<<<<< HEAD
-      <View className="w-full h-[57%] justify-end items-center">
-=======
       <View className="w-full items-center ">
->>>>>>> c9c7b327e96c8ebee80061c7d05e65ae228dfc21
         <TouchableOpacity onPress={() => setReg(true)}>
           <Text className="text-center mt-4">
             ¿Ya tienes cuenta?
