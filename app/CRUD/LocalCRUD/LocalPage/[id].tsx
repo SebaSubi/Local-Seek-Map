@@ -11,7 +11,7 @@ import {
   ProductType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
-import { getLocalById } from "../../../../libs/local";
+import { addPopularityToLocal, getLocalById } from "../../../../libs/local";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
@@ -147,6 +147,7 @@ export default function LocalPage() {
       if (prod && prod.length > 0) {
         setServiceWithProducts(true);
       }
+      await addPopularityToLocal(id as string);
     };
     fetchAll();
     fetchAndSetCategories();

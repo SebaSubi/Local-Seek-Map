@@ -28,6 +28,28 @@ export async function getLocalsOfProduct(id: string) {
   }
 }
 
+export async function addPopularityToProduct(productId: string) {
+  try {
+    const response = await fetch(`${API_URL}/add-popularity/${productId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Error adding popularity to product");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error al sumar popularidad al producto");
+    }
+
+    // return await response.json();
+  } catch (error) {
+    console.error("Error en deleteProduct:", error);
+  }
+}
+
 export async function getProductsOfLocalByName(id: string, name: string) {
   // console.log(`${API_URL}/local/${id}?name=${name}`);
   const url = `${API_URL}/local/${id}?name=${name}`;

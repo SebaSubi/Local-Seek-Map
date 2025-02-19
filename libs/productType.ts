@@ -6,7 +6,7 @@ import { ProductType } from "../schema/GeneralSchema";
 const API_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/productType"
-    : "http://localhost:3000//productType";
+    : "http://localhost:3000/productType";
 // Platform.OS === "android"
 //   ? "http://10.0.2.2:3000/productType"
 

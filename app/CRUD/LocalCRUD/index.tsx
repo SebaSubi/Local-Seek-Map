@@ -8,6 +8,7 @@ import {
   ReaderIcon,
   ReadLogo,
   ServiceIcon,
+  StatsIcon,
   UpdateLogo,
 } from "../../../components/Logos";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -66,12 +67,6 @@ export default function ProductCrud() {
               id: local.id,
             }}
           />
-          {/* <BasicSelectable
-            href="/CRUD/LocalCRUD/DeleteLocal"
-            logo={<DeleteLogo />}
-            text="Borrar Local"
-            style="mt-3"
-          /> */}
           <LocalDeleteModal isVisible={isVisible} setVisible={setVisible} />
           <View className="mt-3">
             <BasicButton
@@ -104,6 +99,12 @@ export default function ProductCrud() {
             href="/CRUD/LocalCRUD/LocalProduct/EditProduct"
             logo={<UpdateLogo />}
             text="Editar Productos"
+            style="mt-3"
+          />
+          <BasicSelectable
+            href="/CRUD/LocalCRUD/LocalStats"
+            logo={<StatsIcon />}
+            text="Estadisticas"
             style="mt-3"
           />
           {local.localTypes?.name === "Servicio" && (

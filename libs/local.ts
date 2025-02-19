@@ -25,6 +25,22 @@ export async function getLocals() {
     console.log("Error getting stores", error);
   }
 }
+export async function addPopularityToLocal(localId: string) {
+  try {
+    const response = await fetch(`${API_URL}/add-popularity/${localId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.log("Failed to add popularity to local");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
 
 export async function getLocalsByCategory(category = "Supermercado") {
   try {

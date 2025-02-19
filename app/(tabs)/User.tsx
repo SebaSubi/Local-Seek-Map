@@ -8,7 +8,7 @@ import { Role, useAuth } from "../context/AuthContext";
 import UserUpdateModal from "../../components/modals/UserUpdateModal";
 import LocalContainer from "../../components/LocalContainer";
 import { getUserLocals, UserLocal } from "../../libs/user";
-import { LocalTypes } from "../../schema/GeneralSchema";
+import { Local, LocalTypes } from "../../schema/GeneralSchema";
 import GoBackButton from "../../components/GoBackButton";
 import EditLocalContainer from "../../components/EditLocalContainer";
 import UserPermissionModal from "../../components/modals/UserPermissionModal";
@@ -16,7 +16,7 @@ import UserPermissionModal from "../../components/modals/UserPermissionModal";
 export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [locals, setLocals] = useState<UserLocal[]>([]);
+  const [locals, setLocals] = useState<Local[]>([]);
   const [isPermissionModalVisible, setPermissionModalVisible] = useState(false);
 
   useEffect(() => {
@@ -90,39 +90,16 @@ export default function UserScreen() {
                       horizontal={false}
                       numColumns={2}
                       renderItem={({ item }) => (
-                        <EditLocalContainer
-                          local={{
-                            id: item.id,
-                            address: item.address,
-                            dateFrom: new Date(),
-                            dateTo: null,
-                            facebook: item.facebook,
-                            imgURL: item.imgURL,
-                            instagram: item.instagram,
-                            localTypeID: item.localTypes.id,
-                            localTypes: item.localTypes as LocalTypes,
-                            location: item.location,
-                            name: item.name,
-                            product: [],
-                            schedule: [],
-                            services: [],
-                            users: [],
-                            viewLocal: [],
-                            webpage: item.webpage,
-                            whatsapp: item.whatsapp,
-                          }}
-                        />
+                        <EditLocalContainer local={item} />
                       )}
-                      keyExtractor={(item) => item.id}
+                      keyExtractor={(item) => item?.id!}
                       onRefresh={() => fetchData()}
                       // refreshing={loading}
                       refreshing={false}
                     />
                   </View>
                 </>
-              ) : (
-                <></>
-              )}
+              ) : null}
               <View className="w-full">
                 <UserPermissionModal
                   isVisible={isPermissionModalVisible}
@@ -140,10 +117,7 @@ export default function UserScreen() {
                 />
               </View>
             </>
-          ) : (
-            ""
-          )}
-
+          ) : null}
           <BasicButton
             text="Cerrar sesion"
             background={colors.primary.orange}
