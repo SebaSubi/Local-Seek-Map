@@ -18,7 +18,11 @@ export default function Search() {
   return (
     <SafeAreaView
       className="flex-1 bg-defaultBlue"
-      style={{ paddingTop: Platform.OS === "android" ? 15 : 0 }}
+      style={{
+        paddingTop: Platform.OS === "android" ? 18 : 0,
+        // paddingBottom: Platform.OS === "android" ? 28 : 0,
+        paddingBottom: Platform.OS === "android" ? 99 : 0,
+      }}
     >
       <StatusBar style="light" backgroundColor="#1a253d" />
       <Stack.Screen
