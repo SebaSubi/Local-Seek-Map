@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BasicButton from "./BasicButton";
-import { localCategryIcons } from "../schema/generalConst";
-import { ProductIcon } from "./Logos";
 import { LocalTypes, ProductType, ServiceType } from "../schema/GeneralSchema";
 
 // type CategoryKey = keyof typeof localCategryIcons;
@@ -48,9 +46,10 @@ export default function BasicSearchButton({
   const [modalVisible, setModalVisible] = useState(false);
   const [categorySelected, setCategory] = useState("");
   const [searchType, setSearchType] = useState("Nombre");
-  useEffect(() => {
+
+  function handleSearch() {
     onSearch(text);
-  }, [text]);
+  }
 
   const handleFilterPress = () => {
     setModalVisible(true);
@@ -60,7 +59,6 @@ export default function BasicSearchButton({
     if (selectedFilters) {
       setSearchType(type);
       type !== "Categoria" ? setModalVisible(false) : null;
-      console.log(`Tipo de búsqueda seleccionado: ${type}`);
       selectedFilters(type);
     } else null;
   };
@@ -92,6 +90,9 @@ export default function BasicSearchButton({
             marginLeft: filters ? 32 : 1,
           }}
           onChangeText={(text) => setText(text)}
+          onSubmitEditing={() => {
+            handleSearch();
+          }}
           value={text}
           placeholder={placeholder}
           placeholderTextColor="#999"

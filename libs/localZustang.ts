@@ -19,6 +19,7 @@ export const useLocalIdStore = create<LocalStore>((set) => ({
     imgURL: "",
     dateTo: null,
     localTypeID: "",
+    popularity: 0,
   },
 
   setLocal: (local: Local) => {
