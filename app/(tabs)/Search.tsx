@@ -20,7 +20,6 @@ export default function Search() {
       className="flex-1 bg-defaultBlue"
       style={{
         paddingTop: Platform.OS === "android" ? 18 : 0,
-        // paddingBottom: Platform.OS === "android" ? 28 : 0,
         paddingBottom: Platform.OS === "android" ? 99 : 0,
       }}
     >
