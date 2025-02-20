@@ -28,25 +28,50 @@ export async function getLocalsOfProduct(id: string) {
   }
 }
 
-export async function addPopularityToProduct(productId: string) {
+// export async function addPopularityToProduct(productId: string) {
+//   try {
+//     const response = await fetch(`${API_URL}/add-popularity/${productId}`, {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//     });
+
+//     if (!response.ok) {
+//       console.error("Error adding popularity to product");
+//       const errorResponse = await response.json();
+//       console.error(errorResponse);
+//       throw new Error("Error al sumar popularidad al producto");
+//     }
+
+//     // return await response.json();
+//   } catch (error) {
+//     console.error("Error en deleteProduct:", error);
+//   }
+// }
+
+export async function addProductStat(localProductId: string) {
   try {
-    const response = await fetch(`${API_URL}/add-popularity/${productId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/add-product-stat/${localProductId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      console.error("Error adding popularity to product");
+      console.error("Error adding productStat");
       const errorResponse = await response.json();
       console.error(errorResponse);
-      throw new Error("Error al sumar popularidad al producto");
+      throw new Error("Error al agregar estadisticas de producto");
     }
 
     // return await response.json();
   } catch (error) {
-    console.error("Error en deleteProduct:", error);
+    console.error("Error adding productStat:", error);
   }
 }
 
