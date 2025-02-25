@@ -75,6 +75,21 @@ export async function addProductStat(localProductId: string) {
   }
 }
 
+export async function getPopularityOfLocalProducts(localId: string) {
+  // console.log(`${API_URL}/local/${id}?name=${name}`);
+  const url = `${API_URL}/products-popularity/${localId}`;
+  try {
+    const rawData = await fetch(url);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch local products by popularity");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting local products by popularity", error);
+  }
+}
+
 export async function getProductsOfLocalByName(id: string, name: string) {
   // console.log(`${API_URL}/local/${id}?name=${name}`);
   const url = `${API_URL}/local/${id}?name=${name}`;

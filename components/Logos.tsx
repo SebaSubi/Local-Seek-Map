@@ -203,3 +203,7 @@ export const CircleCheckIcon = ({ color = "black", size = 24 }) => {
 export const StatsIcon = ({ color = "black", size = 24 }) => {
   return <Ionicons name="stats-chart-sharp" size={size} color={color} />;
 };
+
+export const RefreshLogo = ({ color = "black", size = 24 }) => {
+  return <Ionicons name="refresh" size={size} color={color} />;
+};
