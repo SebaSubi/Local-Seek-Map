@@ -1,6 +1,16 @@
 import { specificDate } from "../constants/consts";
 import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 
+export type LocalProductStats = {
+  _count: {
+    localProductId: number;
+  };
+  localProductId: string;
+  product: {
+    name: string;
+  };
+};
+
 export function bringDayName(dayNumber: number) {
   const days = [
     "Domingo",
