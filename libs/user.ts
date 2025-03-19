@@ -43,6 +43,7 @@ export type UserLocal = {
   };
 };
 export async function getUserLocals(userId: string) {
+  // console.log("here");
   return await axios.get(`${API_URL}/user-locals`, {
     params: {
       userId: userId,

@@ -21,7 +21,10 @@ export default function UserScreen() {
 
   useEffect(() => {
     fetchData();
+    // console.log("We are in the useEffect");
   }, [authState]);
+
+  console.log(authState?.user?.id);
 
   const fetchData = async () => {
     if (
@@ -29,8 +32,9 @@ export default function UserScreen() {
       authState.user.username !== "Admin" &&
       authState.user.username !== Role.USER
     ) {
+      console.log("Inside the ");
       const fetchedLocals = await getUserLocals(authState.user.id);
-      // console.log(fetchedLocals.data);
+
       if (fetchedLocals.data) {
         setLocals(fetchedLocals.data);
       }
