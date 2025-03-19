@@ -156,7 +156,7 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
           <Ionicons
             name={passwordVisible ? "eye-off" : "eye"}
             size={24}
-            color={colors.primary.lightGray}
+            color={colors.primary.blue}
           />
         </TouchableOpacity>
       </View>
