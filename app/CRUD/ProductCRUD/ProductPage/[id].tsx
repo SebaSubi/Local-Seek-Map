@@ -8,7 +8,10 @@ import { Product } from "../../../../schema/GeneralSchema";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
-import { getLocalsOfProduct } from "../../../../libs/localProducts";
+import {
+  addPopularityToProduct,
+  getLocalsOfProduct,
+} from "../../../../libs/localProducts";
 import { getPlaceholders } from "../../../../libs/libs";
 
 type Options = "Info" | "Locals";
@@ -23,6 +26,7 @@ export default function ProductPage() {
 
   async function fetchAndSetAll() {
     const loc = await getLocalsOfProduct(id as string);
+    addPopularityToProduct(id as string);
     setLocals(loc);
     const products = await getProductsByCategory(categoryName as string);
     setSimilarProducts(products);
@@ -98,8 +102,19 @@ export default function ProductPage() {
                       return (
                         <SmallProductContainer
                           product={product}
-                          productCategory={categoryName as string}
                           key={index}
+                          href="CRUD/ProductCRUD/ProductPage/[id]"
+                          params={{
+                            id: product.id,
+                            name: product.name,
+                            description: product.description,
+                            brand: product.brand,
+                            image:
+                              product.imgURL ??
+                              "https://via.placeholder.com/150",
+                            categoryName: product.type?.name,
+                            size: product.measurement,
+                          }}
                         />
                       );
                     } else {

@@ -19,6 +19,7 @@ export interface Local {
   facebook?: string | null;
   webpage?: string | null;
   imgURL?: string | null;
+  popularity?: number;
   dateFrom?: Date;
   dateTo?: Date | null;
   users?: User[];

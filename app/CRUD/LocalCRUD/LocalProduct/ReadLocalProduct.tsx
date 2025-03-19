@@ -9,6 +9,7 @@ import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
 import {
+  addProductStat,
   getLocalsOfProduct,
   getProductsOfLocalByNameAndCat,
   getSimilarLocalProducts,
@@ -43,7 +44,6 @@ export default function LocalProductPage() {
   const insets = useSafeAreaInsets();
 
   async function fetchAndSetAll() {
-    console.log(localId);
     const loc = await getLocalsOfProduct(productId as string);
     setLocals(loc);
     if (categoryName) {
@@ -62,6 +62,7 @@ export default function LocalProductPage() {
       setSimilarProducts(products);
       setLoading(false);
     }
+    await addProductStat(id as string);
   }
 
   useEffect(() => {

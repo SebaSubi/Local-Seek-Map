@@ -11,7 +11,7 @@ import {
   ProductType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
-import { getLocalById } from "../../../../libs/local";
+import { addPopularityToLocal, getLocalById } from "../../../../libs/local";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
@@ -147,6 +147,7 @@ export default function LocalPage() {
       if (prod && prod.length > 0) {
         setServiceWithProducts(true);
       }
+      await addPopularityToLocal(id as string);
     };
     fetchAll();
     fetchAndSetCategories();
@@ -185,7 +186,7 @@ export default function LocalPage() {
       <View
         className="flex flex-col items-start h-full justify-end bg-[#1a253d]"
         style={{
-          paddingTop: Platform.OS === "android" ? insets.top + 6 : insets.top,
+          paddingTop: Platform.OS === "android" ? insets.top + 18 : insets.top,
         }}
       >
         {selectedOption === "Info" ? (
@@ -199,12 +200,21 @@ export default function LocalPage() {
               iconColor="white"
             />
           </View>
-        ) : (
+        ) : selectedOption === "Schedule" ? (
           <View className="flex flex-row items-center justify-between w-full">
             <GoBackButton style="ml-4" iconColor="white" />
             <Text className="text-3xl text-white font-normal ml-[-16px]">
               Horarios
             </Text>
+            <GoBackButton
+              style="border border-white opacity-0"
+              iconColor="white"
+            />
+          </View>
+        ) : (
+          <View className="flex flex-row items-center justify-between w-full">
+            <GoBackButton style="ml-4" iconColor="white" />
+            <Text className="text-3xl text-white font-normal ml-[-16px]"></Text>
             <GoBackButton
               style="border border-white opacity-0"
               iconColor="white"

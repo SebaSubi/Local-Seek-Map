@@ -27,15 +27,15 @@ export default function EditLocalContainer({ local }: { local: Local }) {
     <Link
       href={{
         pathname: "CRUD/LocalCRUD",
-        params: {
-          id: local.id,
-          name: local.name,
-          localCoordinates: local.location,
-          image: local.imgURL
-            ? local.imgURL
-            : "https://via.placeholder.com/150", //FIXME: add a placeholderImage
-          localType: local.localTypes?.name,
-        },
+        // params: {
+        //   id: local.id,
+        //   name: local.name,
+        //   localCoordinates: local.location,
+        //   image: local.imgURL
+        //     ? local.imgURL
+        //     : "https://via.placeholder.com/150", //FIXME: add a placeholderImage
+        //   localType: local.localTypes?.name,
+        // },
       }}
       asChild
     >

@@ -1,7 +1,11 @@
 import axios from "axios";
 import { Platform } from "react-native";
 
-const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
+// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
+const API_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/auth-v2"
+    : "http://localhost:3000/auth-v2";
 // Platform.OS === "android"
 //   ? "http://10.0.2.2:3000/auth-v2"
 //   :

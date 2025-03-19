@@ -7,12 +7,10 @@ export default function ProductContainer({
   product,
   href,
   params,
-  productCategory,
 }: {
   product: Product;
   href: string;
   params: any;
-  productCategory: string;
 }) {
   return (
     <Link
@@ -21,6 +19,7 @@ export default function ProductContainer({
         params: params,
       }}
       asChild
+      replace
     >
       <Pressable
         className="flex flex-col items-center mt-3 w-36 bg-[#f8f8f8] h-fit rounded-3xl"
