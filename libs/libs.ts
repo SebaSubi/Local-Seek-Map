@@ -1,5 +1,9 @@
 import { specificDate } from "../constants/consts";
-import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
+import {
+  Local,
+  LocalSchedule,
+  LocalServiceSchedule,
+} from "../schema/GeneralSchema";
 
 export type LocalProductStats = {
   _count: {
@@ -7,6 +11,25 @@ export type LocalProductStats = {
   };
   localProductId: string;
   product: {
+    name: string;
+  };
+};
+
+type localSat = {
+  localId: string;
+  count: number;
+};
+
+export type GlobalStats = {
+  locals: localSat[];
+  mostPop: Local;
+};
+
+export type GlobalProductStats = {
+  productId: string;
+  count: number;
+  name: string;
+  type: {
     name: string;
   };
 };

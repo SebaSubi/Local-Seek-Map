@@ -321,4 +321,35 @@ export async function getLocalsOfUser(userEmail: string) {
   }
 }
 
-//----------------------------------------------------------------Local Services----------------------------------------------------------------
+//----------------------------------------------------------------Local Stats----------------------------------------------------------------
+
+export async function addLocalStats(localId: string) {
+  try {
+    const response = await fetch(`${API_URL}/addStat/${localId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      Alert.alert("Error", "Failed to create Product");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    Alert.alert("Error: ", (error as any).message.data.msg);
+  }
+}
+
+export async function getGlobalLocalStats() {
+  try {
+    const rawData = await fetch(`${API_URL}/getStats/global`);
+    if (!rawData.ok) {
+      throw new Error("Failed to fetch global store data");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting global store data", error);
+  }
+}

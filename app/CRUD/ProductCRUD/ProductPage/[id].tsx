@@ -3,15 +3,15 @@ import { View, Text, Image, FlatList, ScrollView } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import BasicButton from "../../../../components/BasicButton";
 import { useEffect, useState } from "react";
-import { getProductsByCategory } from "../../../../libs/product";
+import {
+  addProductStat,
+  getProductsByCategory,
+} from "../../../../libs/product";
 import { Product } from "../../../../schema/GeneralSchema";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
-import {
-  addPopularityToProduct,
-  getLocalsOfProduct,
-} from "../../../../libs/localProducts";
+import { getLocalsOfProduct } from "../../../../libs/localProducts";
 import { getPlaceholders } from "../../../../libs/libs";
 
 type Options = "Info" | "Locals";
@@ -26,12 +26,14 @@ export default function ProductPage() {
 
   async function fetchAndSetAll() {
     const loc = await getLocalsOfProduct(id as string);
-    addPopularityToProduct(id as string);
+    addProductStat(id as string);
     setLocals(loc);
     const products = await getProductsByCategory(categoryName as string);
     setSimilarProducts(products);
     setLoading(false);
   }
+
+  // console.log(id);
 
   useEffect(() => {
     fetchAndSetAll();

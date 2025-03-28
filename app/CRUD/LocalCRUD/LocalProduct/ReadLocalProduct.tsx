@@ -9,6 +9,7 @@ import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
 import {
+  addPopularityToProduct,
   addProductStat,
   getLocalsOfProduct,
   getProductsOfLocalByNameAndCat,
@@ -62,7 +63,8 @@ export default function LocalProductPage() {
       setSimilarProducts(products);
       setLoading(false);
     }
-    await addProductStat(id as string);
+    // await addProductStat(productId as string);
+    await addPopularityToProduct(id as string);
   }
 
   useEffect(() => {

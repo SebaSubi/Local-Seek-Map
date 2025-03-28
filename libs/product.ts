@@ -365,3 +365,47 @@ export async function createLocalProductSubCategory(
     Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }
+
+//--------------------------------------------------------------- Product Stats ---------------------------------------------------------------
+
+export async function addProductStat(ProductId: string) {
+  try {
+    const response = await fetch(
+      `${API_URL}/add-global-product-stat/${ProductId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error("Error adding productStat");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error al agregar estadisticas de producto");
+    }
+
+    // return await response.json();
+  } catch (error) {
+    console.error("Error adding productStat:", error);
+  }
+}
+
+export async function getGlobalProductList() {
+  try {
+    const response = await fetch(`${API_URL}/global/stats`);
+
+    if (!response.ok) {
+      console.error("Error getting global product list");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting global product list");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting global product list", error);
+  }
+}
