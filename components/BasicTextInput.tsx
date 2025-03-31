@@ -1,5 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
+import { InfoIcon } from "./Logos";
 
 const BasicTextInput = forwardRef(
   (
@@ -10,6 +11,8 @@ const BasicTextInput = forwardRef(
       textStyle,
       value,
       textSecure = false,
+      info,
+      infoPress,
     }: {
       placeholder: string;
       inputType: "text" | "number";
@@ -17,6 +20,8 @@ const BasicTextInput = forwardRef(
       textStyle?: string;
       value?: string;
       textSecure?: boolean;
+      info?: boolean;
+      infoPress?: () => void;
     },
     ref: React.ForwardedRef<{
       getValue: () => string;
@@ -42,17 +47,24 @@ const BasicTextInput = forwardRef(
             {title}
           </Text>
         )}
-        <TextInput
-          value={text}
-          multiline={false}
-          numberOfLines={1}
-          className="w-full bg-[#f8f8f8] h-11 rounded-2xl p-2 font-light"
-          onChangeText={handleChange}
-          placeholder={placeholder}
-          keyboardType={inputType === "number" ? "numeric" : "default"}
-          secureTextEntry={textSecure}
-          style={{ overflow: "hidden" }}
-        />
+        <View className="flex flex-row items-center">
+          <TextInput
+            value={text}
+            multiline={false}
+            numberOfLines={1}
+            className="w-full bg-[#f8f8f8] h-11 rounded-2xl p-2 font-light"
+            onChangeText={handleChange}
+            placeholder={placeholder}
+            keyboardType={inputType === "number" ? "numeric" : "default"}
+            secureTextEntry={textSecure}
+            style={{ overflow: "hidden" }}
+          />
+          {info && (
+            <Pressable className="ml-1" onPress={infoPress}>
+              <InfoIcon color="black" size={22} />
+            </Pressable>
+          )}
+        </View>
       </View>
     );
   }

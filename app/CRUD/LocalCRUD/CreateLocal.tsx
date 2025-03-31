@@ -13,7 +13,7 @@ import {
 import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
 import Header from "../../../components/Header";
-import { CreateLogo } from "../../../components/Logos";
+import { CreateLogo, InfoIcon } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useRef, useState, useEffect } from "react";
 import {
@@ -50,6 +50,7 @@ export default function CreateLocal() {
   const facebookRef = useRef<any>(null);
   const webpageRef = useRef<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [coordinatesInfo, setCoordinatesInfo] = useState<boolean>(false);
   const [image, setImage] = useState<string | null>(null);
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [localTypes, setLocalTypes] = useState<LocalTypes[]>([]);
@@ -368,201 +369,252 @@ export default function CreateLocal() {
   const defaultImage = "https://via.placeholder.com/150";
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "white",
-      }}
-    >
+    <>
       <Stack.Screen
         options={{
           headerShown: false,
         }}
       />
       <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
-        <View className="flex flex-row justify-between w-full items-center">
-          <GoBackButton style="bg-white w-12 justify-center mb-3 ml-3 h-9" />
-          <Text className="text-white font-semibold text-xl mt-1 w-[75%] text-center">
+        <View className="flex flex-row items-center justify-between w-full ">
+          <GoBackButton iconColor="white" style="ml-1" />
+          <Text className="text-white font-semibold text-xl mt-1">
             Crear Local
           </Text>
-          <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+          <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
-        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center overflow-hidden">
           {nameError === "" ? null : (
             <View className="w-full flex items-start ml-28">
               <Text className="text-red-800">{nameError}</Text>
             </View>
           )}
-          <BasicTextInput
-            inputType="text"
-            placeholder="Nombre"
-            textStyle="mt-10"
-            title="Nombre de Local: "
-            ref={nameRef}
-            value=""
-          />
-          {/* <CategorySelectButtonLocals
+          <ScrollView
+            className="w-full"
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "white",
+            }}
+          >
+            <BasicTextInput
+              inputType="text"
+              placeholder="Nombre"
+              textStyle="mt-10"
+              title="Nombre de Local: "
+              ref={nameRef}
+              value=""
+            />
+            {/* <CategorySelectButtonLocals
         title="Categoría del Local:"
         placeholder="Seleccione una categoría"
         onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
         selectedCategory={selectedCategory}
       /> */}
-          {addressError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{addressError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            inputType="text"
-            placeholder="Dirección"
-            textStyle="mt-4"
-            title="Direccion del Local: "
-            ref={addressRef}
-            value=""
-          />
-          {locationError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{locationError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            inputType="text"
-            placeholder="Coordenadas"
-            textStyle="mt-4"
-            title="Coordenadas del Local: "
-            ref={locationRef}
-            value=""
-          />
-          {whatsappError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{whatsappError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            inputType="number"
-            placeholder="Número de WhatsApp"
-            textStyle="mt-4"
-            title="Número de WhatsApp: "
-            ref={whatsappRef}
-            value=""
-          />
-          {instagramError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{instagramError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            inputType="text"
-            placeholder="@Instagram"
-            textStyle="mt-4"
-            title="Instagram: "
-            ref={instagramRef}
-            value=""
-          />
-          {facebookError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{facebookError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            inputType="text"
-            placeholder="@Facebook"
-            textStyle="mt-4"
-            title="Facebook: "
-            ref={facebookRef}
-            value=""
-          />
-          {webpageError === "" ? null : (
-            <View className="w-full flex items-start ml-28">
-              <Text className="text-red-800">{webpageError}</Text>
-            </View>
-          )}
-          <BasicTextInput
-            inputType="text"
-            placeholder="Página Web"
-            textStyle="mt-4"
-            title="Página Web: "
-            ref={webpageRef}
-            value=""
-          />
-
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={typeModalVisibility}
-            onRequestClose={() => setTypeModalVisibility(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  Selecciona el tipo de producto
-                </Text>
-                <ScrollView style={styles.scrollView}>
-                  {localTypes.length === 0 ? (
-                    <Text>No hay tipos disponibles</Text>
-                  ) : (
-                    localTypes.map((category, index) => (
-                      <Pressable
-                        key={index}
-                        onPress={() => {
-                          setSelectedType(category);
-                          setTypeModalVisibility(false);
-                        }}
-                        style={styles.modalOption}
-                      >
-                        <Text style={styles.modalOptionText}>
-                          {category.name}
-                        </Text>
-                      </Pressable>
-                    ))
-                  )}
-                </ScrollView>
-                <Pressable
-                  onPress={() => setTypeModalVisibility(false)}
-                  style={styles.closeButton}
-                >
-                  <Text style={styles.closeButtonText}>Cerrar</Text>
-                </Pressable>
+            {addressError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{addressError}</Text>
               </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="Dirección"
+              textStyle="mt-4"
+              title="Direccion del Local: "
+              ref={addressRef}
+              value=""
+            />
+            {locationError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{locationError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="Coordenadas"
+              textStyle="mt-4"
+              title="Coordenadas del Local: "
+              ref={locationRef}
+              value=""
+              info={true}
+              infoPress={() => setCoordinatesInfo(!coordinatesInfo)}
+            />
+            {whatsappError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{whatsappError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="number"
+              placeholder="Número de WhatsApp"
+              textStyle="mt-4"
+              title="Número de WhatsApp: "
+              ref={whatsappRef}
+              value=""
+            />
+            {instagramError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{instagramError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="@Instagram"
+              textStyle="mt-4"
+              title="Instagram: "
+              ref={instagramRef}
+              value=""
+            />
+            {facebookError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{facebookError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="@Facebook"
+              textStyle="mt-4"
+              title="Facebook: "
+              ref={facebookRef}
+              value=""
+            />
+            {webpageError === "" ? null : (
+              <View className="w-full flex items-start ml-28">
+                <Text className="text-red-800">{webpageError}</Text>
+              </View>
+            )}
+            <BasicTextInput
+              inputType="text"
+              placeholder="Página Web"
+              textStyle="mt-4"
+              title="Página Web: "
+              ref={webpageRef}
+              value=""
+            />
+
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={typeModalVisibility}
+              onRequestClose={() => setTypeModalVisibility(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    Selecciona el tipo de producto
+                  </Text>
+                  <ScrollView style={styles.scrollView}>
+                    {localTypes.length === 0 ? (
+                      <Text>No hay tipos disponibles</Text>
+                    ) : (
+                      localTypes.map((category, index) => (
+                        <Pressable
+                          key={index}
+                          onPress={() => {
+                            setSelectedType(category);
+                            setTypeModalVisibility(false);
+                          }}
+                          style={styles.modalOption}
+                        >
+                          <Text style={styles.modalOptionText}>
+                            {category.name}
+                          </Text>
+                        </Pressable>
+                      ))
+                    )}
+                  </ScrollView>
+                  <Pressable
+                    onPress={() => setTypeModalVisibility(false)}
+                    style={styles.closeButton}
+                  >
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={coordinatesInfo}
+              onRequestClose={() => setCoordinatesInfo(false)}
+            >
+              <View
+                className="w-full h-full flex items-center justify-center"
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <View className="w-3/4 h-1/2 bg-white rounded-3xl flex items-center px-3">
+                  <ScrollView
+                    contentContainerStyle={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text className="flex-wrap mt-2 text-2xl text-center font-light">
+                      ¿Por qué utilizamos coordenadas?
+                    </Text>
+                    <Text className="flex-wrap mt-2 text-lg text-center font-light">
+                      Las coordenadas aseguran que tu local aparezca en el lugar
+                      correcto en el mapa de la aplicación, ya que Maps y Google
+                      Maps pueden equivocarse al proporcionarle solamente la
+                      dirección.
+                    </Text>
+                    <Text className="flex-wrap mt-6 text-2xl text-center font-light">
+                      ¿Cómo las consigo?
+                    </Text>
+                    <Text className="flex-wrap mt-2 text-lg text-center font-light mb-2">
+                      En Google Maps, mantén presionado sobre el punto donde se
+                      ubica tu local. Abajo aparecerá la información de ese
+                      lugar con las coordenadas; simplemente cópialas y pégalas.
+                    </Text>
+                    <Pressable
+                      onPress={() => {
+                        setCoordinatesInfo(false);
+                        fetchCategories();
+                      }}
+                      className="w-20 h-10 bg-defaultGray rounded-2xl flex items-center justify-center my-4"
+                    >
+                      <Text>Cerrar</Text>
+                    </Pressable>
+                  </ScrollView>
+                </View>
+              </View>
+            </Modal>
+
+            <Pressable
+              onPress={() => {
+                setTypeModalVisibility(true);
+                fetchCategories();
+              }}
+              style={styles.typeButton}
+            >
+              <Text style={styles.typeButtonText}>
+                {selectedType
+                  ? selectedType.name
+                  : "Seleccionar categoria del Local"}
+              </Text>
+            </Pressable>
+
+            <View style={{ marginTop: 20 }}>
+              <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
             </View>
-          </Modal>
-
-          <Pressable
-            onPress={() => {
-              setTypeModalVisibility(true);
-              fetchCategories();
-            }}
-            style={styles.typeButton}
-          >
-            <Text style={styles.typeButtonText}>
-              {selectedType
-                ? selectedType.name
-                : "Seleccionar categoria del Local"}
-            </Text>
-          </Pressable>
-
-          <View style={{ marginTop: 20 }}>
-            <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
-          </View>
-          {image && (
-            <Image
-              source={{ uri: image }}
-              style={{ width: 100, height: 100, marginTop: 10 }}
-            />
-          )}
-          <View className="flex flex-col justify-center items-center w-3/4 mt-3 pb-10">
-            <BasicButton
-              logo={<CreateLogo />}
-              text="Crear Local"
-              style="mt-3"
-              onPress={handleSubmit}
-            />
-          </View>
+            {image && (
+              <Image
+                source={{ uri: image }}
+                style={{ width: 100, height: 100, marginTop: 10 }}
+              />
+            )}
+            <View className="flex flex-col justify-center items-center w-3/4 mt-3 pb-10">
+              <BasicButton
+                logo={<CreateLogo />}
+                text="Crear Local"
+                style="mt-3"
+                onPress={handleSubmit}
+              />
+            </View>
+          </ScrollView>
         </View>
       </View>
-    </ScrollView>
+    </>
   );
 }
 
@@ -614,8 +666,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 15, // Aumenta el padding vertical
     paddingHorizontal: 20, // Aumenta el padding horizontal
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
+    borderRadius: 16,
+    backgroundColor: "#f8f8f8",
     minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
     alignItems: "center",
     justifyContent: "center",
