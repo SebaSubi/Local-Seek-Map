@@ -422,7 +422,7 @@ export default function EditProductPage() {
                     text="No encunetra la categoría?"
                     onPress={() => setCreateCategory(true)}
                     background="#f8f8f8"
-                    style="mt-4"
+                    style="mt-4 mb-2"
                   />
                   {createCategory ? (
                     <View className="w-full h-full flex items-center justify-center">
@@ -469,6 +469,14 @@ export default function EditProductPage() {
                       />
                     </>
                   )}
+                  <Pressable
+                    onPress={() => {
+                      setProductCategoryModal(false);
+                    }}
+                    className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                  >
+                    <Text className="text-white">Cancelar</Text>
+                  </Pressable>
                 </View>
               </View>
             </Modal>
@@ -487,7 +495,7 @@ export default function EditProductPage() {
                     text="No encunetra la sub categoría?"
                     onPress={() => setCreateSubCategory(true)}
                     background="#f8f8f8"
-                    style="mt-4"
+                    style="mt-4 mb-2"
                   />
                   {createSubCategory ? (
                     <View className="w-full h-full flex items-center justify-center">
@@ -534,6 +542,14 @@ export default function EditProductPage() {
                       />
                     </>
                   )}
+                  <Pressable
+                    onPress={() => {
+                      setProductSubCategoryModal(false);
+                    }}
+                    className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                  >
+                    <Text className="text-white">Cancelar</Text>
+                  </Pressable>
                 </View>
               </View>
             </Modal>

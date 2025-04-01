@@ -395,6 +395,14 @@ export default function UpdateService() {
                     />
                   </>
                 )}
+                <Pressable
+                  onPress={() => {
+                    setTypeModalVisibility(false);
+                  }}
+                  className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                >
+                  <Text className="text-white">Cancelar</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>

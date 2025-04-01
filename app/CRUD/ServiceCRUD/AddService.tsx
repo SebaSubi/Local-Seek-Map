@@ -282,6 +282,14 @@ export default function CreateService() {
               )}
               keyExtractor={(item) => item.id!.toString()}
             />
+            <Pressable
+              onPress={() => {
+                router.back();
+              }}
+              className="w-20 h-10 bg-defaultGray rounded-2xl flex items-center justify-center my-4"
+            >
+              <Text>Volver</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>

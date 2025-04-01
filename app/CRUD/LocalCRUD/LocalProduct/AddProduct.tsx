@@ -48,7 +48,9 @@ export default function AddProduct() {
   const [createSubCategory, setCreateSubCategory] = useState(false);
   const [productModalVisibility, setProductModalVisibility] = useState(true);
   const [productCategoryModal, setProductCategoryModal] = useState(false);
-  const [localProductCategories, setLocalProductCategories] = useState();
+  const [localProductCategories, setLocalProductCategories] = useState<
+    LocalProductCategory[]
+  >([]);
   const [selectedProductCategory, setSelectedCategory] =
     useState<LocalProductCategory | null>(null);
   const [selectedProductSubCategory, setSelectedSubCategory] =
@@ -142,10 +144,8 @@ export default function AddProduct() {
   }
 
   async function getAndSetCategories() {
-    const localProductCategories = await getLocalProductCategoriesByName(
-      local.id!,
-      search
-    );
+    const localProductCategories =
+      await getLocalProductCategoriesByName(search);
     setLocalProductCategories(localProductCategories);
   }
 
@@ -221,6 +221,7 @@ export default function AddProduct() {
                   placeholder="Buscar Producto"
                   onSearch={setSearch}
                   background="#f8f8f8"
+                  style="mb-2"
                 />
                 <FlatList
                   data={products}
@@ -258,6 +259,14 @@ export default function AddProduct() {
                   )}
                   keyExtractor={(item) => item.id!.toString()}
                 />
+                <Pressable
+                  onPress={() => {
+                    rounter.back();
+                  }}
+                  className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                >
+                  <Text className="text-white">Volver</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>
@@ -370,7 +379,7 @@ export default function AddProduct() {
                           data={localProductCategories}
                           renderItem={({ item, index }) => (
                             <Pressable
-                              className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                              className={`flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden ${localProductCategories && index === localProductCategories.length - 1 ? "mb-14" : ""}`}
                               onPress={() => {
                                 setSelectedCategory(item);
                                 setProductCategoryModal(false);
@@ -383,6 +392,14 @@ export default function AddProduct() {
                         />
                       </>
                     )}
+                    <Pressable
+                      onPress={() => {
+                        setProductCategoryModal(false);
+                      }}
+                      className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                    >
+                      <Text className="text-white">Cancelar</Text>
+                    </Pressable>
                   </View>
                 </View>
               </Modal>
@@ -435,7 +452,7 @@ export default function AddProduct() {
                           data={localProductCategories}
                           renderItem={({ item, index }) => (
                             <Pressable
-                              className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                              className={`flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden  ${localProductCategories && index === localProductCategories.length - 1 ? "mb-14" : ""}`}
                               onPress={() => {
                                 setSelectedSubCategory(item);
                                 setProductSubCategoryModal(false);
@@ -448,87 +465,35 @@ export default function AddProduct() {
                         />
                       </>
                     )}
+                    <Pressable
+                      onPress={() => {
+                        setProductSubCategoryModal(false);
+                      }}
+                      className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                    >
+                      <Text className="text-white">Cancelar</Text>
+                    </Pressable>
                   </View>
                 </View>
               </Modal>
             </>
           </ScrollView>
         </View>
-        <View
-          className="w-full flex flex-row justify-between"
-          style={{ marginTop: 20, alignItems: "center" }}
-        >
-          <GoBackButton style="ml-4" iconColor="white" iconSize={30} />
+        <View className="flex flex-row justify-evenly items-end w-full">
+          <View className="flex w-16 h-12 justify-center   items-start ">
+            <GoBackButton style="mt-2" iconColor="white" />
+          </View>
           <BasicButton
-            logo={<CreateLogo />}
             text="Agregar Producto"
-            onPress={handleSubmit}
-            background="#ffffff"
+            style="mt-4"
+            onPress={() => handleSubmit()}
+            background="white"
           />
-          <GoBackButton style="opacity-0 mr-4" />
+          <View className="flex w-16 justify-start  items-end ">
+            <GoBackButton style="opacity-0" iconColor="white" />
+          </View>
         </View>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    maxHeight: 400,
-  },
-  scrollView: {
-    width: "100%",
-    maxHeight: 300, // Limita la altura del contenido dentro del ScrollView
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  modalOption: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    width: "100%",
-  },
-  modalOptionText: {
-    textAlign: "center",
-    fontSize: 16,
-  },
-  closeButton: {
-    marginTop: 15,
-    padding: 10,
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
-  typeButton: {
-    marginTop: 20,
-    paddingVertical: 15, // Aumenta el padding vertical
-    paddingHorizontal: 20, // Aumenta el padding horizontal
-    backgroundColor: "#e1e8e8",
-    borderRadius: 5,
-    minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  typeButtonText: {
-    fontSize: 16, // Aumenta el tamaño de la fuente
-    // fontWeight: "bold",
-    textAlign: "center",
-  },
-});

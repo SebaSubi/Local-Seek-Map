@@ -247,13 +247,10 @@ export async function getLocalProductCategories(localId: string) {
 //   }
 // }
 
-export async function getLocalProductCategoriesByName(
-  name: string,
-  id: string
-) {
+export async function getLocalProductCategoriesByName(name: string) {
   try {
     // const response = await fetch(`${API_URL_2}/local/search-name?name=${name}`);
-    const response = await fetch(`${API_URL_2}/local/${id}?name=${name}`);
+    const response = await fetch(`${API_URL_2}/search-name?name=${name}`);
 
     if (!response.ok) {
       console.error("Error getting local product categories by name");
@@ -261,7 +258,7 @@ export async function getLocalProductCategoriesByName(
     }
 
     const text = await response.text();
-    console.log("Raw response:", text);
+    console.log("Raw response:", text); //This dumb in my opinion but it works, so im not touching it
 
     if (!text) {
       console.warn("Empty response body");

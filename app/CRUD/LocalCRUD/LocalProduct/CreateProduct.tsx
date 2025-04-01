@@ -340,6 +340,14 @@ export default function CreateProduct() {
                       />
                     </>
                   )}
+                  <Pressable
+                    onPress={() => {
+                      setTypeModalVisibility(false);
+                    }}
+                    className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-4 absolute bottom-0"
+                  >
+                    <Text className="text-white">Cancelar</Text>
+                  </Pressable>
                 </View>
               </View>
             </Modal>
