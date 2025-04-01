@@ -221,7 +221,13 @@ export default function LocalPage() {
         ) : (
           <View className="flex flex-row items-center justify-between w-full">
             <GoBackButton style="ml-4" iconColor="white" />
-            <Text className="text-3xl text-white font-normal ml-[-16px]"></Text>
+            <Text className="text-3xl text-white font-normal ml-[-16px]">
+              {localType === "Restaurante"
+                ? "Menu"
+                : localType === "Servicio" && selectedOption === "Services"
+                  ? "Servicios"
+                  : "Productos"}
+            </Text>
             <GoBackButton
               style="border border-white opacity-0"
               iconColor="white"

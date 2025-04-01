@@ -209,7 +209,7 @@ export default function UpdateSchedule() {
   return loaded ? (
     <>
       <View
-        className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
+        className="flex w-full h-full bg-defaultBlue flex-col items-center justify-end"
         style={{
           paddingTop: insents.top,
         }}

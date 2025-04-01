@@ -12,15 +12,10 @@ import {
 } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
 import { Stack } from "expo-router";
-import Header from "../../../components/Header";
-import { CreateLogo, InfoIcon } from "../../../components/Logos";
+import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useRef, useState, useEffect } from "react";
-import {
-  checkLocalName,
-  createLocal,
-  createLocalAndAddOwner,
-} from "../../../libs/local";
+import { checkLocalName, createLocalAndAddOwner } from "../../../libs/local";
 // import { CategorySelectButtonLocals } from "../../../components/CategorySelectButton";
 import { getLocalTypes } from "../../../libs/localType";
 import { Local, LocalTypes } from "../../../schema/GeneralSchema";
@@ -29,7 +24,6 @@ import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 import { z } from "zod";
 import { useAuth } from "../../context/AuthContext";
 import GoBackButton from "../../../components/GoBackButton";
-import { colors } from "../../../constants/colors";
 
 export const verifyUrl = (url: string): boolean => {
   const urlSchema = z.string().url();
@@ -543,8 +537,9 @@ export default function CreateLocal() {
                 className="w-full h-full flex items-center justify-center"
                 style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
               >
-                <View className="w-3/4 h-1/2 bg-white rounded-3xl flex items-center px-3">
+                <View className="w-3/4 h-1/2 bg-white rounded-3xl overflow-hidden flex items-center ">
                   <ScrollView
+                    className="px-3"
                     contentContainerStyle={{
                       alignItems: "center",
                     }}

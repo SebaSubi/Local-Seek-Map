@@ -22,9 +22,6 @@ import BasicButton from "../../../components/BasicButton";
 import LocalDeleteModal from "../../../components/modals/LocalDeleteModal";
 
 export default function ProductCrud() {
-  const { id, name, localCoordinates, image, localType } =
-    useLocalSearchParams();
-
   const local = useLocalIdStore((state) => state.local);
 
   const [isVisible, setVisible] = useState(false);
@@ -40,7 +37,7 @@ export default function ProductCrud() {
         <View className="flex flex-row items-center justify-between w-full ">
           <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
-            {`Editar ${name as string}`}
+            {`${local && local.name ? local.name : ""}`}
           </Text>
           <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
@@ -63,9 +60,6 @@ export default function ProductCrud() {
             logo={<ReaderIcon />}
             text="Ver Local"
             style="mt-3"
-            params={{
-              id: local.id,
-            }}
           />
           <LocalDeleteModal isVisible={isVisible} setVisible={setVisible} />
           <View className="mt-3">
@@ -91,9 +85,6 @@ export default function ProductCrud() {
             logo={<ProductIcon />}
             text="Agregar Producto"
             style="mt-3"
-            params={{
-              name: name,
-            }}
           />
           <BasicSelectable
             href="/CRUD/LocalCRUD/LocalProduct/EditProduct"

@@ -22,8 +22,8 @@ export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [error, setError] = useState("");
   const [errorModal, setErrorModal] = useState(false);
+  const [clearTimes, setClearTimes] = useState(false);
 
-  // const localId = useLocalScheduleIdStore((state) => state.localId);
   const local = useLocalIdStore((state) => state.local);
   const setScheduleId = useLocalScheduleIdStore((state) => state.setScheduleId);
 
@@ -32,9 +32,6 @@ export default function CreateProduct() {
   const dayNumberRef = useRef<any>(null);
 
   const { name } = useLocalSearchParams();
-
-  // console.log("hello?");
-  // console.log(local);
 
   const FirstShiftStartRef = useRef<any>(null);
   const FirstShiftFinishRef = useRef<any>(null);
@@ -158,12 +155,16 @@ export default function CreateProduct() {
   async function handleSubmit() {
     const newSchedule = createNewSchedule();
     createSchedule(newSchedule);
+    setClearTimes(!clearTimes);
+    dayNumberRef.current.setValue("");
   }
 
   async function handleUpdate() {
     const newSchedule = createNewSchedule();
     updateSchedule(scheduleId, newSchedule);
     setWarning(false);
+    setClearTimes(!clearTimes);
+    dayNumberRef.current.setValue("");
   }
 
   return (
@@ -199,18 +200,22 @@ export default function CreateProduct() {
             <TimeSelect
               text="Hora de Apertura Primer Turno:"
               ref={FirstShiftStartRef}
+              clear={clearTimes}
             />
             <TimeSelect
               text="Hora de Cerrada Primer Turno:"
               ref={FirstShiftFinishRef}
+              clear={clearTimes}
             />
             <TimeSelect
               text="Hora de Apertura Segundo Turno:"
               ref={SecondShiftStartRef}
+              clear={clearTimes}
             />
             <TimeSelect
               text="Hora de Cerrada Segundo Turno:"
               ref={SecondShiftFinishRef}
+              clear={clearTimes}
             />
             <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
               *Los horarios nocturnos pueden ser aquellos que empiezan en un día
@@ -219,10 +224,12 @@ export default function CreateProduct() {
             <TimeSelect
               text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
+              clear={clearTimes}
             />
             <TimeSelect
               text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
+              clear={clearTimes}
             />
             <View className="flex flex-col justify-center items-center w-3/4 mt-3">
               <BasicButton
