@@ -5,7 +5,6 @@ import { CloseCircle, TrashIcon, WarningIcon } from "../Logos";
 import { useAuth } from "../../app/context/AuthContext";
 import BasicButton from "../BasicButton";
 import BasicTextInput from "../BasicTextInput";
-import { deleteUser } from "../../libs/user";
 import { useLocalIdStore } from "../../libs/localZustang";
 import { deleteLocalv2 } from "../../libs/local";
 

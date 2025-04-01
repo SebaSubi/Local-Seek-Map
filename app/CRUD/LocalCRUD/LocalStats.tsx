@@ -21,7 +21,7 @@ import {
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Local } from "../../../schema/GeneralSchema";
-import { getLocalById, getLocals } from "../../../libs/local";
+import { getLocalById } from "../../../libs/local";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";

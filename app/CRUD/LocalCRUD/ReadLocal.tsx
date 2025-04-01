@@ -11,11 +11,8 @@ import { Stack } from "expo-router";
 import Header from "../../../components/Header";
 import { Local, LocalDisplay, LocalTypes } from "../../../schema/GeneralSchema";
 import {
-  getDisplayLocals,
-  getLocalsByCategory,
   getLocalsByCategoryAndName,
   getLocalsByName,
-  getOpenLocals,
   getOpenLocalsByCategoryAndName,
   getOpenLocalsByName,
 } from "../../../libs/local";
