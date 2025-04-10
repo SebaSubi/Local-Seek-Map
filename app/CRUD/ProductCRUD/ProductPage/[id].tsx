@@ -7,33 +7,57 @@ import {
   addProductStat,
   getProductsByCategory,
 } from "../../../../libs/product";
-import { Product } from "../../../../schema/GeneralSchema";
+import {
+  LocalProduct,
+  LocalTypes,
+  Product,
+} from "../../../../schema/GeneralSchema";
 import ProductMap from "../../../../components/ProductMap";
 import LocalContainer from "../../../../components/LocalContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
-import { getLocalsOfProduct } from "../../../../libs/localProducts";
+import {
+  getLocalsOfProduct,
+  getProductsOfLocalByName,
+} from "../../../../libs/localProducts";
 import { getPlaceholders } from "../../../../libs/libs";
 
 type Options = "Info" | "Locals";
+type localsOfProd = {
+  id: string;
+  name: string;
+  location: string;
+  imgURL: string;
+  address: string;
+  localTypes: LocalTypes;
+};
 
 export default function ProductPage() {
   const { id, name, image, description, brand, categoryName, size } =
     useLocalSearchParams();
-  const [locals, setLocals] = useState<any>([]);
+  const [locals, setLocals] = useState<localsOfProd[]>([]);
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
   const [loading, setLoading] = useState(true);
-  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
+  const [similarProducts, setSimilarProducts] = useState<any>([]);
+  const [isLocalProd, setIsLocalProd] = useState(false);
 
   async function fetchAndSetAll() {
     const loc = await getLocalsOfProduct(id as string);
     addProductStat(id as string);
     setLocals(loc);
     const products = await getProductsByCategory(categoryName as string);
-    setSimilarProducts(products);
+
+    if (products && products.length > 1) {
+      setSimilarProducts(products);
+    } else {
+      const prod = await getProductsOfLocalByName(
+        loc[0] ? loc[0].id : "cm1fehp820007ygy4avgztouf",
+        ""
+      );
+      setIsLocalProd(true);
+      setSimilarProducts(prod);
+    }
     setLoading(false);
   }
-
-  // console.log(id);
 
   useEffect(() => {
     fetchAndSetAll();
@@ -99,23 +123,35 @@ export default function ProductPage() {
                 </Text>
 
                 <View className="flex flex-row flex-wrap justify-evenly mb-5">
-                  {similarProducts.map((product, index) => {
+                  {similarProducts.map((product: any, index: number) => {
                     if (product.id !== id) {
                       return (
                         <SmallProductContainer
-                          product={product}
+                          product={isLocalProd ? product.product : product}
                           key={index}
                           href="CRUD/ProductCRUD/ProductPage/[id]"
                           params={{
-                            id: product.id,
-                            name: product.name,
-                            description: product.description,
-                            brand: product.brand,
+                            id: isLocalProd ? product.product.id : product.id,
+                            name: isLocalProd
+                              ? product.product.name
+                              : product.name,
+                            description: isLocalProd
+                              ? product.product.description
+                              : product.description,
+                            brand: isLocalProd
+                              ? product.product.brand
+                              : product.brand,
                             image:
-                              product.imgURL ??
-                              "https://via.placeholder.com/150",
-                            categoryName: product.type?.name,
-                            size: product.measurement,
+                              isLocalProd && product.product.imgURL
+                                ? product.product.imgURL
+                                : (product.imgURL ??
+                                  "https://via.placeholder.com/150"),
+                            categoryName: isLocalProd
+                              ? product.product.type?.name
+                              : product.type.name,
+                            size: isLocalProd
+                              ? product.product.measurement
+                              : product.measurement,
                           }}
                         />
                       );

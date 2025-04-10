@@ -247,10 +247,15 @@ export async function getLocalProductCategories(localId: string) {
 //   }
 // }
 
-export async function getLocalProductCategoriesByName(name: string) {
+export async function getLocalProductCategoriesByName(
+  localId: string,
+  name: string
+) {
   try {
     // const response = await fetch(`${API_URL_2}/local/search-name?name=${name}`);
-    const response = await fetch(`${API_URL_2}/search-name?name=${name}`);
+    const response = await fetch(
+      `${API_URL_2}/search-name/${localId}?name=${name}`
+    );
 
     if (!response.ok) {
       console.error("Error getting local product categories by name");
