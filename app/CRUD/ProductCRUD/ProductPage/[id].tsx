@@ -44,10 +44,18 @@ export default function ProductPage() {
     const loc = await getLocalsOfProduct(id as string);
     addProductStat(id as string);
     setLocals(loc);
-    const products = await getProductsByCategory(categoryName as string);
 
-    if (products && products.length > 1) {
-      setSimilarProducts(products);
+    if (categoryName !== "Item Menu") {
+      const products = await getProductsByCategory(categoryName as string);
+      if (products && products.length > 1) setSimilarProducts(products);
+      else {
+        const prod = await getProductsOfLocalByName(
+          loc[0] ? loc[0].id : "cm1fehp820007ygy4avgztouf",
+          ""
+        );
+        setIsLocalProd(true);
+        setSimilarProducts(prod);
+      }
     } else {
       const prod = await getProductsOfLocalByName(
         loc[0] ? loc[0].id : "cm1fehp820007ygy4avgztouf",
@@ -119,7 +127,9 @@ export default function ProductPage() {
                   {description}
                 </Text>
                 <Text className="text-xl font-semibold ml-4 mt-2 text-[#1a253d]">
-                  Productos Similares
+                  {categoryName !== "Item Menu"
+                    ? "Productos Similares"
+                    : "Menu de Restaurante:"}
                 </Text>
 
                 <View className="flex flex-row flex-wrap justify-evenly mb-5">
