@@ -27,6 +27,8 @@ const LocalDeleteModal = ({
   const DeleteLocal = async () => {
     if (DeleteText.current?.getValue() === wordToCheck) {
       if (authState?.user?.id && local.id) {
+        console.log(local.id);
+        console.log(authState.token);
         const response = await deleteLocalv2(local.id, authState.user.id);
         console.log(response);
         if (response?.status === 200) {

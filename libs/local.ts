@@ -44,20 +44,6 @@ export async function addPopularityToLocal(localId: string) {
   }
 }
 
-//FIXME:this is not used
-export async function getLocalsByCategory(category = "Supermercado") {
-  try {
-    const rawData = await fetch(`${API_URL}/category/${category}`);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch Stores by category");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting stores by category", error);
-  }
-}
-
 //this method is used in ReadLocal
 export async function getLocalsByCategoryAndName(
   category: string,
@@ -135,34 +121,6 @@ export async function getLocalsByName(name: string) {
     return json;
   } catch (error) {
     console.log(error);
-  }
-}
-
-//FIXME: this is not used
-export async function getOpenLocals() {
-  try {
-    const rawData = await fetch(`${API_URL}/openSchedules`);
-    if (!rawData.ok) {
-      throw new Error("Error getting open stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-//FIXME: this is not used
-export async function getDisplayLocals() {
-  try {
-    const rawData = await fetch(`${API_URL}/display`);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch Stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting stores", error);
   }
 }
 
@@ -302,12 +260,15 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
   }
 }
 
+const API_URL_3 =
+  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
+
 //this method is used in LocalDeleteModal
 export async function deleteLocalv2(localId: string, userId: string) {
   try {
     const payload = { userId: userId, storeId: localId };
     const response = await axios.patch(
-      `${API_URL_2}/auth-v2/store_owner/delete-store`,
+      `${API_URL_3}/auth-v2/store_owner/delete-store`,
       payload
     );
     if (!response.status) {
@@ -318,28 +279,6 @@ export async function deleteLocalv2(localId: string, userId: string) {
     }
   } catch (error) {
     console.log("Error: ", error);
-  }
-}
-
-//----------------------------------------------------------------Local User----------------------------------------------------------------
-// const API_URL_LU = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-user`
-const API_URL_LU =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/local-user"
-    : "http://localhost:3000/local-user";
-
-//this si used in DeleteLocal
-export async function getLocalsOfUser(userEmail: string) {
-  const url = `${API_URL_LU}/locals/${userEmail}`;
-  try {
-    const rawData = await fetch(url);
-    if (!rawData.ok) {
-      throw new Error("Failed to fetch store services");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting store services", error);
   }
 }
 
