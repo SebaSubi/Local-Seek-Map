@@ -60,6 +60,12 @@ export default function ProductCrud() {
             logo={<ReaderIcon />}
             text="Ver Local"
             style="mt-3"
+            params={{
+              id: local.id,
+              name: local.name,
+              localCoordinates: local.location,
+              localType: local.localTypes?.name,
+            }}
           />
           <LocalDeleteModal isVisible={isVisible} setVisible={setVisible} />
           <View className="mt-3">

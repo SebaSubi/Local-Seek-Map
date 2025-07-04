@@ -92,6 +92,7 @@ export default function AddProduct() {
 
   const handleSubmit = async () => {
     let price = priceRef.current?.getValue();
+    let reuseCat = "";
     const localProductCategoryId = selectedProductCategory?.id;
     const localProductSubCategoryId = selectedProductSubCategory?.id;
     const localProductDescription = subDescriptionRef.current?.getValue();
@@ -106,6 +107,13 @@ export default function AddProduct() {
         Alert.alert("Error", "Este producto ya existe en tu local!");
         return;
       }
+    }
+
+    if (!localProductCategoryId && product.type) {
+      const productCategory = await createLocalProductCategory({
+        name: product.type?.name,
+      });
+      reuseCat = productCategory?.id!;
     }
 
     try {
@@ -133,7 +141,9 @@ export default function AddProduct() {
         productId: product.id,
         price,
         localProductDescription,
-        localProductCategoryId,
+        localProductCategoryId: localProductCategoryId
+          ? localProductCategoryId
+          : reuseCat,
         localProductSubCategoryId,
         dateFrom: new Date(),
       };
@@ -175,7 +185,6 @@ export default function AddProduct() {
   async function hanldeCreateCategory() {
     const name = categoryRef.current?.getValue();
     const productCategory = await createLocalProductCategory({ name });
-    console.log(productCategory);
     productCategory ? setSelectedCategory(productCategory) : null;
     setCreateCategory(false);
   }
@@ -355,7 +364,7 @@ export default function AddProduct() {
                   onPress={() =>
                     setError({
                       state: true,
-                      text: `Esto es la categoria que desea que el producto tenga dentro de su local. El producto por default trae el valor: "${product.type?.name}", si desea que tenga otra categoria especifica de su local, agreguela aca, sino se agregara con el valor anteriormente dicho`,
+                      text: `Esto es la categoria que desea que el producto tenga dentro de su local. El producto por default trae la categoría: "${product.type?.name}", si desea que tenga otra categoria especifica de su local, agreguela aca, sino se agregara con el valor anteriormente dicho`,
                     })
                   }
                 >

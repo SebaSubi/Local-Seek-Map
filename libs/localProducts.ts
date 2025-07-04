@@ -102,7 +102,6 @@ export async function getMenuProductsOfLocalByNameAndCat(
 ) {
   const url = `${API_URL}/localMenu/${id}/${category}?name=${name}`;
 
-  console.log(url);
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {

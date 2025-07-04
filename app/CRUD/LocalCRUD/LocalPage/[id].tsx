@@ -4,10 +4,8 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Local,
-  LocalProduct,
   LocalProductCategory,
   LocalSchedule,
-  LocalService,
   ProductType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
@@ -19,7 +17,6 @@ import {
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
-import ProductContainer from "../../../../components/ProductContainer";
 import {
   getLocalProductCategoriesOfLocal,
   getProductsOfLocalByName,
@@ -42,11 +39,9 @@ import LocalProductContainer from "../../../../components/LocalProductContainer"
 import { useLocalIdStore } from "../../../../libs/localZustang";
 
 type Options = "Info" | "Schedule" | "Products" | "Services" | "Menu";
-type SerProdOption = "Products" | "Services";
 
 export default function LocalPage() {
-  const { id, name, localCoordinates, image, localType } =
-    useLocalSearchParams();
+  const { id, name, localType } = useLocalSearchParams();
   const [local, setLocals] = useState<Local>();
   const [schedules, setSchedules] = useState<LocalSchedule[]>([]);
   const [selectedOption, setSelectedOption] = useState<Options>("Info");
@@ -75,7 +70,6 @@ export default function LocalPage() {
       const localProducts = await getMenuProductsOfLocalByNameAndCat(
         id as string,
         search,
-        // eslint-disable-next-line prettier/prettier
         selectedCategory
       );
       setLocalProducts(localProducts);
@@ -84,25 +78,19 @@ export default function LocalPage() {
       const localProducts = await getProductsOfLocalByNameAndCat(
         id as string,
         search,
-        // eslint-disable-next-line prettier/prettier
         selectedCategory
       );
       setLocalProducts(localProducts);
       setLoading(false);
     } else {
-      // console.log("We are in here");
       const localProducts = await getProductsOfLocalByName(
         id as string,
-        // eslint-disable-next-line prettier/prettier
         search
       );
-      // console.log(localProducts);
       setLocalProducts(localProducts);
       setLoading(false);
     }
   }
-
-  console.log(id);
 
   const handleCategorySelection = (cat: string) => {
     setSelectedCategory(cat);

@@ -50,7 +50,7 @@ export interface LocalProduct {
 }
 
 export interface LocalProductCategory {
-  id?: string | null; // Unique identifier, generated using cuid
+  id?: string; // Unique identifier, generated using cuid
   name: string; // Unique name for the category
   localProduct?: LocalProduct[] | null; // Array of related local products
 }
