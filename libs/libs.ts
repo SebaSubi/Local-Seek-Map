@@ -55,11 +55,32 @@ export function isNumeric(str: string) {
 export function getPlaceholders(category: string): string {
   // console.log(category);
   switch (category) {
-    case "Item Menu":
+    case "Item Menu" || "cm6axgrmi0000at8nx3p6oblt":
       return "https://orders.goodthymes.ca/assets/img/goodthymes/default-menu-image-placeholder.png";
 
+    case "Yerba Mate" || "cm19y0b2p0008iz2pjmgymw9d":
+      return "https://us.123rf.com/450wm/rraya/rraya2111/rraya211100058/176769306-hand-drawn-yerba-mate-set-vector-background-sketch-illustration.jpg";
+
+    case "Lacteos" || "cm19y0b2r0009iz2pcctzrfr5":
+      return "https://t4.ftcdn.net/jpg/03/28/74/97/360_F_328749732_dWFmfh2HLvAuNWdFXV0wWG726ogGbQo5.jpg";
+
+    case "Utiles Escolares" || "cm19y0b2u000biz2p5ktv682f":
+      return "https://img.freepik.com/premium-vector/hand-drawn-school-doodle-vector-set_484148-164.jpg";
+
+    case "Agua Saborizada" || "cm19y0b2x000diz2pgaac0vhb":
+      return "https://img.freepik.com/premium-vector/drinks-set-hand-drawn-ink-sketches_659215-119.jpg";
+
+    case "Gaseosas" || "cm19y0b2z000eiz2p10f2lj03":
+      return "https://www.shutterstock.com/image-vector/hand-drawing-soda-soft-drink-600nw-665445703.jpg";
+
+    case "Productos Sin TACC" || "cm19yv94e000fpy0x4wypgga4":
+      return "https://img.freepik.com/premium-vector/gluten-free-symbol_1274264-19851.jpg";
+    
+    case "Galletitas" || "cm19yv94h000gpy0x40huijgw":
+      return "https://static.vecteezy.com/system/resources/previews/025/797/739/non_2x/cookies-sketch-line-drawing-black-on-white-vector.jpg";
+
     default:
-      return "";
+      return "https://i0.wp.com/mikeyarce.com/wp-content/uploads/2021/09/woocommerce-placeholder.png?ssl=1";
   }
 }
 

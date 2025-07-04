@@ -28,7 +28,7 @@ import { Stack, useRouter } from "expo-router";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
-import { CreateLogo } from "../../../../components/Logos";
+import { CreateLogo, InfoIcon } from "../../../../components/Logos";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import {
   createLocalProduct,
@@ -37,7 +37,8 @@ import {
 } from "../../../../libs/localProducts";
 import { useLocalIdStore } from "../../../../libs/localZustang";
 import GoBackButton from "../../../../components/GoBackButton";
-import { isNumeric } from "../../../../libs/libs";
+import { getPlaceholders, isNumeric } from "../../../../libs/libs";
+import BasicWarning from "../../../../components/BasicWarning";
 
 export default function AddProduct() {
   const priceRef = useRef<any>(null);
@@ -58,9 +59,23 @@ export default function AddProduct() {
   const [productSubCategoryModal, setProductSubCategoryModal] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [products, setProducts] = useState<Product[]>([]);
-  const [productId, setProductId] = useState("");
+  const [product, setProduct] = useState<Product>({
+    name: "",
+    brand: "",
+    measurement: "",
+    description: "",
+    dateFrom: new Date(),
+    productTypeId: "",
+  });
   const [localPrducts, setLocalProducts] = useState<LocalProduct[]>([]);
   const [priceError, setPriceError] = useState(false);
+  const [error, setError] = useState<{
+    state: boolean;
+    text: string;
+  }>({
+    state: false,
+    text: "",
+  });
 
   const local = useLocalIdStore((state) => state.local);
 
@@ -82,12 +97,12 @@ export default function AddProduct() {
     const localProductDescription = subDescriptionRef.current?.getValue();
 
     for (const lp of localPrducts) {
-      if (lp.productId === productId && lp.dateTo !== null) {
+      if (lp.productId === product?.id && lp.dateTo !== null) {
         console.log(lp.id);
         reactivateLocalProduct(lp.id!);
         Alert.alert("Éxito", "Producto creado exitosamente");
         return;
-      } else if (lp.productId === productId) {
+      } else if (lp.productId === product.id) {
         Alert.alert("Error", "Este producto ya existe en tu local!");
         return;
       }
@@ -115,7 +130,7 @@ export default function AddProduct() {
 
       const newProduct: LocalProduct = {
         localId: local.id,
-        productId,
+        productId: product.id,
         price,
         localProductDescription,
         localProductCategoryId,
@@ -144,8 +159,10 @@ export default function AddProduct() {
   }
 
   async function getAndSetCategories() {
-    const localProductCategories =
-      await getLocalProductCategoriesByName(search);
+    const localProductCategories = await getLocalProductCategoriesByName(
+      "1",
+      search
+    );
     setLocalProductCategories(localProductCategories);
   }
 
@@ -190,6 +207,17 @@ export default function AddProduct() {
       />
       <View className="bg-[#1a253d] w-full h-full flex items-center">
         <View className=" h-[90%] w-full ">
+          <Modal animationType="slide" transparent={true} visible={error.state}>
+            <View className="w-full h-full flex items-center justify-center">
+              {error.state ? (
+                <BasicWarning
+                  text={error.text}
+                  cancelButton={true}
+                  onPressLeft={() => setError({ state: false, text: "" })}
+                />
+              ) : null}
+            </View>
+          </Modal>
           <Modal
             animationType="slide"
             transparent={true}
@@ -201,7 +229,7 @@ export default function AddProduct() {
               style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
             >
               <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
-                <Text className="font-thin text-base mt-4">
+                <Text className="font-light text-base mt-4">
                   Seleccione el producto que desea agregar:
                 </Text>
                 <Pressable
@@ -231,25 +259,26 @@ export default function AddProduct() {
                     <Pressable
                       className="flex items-center justify-start w-32 bg-[#f8f8f8] h-40 m-3 rounded-2xl overflow-hidden"
                       onPress={() => {
-                        setProductId(item.id!);
+                        setProduct(item);
                         setProductModalVisibility(false);
                       }}
+                      //TODO: Podriamos poner un onLongPress que te da mas detalles del producto.
                     >
-                      <View className="w-16 h-[48%] flex items-center justify-center rounded-2xl overflow-hidden mt-3 ">
+                      <View className="w-16 h-20 flex items-center justify-center rounded-2xl overflow-hidden mt-3">
                         <Image
                           source={{
                             uri:
-                              item.imgURL || "https://via.placeholder.com/150",
+                              item.imgURL ||
+                              getPlaceholders(item.productTypeId),
                           }}
                           style={{
                             height: "100%",
                             width: "100%",
-                            // borderRadius: 20,
-                            resizeMode: "contain",
                           }}
+                          resizeMode="contain"
                         />
                       </View>
-                      <Text className="font-light text-sm mt-2">
+                      <Text className="font-light text-sm mt-2 text-center">
                         {item.name}
                       </Text>
                       <Text className="font-light text-sm">
@@ -304,32 +333,66 @@ export default function AddProduct() {
                 value=""
                 ref={subDescriptionRef}
               />
-              <Pressable
-                className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
-                onPress={() => {
-                  getAndSetCategories();
-                  setProductCategoryModal(true);
-                }}
-              >
-                <Text>
-                  {selectedProductCategory
-                    ? selectedProductCategory.name
-                    : "Seleccionar Categoria (Ej: comida)"}
-                </Text>
-              </Pressable>
-              <Pressable
-                className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
-                onPress={() => {
-                  getAndSetSubCategories();
-                  setProductSubCategoryModal(true);
-                }}
-              >
-                <Text>
-                  {selectedProductSubCategory
-                    ? selectedProductSubCategory.name
-                    : "Seleccionar Sub Categoria (Ej: Pastas)"}
-                </Text>
-              </Pressable>
+              <View className="flex flex-row items-center justify-evenly w-full h-12  mt-2">
+                <Pressable className="w-6 h-12 items-center justify-center opacity-0">
+                  <InfoIcon color="#1a253d" />
+                </Pressable>
+                <Pressable
+                  className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] rounded-2xl"
+                  onPress={() => {
+                    getAndSetCategories();
+                    setProductCategoryModal(true);
+                  }}
+                >
+                  <Text>
+                    {selectedProductCategory
+                      ? selectedProductCategory.name
+                      : "Seleccionar Categoria (Ej: comida)"}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  className="w-6 h-12 items-center justify-center"
+                  onPress={() =>
+                    setError({
+                      state: true,
+                      text: `Esto es la categoria que desea que el producto tenga dentro de su local. El producto por default trae el valor: "${product.type?.name}", si desea que tenga otra categoria especifica de su local, agreguela aca, sino se agregara con el valor anteriormente dicho`,
+                    })
+                  }
+                >
+                  <InfoIcon color="#1a253d" />
+                </Pressable>
+              </View>
+              <View className="flex flex-row items-center justify-evenly w-full h-12  mt-2">
+                <Pressable className="w-6 h-12 items-center justify-center opacity-0">
+                  <InfoIcon color="#1a253d" />
+                </Pressable>
+
+                <Pressable
+                  className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
+                  onPress={() => {
+                    getAndSetSubCategories();
+                    setProductSubCategoryModal(true);
+                  }}
+                >
+                  <Text>
+                    {selectedProductSubCategory
+                      ? selectedProductSubCategory.name
+                      : "Seleccionar Sub Categoria (Ej: Pastas)"}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  className="w-6 h-12 items-center justify-center"
+                  onPress={() =>
+                    setError({
+                      state: true,
+                      text: `Esta es la sub-categoria que tendra su producto. Si, por ejemplo, su producto tiene la cateogría "comida", la sub-categoría podria ser "pasta". Este valor es completamente opcional, si no desea ponerlo, deje este campo en blanco.`,
+                    })
+                  }
+                >
+                  <InfoIcon color="#1a253d" />
+                </Pressable>
+              </View>
+
               <Modal
                 animationType="slide"
                 transparent={true}

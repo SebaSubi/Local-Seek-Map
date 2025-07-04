@@ -1,11 +1,8 @@
 import React from "react";
 import { FlatList, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ScheduleBox from "./ScheduleBox";
 import { shift } from "../constants/consts";
-import { useEffect, useState } from "react";
-import { useLocalServiceIdStore } from "../libs/localServiceZustang";
-import { getScheduleByServiceId } from "../libs/serviceSchedule";
+import { useState } from "react";
 import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 
 type Shift = {
@@ -59,7 +56,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
               return (
                 <View
                   key={dayNumber}
-                  className="flex flex-row items-center my-3 px-3"
+                  className="flex flex-row items-center justify-center my-3 px-3"
                 >
                   <Text className="text-xl font-light w-1/4 text-center">
                     {

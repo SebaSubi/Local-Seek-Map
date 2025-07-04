@@ -6,10 +6,8 @@ import BasicButton from "../../components/BasicButton";
 import { Checkbox, LogOutIcon, UpdateLogo } from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
 import UserUpdateModal from "../../components/modals/UserUpdateModal";
-import LocalContainer from "../../components/LocalContainer";
 import { getUserLocals, UserLocal } from "../../libs/user";
 import { Local, LocalTypes } from "../../schema/GeneralSchema";
-import GoBackButton from "../../components/GoBackButton";
 import EditLocalContainer from "../../components/EditLocalContainer";
 import UserPermissionModal from "../../components/modals/UserPermissionModal";
 
@@ -24,15 +22,18 @@ export default function UserScreen() {
   }, [authState]);
 
   const fetchData = async () => {
+    // console.log("username: ", authState?.user?.username);
+    // console.log(authState?.user?.username !== "Admin");
+    // console.log(authState?.user?.username !== Role.USER);
     if (
       authState?.user?.username &&
       authState.user.username !== "Admin" &&
       authState.user.username !== Role.USER
     ) {
-      const fetchedLocals = await getUserLocals(authState.user.id);
-      // console.log(fetchedLocals.data);
-      if (fetchedLocals.data) {
-        setLocals(fetchedLocals.data);
+      const fetchedLocals = await getUserLocals(authState?.user?.email);
+
+      if (fetchedLocals) {
+        setLocals(fetchedLocals);
       }
     }
   };
@@ -45,6 +46,7 @@ export default function UserScreen() {
     password: "guest",
     role: Role.USER,
   };
+
   return (
     <View className="h-full bg-white w-full">
       <View

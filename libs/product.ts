@@ -263,7 +263,6 @@ export async function getLocalProductCategoriesByName(
     }
 
     const text = await response.text();
-    console.log("Raw response:", text); //This dumb in my opinion but it works, so im not touching it
 
     if (!text) {
       console.warn("Empty response body");

@@ -42,12 +42,27 @@ export type UserLocal = {
     name: string;
   };
 };
-export async function getUserLocals(userId: string) {
-  return await axios.get(`${API_URL}/user-locals`, {
-    params: {
-      userId: userId,
-    },
-  });
+export async function getUserLocals(userEmail: string, userId?: string) {
+  // console.log("We are in the API");  Esto hay que decomentar después, solo que nose como arreglar el auth en este momento
+  // console.log(userId);
+  // return await axios.get(`${API_URL}/user-locals`, {
+  //   params: {
+  //     userId: userId,
+  //   },
+  // });
+
+  try {
+    const rawData = await fetch(
+      `http://localhost:3000/local-user/locals/${userEmail}`
+    );
+    if (!rawData.ok) {
+      throw new Error("Failed to get local user stores");
+    }
+    const json = await rawData.json();
+    return json;
+  } catch (error) {
+    console.log("Error getting user stores", error);
+  }
 }
 
 export async function deleteUser(userId: string) {
