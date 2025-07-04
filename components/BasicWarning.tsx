@@ -13,14 +13,14 @@ export default function BasicWarning({
   text: string;
   cancelButton: boolean;
   buttonRight?: string;
-  buttonLeft: string;
+  buttonLeft?: string;
   style?: string;
   onPressRight?: () => void;
   onPressLeft?: () => void;
 }) {
   return (
     <View
-      className={`flex flex-col items-center justify-center w-72 h-72 rounded-xl bg-white shadow-lg ${style}`}
+      className={`flex flex-col items-center justify-center w-72 h-fit pt-12 pb-14 rounded-xl bg-white shadow-lg ${style}`}
     >
       <View className="absolute top-4">
         <WarningIcon />

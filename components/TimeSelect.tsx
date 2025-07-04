@@ -1,4 +1,10 @@
-import React, { useState, forwardRef, useImperativeHandle, Ref } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  Ref,
+  useEffect,
+} from "react";
 import {
   View,
   Text,
@@ -22,10 +28,11 @@ interface TimeSelectProps {
   defaultTime?: Date;
   nextDay?: boolean;
   setNextDay?: React.Dispatch<React.SetStateAction<boolean>>;
+  clear?: boolean;
 }
 
 const TimeSelect = forwardRef(
-  ({ text, defaultTime, nextDay, setNextDay }: TimeSelectProps, ref) => {
+  ({ text, defaultTime, nextDay, setNextDay, clear }: TimeSelectProps, ref) => {
     const [time, setTime] = useState(
       defaultTime && defaultTime !== specificDate ? defaultTime : specificDate
     );
@@ -42,6 +49,12 @@ const TimeSelect = forwardRef(
         }
       }
     };
+
+    useEffect(() => {
+      setTime(specificDate);
+      setTextVisibility(false);
+      setPickerVisible(false);
+    }, [clear]);
 
     // Use ref to expose the current time
     useImperativeHandle(ref, () => ({

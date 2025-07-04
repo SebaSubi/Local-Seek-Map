@@ -120,13 +120,20 @@ export default function ProductCrud() {
             />
           </View>
         </View>
-        <BasicButton
-          logo={<CreateLogo />}
-          text="Crear Servicio"
-          style="mt-4"
-          onPress={() => router.push("/CRUD/ServiceCRUD/AddService")}
-          background="white"
-        />
+        <View className="flex flex-row justify-evenly items-end w-full">
+          <View className="flex w-16 h-12 justify-center   items-start ">
+            <GoBackButton style="mt-2" iconColor="white" />
+          </View>
+          <BasicButton
+            text="Crear Servicio"
+            style="mt-4"
+            onPress={() => router.push("/CRUD/ServiceCRUD/AddService")}
+            background="white"
+          />
+          <View className="flex w-16 justify-start  items-end ">
+            <GoBackButton style="opacity-0" iconColor="white" />
+          </View>
+        </View>
       </View>
     </>
   );

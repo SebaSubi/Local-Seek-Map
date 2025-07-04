@@ -11,7 +11,11 @@ import {
   ProductType,
 } from "../../../../schema/GeneralSchema";
 import LocalInformation from "../../../../components/LocalInformation";
-import { addPopularityToLocal, getLocalById } from "../../../../libs/local";
+import {
+  addLocalStats,
+  addPopularityToLocal,
+  getLocalById,
+} from "../../../../libs/local";
 import { getSchedulesByLocalId } from "../../../../libs/localSchedule";
 import Schedule from "../../../../components/Schedule";
 import BasicButton from "../../../../components/BasicButton";
@@ -98,6 +102,8 @@ export default function LocalPage() {
     }
   }
 
+  console.log(id);
+
   const handleCategorySelection = (cat: string) => {
     setSelectedCategory(cat);
   };
@@ -148,11 +154,12 @@ export default function LocalPage() {
         setServiceWithProducts(true);
       }
       await addPopularityToLocal(id as string);
+      await addLocalStats(id as string);
     };
     fetchAll();
     fetchAndSetCategories();
     fetchAndSetLocals();
-  }, [id]);
+  }, []); //Took out id here
 
   useEffect(() => {
     if (localType !== "Servicio") {
@@ -214,7 +221,13 @@ export default function LocalPage() {
         ) : (
           <View className="flex flex-row items-center justify-between w-full">
             <GoBackButton style="ml-4" iconColor="white" />
-            <Text className="text-3xl text-white font-normal ml-[-16px]"></Text>
+            <Text className="text-3xl text-white font-normal ml-[-16px]">
+              {localType === "Restaurante"
+                ? "Menu"
+                : localType === "Servicio" && selectedOption === "Services"
+                  ? "Servicios"
+                  : "Productos"}
+            </Text>
             <GoBackButton
               style="border border-white opacity-0"
               iconColor="white"

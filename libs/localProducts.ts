@@ -28,65 +28,40 @@ export async function getLocalsOfProduct(id: string) {
   }
 }
 
-// export async function addPopularityToProduct(productId: string) {
-//   try {
-//     const response = await fetch(`${API_URL}/add-popularity/${productId}`, {
-//       method: "PATCH",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//     });
-
-//     if (!response.ok) {
-//       console.error("Error adding popularity to product");
-//       const errorResponse = await response.json();
-//       console.error(errorResponse);
-//       throw new Error("Error al sumar popularidad al producto");
-//     }
-
-//     // return await response.json();
-//   } catch (error) {
-//     console.error("Error en deleteProduct:", error);
-//   }
-// }
-
-export async function addProductStat(localProductId: string) {
+export async function addPopularityToProduct(productId: string) {
   try {
-    const response = await fetch(
-      `${API_URL}/add-product-stat/${localProductId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${API_URL}/add-popularity/${productId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
-      console.error("Error adding productStat");
+      console.error("Error adding popularity to product");
       const errorResponse = await response.json();
       console.error(errorResponse);
-      throw new Error("Error al agregar estadisticas de producto");
+      throw new Error("Error al sumar popularidad al producto");
     }
 
     // return await response.json();
   } catch (error) {
-    console.error("Error adding productStat:", error);
+    console.error("Error en deleteProduct:", error);
   }
 }
 
 export async function getPopularityOfLocalProducts(localId: string) {
   // console.log(`${API_URL}/local/${id}?name=${name}`);
-  const url = `${API_URL}/products-popularity/${localId}`;
+  const url = `${API_URL}/popularity/get-lp-stats`;
   try {
     const rawData = await fetch(url);
     if (!rawData.ok) {
-      throw new Error("Failed to fetch local products by popularity");
+      throw new Error("Failed to fetch local products popularity");
     }
     const json = await rawData.json();
     return json;
   } catch (error) {
-    console.log("Error getting local products by popularity", error);
+    console.log("Error getting local products popularity", error);
   }
 }
 

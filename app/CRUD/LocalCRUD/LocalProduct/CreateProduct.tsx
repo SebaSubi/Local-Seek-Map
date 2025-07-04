@@ -110,7 +110,7 @@ export default function CreateProduct() {
       !brand ||
       !measurement ||
       !description ||
-      !image ||
+      // ||!image
       !productTypeId
     ) {
       Alert.alert("Error", "Por favor complete todos los campos");
@@ -165,14 +165,14 @@ export default function CreateProduct() {
 
       // console.log("Imagen antes de subir:", image);
 
-      const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+      // const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
 
       // console.log("URL de imagen subida:", uploadedImageUrl);
 
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen");
-        return;
-      }
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen");
+      //   return;
+      // }
 
       const newProduct: Product = {
         name,
@@ -180,7 +180,7 @@ export default function CreateProduct() {
         measurement,
         description,
         productTypeId,
-        imgURL: uploadedImageUrl,
+        // imgURL: uploadedImageUrl,
         dateFrom: new Date(),
       };
 
@@ -193,6 +193,7 @@ export default function CreateProduct() {
       // brandRef.current.setValue("");
       // measurementRef.current.setValue("");
       // descriptionRef.current.setValue("");
+      // Sinceramente no estoy escribiendo nada. Unite a FACEA pa
       setImage(null);
     } catch (error) {
       Alert.alert("Error");
@@ -327,7 +328,7 @@ export default function CreateProduct() {
                         data={serviceTypes}
                         renderItem={({ item, index }) => (
                           <Pressable
-                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            className={`flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden ${serviceTypes && index === serviceTypes.length - 1 ? "mb-14" : ""}`}
                             onPress={() => {
                               setSelectedType(item);
                               setTypeModalVisibility(false);
@@ -340,6 +341,14 @@ export default function CreateProduct() {
                       />
                     </>
                   )}
+                  <Pressable
+                    onPress={() => {
+                      setTypeModalVisibility(false);
+                    }}
+                    className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-4 absolute bottom-0"
+                  >
+                    <Text className="text-white">Cancelar</Text>
+                  </Pressable>
                 </View>
               </View>
             </Modal>

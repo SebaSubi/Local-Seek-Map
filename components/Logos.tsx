@@ -102,8 +102,8 @@ export const LogOutIcon = ({ color = "white" }) => {
   return <MaterialCommunityIcons name="logout" size={24} color={color} />;
 };
 
-export const InfoIcon = ({ color = "white" }) => {
-  return <AntDesign name="question" size={24} color={color} />;
+export const InfoIcon = ({ color = "white", size = 24 }) => {
+  return <AntDesign name="question" size={size} color={color} />;
 };
 
 export const Cafeteria = ({ color = "black" }) => {

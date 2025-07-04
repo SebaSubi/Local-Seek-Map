@@ -31,6 +31,7 @@ import BasicSelectable from "../../../components/BasicSelectable";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
+import GoBackButton from "../../../components/GoBackButton";
 
 export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -250,6 +251,14 @@ export default function CreateService() {
                     />
                   </>
                 )}
+                <Pressable
+                  onPress={() => {
+                    router.back();
+                  }}
+                  className="w-20 h-10 bg-defaultGray rounded-2xl flex items-center justify-center my-4"
+                >
+                  <Text>Volver</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>
@@ -290,14 +299,19 @@ export default function CreateService() {
           )} */}
         </ScrollView>
       </View>
-      <View className="flex flex-row justify-evenly items-center w-full">
+      <View className="flex flex-row justify-evenly items-end w-full">
+        <View className="flex w-16 h-12 justify-center   items-start ">
+          <GoBackButton style="mt-2" iconColor="white" />
+        </View>
         <BasicButton
-          logo={<CreateLogo />}
           text="Crear Servicio"
           style="mt-4"
           onPress={() => handleSubmit()}
           background="white"
         />
+        <View className="flex w-16 justify-start  items-end ">
+          <GoBackButton style="opacity-0" iconColor="white" />
+        </View>
       </View>
     </View>
   );

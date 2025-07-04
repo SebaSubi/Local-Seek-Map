@@ -248,12 +248,14 @@ export async function getLocalProductCategories(localId: string) {
 // }
 
 export async function getLocalProductCategoriesByName(
-  name: string,
-  id: string
+  localId: string,
+  name: string
 ) {
   try {
     // const response = await fetch(`${API_URL_2}/local/search-name?name=${name}`);
-    const response = await fetch(`${API_URL_2}/local/${id}?name=${name}`);
+    const response = await fetch(
+      `${API_URL_2}/search-name/${localId}?name=${name}`
+    );
 
     if (!response.ok) {
       console.error("Error getting local product categories by name");
@@ -261,7 +263,6 @@ export async function getLocalProductCategoriesByName(
     }
 
     const text = await response.text();
-    console.log("Raw response:", text);
 
     if (!text) {
       console.warn("Empty response body");
@@ -363,5 +364,49 @@ export async function createLocalProductSubCategory(
   } catch (error) {
     console.log("Error: ", error);
     Alert.alert("Error: ", (error as any).message.data.msg);
+  }
+}
+
+//--------------------------------------------------------------- Product Stats ---------------------------------------------------------------
+
+export async function addProductStat(ProductId: string) {
+  try {
+    const response = await fetch(
+      `${API_URL}/add-global-product-stat/${ProductId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error("Error adding productStat");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error al agregar estadisticas de producto");
+    }
+
+    // return await response.json();
+  } catch (error) {
+    console.error("Error adding productStat:", error);
+  }
+}
+
+export async function getGlobalProductList() {
+  try {
+    const response = await fetch(`${API_URL}/global/stats`);
+
+    if (!response.ok) {
+      console.error("Error getting global product list");
+      const errorResponse = await response.json();
+      console.error(errorResponse);
+      throw new Error("Error getting global product list");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting global product list", error);
   }
 }
