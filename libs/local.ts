@@ -274,9 +274,7 @@ export async function deleteLocal(id: string) {
 //TODO: remake this
 // const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
 const API_URL_2 =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/store"
-    : "http://localhost:3000/store";
+  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
 //this method is used in CreateLocal
 export async function createLocalAndAddOwner(local: Local, userId: string) {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Platform } from "react-native";
+import { Local } from "../schema/GeneralSchema";
 
 // const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
 const API_URL =
@@ -44,11 +45,14 @@ export type UserLocal = {
 };
 export async function getUserLocals(userId: string) {
   // console.log("here");
-  return await axios.get(`${API_URL}/user-locals`, {
-    params: {
-      userId: userId,
-    },
-  });
+  try {
+    const Locals = await axios.get(`${API_URL}/user-locals`, {
+      params: {
+        userId: userId,
+      },
+    });
+    return Locals.data as Local[];
+  } catch (error) {}
 }
 
 export async function deleteUser(userId: string) {

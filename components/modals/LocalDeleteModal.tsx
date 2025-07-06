@@ -7,6 +7,7 @@ import BasicButton from "../BasicButton";
 import BasicTextInput from "../BasicTextInput";
 import { useLocalIdStore } from "../../libs/localZustang";
 import { deleteLocalv2 } from "../../libs/local";
+import { useNavigation } from "expo-router";
 
 const LocalDeleteModal = ({
   isVisible,
@@ -24,6 +25,8 @@ const LocalDeleteModal = ({
     setValue: (value: string) => void;
   }>(null);
 
+  const navigation = useNavigation();
+
   const DeleteLocal = async () => {
     if (DeleteText.current?.getValue() === wordToCheck) {
       if (authState?.user?.id && local.id) {
@@ -31,6 +34,7 @@ const LocalDeleteModal = ({
         console.log(response);
         if (response?.status === 200) {
           setVisible(false);
+          navigation.goBack();
           //   onLogout; FIXME: en vez de logout que recargue la parte de user
         }
       }
