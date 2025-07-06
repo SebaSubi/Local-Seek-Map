@@ -12,6 +12,7 @@ const API_URL =
 //   Platform.OS === "android" ? "http://192.168.0.135:3000/store" : "";
 // // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
+//this is used in the SearchComponent
 export async function getLocals() {
   // console.log(API_URL);
   try {
@@ -25,6 +26,7 @@ export async function getLocals() {
     console.log("Error getting stores", error);
   }
 }
+//this method is used in LocalPage
 export async function addPopularityToLocal(localId: string) {
   try {
     const response = await fetch(`${API_URL}/add-popularity/${localId}`, {
@@ -42,6 +44,7 @@ export async function addPopularityToLocal(localId: string) {
   }
 }
 
+//FIXME:this is not used
 export async function getLocalsByCategory(category = "Supermercado") {
   try {
     const rawData = await fetch(`${API_URL}/category/${category}`);
@@ -55,6 +58,7 @@ export async function getLocalsByCategory(category = "Supermercado") {
   }
 }
 
+//this method is used in ReadLocal
 export async function getLocalsByCategoryAndName(
   category: string,
   name: string
@@ -73,6 +77,7 @@ export async function getLocalsByCategoryAndName(
   }
 }
 
+//this is also used at ReadLocal
 export async function getOpenLocalsByCategoryAndName(
   category: string,
   name: string
@@ -91,6 +96,7 @@ export async function getOpenLocalsByCategoryAndName(
   }
 }
 
+//this is used in LocalContainer and EditLocalContainer
 export async function getIfLocalOpen(id: string) {
   try {
     const rawData = await fetch(`${API_URL}/openStore/${id}`);
@@ -104,6 +110,7 @@ export async function getIfLocalOpen(id: string) {
   }
 }
 
+//this is used in ReadLocal
 export async function getOpenLocalsByName(name: string) {
   try {
     const rawData = await fetch(`${API_URL}/open-name?name=${name}`);
@@ -117,6 +124,7 @@ export async function getOpenLocalsByName(name: string) {
   }
 }
 
+//this is used in ReadLocal
 export async function getLocalsByName(name: string) {
   try {
     const rawData = await fetch(`${API_URL}/search-name?name=${name}`);
@@ -130,6 +138,7 @@ export async function getLocalsByName(name: string) {
   }
 }
 
+//FIXME: this is not used
 export async function getOpenLocals() {
   try {
     const rawData = await fetch(`${API_URL}/openSchedules`);
@@ -142,6 +151,8 @@ export async function getOpenLocals() {
     console.log(error);
   }
 }
+
+//FIXME: this is not used
 export async function getDisplayLocals() {
   try {
     const rawData = await fetch(`${API_URL}/display`);
@@ -155,6 +166,7 @@ export async function getDisplayLocals() {
   }
 }
 
+//TODO: this is used in a lot of places, but it should use jwt security
 export async function createLocal(local: Local) {
   try {
     const response = await fetch(API_URL, {
@@ -177,6 +189,7 @@ export async function createLocal(local: Local) {
   }
 }
 
+//this method is used in LocalStats and in localPage
 export async function getLocalById(id: string) {
   const url = `${API_URL}/${id}`;
   try {
@@ -191,6 +204,7 @@ export async function getLocalById(id: string) {
   }
 }
 
+//this method is used in CreateLocal and NewUpdateLocal
 export async function checkLocalName(name: string) {
   try {
     const rawData = await axios.get(`${API_URL}/check-name/${name}`);
@@ -200,6 +214,8 @@ export async function checkLocalName(name: string) {
   }
 }
 
+//this is used in NewCreateLocal
+//TODO: remake this with security
 export async function updateLocal(id: string, local: Local) {
   try {
     const response = await fetch(`${API_URL}/update/${id}`, {
@@ -231,6 +247,8 @@ export async function updateLocal(id: string, local: Local) {
   }
 }
 
+//this is used in DeleteLocal, but its weird
+//TODO: Check this
 export async function deleteLocal(id: string) {
   try {
     const response = await fetch(`${API_URL}/removeLocal/${id}`, {
@@ -253,12 +271,12 @@ export async function deleteLocal(id: string) {
     console.error("Error en deleteProduct:", error);
   }
 }
+//TODO: remake this
 // const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
 const API_URL_2 =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/store"
-    : "http://localhost:3000/store";
+  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
+//this method is used in CreateLocal
 export async function createLocalAndAddOwner(local: Local, userId: string) {
   try {
     const payload = {
@@ -282,6 +300,7 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
   }
 }
 
+//this method is used in LocalDeleteModal
 export async function deleteLocalv2(localId: string, userId: string) {
   try {
     const payload = { userId: userId, storeId: localId };
@@ -307,6 +326,7 @@ const API_URL_LU =
     ? "http://10.0.2.2:3000/local-user"
     : "http://localhost:3000/local-user";
 
+//this si used in DeleteLocal
 export async function getLocalsOfUser(userEmail: string) {
   const url = `${API_URL_LU}/locals/${userEmail}`;
   try {

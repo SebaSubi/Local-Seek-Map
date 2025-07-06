@@ -10,6 +10,8 @@ import { getUserLocals, UserLocal } from "../../libs/user";
 import { Local, LocalTypes } from "../../schema/GeneralSchema";
 import EditLocalContainer from "../../components/EditLocalContainer";
 import UserPermissionModal from "../../components/modals/UserPermissionModal";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
@@ -17,9 +19,17 @@ export default function UserScreen() {
   const [locals, setLocals] = useState<Local[]>([]);
   const [isPermissionModalVisible, setPermissionModalVisible] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, [authState]);
+  // useEffect(() => {
+  //   fetchData();
+  //   // console.log("We are in the useEffect");
+  // }, [authState]);
+
+  // Dentro del componente UserScreen
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(); // se ejecuta cada vez que esta pantalla recibe el foco
+    }, [authState?.user?.email])
+  );
 
   const fetchData = async () => {
     // console.log("username: ", authState?.user?.username);
@@ -31,8 +41,9 @@ export default function UserScreen() {
       authState.user.username !== Role.USER
     ) {
       const fetchedLocals = await getUserLocals(authState?.user?.email);
+      // console.log(fetchedLocals);
 
-      if (fetchedLocals) {
+      if (Array.isArray(fetchedLocals)) {
         setLocals(fetchedLocals);
       }
     }

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Platform } from "react-native";
+import { Local } from "../schema/GeneralSchema";
 
 // const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
 const API_URL =
@@ -42,27 +43,16 @@ export type UserLocal = {
     name: string;
   };
 };
-export async function getUserLocals(userEmail: string, userId?: string) {
-  // console.log("We are in the API");  Esto hay que decomentar después, solo que nose como arreglar el auth en este momento
-  // console.log(userId);
-  // return await axios.get(`${API_URL}/user-locals`, {
-  //   params: {
-  //     userId: userId,
-  //   },
-  // });
-
+export async function getUserLocals(userId: string) {
+  // console.log("here");
   try {
-    const rawData = await fetch(
-      `http://localhost:3000/local-user/locals/${userEmail}`
-    );
-    if (!rawData.ok) {
-      throw new Error("Failed to get local user stores");
-    }
-    const json = await rawData.json();
-    return json;
-  } catch (error) {
-    console.log("Error getting user stores", error);
-  }
+    const Locals = await axios.get(`${API_URL}/user-locals`, {
+      params: {
+        userId: userId,
+      },
+    });
+    return Locals.data as Local[];
+  } catch (error) {}
 }
 
 export async function deleteUser(userId: string) {

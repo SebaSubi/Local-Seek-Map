@@ -9,7 +9,6 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import Header from "../../../../components/Header";
 import { useEffect, useState } from "react";
 import { Local } from "../../../../schema/GeneralSchema";
-import { getLocals } from "../../../../libs/local";
 import React from "react";
 import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
