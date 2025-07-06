@@ -9,8 +9,6 @@ import { validateEmail } from "../components/Register";
 //     ? "http://10.0.2.2:3000/store"
 //     : "http://localhost:3000/store";
 const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/store`;
-//   Platform.OS === "android" ? "http://192.168.0.135:3000/store" : "";
-// // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
 //this is used in the SearchComponent
 export async function getLocals() {
