@@ -8,13 +8,10 @@ import {
   Service,
 } from "../schema/GeneralSchema";
 
-// const API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
+const API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
 
-const API_URL =
-  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
-// Platform.OS === "android"
-//   ? "http://10.0.2.2:3000"
-//   : ;
+// const API_URL =
+//   Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
 export async function getServices() {
   // const url = Platform.OS === 'android' ? "http://10.0.2.2:3000/store" : "http://localhost:3000/store";

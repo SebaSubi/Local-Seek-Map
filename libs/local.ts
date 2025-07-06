@@ -4,11 +4,11 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { validateEmail } from "../components/Register";
 
-const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/store"
-    : "http://localhost:3000/store";
-// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/store`;
+// const API_URL =
+//   Platform.OS === "android"
+//     ? "http://10.0.2.2:3000/store"
+//     : "http://localhost:3000/store";
+const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/store`;
 //   Platform.OS === "android" ? "http://192.168.0.135:3000/store" : "";
 // // Platform.OS === "android" ? "http://192.168.130.1:3000/store" : "";
 
@@ -272,9 +272,9 @@ export async function deleteLocal(id: string) {
   }
 }
 //TODO: remake this
-// const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
-const API_URL_2 =
-  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
+const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
+// const API_URL_2 =
+//   Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
 //this method is used in CreateLocal
 export async function createLocalAndAddOwner(local: Local, userId: string) {
@@ -320,11 +320,11 @@ export async function deleteLocalv2(localId: string, userId: string) {
 }
 
 //----------------------------------------------------------------Local User----------------------------------------------------------------
-// const API_URL_LU = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-user`
-const API_URL_LU =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/local-user"
-    : "http://localhost:3000/local-user";
+const API_URL_LU = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-user`;
+// const API_URL_LU =
+//   Platform.OS === "android"
+//     ? "http://10.0.2.2:3000/local-user"
+//     : "http://localhost:3000/local-user";
 
 //this si used in DeleteLocal
 export async function getLocalsOfUser(userEmail: string) {

@@ -19,13 +19,20 @@
     "extra": {
       "CLOUDINARY_CLOUD_NAME": "dbbgx9qeo",
       "CLOUDINARY_API_KEY": "156178638187592",
-      "CLOUDINARY_API_SECRET": "H2qSuO48v03VC6MzG8pOi7EF_H4"
+      "CLOUDINARY_API_SECRET": "H2qSuO48v03VC6MzG8pOi7EF_H4",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3b987b4a-0c91-424c-8ad3-77fbaec7ddc0"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.luky_s.localseekmap"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -42,9 +49,12 @@
       [
         "expo-font",
         {
-          "fonts": ["node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"]
+          "fonts": [
+            "node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"
+          ]
         }
       ]
-    ]
+    ],
+    "owner": "luky_s"
   }
 }

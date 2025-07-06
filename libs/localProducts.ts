@@ -5,11 +5,11 @@ import { Platform } from "react-native";
 // const BASE_API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
 // const API_URL = `${BASE_API_URL}/local-product`;
 
-// const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
-const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/local-product"
-    : "http://localhost:3000/local-product";
+const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
+// const API_URL =
+//   Platform.OS === "android"
+//     ? "http://10.0.2.2:3000/local-product"
+//     : "http://localhost:3000/local-product";
 
 export async function getLocalsOfProduct(id: string) {
   try {
@@ -289,11 +289,11 @@ export async function updateLocalProduct(
 
 // ------------------------------------ Categories ------------------------------------
 
-// const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
-const API_URL_2 =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000/local-product"
-    : "http://localhost:3000/local-product";
+const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
+// const API_URL_2 =
+//   Platform.OS === "android"
+//     ? "http://10.0.2.2:3000/local-product"
+//     : "http://localhost:3000/local-product";
 
 export async function getLocalProductCategories(localId: string) {
   try {

@@ -1,10 +1,10 @@
 import { Alert, Platform } from "react-native";
 import { LocalSchedule } from "../schema/GeneralSchema";
 
-const API_URL =
-  Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
+// const API_URL =
+//   Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
-// const API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
+const API_URL = process.env.EXPO_PUBLIC_API_ROUTE;
 // Platform.OS === "android"
 // ? "http://10.0.2.2:3000"
 
