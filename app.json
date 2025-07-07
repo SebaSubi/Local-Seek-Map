@@ -36,7 +36,7 @@
       "package": "com.luky_s.localseekmap",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBKhiy8qq6-QM7WwW03gSONij6ZFOQf28I"
+          "apiKey": "process.env.GOOGLE_MAPS_API_KEY"
         }
       }
     },
