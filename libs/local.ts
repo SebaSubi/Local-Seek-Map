@@ -194,9 +194,10 @@ export async function getLocalById(id: string) {
 export async function checkLocalName(name: string) {
   try {
     const rawData = await axios.get(`${API_URL}/check-name/${name}`);
+    console.log("Estamos metidos aca: ", rawData.request.response);
     return rawData.request.response;
   } catch (error) {
-    console.log(error);
+    console.log("Segundo estamos aca", error);
   }
 }
 

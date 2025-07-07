@@ -23,6 +23,8 @@ export const validateEmail = (email: string): boolean => {
   }
 };
 
+type error = "email" | "username" | "password" | "";
+
 const Register = ({ setReg, setModalVisible }: RegProps) => {
   const { onRegister, authState } = useAuth();
 
@@ -30,10 +32,11 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
   const username = useRef("");
   const password = useRef("");
   const secondPassword = useRef("");
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
 
-  const [emailError, setEmailError] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false); // Visibilidad de la contraseña
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // Visibilidad de la contraseña de confirmación
 
@@ -44,44 +47,53 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
       : true;
 
     if (!validateEmail(email.current)) {
-      setEmailError("La dirección de email no es válida.");
-      setPasswordError("");
-      setUsernameError("");
+      setError({
+        type: "email",
+        message: "La dirección de email no es válida.",
+      });
     } else if (username.current.length < 2) {
-      setPasswordError("");
-      setEmailError("");
-      setUsernameError(
-        "El nombre de usuario debe tener al menos 2 caracteres."
-      );
+      setError({
+        type: "username",
+        message: "El nombre de usuario debe tener al menos 2 caracteres.",
+      });
+    } else if (username.current.length > 24) {
+      setError({
+        type: "username",
+        message: "El nombre de usuario no debe superar los 24 caracteres",
+      });
     } else if (password.current.length < 8) {
-      setPasswordError("La contraseña debe tener al menos 8 caracteres.");
-      setEmailError("");
-      setUsernameError("");
-    } else if (secondPassword.current.length < 8) {
-      setPasswordError(
-        "La contraseña de confirmación debe tener al menos 8 caracteres."
-      );
-      setEmailError("");
-      setUsernameError("");
-    } else if (
-      secondPassword.current.length > 64 ||
-      password.current.length > 64
-    ) {
-      setPasswordError("La contraseña no debe tener mas de 64 caracteres.");
-      setEmailError("");
-      setUsernameError("");
+      setError({
+        type: "password",
+        message: "La contraseña debe tener al menos 8 caracteres.",
+      });
     } else if (secondPassword.current !== password.current) {
-      setPasswordError("Las contraseñas no coinciden.");
-      setEmailError("");
-      setUsernameError("");
+      setError({
+        type: "password",
+        message: "Las contraseñas deben coincidir",
+      });
+    } else if (
+      secondPassword.current.length > 30 ||
+      password.current.length > 30
+    ) {
+      setError({
+        type: "password",
+        message: "La contraseña no debe tener mas de 30 caracteres.",
+      });
+    } else if (password.current.replace(/\s+/g, "").length === 0) {
+      setError({
+        type: "password",
+        message: "La contraseña no puede tener solo espacios",
+      });
     } else if (validEmail === true) {
-      setPasswordError("");
-      setEmailError("Este Email ya tiene una cuenta asociada.");
-      setUsernameError("");
+      setError({
+        type: "email",
+        message: "Este Email ya tiene una cuenta asociada.",
+      });
     } else if (validUsername === true) {
-      setPasswordError("");
-      setEmailError("");
-      setUsernameError("Este Nombre de Usuario no está disponible.");
+      setError({
+        type: "email",
+        message: "Este Nombre de Usuario no está disponible.",
+      });
     } else {
       const request = await onRegister!(
         email.current,
@@ -93,7 +105,10 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
         setModalVisible(true);
         setReg(true);
       } else {
-        setEmailError("Hubo un error, intentelo de vuelta mas tarde");
+        setError({
+          type: "email",
+          message: "Hubo un error, intentelo de vuelta mas tarde",
+        });
       }
     }
   };
@@ -116,11 +131,11 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
         style={{ backgroundColor: colors.primary.lightGray }}
         onChangeText={(text) => {
           email.current = text;
-          setEmailError("");
+          setError({ type: "", message: "" });
         }}
       />
-      {emailError ? (
-        <Text className="text-red-600 mb-2">{emailError}</Text>
+      {error.type === "email" ? (
+        <Text className="text-red-600 mb-2">{error.message}</Text>
       ) : null}
 
       {/* Campo de Nombre de Usuario */}
@@ -130,11 +145,11 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
         style={{ backgroundColor: colors.primary.lightGray }}
         onChangeText={(text) => {
           username.current = text;
-          setUsernameError("");
+          setError({ type: "", message: "" });
         }}
       />
-      {usernameError ? (
-        <Text className="text-red-600 mb-2">{usernameError}</Text>
+      {error.type === "username" ? (
+        <Text className="text-red-600 mb-2">{error.message}</Text>
       ) : null}
 
       {/* Campo de Contraseña */}
@@ -146,7 +161,7 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
           style={{ backgroundColor: colors.primary.lightGray }}
           onChangeText={(text) => {
             password.current = text;
-            setPasswordError("");
+            setError({ type: "", message: "" });
           }}
         />
         <TouchableOpacity
@@ -170,7 +185,7 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
           style={{ backgroundColor: colors.primary.lightGray }}
           onChangeText={(text) => {
             secondPassword.current = text;
-            setPasswordError("");
+            setError({ type: "", message: "" });
           }}
         />
         <TouchableOpacity
@@ -184,8 +199,8 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
           />
         </TouchableOpacity>
       </View>
-      {passwordError ? (
-        <Text className="text-red-600 mb-2">{passwordError}</Text>
+      {error.type === "password" ? (
+        <Text className="text-red-600 mb-2">{error.message}</Text>
       ) : null}
 
       {/* Botón de Registrarse */}
@@ -200,7 +215,10 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
         <TouchableOpacity onPress={() => setReg(true)}>
           <Text className="text-center mt-4">
             ¿Ya tienes cuenta?
-            <Text style={{ color: colors.primary.orange }}>Iniciar Sesión</Text>
+            <Text style={{ color: colors.primary.orange }}>
+              {" "}
+              Iniciar Sesión
+            </Text>
           </Text>
         </TouchableOpacity>
       </View>
