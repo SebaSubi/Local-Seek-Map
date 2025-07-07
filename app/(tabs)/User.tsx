@@ -68,6 +68,7 @@ export default function UserScreen() {
       </View>
       <View className="flex items-center mt-28">
         <UserComponent user={authState?.user ? authState.user : guestUser} />
+        <Text>API_ROUTE: {process.env.GOOGLE_MAPS_KEY ?? "❌ No llegó"}</Text>
         <View className="w-[80%] mt-4">
           {authState?.user && authState.user.username !== "guest" ? (
             <>

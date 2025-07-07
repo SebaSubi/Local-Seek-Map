@@ -1,4 +1,4 @@
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 export default function LocalMap({
   localCoordinates,
@@ -18,6 +18,7 @@ export default function LocalMap({
         latitudeDelta: 0.015,
         longitudeDelta: 0.01,
       }}
+      provider={PROVIDER_GOOGLE}
     >
       {localCoordinates && (
         <Marker

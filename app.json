@@ -33,7 +33,12 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.luky_s.localseekmap"
+      "package": "com.luky_s.localseekmap",
+      "config": {
+        "googleMaps": {
+          "apiKey": "process.env.GOOGLE_MAPS_KEY"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -50,9 +55,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"
-          ]
+          "fonts": ["node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"]
         }
       ]
     ],
