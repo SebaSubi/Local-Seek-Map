@@ -119,26 +119,42 @@ export default function CreateLocal() {
       });
       return;
     } else if ((await checkLocalName(name)) === "true") {
-      setError({ type: "name", message: "El nombre del Local ya esta en uso" });
+      setError({
+        type: "name",
+        message: "*El nombre del Local ya esta en uso",
+      });
       return;
     } else if (address.length < 5) {
       setError({
         type: "address",
-        message: "La ubicacion del Local requiere minimamente 5 caracteres",
+        message: "La dirección del Local requiere minimamente 5 caracteres",
       });
       return;
     } else if (address.length >= 120) {
       setError({
         type: "address",
-        message: "La ubicacion del Local tiene demasiados caracteres",
+        message: "La dirección del Local no puede tener mas de 120 caracteres",
       });
 
       return;
-    } else if (location.length < 5) {
+    } else if (
+      address &&
+      (address.includes("!") ||
+        address.includes("@") ||
+        address.includes("#") ||
+        address.includes("$") ||
+        address.includes("&") ||
+        address.includes("*"))
+    ) {
+      setError({
+        type: "address",
+        message: "La dirección del local no puede tener caracteres especiales",
+      });
+    } else if (location.length < 10) {
       setError({
         type: "location",
         message:
-          "Las coordenadas del Local requieren minimamente 23 caracteres",
+          "Las coordenadas del Local requieren mínimamente 10 caracteres",
       });
       return;
     }
@@ -316,7 +332,7 @@ export default function CreateLocal() {
             <BasicTextInput
               inputType="text"
               placeholder="Nombre"
-              textStyle={`mt-10 ${error.type === "required" || "nombre" ? " text-red-800" : ""}`}
+              textStyle={`mt-10 ${error.type === "required" || error.type === "name" ? " text-red-800" : ""}`}
               title="Nombre de Local: "
               ref={nameRef}
               value=""
@@ -332,86 +348,92 @@ export default function CreateLocal() {
         onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
         selectedCategory={selectedCategory}
       /> */}
-            {error.type === "address" ? (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{error.message}</Text>
-              </View>
-            ) : null}
+
             <BasicTextInput
               inputType="text"
               placeholder="Dirección"
-              textStyle={`mt-4 ${error.type === "required" ? " text-red-800" : ""}`}
-              title="Direccion del Local: "
+              textStyle={`mt-4 ${error.type === "required" || error.type === "address" ? " text-red-800" : ""}`}
+              title="Dirección del Local: "
               ref={addressRef}
               value=""
             />
-            {error.type === "location" ? (
-              <View className="w-full flex items-start ml-28">
+            {error.type === "address" ? (
+              <View className="w-3/4">
                 <Text className="text-red-800">{error.message}</Text>
               </View>
             ) : null}
+
             <BasicTextInput
               inputType="text"
               placeholder="Coordenadas"
-              textStyle={`mt-4 ${error.type === "required" ? " text-red-800" : ""}`}
+              textStyle={`mt-4 ${error.type === "required" || error.type === "location" ? " text-red-800" : ""}`}
               title="Coordenadas del Local: "
               ref={locationRef}
               value=""
               info={true}
               infoPress={() => setCoordinatesInfo(!coordinatesInfo)}
             />
-            {error.type === "whatsapp" ? (
-              <View className="w-full flex items-start ml-28">
+            {error.type === "location" ? (
+              <View className="w-3/4">
                 <Text className="text-red-800">{error.message}</Text>
               </View>
             ) : null}
             <BasicTextInput
               inputType="number"
               placeholder="Número de WhatsApp"
-              textStyle="mt-4"
+              textStyle={`mt-4 ${error.type === "whatsapp" ? " text-red-800" : ""}`}
               title="Número de WhatsApp: "
               ref={whatsappRef}
               value=""
             />
-            {error.type === "instagram" ? (
-              <View className="w-full flex items-start ml-28">
+
+            {error.type === "whatsapp" ? (
+              <View className="w-3/4">
                 <Text className="text-red-800">{error.message}</Text>
               </View>
             ) : null}
+
             <BasicTextInput
               inputType="text"
               placeholder="@Instagram"
-              textStyle="mt-4"
+              textStyle={`mt-4 ${error.type === "instagram" ? " text-red-800" : ""}`}
               title="Instagram: "
               ref={instagramRef}
               value=""
             />
-            {error.type === "facebook" ? (
-              <View className="w-full flex items-start ml-28">
+            {error.type === "instagram" ? (
+              <View className="w-3/4">
                 <Text className="text-red-800">{error.message}</Text>
               </View>
             ) : null}
+
             <BasicTextInput
               inputType="text"
               placeholder="@Facebook"
-              textStyle="mt-4"
+              textStyle={`mt-4 ${error.type === "facebook" ? " text-red-800" : ""}`}
               title="Facebook: "
               ref={facebookRef}
               value=""
             />
-            {error.type === "webpage" ? (
-              <View className="w-full flex items-start ml-28">
+            {error.type === "facebook" ? (
+              <View className="w-3/4">
                 <Text className="text-red-800">{error.message}</Text>
               </View>
             ) : null}
             <BasicTextInput
               inputType="text"
               placeholder="Página Web"
-              textStyle="mt-4"
+              textStyle={`mt-4 ${error.type === "webpage" ? " text-red-800" : ""}`}
               title="Página Web: "
               ref={webpageRef}
               value=""
             />
+
+            {error.type === "webpage" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800">{error.message}</Text>
+              </View>
+            ) : null}
 
             <Modal
               animationType="slide"
