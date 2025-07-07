@@ -14,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "Local-Seek-Map"
     },
     "extra": {
       "CLOUDINARY_CLOUD_NAME": "dbbgx9qeo",
@@ -49,7 +50,9 @@
       [
         "expo-font",
         {
-          "fonts": ["node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"]
+          "fonts": [
+            "node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"
+          ]
         }
       ]
     ],
