@@ -9,11 +9,21 @@ const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
 //     : "http://localhost:3000/auth-v2";
 
 export async function checkEmail(email: string) {
-  return await axios.get(`${API_URL}/check-email/${email}`);
+  try {
+    const response = await axios.get(`${API_URL}/check-email/${email}`);
+    return response.data; // Assuming the API returns a boolean or some data indicating the email's validity
+  } catch (error) {
+    console.log("Error checking email:", error);
+  }
 }
 
 export async function checkUsername(username: string) {
-  return await axios.get(`${API_URL}/check-username/${username}`);
+  try {
+    const response = await axios.get(`${API_URL}/check-username/${username}`);
+    return response.data; // Assuming the API returns a boolean or some data indicating the email's validity
+  } catch (error) {
+    console.log("Error checking email:", error);
+  }
 }
 
 export async function EditUser(user: {

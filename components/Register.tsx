@@ -93,6 +93,7 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
         setModalVisible(true);
         setReg(true);
       } else {
+        console.log(request.status);
         setEmailError("Hubo un error, intentelo de vuelta mas tarde");
       }
     }
