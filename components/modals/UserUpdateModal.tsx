@@ -263,33 +263,32 @@ const handleUserChange = async (
     setUsernameError("");
   } else if (
     email.current?.getValue() !== user.email &&
-    (validEmail === true || validEmail.request.response === "true")
+    (validEmail === true || validEmail === "true")
   ) {
     //handle email already in use
     setPasswordError("");
     setEmailError("Este Email ya tiene una cuenta asociada");
-    //   setEmailError("hoy me levante re loco");
     setUsernameError("");
   } else if (
     username.current?.getValue() !== user.username &&
-    (validUsername === true || validUsername.request.response === "true")
+    (validUsername === true || validUsername === "true")
   ) {
     //handle username already in use
     setPasswordError("");
     setEmailError("");
     setUsernameError("Este Nombre de Usuario no esta disponible");
   } else if ((email.current?.getValue().length ?? 0) >= 250) {
-    //handle
+    //handle email too long
     setPasswordError("");
     setEmailError("El Email es demasiado largo");
     setUsernameError("");
   } else if ((username.current?.getValue().length ?? 0) >= 30) {
-    //handle
+    //handle username too long
     setPasswordError("");
     setEmailError("");
     setUsernameError("El nombre del usuario es muy largo");
   } else if ((password.current?.getValue().length ?? 0) >= 20) {
-    //handle
+    //handle password too long
     setPasswordError("La contraseña es demasiado larga");
     setEmailError("");
     setUsernameError("");
@@ -324,7 +323,7 @@ const handleUserChange = async (
         setUsernameError("Los campos no deben estar vacios");
       }
     };
-    return editUser();
+    return await editUser();
   }
 };
 

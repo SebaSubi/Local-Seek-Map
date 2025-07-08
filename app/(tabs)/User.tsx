@@ -92,9 +92,9 @@ export default function UserScreen() {
             ""
           )}
 
-          {authState?.user?.username !== "guest" && locals.length >= 1 ? (
+          {authState?.user?.username !== "guest" ? (
             <>
-              {authState?.user?.role !== Role.USER ? (
+              {authState?.user?.role !== Role.USER && locals.length >= 1 ? (
                 <>
                   <Text className="text-2xl font-bold">Mi Local</Text>
                   <View className="w-full h-[50%]">
