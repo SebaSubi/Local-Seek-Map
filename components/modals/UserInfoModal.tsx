@@ -221,6 +221,7 @@ const UserInfoModal = ({
                   isVisible={seeDeleteModal}
                   setVisible={setSeeDeleteModal}
                   setBeforeModalVisible={setVisible}
+                  userId={user.id}
                 />
               </View>
             </>
@@ -267,7 +268,10 @@ export const handleUserChange = async (
     setPasswordError("");
     setEmailError("");
     setUsernameError("El nombre de usuario debe tener al menos 2 caracteres");
-  } else if ((password.current?.getValue().length ?? 0) < 8) {
+  } else if (
+    (password.current?.getValue().length ?? 0) < 8 &&
+    (password.current?.getValue().length ?? 0) !== 0
+  ) {
     //handle no first Password
     setPasswordError("La contraseña debe tener al menos 8 caracteres");
     setEmailError("");
@@ -279,7 +283,10 @@ export const handleUserChange = async (
     setPasswordError("La contraseña no debe tener mas de 64 caracteres.");
     setEmailError("");
     setUsernameError("");
-  } else if ((secondPassword.current?.getValue().length ?? 0) < 8) {
+  } else if (
+    (secondPassword.current?.getValue().length ?? 0) < 8 &&
+    (secondPassword.current?.getValue().length ?? 0) !== 0
+  ) {
     //handle no second Password
     setPasswordError("La contraseña debe tener al menos 8 caracteres");
     setEmailError("");

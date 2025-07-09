@@ -22,15 +22,24 @@ const UserCard = ({
     setVisible(!isVisible);
   };
   return (
-    <View className="w-11/12 h-24 flex flex-row items-center justify-between my-2">
+    <View className="w-11/12 flex flex-row items-center justify-between my-2">
       <View className="ml-2">
         <PersonCircleIcon color={colors.primary.blue} size={90} />
       </View>
       <View className="flex flex-col w-full items-start ml-3">
         <View className="flex flex-row items-center justify-between w-9/12">
-          <Text className="text-xl font-bold mr-6">
-            {user.name.length > 16 ? user.name.slice(0, 16) + "..." : user.name}
-          </Text>
+          <View className="flex flex-col">
+            {user.dateTo !== null ? (
+              <Text className="text-lg font-bold text-red-700">
+                Usuario Eliminado ❌
+              </Text>
+            ) : null}
+            <Text className="text-xl font-bold mr-6">
+              {user.name.length > 16
+                ? user.name.slice(0, 16) + "..."
+                : user.name}
+            </Text>
+          </View>
           <BasicButton
             text="Editar"
             background={colors.primary.blue}
