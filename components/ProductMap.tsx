@@ -31,7 +31,7 @@ export default function ProductMap({ locals }: { locals: any[] }) {
               longitude: Number(coordinate[1]),
             }}
             title="Disponible" //change to name
-            description={`El producto esta disponible en el local: ${locals[index].name}`} //idk what to put here
+            description={`El producto esta disponible en el local: ${locals[index]?.name}`} //idk what to put here
           />
         ))}
     </MapView>

@@ -21,7 +21,7 @@ export async function getLocalsOfProduct(id: string) {
       console.error(errorResponse);
       throw new Error("Error getting locals of product");
     }
-
+    // console.log("Response Status: ", response);
     return await response.json();
   } catch (error) {
     console.error("Error getting locals of product", error);

@@ -85,6 +85,13 @@ export default function ProductPage() {
               <View className="w-full h-[40%] rounded-3xl  overflow-hidden">
                 <ProductMap locals={locals} />
               </View>
+              {locals.length === 0 ? (
+                <View className="flex w-full items-center p-4">
+                  <Text className="text-lg text-center">
+                    No se encuentra disponible en ningun local en este momento
+                  </Text>
+                </View>
+              ) : null}
               <FlatList
                 data={locals}
                 horizontal={false}
