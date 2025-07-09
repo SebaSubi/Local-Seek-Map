@@ -348,7 +348,7 @@ export default function EditProductPage() {
           </Text>
           <GoBackButton style="opacity-0" />
         </View>
-        <View className="bg-white w-full h-[90%] rounded-3xl overflow-hidden">
+        <View className="bg-white w-full h-[88%] rounded-3xl overflow-hidden">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -555,7 +555,14 @@ export default function EditProductPage() {
             </Modal>
           </ScrollView>
         </View>
-        <View style={{ marginTop: 20, alignItems: "center", width: "80%" }}>
+        <View
+          style={{
+            marginTop: 10,
+            marginBottom: 20,
+            alignItems: "center",
+            width: "80%",
+          }}
+        >
           <BasicButton
             logo={<CreateLogo />}
             text="Actualizar Producto"

@@ -92,7 +92,7 @@ export default function CreateLocal() {
     const webpage = webpageRef.current?.getValue();
     const localTypeID = selectedType?.id;
 
-    if (!name || !location || !image || !location || !address) {
+    if (!name || !location || !location || !address) {
       Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
       return;
     }
@@ -307,10 +307,20 @@ export default function CreateLocal() {
       return;
     }
     try {
-      const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen.");
-        return;
+      // const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen.");
+      //   return;
+      // }
+
+      let uploadedImageUrl: string | null = null;
+
+      try {
+        if (image) {
+          uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
+        }
+      } catch (err) {
+        console.warn("Error subiendo imagen:", err);
       }
 
       const newLocal: Local = {
@@ -364,11 +374,7 @@ export default function CreateLocal() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
         <View className="flex flex-row items-center justify-between w-full ">
           <GoBackButton iconColor="white" style="ml-1" />
@@ -540,9 +546,7 @@ export default function CreateLocal() {
                 <View className="w-3/4 h-1/2 bg-white rounded-3xl overflow-hidden flex items-center ">
                   <ScrollView
                     className="px-3"
-                    contentContainerStyle={{
-                      alignItems: "center",
-                    }}
+                    contentContainerStyle={{ alignItems: "center" }}
                   >
                     <Text className="flex-wrap mt-2 text-2xl text-center font-light">
                       ¿Por qué utilizamos coordenadas?
@@ -628,35 +632,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxHeight: 400,
   },
-  scrollView: {
-    width: "100%",
-    maxHeight: 300,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
+  scrollView: { width: "100%", maxHeight: 300 },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 15 },
   modalOption: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     width: "100%",
   },
-  modalOptionText: {
-    textAlign: "center",
-    fontSize: 16,
-  },
+  modalOptionText: { textAlign: "center", fontSize: 16 },
   closeButton: {
     marginTop: 15,
     padding: 10,
     backgroundColor: "#e1e8e8",
     borderRadius: 5,
   },
-  closeButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
+  closeButtonText: { color: "#000", fontWeight: "bold" },
   typeButton: {
     marginTop: 20,
     paddingVertical: 15, // Aumenta el padding vertical
