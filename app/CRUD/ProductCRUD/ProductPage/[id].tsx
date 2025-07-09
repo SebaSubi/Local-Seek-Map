@@ -20,6 +20,7 @@ import {
   getProductsOfLocalByName,
 } from "../../../../libs/localProducts";
 import { getPlaceholders } from "../../../../libs/libs";
+import GoBackButton from "../../../../components/GoBackButton";
 
 type Options = "Info" | "Locals";
 type localsOfProd = {
@@ -79,7 +80,10 @@ export default function ProductPage() {
         }}
       />
       <View className="flex flex-col items-start h-full justify-start bg-[#1a253d]">
-        <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden ">
+        <View className="absolute top-8 left-0 right-0 rounded-full bg-[#1a253d] mt-10 ml-4 z-30 w-12 flex items-center justify-center">
+          <GoBackButton iconColor="white" style="ml-1" />
+        </View>
+        <View className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden">
           {selectedOption === "Locals" && locals && (
             <>
               <View className="w-full h-[40%] rounded-3xl  overflow-hidden">

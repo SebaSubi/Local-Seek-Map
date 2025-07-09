@@ -10,7 +10,7 @@ import LocalContainer from "../../../../components/LocalContainer";
 import SmallProductContainer from "../../../../components/SmallProductContainer";
 import {
   addPopularityToProduct,
-  addProductStat,
+  // addProductStat,
   getLocalsOfProduct,
   getProductsOfLocalByNameAndCat,
   getSimilarLocalProducts,
@@ -20,6 +20,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import GoBackButton from "../../../../components/GoBackButton";
 
 type Options = "Info" | "Locals";
 
@@ -79,6 +80,9 @@ export default function LocalProductPage() {
         }}
       />
       <View className="flex flex-col items-start h-full justify-start bg-[#1a253d]">
+        <View className="absolute top-8 left-0 right-0 rounded-full bg-[#1a253d] mt-10 ml-4 z-30 w-12 flex items-center justify-center">
+          <GoBackButton iconColor="white" style="ml-1" />
+        </View>
         <View
           className="flex flex-col bg-white h-[90%] w-full rounded-3xl overflow-hidden "
           style={{
