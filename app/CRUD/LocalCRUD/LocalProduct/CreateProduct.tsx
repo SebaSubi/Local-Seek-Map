@@ -110,7 +110,7 @@ export default function CreateProduct() {
       !brand ||
       !measurement ||
       !description ||
-      // ||!image
+      // !image ||
       !productTypeId
     ) {
       Alert.alert("Error", "Por favor complete todos los campos");
@@ -174,13 +174,19 @@ export default function CreateProduct() {
       //   return;
       // }
 
+      let uploadedImageUrl: string | null = null;
+
+      if (image) {
+        uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+      }
+
       const newProduct: Product = {
         name,
         brand,
         measurement,
         description,
         productTypeId,
-        // imgURL: uploadedImageUrl,
+        imgURL: uploadedImageUrl, // Puede ser null si no se subió imagen
         dateFrom: new Date(),
       };
 
@@ -209,16 +215,10 @@ export default function CreateProduct() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView
         className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end"
-        style={{
-          paddingTop: Platform.OS === "android" ? 24 : 0,
-        }}
+        style={{ paddingTop: Platform.OS === "android" ? 24 : 0 }}
       >
         <View className="flex flex-row justify-between w-full items-center">
           <GoBackButton style="ml-2" iconColor="white" />
@@ -408,31 +408,21 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: 300, // Limita la altura del contenido dentro del ScrollView
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 15 },
   modalOption: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     width: "100%",
   },
-  modalOptionText: {
-    textAlign: "center",
-    fontSize: 16,
-  },
+  modalOptionText: { textAlign: "center", fontSize: 16 },
   closeButton: {
     marginTop: 15,
     padding: 10,
     backgroundColor: "#e1e8e8",
     borderRadius: 5,
   },
-  closeButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
+  closeButtonText: { color: "#000", fontWeight: "bold" },
   typeButton: {
     marginTop: 20,
     paddingVertical: 15, // Aumenta el padding vertical

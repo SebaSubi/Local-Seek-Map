@@ -76,7 +76,7 @@ export default function CreateProduct() {
       !brand ||
       !measurement ||
       !description ||
-      !image ||
+      // !image ||
       !productTypeId
     ) {
       Alert.alert("Error", "Por favor complete todos los campos");
@@ -139,15 +139,25 @@ export default function CreateProduct() {
       //   return;
       // }
 
-      console.log("Imagen antes de subir:", image);
+      // console.log("Imagen antes de subir:", image);
 
-      const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+      // const uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
 
-      console.log("URL de imagen subida:", uploadedImageUrl);
+      // console.log("URL de imagen subida:", uploadedImageUrl);
 
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen");
-        return;
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen");
+      //   return;
+      // }
+
+      let uploadedImageUrl: string | null = null;
+
+      try {
+        if (image) {
+          uploadedImageUrl = await uploadImageToCloudinaryProducts(image);
+        }
+      } catch (e) {
+        console.warn("Error subiendo la imagen:", e);
       }
 
       const newProduct: Product = {
@@ -156,7 +166,7 @@ export default function CreateProduct() {
         measurement,
         description,
         productTypeId,
-        imgURL: uploadedImageUrl,
+        imgURL: uploadedImageUrl, // puede ser null
         dateFrom: new Date(),
       };
 
@@ -309,9 +319,7 @@ export default function CreateProduct() {
         }}
       >
         <Stack.Screen
-          options={{
-            header: () => <Header title="Crear Producto" />,
-          }}
+          options={{ header: () => <Header title="Crear Producto" /> }}
         />
         {nameError === "" ? null : (
           <View className="w-full flex items-start ml-28">
@@ -447,31 +455,21 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: 300, // Limita la altura del contenido dentro del ScrollView
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 15 },
   modalOption: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     width: "100%",
   },
-  modalOptionText: {
-    textAlign: "center",
-    fontSize: 16,
-  },
+  modalOptionText: { textAlign: "center", fontSize: 16 },
   closeButton: {
     marginTop: 15,
     padding: 10,
     backgroundColor: "#e1e8e8",
     borderRadius: 5,
   },
-  closeButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
+  closeButtonText: { color: "#000", fontWeight: "bold" },
   typeButton: {
     marginTop: 20,
     paddingVertical: 15, // Aumenta el padding vertical

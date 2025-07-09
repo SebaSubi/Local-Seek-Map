@@ -125,9 +125,7 @@ export const uploadImageToCloudinaryProducts = async (
       {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
         // eslint-disable-next-line prettier/prettier
       }
     );
@@ -207,7 +205,7 @@ export const uploadImageToCloudinaryProducts = async (
 //   const uploadPreset = "products_test";
 
 //   try {
-//     // 🔄 Convertir la imagen a Base64
+//     // Convertir la imagen a Base64
 //     const base64 = await FileSystem.readAsStringAsync(imageUri, {
 //       encoding: FileSystem.EncodingType.Base64,
 //     });
