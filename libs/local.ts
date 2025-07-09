@@ -210,13 +210,10 @@ export async function updateLocal(id: string, local: Local) {
       body: JSON.stringify(local),
     });
 
-    console.log("Response Status:", response.status);
-    console.log("Response Headers:", response.headers);
-
     if (!response.ok) {
       const errorText = await response.text();
       console.log("Error Response Body:", errorText);
-      Alert.alert("Error", `Failed to update local: ${response.status}`);
+      Alert.alert("Error", `Error al alctualizar el local: ${response.status}`);
       return;
     } else {
       Alert.alert("Local actualizado con éxito");
@@ -257,7 +254,7 @@ export async function deleteLocal(id: string) {
 const API_URL_2 =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/store"
-    : "http://localhost:3000/store";
+    : "http://localhost:3000";
 
 export async function createLocalAndAddOwner(local: Local, userId: string) {
   try {
@@ -269,8 +266,6 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
       `${API_URL_2}/auth-v2/store_owner/craete-and-add-store`,
       payload
     );
-
-    // console.log(JSON.stringify(local));
 
     if (!response.status) {
       Alert.alert("Error", "Failed to create Local");

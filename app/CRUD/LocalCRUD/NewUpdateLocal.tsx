@@ -5,13 +5,24 @@ import { useEffect, useRef, useState } from "react";
 import { checkLocalName, updateLocal } from "../../../libs/local";
 import { Local } from "../../../schema/GeneralSchema";
 import { verifyUrl } from "./CreateLocal";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, router, useLocalSearchParams } from "expo-router";
 import GoBackButton from "../../../components/GoBackButton";
 import { colors } from "../../../constants/colors";
 import { useLocalIdStore } from "../../../libs/localZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+type error =
+  | "name"
+  | "location"
+  | "whatsapp"
+  | "instagram"
+  | "facebook"
+  | "webpage"
+  | "address"
+  | "required"
+  | "";
 
 export default function UpdateLocal() {
   // const { id, name, location, wpp, instagram, facebook, webpage, image } =
@@ -50,18 +61,16 @@ export default function UpdateLocal() {
     setValue: (value: string) => void;
   } | null>(null);
   //errorHandlers
-  const [nameError, setNameError] = useState("");
-  const [addressError, setAddressError] = useState(""); //TODO: add the address error
-  const [locationError, setLocationError] = useState("");
-  const [whatsappError, setWhatsappError] = useState("");
-  const [instagramError, setInstagramError] = useState("");
-  const [facebookError, setFacebookError] = useState("");
-  const [webpageError, setWebpageError] = useState("");
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
   const [image, setImage] = useState<string | null>(null);
 
   const insets = useSafeAreaInsets();
 
   const local = useLocalIdStore((state) => state.local);
+  const setLocal = useLocalIdStore((state) => state.setLocal);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -118,6 +127,7 @@ export default function UpdateLocal() {
   }, []);
 
   const handlePress = async () => {
+    setError({ type: "", message: "" });
     const name = nameRef.current?.getValue();
     const location = locationRef.current?.getValue();
     const address = addressRef.current?.getValue();
@@ -128,237 +138,175 @@ export default function UpdateLocal() {
     // const image = imgURLRef.current?.getValue();
 
     if (!name || !location || !location || !address) {
-      Alert.alert("Error", "Por favor complete todos los campos obligatorios.");
+      setError({
+        type: "required",
+        message: "Por favor complete todos los campos obligatorios",
+      });
       return;
-    }
-    if (name.length < 2) {
-      setNameError("El nombre del Local requiere minimamente 2 caracteres");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (name.length < 2) {
+      setError({
+        type: "name",
+        message: "*El nombre del Local requiere minimamente 2 caracteres",
+      });
       return;
-    }
-    if (name.length >= 40) {
-      setNameError("El nombre del Local es demasiado largo");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (name.length >= 24) {
+      setError({
+        type: "name",
+        message: "*El nombre del Local es no puede superar los 24 caracteres",
+      });
       return;
-    }
-    if ((await checkLocalName(name)) === "true") {
-      setNameError("El nombre del Local ya esta en uso");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if ((await checkLocalName(name)) === "true" && local.name !== name) {
+      setError({
+        type: "name",
+        message: "*El nombre del Local ya esta en uso",
+      });
       return;
-    }
+    } else if (address.length < 5) {
+      setError({
+        type: "address",
+        message: "La dirección del Local requiere minimamente 5 caracteres",
+      });
+      return;
+    } else if (address.length >= 120) {
+      setError({
+        type: "address",
+        message: "La dirección del Local no puede tener mas de 120 caracteres",
+      });
 
-    if (address.length < 5) {
-      setNameError("");
-      setLocationError(
-        "La ubicacion del Local requiere minimamente 5 caracteres"
-      );
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
       return;
-    }
-    if (address.length >= 120) {
-      setNameError("");
-      setLocationError("La ubicacion del Local tiene demasiados caracteres");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (
+      address &&
+      (address.includes("!") ||
+        address.includes("@") ||
+        address.includes("#") ||
+        address.includes("$") ||
+        address.includes("&") ||
+        address.includes("*"))
+    ) {
+      setError({
+        type: "address",
+        message: "La dirección del local no puede tener caracteres especiales",
+      });
       return;
-    }
-    if (location.length < 5) {
-      setNameError("");
-      setLocationError(
-        // eslint-disable-next-line prettier/prettier
-        "Las coordenadas del Local requieren minimamente 23 caracteres"
-      );
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (location.length < 10) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del Local requieren mínimamente 14 caracteres",
+      });
       return;
-    }
-    if (location.length >= 120) {
-      setNameError("");
-      setLocationError("Las coordenadas del Local tiene demasiados caracteres");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (location.length >= 60) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del Local no pueden tener mas de 60 caracteres caracteres",
+      });
       return;
-    }
-    if (whatsapp && whatsapp.length < 8) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError(
-        // eslint-disable-next-line prettier/prettier
-        "La longitud minima de un numero de Whatsapp es de 8 numeros"
-      );
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (
+      location &&
+      (location.includes("!") ||
+        location.includes("@") ||
+        location.includes("#") ||
+        location.includes("$") ||
+        location.includes("&") ||
+        location.includes("*"))
+    ) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del local no puede tener caracteres especiales",
+      });
       return;
-    }
-    if (whatsapp && whatsapp.length > 18) {
+    } else if (whatsapp && whatsapp.length < 8) {
+      setError({
+        type: "whatsapp",
+        message: "La longitud mínima de un número de Whatsapp es de 8 números",
+      });
+      return;
+    } else if (whatsapp && whatsapp.length > 18) {
       //checkear esto y agregar que wpp no pueda ser negativo.
-      setNameError("");
-      setLocationError("");
-      setWhatsappError(
-        // eslint-disable-next-line prettier/prettier
-        "La longitud maxima de un numero de Whatsapp es de 18 numeros"
-      );
-      setInstagramError("");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+      setError({
+        type: "whatsapp",
+        message: "La longitud máxima de un número de Whatsapp es de 18 números",
+      });
       return;
-    }
-    if (instagram && instagram.length < 1) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError(
-        // eslint-disable-next-line prettier/prettier
-        "La longitud minima de un usuario de instagram es de 1 caracter"
-      );
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (instagram && instagram.length >= 30) {
+      setError({
+        type: "instagram",
+        message:
+          "La longitud máxima de un usuario de instagram es de 30 caracteres",
+      });
       return;
-    }
-    if (instagram && instagram.length >= 30) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError(
-        // eslint-disable-next-line prettier/prettier
-        "La longitud maxima de un usuario de instagram es de 30 caracteres"
-      );
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (instagram && instagram.includes(",")) {
+      setError({
+        type: "instagram",
+        message: "Un usuario de instagram no puede tener comas ','",
+      });
       return;
-    }
-    if (instagram && instagram.includes(",")) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("un usuario de instagram no puede tener comas ','");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (
+      instagram &&
+      instagram.length !== instagram.replace(/\s+/g, "").length
+    ) {
+      setError({
+        type: "instagram",
+        message: "Un usuario de instagram no puede tener espacios",
+      });
       return;
-    }
-    if (instagram && instagram.includes(" ")) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("un usuario de instagram no puede tener espacios");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (
+      instagram &&
+      (instagram.includes("__") || instagram.includes(".."))
+    ) {
+      setError({
+        type: "instagram",
+        message: "Un usuario de instagram no puede incluir esos caracteres",
+      });
       return;
-    }
-    if (instagram && (instagram.includes("__") || instagram.includes(".."))) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("un usuario de instagram no puede tener este caracter");
-      setFacebookError("");
-      setWebpageError("");
-      setAddressError("");
+    } else if (facebook && facebook.length < 5) {
+      setError({
+        type: "facebook",
+        message: "Un usuario de Facebook debe tener como minimo 5 caracteres",
+      });
       return;
-    }
-    // if (facebook && facebook.length < 5) {
-    //   setNameError("");
-    //   setLocationError("");
-    //   setWhatsappError("");
-    //   setInstagramError("");
-    //   setFacebookError(
-    //     // eslint-disable-next-line prettier/prettier
-    //     "un usuario de Facebook debe tener como minimo 5 caracteres"
-    //   );
-    //   setWebpageError("");
-    //   setAddressError("");
-    //   return;
-    // }
-    if (facebook && facebook.length > 50) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError(
-        // eslint-disable-next-line prettier/prettier
-        "un usuario de Facebook debe tener como maximo 50 caracteres"
-      );
-      setWebpageError("");
-      setAddressError("");
+    } else if (facebook && facebook.length > 50) {
+      setError({
+        type: "facebook",
+        message: "Un usuario de Facebook debe tener como máximo 50 caracteres",
+      });
       return;
-    }
-    if (
+    } else if (
       facebook &&
       (facebook.includes("-") ||
         facebook.includes("@") ||
         facebook.includes("#") ||
         facebook.includes("$"))
     ) {
-      setNameError("");
-      setLocationError("");
-      setWhatsappError("");
-      setInstagramError("");
-      setFacebookError("Un usuario de Facebook no permite estos caracteres");
-      setWebpageError("");
-      setAddressError("");
+      setError({
+        type: "facebook",
+        message: "Un usuario de Facebook no permite estos caracteres",
+      });
+
       return;
     }
-    // if ((webpage && !verifyUrl(webpage)) || !verifyUrl(`https://${webpage}`)) {
-    //   setNameError("");
-    //   setLocationError("");
-    //   setWhatsappError("");
-    //   setInstagramError("");
-    //   setFacebookError("");
-    //   setWebpageError("URL no valida");
+    if (webpage && !verifyUrl(webpage)) {
+      setError({ type: "webpage", message: "URL no valida" });
+      return;
+    }
+
+    // if (!image) {
+    //   Alert.alert(
+    //     "Error",
+    //     "Por favor, seleccione una imagen para el producto."
+    //   );
     //   return;
     // }
 
-    console.log("image:", image);
-
-    if (!image) {
-      Alert.alert(
-        "Error",
-        "Por favor, seleccione una imagen para el producto."
-      );
-      return;
-    }
-
     // console.log("Image from ref:", imgURLRef.current?.getValue());
 
-    const uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
-    if (!uploadedImageUrl) {
-      Alert.alert("Error", "No se pudo cargar la imagen");
-      return;
-    }
+    // const uploadedImageUrl = await uploadImageToCloudinaryLocals(""); //Esto esta mal, hay que arreglarlo
+    // if (!uploadedImageUrl) {
+    //   Alert.alert("Error", "No se pudo cargar la imagen");
+    //   return;
+    // }
 
     // const newLocal: Local = {
     const newLocal: Local = {
@@ -369,13 +317,16 @@ export default function UpdateLocal() {
       instagram,
       facebook,
       webpage,
-      imgURL: uploadedImageUrl,
+      imgURL: "",
       dateFrom: new Date(),
     };
 
     if (local.id) {
-      await updateLocal(local.id, newLocal);
-      Alert.alert("Actualizando...", "Actualizando local");
+      const response = await updateLocal(local.id, newLocal);
+      if (response) {
+        setLocal(response);
+        router.back();
+      }
     }
   };
 
@@ -405,90 +356,100 @@ export default function UpdateLocal() {
           alignItems: "center",
         }}
       >
-        {nameError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{nameError}</Text>
-          </View>
-        )}
+        {error.type === "required" ? (
+          <Text className="mt-5 mb-[-15px] text-red-800">{error.message}</Text>
+        ) : null}
+
         <BasicTextInput
           placeholder="Nombre del Local"
           inputType="text"
           title="Nuevo Nombre: "
-          textStyle="mt-4"
+          textStyle={`mt-4 ${error.type === "required" || error.type === "name" ? " text-red-800" : ""}`}
           ref={nameRef}
         />
-        {addressError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{addressError}</Text>
+        {error.type === "name" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
           </View>
-        )}
+        ) : null}
         <BasicTextInput
-          placeholder="Ubicacion de Local"
+          placeholder="Dirección de Local"
           inputType="text"
-          title="Nueva Ubicación del Local"
-          textStyle="mt-4"
+          title="Nueva Dirección del Local"
+          textStyle={`mt-4 ${error.type === "required" || error.type === "address" ? " text-red-800" : ""}`}
           ref={addressRef}
         />
-        {locationError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{locationError}</Text>
+
+        {error.type === "address" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
           </View>
-        )}
+        ) : null}
         <BasicTextInput
           placeholder="Coordenadas de Local"
           inputType="text"
           title="Coordenadas del Local"
-          textStyle="mt-4"
+          textStyle={`mt-4 ${error.type === "required" || error.type === "location" ? " text-red-800" : ""}`}
           ref={locationRef}
         />
-        {whatsappError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{whatsappError}</Text>
+
+        {error.type === "location" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
           </View>
-        )}
+        ) : null}
         <BasicTextInput
           placeholder="Numero de WhatsApp"
           inputType="number"
           title="Nuevo Número: "
-          textStyle="mt-4"
+          textStyle={`mt-4 ${error.type === "whatsapp" ? " text-red-800" : ""}`}
           ref={wppNumberRef}
         />
-        {instagramError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{instagramError}</Text>
+
+        {error.type === "whatsapp" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
           </View>
-        )}
+        ) : null}
         <BasicTextInput
           placeholder="Instagram"
           inputType="text"
           title="Nuevo @Instagram: "
-          textStyle="mt-4"
+          textStyle={`mt-4 ${error.type === "instagram" ? " text-red-800" : ""}`}
           ref={instagramRef}
         />
-        {facebookError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{facebookError}</Text>
+
+        {error.type === "instagram" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
           </View>
-        )}
+        ) : null}
         <BasicTextInput
           placeholder="Nuevo Facebook"
           inputType="text"
           title="Nuevo @Facebook: "
-          textStyle="mt-4"
+          textStyle={`mt-4 ${error.type === "facebook" ? " text-red-800" : ""}`}
           ref={facebookRef}
         />
-        {webpageError === "" ? null : (
-          <View className="w-full flex items-start ml-28">
-            <Text className="text-red-800">{webpageError}</Text>
+
+        {error.type === "facebook" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
           </View>
-        )}
+        ) : null}
         <BasicTextInput
           placeholder="Sitio Web"
           inputType="text"
           title="Nuevo URL: "
-          textStyle="mt-4"
+          textStyle={`mt-4 ${error.type === "webpage" ? " text-red-800" : ""}`}
           ref={paginaWebRef}
         />
+
+        {error.type === "webpage" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.message}</Text>
+          </View>
+        ) : null}
 
         <View style={{ marginTop: 20 }}>
           <Button title="Seleccionar Imagen" onPress={handleImagePicker} />

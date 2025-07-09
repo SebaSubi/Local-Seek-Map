@@ -32,12 +32,12 @@ export default function ReadSchedule() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-row justify-between w-full items-center mb-2">
-        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+      <View className="flex flex-row justify-between w-full items-center">
+        <GoBackButton style="ml-2" iconColor="white" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
-          {`Leer Horarios ${name === undefined ? "" : (name as string)}`}
+          Actualizar/Borrar Horarios
         </Text>
-        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        <GoBackButton style="ml-2 opacity-0" iconColor="white" />
       </View>
       <View className="bg-white h-[89%] w-full rounded-3xl flex items-center overflow-hidden">
         {loading ? (

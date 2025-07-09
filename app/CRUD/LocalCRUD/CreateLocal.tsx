@@ -54,7 +54,7 @@ export default function CreateLocal() {
   const instagramRef = useRef<any>(null);
   const facebookRef = useRef<any>(null);
   const webpageRef = useRef<any>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  // const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [coordinatesInfo, setCoordinatesInfo] = useState<boolean>(false);
   const [image, setImage] = useState<string | null>(null);
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
@@ -150,51 +150,60 @@ export default function CreateLocal() {
         type: "address",
         message: "La dirección del local no puede tener caracteres especiales",
       });
+      return;
     } else if (location.length < 10) {
       setError({
         type: "location",
         message:
-          "Las coordenadas del Local requieren mínimamente 10 caracteres",
+          "Las coordenadas del Local requieren mínimamente 14 caracteres",
       });
       return;
-    }
-    if (location.length >= 120) {
+    } else if (location.length >= 60) {
       setError({
         type: "location",
-        message: "Las coordenadas del Local tiene demasiados caracteres",
+        message:
+          "Las coordenadas del Local no pueden tener mas de 60 caracteres caracteres",
+      });
+      return;
+    } else if (
+      location &&
+      (location.includes("!") ||
+        location.includes("@") ||
+        location.includes("#") ||
+        location.includes("$") ||
+        location.includes("&") ||
+        location.includes("*"))
+    ) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del local no puede tener caracteres especiales",
       });
       return;
     } else if (whatsapp && whatsapp.length < 8) {
       setError({
         type: "whatsapp",
-        message: "La longitud minima de un numero de Whatsapp es de 8 numeros",
+        message: "La longitud mínima de un número de Whatsapp es de 8 números",
       });
       return;
     } else if (whatsapp && whatsapp.length > 18) {
       //checkear esto y agregar que wpp no pueda ser negativo.
       setError({
         type: "whatsapp",
-        message: "La longitud maxima de un numero de Whatsapp es de 18 numeros",
-      });
-      return;
-    } else if (instagram && instagram.length < 1) {
-      setError({
-        type: "instagram",
-        message:
-          "La longitud minima de un usuario de instagram es de 1 caracter",
+        message: "La longitud máxima de un número de Whatsapp es de 18 números",
       });
       return;
     } else if (instagram && instagram.length >= 30) {
       setError({
         type: "instagram",
         message:
-          "La longitud maxima de un usuario de instagram es de 30 caracteres",
+          "La longitud máxima de un usuario de instagram es de 30 caracteres",
       });
       return;
     } else if (instagram && instagram.includes(",")) {
       setError({
         type: "instagram",
-        message: "un usuario de instagram no puede tener comas ','",
+        message: "Un usuario de instagram no puede tener comas ','",
       });
       return;
     } else if (
@@ -203,7 +212,7 @@ export default function CreateLocal() {
     ) {
       setError({
         type: "instagram",
-        message: "un usuario de instagram no puede tener espacios",
+        message: "Un usuario de instagram no puede tener espacios",
       });
       return;
     } else if (
@@ -212,19 +221,19 @@ export default function CreateLocal() {
     ) {
       setError({
         type: "instagram",
-        message: "un usuario de instagram no puede tener este caracter",
+        message: "Un usuario de instagram no puede incluir esos caracteres",
       });
       return;
     } else if (facebook && facebook.length < 5) {
       setError({
         type: "facebook",
-        message: "un usuario de Facebook debe tener como minimo 5 caracteres",
+        message: "Un usuario de Facebook debe tener como minimo 5 caracteres",
       });
       return;
     } else if (facebook && facebook.length > 50) {
       setError({
         type: "facebook",
-        message: "un usuario de Facebook debe tener como maximo 50 caracteres",
+        message: "Un usuario de Facebook debe tener como máximo 50 caracteres",
       });
       return;
     } else if (

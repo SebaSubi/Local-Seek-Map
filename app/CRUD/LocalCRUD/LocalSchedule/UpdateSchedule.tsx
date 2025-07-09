@@ -25,12 +25,25 @@ import {
 import BasicWarning from "../../../../components/BasicWarning";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+type error =
+  | "day"
+  | "firstEnd"
+  | "secondStart"
+  | "secondEnd"
+  | "required"
+  | "thirdStart"
+  | "thirdFinish"
+  | "";
+
 export default function UpdateSchedule() {
   const { id } = useLocalSearchParams();
   const [schedule, setSchedule] = useState<LocalServiceSchedule>();
   const [loaded, setLoaded] = useState(false);
-  const [errorModal, setErrorModal] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
+
   const navigation = useNavigation();
   const insents = useSafeAreaInsets();
 
@@ -117,21 +130,20 @@ export default function UpdateSchedule() {
   const handleCreate = () => {
     const localSchedule = createNewSchedule();
 
-    const validate = FirstShiftInputValidation(
-      FirstShiftStartRef.current?.getTime(),
-      FirstShiftFinishRef.current?.getTime()
-    );
-    if (validate !== "Correct") {
-      setError(validate);
-      setErrorModal(true);
-      return;
-    }
+    // const validate = FirstShiftInputValidation(
+    //   FirstShiftStartRef.current?.getTime(),
+    //   FirstShiftFinishRef.current?.getTime()
+    // );
+    // if (validate !== "Correct") {
+    //   setError(validate);
+    //   setErrorModal(true);
+    //   return;
+    // }
 
-    if (scheduleInputValidation(localSchedule) !== "Correct") {
-      setError(scheduleInputValidation(localSchedule) as string);
-      setErrorModal(true);
+    if (scheduleInputValidation(localSchedule).type !== "") {
+      setError(scheduleInputValidation(localSchedule));
     } else {
-      handleSubmit();
+      handleSubmit(localSchedule);
     }
   };
 
@@ -198,8 +210,7 @@ export default function UpdateSchedule() {
     return newSchedule;
   };
 
-  async function handleSubmit() {
-    const newSchedule = createNewSchedule();
+  async function handleSubmit(newSchedule: LocalSchedule) {
     if (JSON.stringify(schedule) === JSON.stringify(newSchedule)) return;
     updateSchedule(id as string, newSchedule);
     Alert.alert("Exito", "Horario actualizado con exito");
@@ -222,7 +233,7 @@ export default function UpdateSchedule() {
         <View className="flex flex-row justify-between w-full items-center">
           <GoBackButton style="ml-2" iconColor="white" />
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
-            {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
+            {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
           </Text>
           <GoBackButton style="opacity-0" />
         </View>
@@ -240,22 +251,50 @@ export default function UpdateSchedule() {
             <Text className="mt-1 text-sm font-light">
               *Los campos que no cambie o deje en vacio quedaran sin modificar
             </Text>
+            {error.type === "required" ? (
+              <Text className="text-red-800">{error.message}</Text>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Primer Turno:"
+              textStyle={`mt-2 ${error.type === "required" ? " text-red-800" : ""}`}
               ref={FirstShiftStartRef}
             />
             <TimeSelect
               text="Hora de Cerrada Primer Turno:"
+              textStyle={`mt-2 ${error.type === "required" || error.type === "firstEnd" ? " text-red-800" : ""}`}
               ref={FirstShiftFinishRef}
             />
+            {error.type === "firstEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Segundo Turno:"
+              textStyle={`mt-2 ${error.type === "secondStart" ? " text-red-800" : ""}`}
               ref={SecondShiftStartRef}
             />
+            {error.type === "secondStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Segundo Turno:"
+              textStyle={`mt-2 ${error.type === "secondEnd" ? " text-red-800" : ""}`}
               ref={SecondShiftFinishRef}
             />
+            {error.type === "secondEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
               *Los horarios nocturnos pueden ser aquellos que empiezan en un día
               y terminan en otro
@@ -263,11 +302,27 @@ export default function UpdateSchedule() {
             <TimeSelect
               text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
             />
+            {error.type === "thirdStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
             />
+            {error.type === "thirdFinish" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
 
             <View
               className="flex flex-col justify-center items-center w-3/4 mt-3"
@@ -284,30 +339,6 @@ export default function UpdateSchedule() {
             </View>
           </View>
         </ScrollView>
-        {error && (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={errorModal}
-            onRequestClose={() => setErrorModal(false)}
-          >
-            <View
-              className="w-full h-full flex items-center justify-center"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-            >
-              <BasicWarning
-                text={error}
-                cancelButton={true}
-                buttonLeft="Ok"
-                onPressLeft={() => {
-                  setError("");
-                  setErrorModal(false);
-                }}
-                style="absolute"
-              />
-            </View>
-          </Modal>
-        )}
       </View>
     </>
   ) : (

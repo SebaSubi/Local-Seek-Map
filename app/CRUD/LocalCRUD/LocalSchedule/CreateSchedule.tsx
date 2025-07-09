@@ -18,10 +18,22 @@ import GoBackButton from "../../../../components/GoBackButton";
 import { useLocalScheduleIdStore } from "../../../../libs/scheduleZustang";
 import { useLocalIdStore } from "../../../../libs/localZustang";
 
+type error =
+  | "day"
+  | "firstEnd"
+  | "secondStart"
+  | "secondEnd"
+  | "required"
+  | "thirdStart"
+  | "thirdFinish"
+  | "";
+
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
-  const [error, setError] = useState("");
-  const [errorModal, setErrorModal] = useState(false);
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
   const [clearTimes, setClearTimes] = useState(false);
 
   const local = useLocalIdStore((state) => state.local);
@@ -40,6 +52,15 @@ export default function CreateProduct() {
   const ThirdShiftStartRef = useRef<any>(null);
   const ThirdShiftFinishRef = useRef<any>(null);
 
+  function validateSchedule(localSchedule: LocalSchedule) {
+    if (scheduleInputValidation(localSchedule).type !== "") {
+      setError(scheduleInputValidation(localSchedule));
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   const handleCreate = async () => {
     const schedulest = await getSchedulesByLocalId(local.id!);
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
@@ -49,7 +70,7 @@ export default function CreateProduct() {
       schedulest.forEach((schedule: LocalSchedule) => {
         if (schedule.dayNumber === dayNumber) {
           setWarning(true);
-          setScheduleId(schedule.id!); //Idk why this throws an undefined error if i dont put the !
+          setScheduleId(schedule.id!);
           localWarning = true;
         }
       });
@@ -60,13 +81,8 @@ export default function CreateProduct() {
     }
 
     const localSchedule = createNewSchedule();
-
-    if (scheduleInputValidation(localSchedule) !== "Correct") {
-      setError(scheduleInputValidation(localSchedule) as string);
-      setErrorModal(true);
-    } else {
-      handleSubmit();
-    }
+    const create = validateSchedule(localSchedule);
+    create ? handleSubmit(localSchedule) : null;
   };
 
   function checkSchedule(hour: Date): string | null {
@@ -152,19 +168,24 @@ export default function CreateProduct() {
     return newSchedule;
   }
 
-  async function handleSubmit() {
-    const newSchedule = createNewSchedule();
-    createSchedule(newSchedule);
+  async function handleSubmit(schedule: LocalSchedule) {
+    createSchedule(schedule);
     setClearTimes(!clearTimes);
     dayNumberRef.current.setValue("");
   }
 
   async function handleUpdate() {
     const newSchedule = createNewSchedule();
-    updateSchedule(scheduleId, newSchedule);
-    setWarning(false);
-    setClearTimes(!clearTimes);
-    dayNumberRef.current.setValue("");
+    const create = validateSchedule(newSchedule);
+    if (create) {
+      updateSchedule(scheduleId, newSchedule);
+      setWarning(false);
+      setClearTimes(!clearTimes);
+      dayNumberRef.current.setValue("");
+    } else {
+      setWarning(false);
+      return;
+    }
   }
 
   return (
@@ -189,34 +210,69 @@ export default function CreateProduct() {
           <View
             className={`flex justify-center items-center bg-white h-full w-full mb-8`}
           >
+            {error.type === "required" ? (
+              <Text className="text-red-800">{error.message}</Text>
+            ) : null}
             <BasicTextInput
               inputType="text"
               value=""
               placeholder="Numero de Dia"
               title="Dia de la semana (1 = Domingo):"
-              textStyle="mt-4"
+              textStyle={`mt-2 ${error.type === "required" || error.type === "day" ? " text-red-800" : ""}`}
               ref={dayNumberRef}
             />
+            {error.type === "day" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Primer Turno:"
+              textStyle={`mt-2 ${error.type === "required" ? " text-red-800" : ""}`}
               ref={FirstShiftStartRef}
               clear={clearTimes}
             />
             <TimeSelect
               text="Hora de Cerrada Primer Turno:"
+              textStyle={`mt-2 ${error.type === "required" || error.type === "firstEnd" ? " text-red-800" : ""}`}
               ref={FirstShiftFinishRef}
               clear={clearTimes}
             />
+            {error.type === "firstEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Segundo Turno:"
+              textStyle={`mt-2 ${error.type === "secondStart" ? " text-red-800" : ""}`}
               ref={SecondShiftStartRef}
               clear={clearTimes}
             />
+            {error.type === "secondStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Segundo Turno:"
+              textStyle={`mt-2 ${error.type === "secondEnd" ? " text-red-800" : ""}`}
               ref={SecondShiftFinishRef}
               clear={clearTimes}
             />
+            {error.type === "secondEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
               *Los horarios nocturnos pueden ser aquellos que empiezan en un día
               y terminan en otro
@@ -224,13 +280,29 @@ export default function CreateProduct() {
             <TimeSelect
               text="Hora de Apertura Nocturno:"
               ref={ThirdShiftStartRef}
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
               clear={clearTimes}
             />
+            {error.type === "thirdStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
               clear={clearTimes}
             />
+            {error.type === "thirdFinish" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <View className="flex flex-col justify-center items-center w-3/4 mt-3">
               <BasicButton
                 logo={<CreateLogo />}
@@ -271,7 +343,7 @@ export default function CreateProduct() {
           </Modal>
           // </View>
         )}
-        {error && (
+        {/* {error && (
           <Modal
             animationType="slide"
             transparent={true}
@@ -294,7 +366,7 @@ export default function CreateProduct() {
               />
             </View>
           </Modal>
-        )}
+        )} */}
       </View>
     </View>
   );
