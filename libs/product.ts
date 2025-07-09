@@ -197,11 +197,13 @@ export async function deleteProduct(id: string) {
 //     ? "http://10.0.2.2:3000/local-product-categories"
 //     : "http://localhost:3000/local-product-categories";
 
-const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}/local-product`;
+const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}`;
 
 export async function getLocalProductCategories(localId: string) {
   try {
-    const response = await fetch(`${API_URL_2}/lp-categories/${localId}`);
+    const response = await fetch(
+      `${API_URL_2}/local-product-categories/lp-categories/${localId}`
+    );
 
     if (!response.ok) {
       console.error("Error getting local product categories");
@@ -240,9 +242,9 @@ export async function getLocalProductCategoriesByName(
   try {
     // const response = await fetch(`${API_URL_2}/local/search-name?name=${name}`);
     const response = await fetch(
-      `${API_URL_2}/search-name/${localId}?name=${name}`
+      `${API_URL_2}/local-product-categories/search-name/${localId}?name=${name}`
     );
-
+    console.log(response);
     if (!response.ok) {
       console.error("Error getting local product categories by name");
       return [];
@@ -266,13 +268,16 @@ export async function createLocalProductCategory(
   localProductCategory: LocalProductCategory
 ) {
   try {
-    const response = await fetch(`${API_URL_2}/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(localProductCategory),
-    });
+    const response = await fetch(
+      `${API_URL_2}/local-product-categories/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(localProductCategory),
+      }
+    );
 
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Local Product Category");
@@ -281,7 +286,7 @@ export async function createLocalProductCategory(
       return data;
     }
   } catch (error) {
-    console.log("Error: ", error);
+    console.log("THis? Error: ", error);
     Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }
@@ -289,7 +294,7 @@ export async function createLocalProductCategory(
 export async function getLPByNameAndCategory(category: string, name: string) {
   try {
     const response = await fetch(
-      `${API_URL}/lp-category-name-search/${category}?name=${name}`
+      `${API_URL}/local-product-categories/lp-category-name-search/${category}?name=${name}`
     );
 
     if (!response.ok) {

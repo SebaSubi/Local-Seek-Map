@@ -13,6 +13,7 @@ const BasicTextInput = forwardRef(
       textSecure = false,
       info,
       infoPress,
+      maxLength,
     }: {
       placeholder: string;
       inputType: "text" | "number";
@@ -21,6 +22,7 @@ const BasicTextInput = forwardRef(
       value?: string;
       textSecure?: boolean;
       info?: boolean;
+      maxLength?: number;
       infoPress?: () => void;
     },
     ref: React.ForwardedRef<{
@@ -58,6 +60,7 @@ const BasicTextInput = forwardRef(
             keyboardType={inputType === "number" ? "numeric" : "default"}
             secureTextEntry={textSecure}
             style={{ overflow: "hidden" }}
+            maxLength={maxLength}
           />
           {info && (
             <Pressable className="ml-1" onPress={infoPress}>

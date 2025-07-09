@@ -211,7 +211,7 @@ export async function createLocalProduct(localProduct: LocalProduct) {
       return data;
     }
   } catch (error) {
-    console.log("Error: ", error);
+    console.log("This Error: ", error);
     Alert.alert("Error: ", (error as any).message.data.msg);
   }
 }

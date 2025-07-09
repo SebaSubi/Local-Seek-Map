@@ -24,7 +24,7 @@ import {
   getLocalProductSubCategoriesByName,
   searchProductsByName,
 } from "../../../../libs/product";
-import { Stack, useRouter } from "expo-router";
+import { Stack, router, useRouter } from "expo-router";
 import BasicTextInput from "../../../../components/BasicTextInput";
 import BigTextInput from "../../../../components/BigTextInput";
 import BasicButton from "../../../../components/BasicButton";
@@ -41,6 +41,14 @@ import { getPlaceholders, isNumeric } from "../../../../libs/libs";
 import BasicWarning from "../../../../components/BasicWarning";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../../constants/colors";
+
+type error =
+  | "category"
+  | "subcategory"
+  | "description"
+  | "product-category"
+  | "product sub-category"
+  | "";
 
 export default function AddProduct() {
   const priceRef = useRef<any>(null);
@@ -70,12 +78,12 @@ export default function AddProduct() {
     productTypeId: "",
   });
   const [localPrducts, setLocalProducts] = useState<LocalProduct[]>([]);
-  const [priceError, setPriceError] = useState(false);
+
   const [error, setError] = useState<{
-    state: boolean;
+    type: error;
     text: string;
   }>({
-    state: false,
+    type: "",
     text: "",
   });
 
@@ -120,8 +128,16 @@ export default function AddProduct() {
       reuseCat = productCategory?.id!;
     }
 
+    if (localProductDescription && localProductDescription.length > 350) {
+      setError({
+        type: "description",
+        text: "*La descripción de un producto no puede tener mas de 350 caracteres",
+      });
+      return;
+    }
+
     try {
-      const uploadedImageUrl = "";
+      // const uploadedImageUrl = "";
       // await uploadImageToCloudinaryProducts(image);
       // if (!uploadedImageUrl) {
       //   Alert.alert("Error", "No se pudo cargar la imagen");
@@ -132,12 +148,6 @@ export default function AddProduct() {
         price = null;
       } else {
         price = parseFloat(price);
-      }
-
-      if (!isNumeric(price) && price !== null) {
-        Alert.alert("Error", "El precio solo puede tener numeros");
-        setPriceError(true);
-        return;
       }
 
       const newProduct: LocalProduct = {
@@ -152,8 +162,11 @@ export default function AddProduct() {
         dateFrom: new Date(),
       };
 
+      // console.log(newProduct);
+
       await createLocalProduct(newProduct);
       Alert.alert("Éxito", "Producto creado exitosamente");
+      router.back();
       // nameRef.current.setValue("");
       // brandRef.current.setValue("");
       // measurementRef.current.setValue("");
@@ -188,17 +201,34 @@ export default function AddProduct() {
 
   async function hanldeCreateCategory() {
     const name = categoryRef.current?.getValue();
-    const productCategory = await createLocalProductCategory({ name });
-    productCategory ? setSelectedCategory(productCategory) : null;
-    setCreateCategory(false);
+    if (!name || name.length < 2) {
+      setError({
+        type: "product-category",
+        text: "*El nombre de la categoría no puede tener menos de 2 caracteres",
+      });
+    } else {
+      setError({ type: "", text: "" });
+      const productCategory = await createLocalProductCategory({ name });
+      productCategory ? setSelectedCategory(productCategory) : null;
+      setCreateCategory(false);
+      setProductCategoryModal(false);
+    }
   }
 
   async function hanldeCreateSubCategory() {
     const name = subCategoryRef.current?.getValue();
-    const productSubCategory = await createLocalProductSubCategory({ name });
-    console.log(productSubCategory);
-    productSubCategory ? setSelectedSubCategory(productSubCategory) : null;
-    setCreateSubCategory(false);
+    if (!name || name.length < 2) {
+      setError({
+        type: "product sub-category",
+        text: "*El nombre de la sub categoría no puede tener menos de 2 caracteres",
+      });
+    } else {
+      setError({ type: "", text: "" });
+      const productSubCategory = await createLocalProductSubCategory({ name });
+      productSubCategory ? setSelectedSubCategory(productSubCategory) : null;
+      setProductSubCategoryModal(false);
+      setCreateSubCategory(false);
+    }
   }
 
   useEffect(() => {
@@ -237,13 +267,17 @@ export default function AddProduct() {
           alignItems: "center",
         }}
       >
-        <Modal animationType="slide" transparent={true} visible={error.state}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={error.type === "category" || error.type === "subcategory"}
+        >
           <View className="w-full h-full flex items-center justify-center">
-            {error.state ? (
+            {error.type === "category" || error.type === "subcategory" ? (
               <BasicWarning
                 text={error.text}
                 cancelButton={true}
-                onPressLeft={() => setError({ state: false, text: "" })}
+                onPressLeft={() => setError({ type: "", text: "" })}
               />
             ) : null}
           </View>
@@ -338,18 +372,23 @@ export default function AddProduct() {
         <BasicTextInput
           inputType="number"
           placeholder="Precio"
-          textStyle={priceError ? "text-defaultOrange" : ""}
           title="Precio: "
           value=""
           ref={priceRef}
         />
         <BigTextInput
           inputType="text"
+          textStyle={error.type === "description" ? "text-red-800" : ""}
           placeholder="Descripción"
           title="Descripción: "
           value=""
           ref={subDescriptionRef}
         />
+        {error.type === "description" ? (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.text}</Text>
+          </View>
+        ) : null}
         <View className="flex flex-row items-center justify-evenly w-full h-12  mt-2">
           <Pressable className="w-6 h-12 items-center justify-center opacity-0">
             <InfoIcon color="#1a253d" />
@@ -371,7 +410,7 @@ export default function AddProduct() {
             className="w-6 h-12 items-center justify-center"
             onPress={() =>
               setError({
-                state: true,
+                type: "category",
                 text: `Esto es la categoria que desea que el producto tenga dentro de su local. El producto por default trae la categoría: "${product.type?.name}", si desea que tenga otra categoria especifica de su local, agreguela aca, sino se agregara con el valor anteriormente dicho`,
               })
             }
@@ -401,7 +440,7 @@ export default function AddProduct() {
             className="w-6 h-12 items-center justify-center"
             onPress={() =>
               setError({
-                state: true,
+                type: "subcategory",
                 text: `Esta es la sub-categoria que tendra su producto. Si, por ejemplo, su producto tiene la cateogría "comida", la sub-categoría podria ser "pasta". Este valor es completamente opcional, si no desea ponerlo, deje este campo en blanco.`,
               })
             }
@@ -421,8 +460,12 @@ export default function AddProduct() {
           >
             <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
               <BasicButton
-                text="No encunetra la categoría?"
-                onPress={() => setCreateCategory(true)}
+                text={createCategory ? "Volver" : "No encunetra la categoría?"}
+                onPress={() => {
+                  createCategory
+                    ? setCreateCategory(false)
+                    : setCreateCategory(true);
+                }}
                 background="#f8f8f8"
                 style="mt-4 mb-2"
               />
@@ -434,14 +477,21 @@ export default function AddProduct() {
                     title="Nombre de Nueva Categoría: "
                     value=""
                     ref={categoryRef}
+                    textStyle={
+                      error.type === "product-category" ? "text-red-800" : ""
+                    }
+                    maxLength={40}
                   />
+                  {error.type === "product-category" ? (
+                    <View className="w-3/4">
+                      <Text className="text-red-800">{error.text}</Text>
+                    </View>
+                  ) : null}
                   <BasicButton
                     logo={<CreateLogo />}
                     text="Crear Categoría"
                     onPress={() => {
-                      setCreateCategory(false);
                       hanldeCreateCategory();
-                      setProductCategoryModal(false);
                     }}
                     background="#f8f8f8"
                     style="mt-4"
@@ -474,6 +524,7 @@ export default function AddProduct() {
               <Pressable
                 onPress={() => {
                   setProductCategoryModal(false);
+                  setCreateCategory(false);
                 }}
                 className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
               >
@@ -507,14 +558,23 @@ export default function AddProduct() {
                     title="Nombre de Nueva Sub Categoría: "
                     value=""
                     ref={subCategoryRef}
+                    textStyle={
+                      error.type === "product sub-category"
+                        ? "text-red-800"
+                        : ""
+                    }
+                    maxLength={40}
                   />
+                  {error.type === "product sub-category" ? (
+                    <View className="w-3/4">
+                      <Text className="text-red-800">{error.text}</Text>
+                    </View>
+                  ) : null}
                   <BasicButton
                     logo={<CreateLogo />}
                     text="Crear Sub Categoría"
                     onPress={() => {
-                      setCreateSubCategory(false);
                       hanldeCreateSubCategory();
-                      setProductSubCategoryModal(false);
                     }}
                     background="#f8f8f8"
                     style="mt-4"
@@ -570,7 +630,6 @@ export default function AddProduct() {
             <GoBackButton style="opacity-0" iconColor="white" />
           </View>
         </View>
-        ;
       </ScrollView>
     </View>
   );
