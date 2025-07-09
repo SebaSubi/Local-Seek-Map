@@ -55,11 +55,9 @@ const UserDeleteModal = ({
         <View
           style={{
             width: "80%",
-            height: "45%",
+            height: "48%",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
-            borderWidth: 2,
-            borderColor: colors.primary.blue,
             justifyContent: "flex-start",
             alignItems: "center",
             padding: 5,
@@ -73,7 +71,7 @@ const UserDeleteModal = ({
           <Text className="font-bold text-3xl">Eliminar Cuenta</Text>
           <WarningIcon size={100} color="#cc0000" />
           <Text className="font-thin text-xl text-center">
-            Una vez que eliminas tu cuenta no se podra volver a recuperar
+            Una vez que eliminas tu cuenta se eliminaran tus datos cargados
           </Text>
           <Text className=" text-base text-center my-2">
             {`indroduce "${wordToCheck}" para eliminar la cuenta`}

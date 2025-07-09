@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Platform } from "react-native";
-import { Local } from "../schema/GeneralSchema";
+import { DysplayUser, Local } from "../schema/GeneralSchema";
 
 const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
 // const API_URL =
@@ -97,4 +97,13 @@ export async function getStoreOwnerRequests(userId: string) {
       userId: userId,
     },
   });
+}
+
+export async function getAllUsersBySearch(search: string = "") {
+  try {
+    const request = await axios.get(`${API_URL}/all-users?search=${search}`);
+    return request.data as DysplayUser[];
+  } catch (error) {
+    console.log("Error fetching users by search:", error);
+  }
 }

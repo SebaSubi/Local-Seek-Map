@@ -1,26 +1,26 @@
-import { View, Text, Modal, Pressable } from "react-native";
+import { View, Text, Pressable, Modal } from "react-native";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { colors } from "../../constants/colors";
 import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "../Logos";
-import BasicButton from "../BasicButton";
+import { colors } from "../../constants/colors";
+import { DysplayUser } from "../../schema/GeneralSchema";
+import UserDeleteModal from "./UserDeleteModal";
 import BasicTextInput from "../BasicTextInput";
+import BasicButton from "../BasicButton";
+import { AuthUser, useAuth } from "../../app/context/AuthContext";
 import { checkEmail, checkUsername, EditUser } from "../../libs/user";
 import { validateEmail } from "../Register";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AuthUser } from "../../app/context/AuthContext";
-import UserDeleteModal from "./UserDeleteModal";
 
-const UserUpdateModal = ({
+const UserInfoModal = ({
   isVisible,
   setVisible,
   user,
-  onLogin,
 }: {
   isVisible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
-  user: AuthUser;
-  onLogin: ((email: string, password: string) => Promise<any>) | undefined;
+  user: DysplayUser;
 }) => {
+  const { onLogin } = useAuth();
+
   const email = useRef<{
     getValue: () => string;
     setValue: (value: string) => void;
@@ -45,6 +45,8 @@ const UserUpdateModal = ({
 
   const [seeDeleteModal, setSeeDeleteModal] = useState(false);
 
+  const [editType, setEditType] = useState<"user" | "local">("user");
+
   return (
     <Modal
       animationType="slide"
@@ -63,7 +65,7 @@ const UserUpdateModal = ({
         <View
           style={{
             width: "80%",
-            height: "65%",
+            height: "70%",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
             justifyContent: "flex-start",
@@ -76,124 +78,153 @@ const UserUpdateModal = ({
               <CloseCircle color="#cc0000" />
             </Pressable>
           </View>
-          <Text className="font-bold text-2xl">Editar Perfil</Text>
-          <View className="flex ml-10 w-full">
-            <View className="w-10/12 flex items-start ml-4 mt-2 h-4">
-              {emailError === "" ? null : (
-                <Text className="text-red-800">{emailError}</Text>
-              )}
-            </View>
-            <View className="w-96 flex">
-              <BasicTextInput
-                inputType="text"
-                placeholder="Email"
-                title="Email: "
-                textStyle="mt-2"
-                value={user.email}
-                ref={email}
-              />
-              <View
-                className={`w-[70%] flex items-start ml-4 mt-1 ${usernameError ? "h-8" : "h-4"}`}
-              >
-                {usernameError === "" ? null : (
-                  <Text className="text-red-800">{usernameError}</Text>
-                )}
-              </View>
-              <BasicTextInput
-                inputType="text"
-                placeholder="Nombre de Usuario"
-                title="Nombre de Usuario: "
-                textStyle="mt-1"
-                value={user.username}
-                ref={username}
-              />
-            </View>
-            <View className="w-10/12 flex items-start ml-4 mt-2 h-8 justify-end">
-              {passwordError === "" ? null : (
-                <Text className="text-red-800">{passwordError}</Text>
-              )}
-            </View>
-            <View className="flex flex-row">
-              <BasicTextInput
-                inputType="text"
-                placeholder="Contraseña"
-                title="Contraseña: "
-                textStyle=""
-                value={user.password}
-                ref={password}
-                textSecure={seePassword}
-              />
-              <Pressable
-                className="mt-9 ml-5"
-                onPress={() => setSeePassword(!seePassword)}
-              >
-                {seePassword ? <EyeOff /> : <Eye />}
-              </Pressable>
-            </View>
-            <View className="flex flex-row">
-              <BasicTextInput
-                inputType="text"
-                placeholder="Contraseña"
-                title="Repetir Contraseña: "
-                textStyle="mt-2"
-                value={user.password}
-                ref={secondPassword}
-                textSecure={seePassword}
-              />
-              <Pressable
-                className="mt-11 ml-5"
-                onPress={() => {
-                  setSeePassword(!seePassword);
-                }}
-              >
-                {seePassword ? <EyeOff /> : <Eye />}
-              </Pressable>
-            </View>
-          </View>
-          <View className={`justify-end ${usernameError ? "mt-2" : "mt-6"}`}>
+          <View className="flex-row justify-evenly w-11/12">
             <BasicButton
-              text="Guardar"
-              background={colors.primary.blue}
-              textStyle="text-white"
-              logo={
-                <View className="flex pl-2">
-                  <Save color="#fff" />
-                </View>
+              text="Usuario"
+              background={
+                editType === "user"
+                  ? colors.primary.orange
+                  : colors.primary.lightGray
               }
-              style="w-28 justify-evenly"
-              onPress={async () => {
-                const userEditPetition = await handleUserChange(
-                  email,
-                  username,
-                  password,
-                  secondPassword,
-                  setEmailError,
-                  setPasswordError,
-                  setUsernameError,
-                  user,
-                  // eslint-disable-next-line prettier/prettier
-                  onLogin
-                );
-                userEditPetition === 200 ? setVisible(false) : "";
-              }}
+              textStyle="text-black font-bold"
+              style="w-24"
+              onPress={() => setEditType("user")}
             />
-            <Pressable
-              className="flex justify-center flex-row items-center mt-4"
-              onPress={() => {
-                setSeeDeleteModal(true);
-              }}
-            >
-              <Text className="text-sm pr-1" style={{ color: "#cc0000" }}>
-                Eliminar Cuenta
-              </Text>
-              <TrashIcon size={20} color="#cc0000" />
-            </Pressable>
-            <UserDeleteModal
-              isVisible={seeDeleteModal}
-              setVisible={setSeeDeleteModal}
-              setBeforeModalVisible={setVisible}
+            <BasicButton
+              text="Locales"
+              background={
+                editType === "local"
+                  ? colors.primary.orange
+                  : colors.primary.lightGray
+              }
+              textStyle="text-black font-bold"
+              style="w-24"
+              onPress={() => setEditType("local")}
             />
           </View>
+          {editType === "user" ? (
+            <>
+              <View className="flex ml-10 w-full">
+                <View className="w-10/12 flex items-start ml-4 mt-2 h-4">
+                  {emailError === "" ? null : (
+                    <Text className="text-red-800">{emailError}</Text>
+                  )}
+                </View>
+                <View className="w-96 flex">
+                  <BasicTextInput
+                    inputType="text"
+                    placeholder="Email"
+                    title="Email: "
+                    textStyle="mt-2"
+                    value={user.email}
+                    ref={email}
+                  />
+                  <View
+                    className={`w-[70%] flex items-start ml-4 mt-1 ${usernameError ? "h-8" : "h-4"}`}
+                  >
+                    {usernameError === "" ? null : (
+                      <Text className="text-red-800">{usernameError}</Text>
+                    )}
+                  </View>
+                  <BasicTextInput
+                    inputType="text"
+                    placeholder="Nombre de Usuario"
+                    title="Nombre de Usuario: "
+                    textStyle="mt-1"
+                    value={user.name}
+                    ref={username}
+                  />
+                </View>
+                <View className="w-10/12 flex items-start ml-4 mt-2 h-8 justify-end">
+                  {passwordError === "" ? null : (
+                    <Text className="text-red-800">{passwordError}</Text>
+                  )}
+                </View>
+                <View className="flex flex-row">
+                  <BasicTextInput
+                    inputType="text"
+                    placeholder="Contraseña"
+                    title="Contraseña: "
+                    textStyle=""
+                    value={""}
+                    ref={password}
+                    textSecure={seePassword}
+                  />
+                  <Pressable
+                    className="mt-9 ml-5"
+                    onPress={() => setSeePassword(!seePassword)}
+                  >
+                    {seePassword ? <EyeOff /> : <Eye />}
+                  </Pressable>
+                </View>
+                <View className="flex flex-row">
+                  <BasicTextInput
+                    inputType="text"
+                    placeholder="Contraseña"
+                    title="Repetir Contraseña: "
+                    textStyle="mt-2"
+                    value={""}
+                    ref={secondPassword}
+                    textSecure={seePassword}
+                  />
+                  <Pressable
+                    className="mt-11 ml-5"
+                    onPress={() => {
+                      setSeePassword(!seePassword);
+                    }}
+                  >
+                    {seePassword ? <EyeOff /> : <Eye />}
+                  </Pressable>
+                </View>
+              </View>
+              <View
+                className={`justify-end ${usernameError ? "mt-2" : "mt-6"}`}
+              >
+                <BasicButton
+                  text="Guardar"
+                  background={colors.primary.blue}
+                  textStyle="text-white"
+                  logo={
+                    <View className="flex pl-2">
+                      <Save color="#fff" />
+                    </View>
+                  }
+                  style="w-28 justify-evenly"
+                  onPress={async () => {
+                    const userEditPetition = await handleUserChange(
+                      email,
+                      username,
+                      password,
+                      secondPassword,
+                      setEmailError,
+                      setPasswordError,
+                      setUsernameError,
+                      user,
+                      // eslint-disable-next-line prettier/prettier
+                      onLogin
+                    );
+                    userEditPetition === 200 ? setVisible(false) : "";
+                  }}
+                />
+                <Pressable
+                  className="flex justify-center flex-row items-center mt-4"
+                  onPress={() => {
+                    setSeeDeleteModal(true);
+                  }}
+                >
+                  <Text className="text-sm pr-1" style={{ color: "#cc0000" }}>
+                    Eliminar Cuenta
+                  </Text>
+                  <TrashIcon size={20} color="#cc0000" />
+                </Pressable>
+                <UserDeleteModal
+                  isVisible={seeDeleteModal}
+                  setVisible={setSeeDeleteModal}
+                  setBeforeModalVisible={setVisible}
+                />
+              </View>
+            </>
+          ) : null}
         </View>
       </View>
     </Modal>
@@ -216,7 +247,7 @@ export const handleUserChange = async (
   setEmailError: React.Dispatch<React.SetStateAction<string>>,
   setPasswordError: React.Dispatch<React.SetStateAction<string>>,
   setUsernameError: React.Dispatch<React.SetStateAction<string>>,
-  user: AuthUser,
+  user: DysplayUser,
   // eslint-disable-next-line prettier/prettier
   onLogin: any
 ) => {
@@ -268,7 +299,7 @@ export const handleUserChange = async (
     setEmailError("Este Email ya tiene una cuenta asociada");
     setUsernameError("");
   } else if (
-    username.current?.getValue() !== user.username &&
+    username.current?.getValue() !== user.name &&
     (validUsername === true || validUsername === "true")
   ) {
     //handle username already in use
@@ -325,4 +356,4 @@ export const handleUserChange = async (
   }
 };
 
-export default UserUpdateModal;
+export default UserInfoModal;

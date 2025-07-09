@@ -1,9 +1,15 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import UserComponent from "../../components/UserComponent";
 import { colors } from "../../constants/colors";
 import BasicButton from "../../components/BasicButton";
-import { Checkbox, LogOutIcon, UpdateLogo } from "../../components/Logos";
+import {
+  Checkbox,
+  LogOutIcon,
+  ReloadIcon,
+  Servicio,
+  UpdateLogo,
+} from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
 import UserUpdateModal from "../../components/modals/UserUpdateModal";
 import { getUserLocals, UserLocal } from "../../libs/user";
@@ -12,6 +18,7 @@ import EditLocalContainer from "../../components/EditLocalContainer";
 import UserPermissionModal from "../../components/modals/UserPermissionModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { Link } from "expo-router";
 
 export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
@@ -83,10 +90,22 @@ export default function UserScreen() {
                 text="Editar Perfil"
                 background={colors.primary.blue}
                 logo={<UpdateLogo color="#fff" />}
-                textStyle="text-white ml-2"
+                textStyle="text-white ml-2 font-bold text-base"
                 style="h-11 mb-4 justify-center"
                 onPress={() => setModalVisible(!isModalVisible)}
               />
+              {authState.user.role === Role.ADMIN ? (
+                <Link href="/CRUD/AdminCRUD" asChild>
+                  <Pressable className="h-11 mb-4 justify-center bg-black rounded-full flex-row items-center">
+                    <Servicio color="#fff" />
+                    <Text className="text-white ml-2 font-bold text-base">
+                      Controles de Administrador
+                    </Text>
+                  </Pressable>
+                </Link>
+              ) : (
+                ""
+              )}
             </>
           ) : (
             ""
@@ -94,21 +113,35 @@ export default function UserScreen() {
 
           {authState?.user?.username !== "guest" ? (
             <>
-              {authState?.user?.role !== Role.USER && locals.length >= 1 ? (
+              {authState?.user?.role !== Role.USER ? (
                 <>
-                  <Text className="text-2xl font-bold">Mi Local</Text>
-                  <View className="w-full h-[50%]">
-                    <FlatList
-                      data={locals}
-                      horizontal={false}
-                      numColumns={2}
-                      renderItem={({ item }) => (
-                        <EditLocalContainer local={item} />
-                      )}
-                      keyExtractor={(item) => item?.id!}
-                      onRefresh={() => fetchData()}
-                      // refreshing={loading}
-                      refreshing={false}
+                  {locals.length >= 1 ? (
+                    <>
+                      <Text className="text-2xl font-bold">Mi Local</Text>
+                      <View className="w-full h-[45%]">
+                        <FlatList
+                          data={locals}
+                          horizontal={false}
+                          numColumns={2}
+                          renderItem={({ item }) => (
+                            <EditLocalContainer local={item} />
+                          )}
+                          keyExtractor={(item) => item?.id!}
+                          onRefresh={() => fetchData()}
+                          // refreshing={loading}
+                          refreshing={false}
+                        />
+                      </View>
+                    </>
+                  ) : null}
+                  <View className="flex justify-center w-full items-center">
+                    <BasicButton
+                      text="Recargar"
+                      background={colors.primary.blue}
+                      textStyle="text-white font-bold ml-2"
+                      logo={<ReloadIcon color="#fff" />}
+                      style="w-28 pl-2 "
+                      onPress={() => fetchData()}
                     />
                   </View>
                 </>

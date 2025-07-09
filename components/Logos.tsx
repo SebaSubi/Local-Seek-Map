@@ -36,9 +36,9 @@ export const ProductIcon = ({ color = "black", size = 24 }) => {
   );
 };
 
-export const LocalIcon = () => {
+export const LocalIcon = ({ color = "black", size = 24 }) => {
   return (
-    <MaterialCommunityIcons name="shopping-outline" size={24} color="black" />
+    <MaterialCommunityIcons name="shopping-outline" size={size} color={color} />
   );
 };
 
@@ -50,8 +50,8 @@ export const ServiceIcon = () => {
   return <MaterialCommunityIcons name="soccer" size={24} color="black" />;
 };
 
-export const ReloadIcon = () => {
-  return <AntDesign name="reload1" size={24} color="black" />;
+export const ReloadIcon = ({ color = "black", size = 24 }) => {
+  return <AntDesign name="reload1" size={size} color={color} />;
 };
 
 export const EmptyHeartIcon = ({ color = "black", size = 24 }) => {

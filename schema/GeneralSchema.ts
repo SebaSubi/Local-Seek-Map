@@ -182,3 +182,13 @@ export interface LocalDisplay {
   dateTo: Date | null;
   localType: string;
 }
+
+export interface DysplayUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  dateFrom: string;
+  dateTo: string | null;
+  localUser: Local[];
+}
