@@ -1,14 +1,34 @@
-import { View, Text, Pressable, Modal } from "react-native";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "../Logos";
+import { View, Text, Pressable, Modal, FlatList } from "react-native";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  CloseCircle,
+  Eye,
+  EyeOff,
+  ReloadIcon,
+  Save,
+  TrashIcon,
+  WarningIcon,
+} from "../Logos";
 import { colors } from "../../constants/colors";
-import { DysplayUser } from "../../schema/GeneralSchema";
+import { DysplayUser, Local } from "../../schema/GeneralSchema";
 import UserDeleteModal from "./UserDeleteModal";
 import BasicTextInput from "../BasicTextInput";
 import BasicButton from "../BasicButton";
 import { AuthUser, useAuth } from "../../app/context/AuthContext";
-import { checkEmail, checkUsername, EditUser } from "../../libs/user";
+import {
+  checkEmail,
+  checkUsername,
+  EditUser,
+  getUserLocals,
+} from "../../libs/user";
 import { validateEmail } from "../Register";
+import EditLocalContainer from "../EditLocalContainer";
 
 const UserInfoModal = ({
   isVisible,
@@ -19,6 +39,10 @@ const UserInfoModal = ({
   setVisible: Dispatch<SetStateAction<boolean>>;
   user: DysplayUser;
 }) => {
+  useEffect(() => {
+    fetchData();
+  }, [user]);
+
   const { onLogin } = useAuth();
 
   const email = useRef<{
@@ -47,6 +71,17 @@ const UserInfoModal = ({
 
   const [editType, setEditType] = useState<"user" | "local">("user");
 
+  const [locals, setLocals] = useState<Local[]>([]);
+
+  const fetchData = async () => {
+    const fetchedLocals = await getUserLocals(user.email);
+    // console.log(fetchedLocals);
+
+    if (Array.isArray(fetchedLocals)) {
+      setLocals(fetchedLocals);
+    }
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -65,7 +100,7 @@ const UserInfoModal = ({
         <View
           style={{
             width: "80%",
-            height: "70%",
+            height: "65%",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
             justifyContent: "flex-start",
@@ -83,10 +118,12 @@ const UserInfoModal = ({
               text="Usuario"
               background={
                 editType === "user"
-                  ? colors.primary.orange
+                  ? colors.primary.blue
                   : colors.primary.lightGray
               }
-              textStyle="text-black font-bold"
+              textStyle={`text-${
+                editType === "user" ? `white` : `black`
+              } font-bold`}
               style="w-24"
               onPress={() => setEditType("user")}
             />
@@ -94,10 +131,12 @@ const UserInfoModal = ({
               text="Locales"
               background={
                 editType === "local"
-                  ? colors.primary.orange
+                  ? colors.primary.blue
                   : colors.primary.lightGray
               }
-              textStyle="text-black font-bold"
+              textStyle={`text-${
+                editType === "local" ? `white` : `black`
+              } font-bold`}
               style="w-24"
               onPress={() => setEditType("local")}
             />
@@ -225,7 +264,48 @@ const UserInfoModal = ({
                 />
               </View>
             </>
-          ) : null}
+          ) : (
+            <>
+              <View className="flex p-2 mt-2">
+                {user.localUser.length === 0 ? (
+                  <View className="flex items-center justify-center h-5/6">
+                    <WarningIcon size={100} color={colors.primary.orange} />
+                    <Text className="font-thin text-xl text-center">
+                      {" "}
+                      Este usuario no tiene locales
+                    </Text>
+                  </View>
+                ) : (
+                  <>
+                    <View className="w-full h-4/5 mt-4">
+                      <FlatList
+                        data={locals}
+                        horizontal={false}
+                        numColumns={2}
+                        renderItem={({ item }) => (
+                          <EditLocalContainer local={item} />
+                        )}
+                        keyExtractor={(item) => item?.id!}
+                        onRefresh={() => fetchData()}
+                        // refreshing={loading}
+                        refreshing={false}
+                      />
+                      <View className="flex justify-center items-center">
+                        <BasicButton
+                          text="Recargar"
+                          background={colors.primary.blue}
+                          textStyle="text-white font-bold ml-2"
+                          logo={<ReloadIcon color="#fff" />}
+                          style="w-28 pl-2 "
+                          onPress={() => fetchData()}
+                        />
+                      </View>
+                    </View>
+                  </>
+                )}
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Modal>
