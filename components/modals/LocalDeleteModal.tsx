@@ -58,46 +58,47 @@ const LocalDeleteModal = ({
         <View
           style={{
             width: "80%",
-            height: "48%",
+            height: "auto",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
-            borderWidth: 2,
-            borderColor: colors.primary.blue,
-            justifyContent: "flex-start",
+            justifyContent: "center",
             alignItems: "center",
             padding: 5,
           }}
         >
-          <View className="w-full items-end">
-            <Pressable onPress={() => setVisible(false)} className="mt-1 mr-1">
-              <CloseCircle color="#cc0000" />
-            </Pressable>
-          </View>
-          <Text className="font-bold text-3xl">Eliminar Local</Text>
-          <WarningIcon size={100} color="#cc0000" />
-          <Text className="font-thin text-xl text-center">
-            Una vez que eliminas tu local no se podra volver a recuperar
+          <View className="w-full items-end"></View>
+          <Text className="font-normal text-2xl">Eliminar Local</Text>
+          <Text className="font-extralight text-lg text-center">
+            Una vez que eliminas tu local no se podra volver a recuperar.{" "}
+            {`Indroduce "${wordToCheck}" para eliminar el local`}
           </Text>
-          <Text className=" text-base text-center my-2">
-            {`indroduce "${wordToCheck}" para eliminar el local`}
-          </Text>
+
           <BasicTextInput
             inputType="text"
             placeholder={wordToCheck}
             ref={DeleteText}
           />
-          <BasicButton
-            text="Eliminar"
-            background="#cc0000"
-            textStyle="text-white"
-            style="mt-4"
-            logo={
-              <View className="flex px-2">
-                <TrashIcon color="#fff" size={21} />
-              </View>
-            }
-            onPress={DeleteLocal}
-          />
+          <View className="w-full h-fit flex flex-row items-center justify-evenly mb-2">
+            <BasicButton
+              text="Eliminar"
+              background="#cc0000"
+              textStyle="text-white"
+              style="mt-4"
+              logo={
+                <View className="flex px-2">
+                  <TrashIcon color="#fff" size={21} />
+                </View>
+              }
+              onPress={DeleteLocal}
+            />
+            <BasicButton
+              text="Cancelar"
+              background={colors.primary.lightGray}
+              textStyle={`text-${colors.primary.blue}`}
+              style="mt-4"
+              onPress={() => setVisible(false)}
+            />
+          </View>
         </View>
       </View>
     </Modal>

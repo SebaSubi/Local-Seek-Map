@@ -208,7 +208,7 @@ export async function checkLocalName(name: string) {
     const rawData = await axios.get(`${API_URL}/check-name/${name}`);
     return rawData.request.response;
   } catch (error) {
-    console.log(error);
+    console.log("Segundo estamos aca", error);
   }
 }
 
@@ -224,13 +224,10 @@ export async function updateLocal(id: string, local: Local) {
       body: JSON.stringify(local),
     });
 
-    console.log("Response Status:", response.status);
-    console.log("Response Headers:", response.headers);
-
     if (!response.ok) {
       const errorText = await response.text();
       console.log("Error Response Body:", errorText);
-      Alert.alert("Error", `Failed to update local: ${response.status}`);
+      Alert.alert("Error", `Error al alctualizar el local: ${response.status}`);
       return;
     } else {
       Alert.alert("Local actualizado con éxito");
@@ -285,8 +282,6 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
       `${API_URL_2}/auth-v2/store_owner/craete-and-add-store`,
       payload
     );
-
-    // console.log(JSON.stringify(local));
 
     if (!response.status) {
       Alert.alert("Error", "Failed to create Local");

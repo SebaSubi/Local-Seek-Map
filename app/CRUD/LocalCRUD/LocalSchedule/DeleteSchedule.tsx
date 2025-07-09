@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Modal, Text, View } from "react-native";
 import { useEffect, useState } from "react";
 
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -12,11 +12,14 @@ import { colors } from "../../../../constants/colors";
 import EditScheduleContainer from "../../../../components/EditScheduleContainer";
 import { useLocalIdStore } from "../../../../libs/localZustang";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BasicWarning from "../../../../components/BasicWarning";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState<LocalSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
+  const [warning, setWarning] = useState(false);
+  const [scheduleId, setScheduleId] = useState<string>();
   const local = useLocalIdStore((state) => state.local);
 
   const insest = useSafeAreaInsets();
@@ -40,12 +43,13 @@ export default function DeleteSchedule() {
 
   function handleDelete(id: string) {
     deleteSchedule(id);
+    setWarning(false);
     setRefresh(!refresh);
   }
 
-  const handleReload = () => {
-    setRefresh(!refresh);
-  };
+  // const handleReload = () => {
+  //   setRefresh(!refresh);
+  // };
 
   return (
     <View
@@ -56,12 +60,12 @@ export default function DeleteSchedule() {
     >
       <Stack.Screen options={{ headerShown: false }} />
 
-      <View className="flex flex-row justify-between w-full items-center h-8">
+      <View className="flex flex-row justify-between w-full items-center">
         <GoBackButton style="ml-2" iconColor="white" />
-        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
-          {`Crear Horarios ${name === undefined ? "" : (name as string)}`}
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
+          Actualizar/Borrar Horarios
         </Text>
-        <GoBackButton style="opacity-0" />
+        <GoBackButton style="ml-2 opacity-0" iconColor="white" />
       </View>
 
       {loading ? (
@@ -75,7 +79,10 @@ export default function DeleteSchedule() {
                 local={true}
                 href="CRUD/LocalCRUD/LocalSchedule/UpdateSchedule"
                 schedule={item}
-                onDelete={handleDelete}
+                onDelete={() => {
+                  setWarning(true);
+                  setScheduleId(item.id);
+                }}
               />
             )}
             keyExtractor={(item) => item.id!}
@@ -86,6 +93,32 @@ export default function DeleteSchedule() {
         </View>
       ) : (
         <Text>No hay Horarios disponibles</Text>
+      )}
+
+      {warning && (
+        // <View className="w-full h-full flex items-center justify-center">
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={warning}
+          onRequestClose={() => setWarning(false)}
+        >
+          <View
+            className="w-full h-full flex items-center justify-center"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          >
+            <BasicWarning
+              text="Una vez que elimine el horario no se podrá volver para atrás."
+              cancelButton={false}
+              buttonLeft="Cancelar"
+              buttonRight="Eliminar"
+              onPressRight={() => {
+                handleDelete(scheduleId!);
+              }}
+              onPressLeft={() => setWarning(false)}
+            />
+          </View>
+        </Modal>
       )}
     </View>
   );

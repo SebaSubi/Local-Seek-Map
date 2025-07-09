@@ -75,7 +75,7 @@ export function getPlaceholders(category: string): string {
 
     case "Productos Sin TACC" || "cm19yv94e000fpy0x4wypgga4":
       return "https://img.freepik.com/premium-vector/gluten-free-symbol_1274264-19851.jpg";
-    
+
     case "Galletitas" || "cm19yv94h000gpy0x40huijgw":
       return "https://static.vecteezy.com/system/resources/previews/025/797/739/non_2x/cookies-sketch-line-drawing-black-on-white-vector.jpg";
 
@@ -95,7 +95,10 @@ export function FirstShiftInputValidation(
   firstShiftStart: Date | undefined,
   firstShiftFinish: Date | undefined
 ): string {
-  if (!firstShiftStart || !firstShiftFinish) {
+  if (
+    firstShiftStart?.toDateString() === "23:02" ||
+    firstShiftFinish?.toDateString() === "23:02"
+  ) {
     return "Se debe completar como minimo el primer turno";
   }
   if (firstShiftStart === specificDate || firstShiftFinish === specificDate) {
@@ -103,24 +106,66 @@ export function FirstShiftInputValidation(
   } else return "Correct";
 }
 
+type error =
+  | "day"
+  | "firstEnd"
+  | "secondEnd"
+  | "secondStart"
+  | "required"
+  | "thirdStart"
+  | "thirdFinish"
+  | "";
+
 export function scheduleInputValidation(
   schedule: LocalSchedule | LocalServiceSchedule
-): string | boolean {
-  // if(schedule.FirstShiftStart === "")
-  if (schedule.FirstShiftStart > schedule.FirstShiftFinish) {
-    return "La hora inicial no puede ser mayor a la hora final (Primer turno)";
+): { type: error; message: string } {
+  if (
+    (schedule.dayNumber || schedule.dayNumber === 0) &&
+    (schedule.dayNumber < 1 || schedule.dayNumber > 7)
+  ) {
+    return {
+      type: "day",
+      message: "*El día debe ser entre 1 (domingo) y 7 (sábado)",
+    };
   }
 
+  if (
+    schedule.FirstShiftStart === "23:02" ||
+    schedule.FirstShiftFinish === "23:02"
+  ) {
+    return {
+      type: "required",
+      message: "*Debe completar todos los campos obligatorios",
+    };
+  }
+  if (schedule.FirstShiftStart > schedule.FirstShiftFinish) {
+    return {
+      type: "firstEnd",
+      message: "*La hora final no puede ser anterior a la hora inicial",
+    };
+  }
+  if (
+    schedule.SecondShiftStart &&
+    (!schedule.SecondShiftFinish || schedule.SecondShiftFinish === "23:02")
+  ) {
+    return {
+      type: "secondEnd",
+      message: "*Se debe indicar tanto la hora de apertura como de cierre",
+    };
+  }
   if (
     schedule.SecondShiftStart &&
     schedule.SecondShiftFinish &&
     schedule.SecondShiftStart > schedule.SecondShiftFinish
   ) {
-    return "La hora inicial no puede ser mayor a la hora final (Segundo turno)";
+    return {
+      type: "secondEnd",
+      message: "*La hora final no puede ser anterior a la hora inicial",
+    };
   }
 
   if (schedule.ThirdShiftFinish === "00:00") {
-    return "Correct";
+    return { type: "", message: "Correct" };
   }
   // else if (
   //   schedule.ThirdShiftStart &&
@@ -129,17 +174,45 @@ export function scheduleInputValidation(
   // ) {
   //   return "La hora inicial no puede ser mayor a la hora final (Tercer turno)";
   // }
-  if (schedule.dayNumber === null || schedule.dayNumber === 0)
-    return "El día no puede estar vacío o ser 0";
 
-  if (schedule.FirstShiftStart === null || schedule.FirstShiftFinish === null)
-    return "Debe por lo menos tener un horario de mañana";
+  if (schedule.FirstShiftStart === null || schedule.FirstShiftFinish === null) {
+    return {
+      type: "required",
+      message: "*Debe por lo menos tener un horario de mañana",
+    };
+  }
 
   if (
     schedule.SecondShiftStart &&
     schedule.SecondShiftStart < schedule.FirstShiftFinish
   ) {
-    return "El horario de comienzo de segundo turno no puede ser menor al cierre del primero";
+    return {
+      type: "secondStart",
+      message:
+        "*El horario de comienzo de segundo turno no puede ser menor al cierre del primero",
+    };
+  }
+
+  if (
+    schedule.ThirdShiftStart &&
+    schedule.SecondShiftFinish &&
+    (schedule.ThirdShiftStart < schedule.SecondShiftFinish ||
+      schedule.ThirdShiftStart < schedule.FirstShiftFinish)
+  ) {
+    return {
+      type: "thirdStart",
+      message:
+        "*El horario de comienzo de turno nocturno no puede ser menor al cierre del segundo o primero",
+    };
+  }
+  if (
+    schedule.ThirdShiftStart &&
+    (!schedule.ThirdShiftFinish || schedule.ThirdShiftFinish === "23:02")
+  ) {
+    return {
+      type: "thirdFinish",
+      message: "*Se debe indicar tanto la hora de apertura como de cierre",
+    };
   }
 
   // if (
@@ -150,5 +223,5 @@ export function scheduleInputValidation(
   //   return "El horario de comienzo del turno nocturno no puede ser menor al cierre del segundo";
   // }
 
-  return "Correct";
+  return { type: "", message: "Correct" };
 }

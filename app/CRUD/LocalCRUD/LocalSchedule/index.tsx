@@ -40,7 +40,7 @@ export default function LocalSchedule() {
         <BasicSelectable
           href="/CRUD/LocalCRUD/LocalSchedule/DeleteSchedule"
           logo={<UpdateLogo />}
-          text="Actualizar/Borrar Horiario"
+          text="Actualizar/Borrar Horario"
           style="mt-3"
           params={{ name: name }}
         />

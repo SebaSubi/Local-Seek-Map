@@ -25,6 +25,7 @@ const options: Intl.DateTimeFormatOptions = {
 interface TimeSelectProps {
   logo?: any;
   text?: string;
+  textStyle?: string;
   defaultTime?: Date;
   nextDay?: boolean;
   setNextDay?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,7 +33,17 @@ interface TimeSelectProps {
 }
 
 const TimeSelect = forwardRef(
-  ({ text, defaultTime, nextDay, setNextDay, clear }: TimeSelectProps, ref) => {
+  (
+    {
+      text,
+      defaultTime,
+      nextDay,
+      setNextDay,
+      clear,
+      textStyle,
+    }: TimeSelectProps,
+    ref
+  ) => {
     const [time, setTime] = useState(
       defaultTime && defaultTime !== specificDate ? defaultTime : specificDate
     );
@@ -80,7 +91,7 @@ const TimeSelect = forwardRef(
     return (
       <TouchableWithoutFeedback onPress={handleOutsideClick}>
         <View className={`w-3/4 mt-4`}>
-          <Text className="ml-2">{text}</Text>
+          <Text className={`ml-2 ${textStyle}`}>{text}</Text>
 
           <Pressable
             className="flex flex-row items-center justify-between w-full bg-defaultGray h-12 rounded-2xl text-center"
@@ -108,8 +119,7 @@ const TimeSelect = forwardRef(
             >
               <View
                 style={{
-                  opacity:
-                    time.toTimeString() === specificDate.toTimeString() ? 0 : 1,
+                  opacity: isPickerVisible ? 1 : 0,
                 }}
               >
                 <Text className="text-defaultOrange pr-3">Quitar</Text>
