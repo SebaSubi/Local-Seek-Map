@@ -1,4 +1,4 @@
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Modal, Pressable, Text, View } from "react-native";
 
 import { useEffect, useState } from "react";
 import {
@@ -20,11 +20,14 @@ import GoBackButton from "../../../../components/GoBackButton";
 import { colors } from "../../../../constants/colors";
 import EditScheduleContainer from "../../../../components/EditScheduleContainer";
 import { bringDayName } from "../../../../libs/libs";
+import BasicWarning from "../../../../components/BasicWarning";
 
 export default function DeleteSchedule() {
   const [schedule, setSchedule] = useState<LocalServiceSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
+  const [warning, setWarning] = useState(false);
+  const [scheduleId, setScheduleId] = useState<string>();
   const localService = useLocalServiceIdStore((state) => state.localService);
 
   useEffect(() => {
@@ -38,6 +41,7 @@ export default function DeleteSchedule() {
 
   function handleDelete(id: string) {
     deleteServiceSchedule(id);
+    setWarning(false);
     setRefresh(!refresh);
   }
 
@@ -73,7 +77,10 @@ export default function DeleteSchedule() {
                   local={false}
                   href="CRUD/ServiceCRUD/ServiceSchedule/UpdateSchedule"
                   schedule={item}
-                  onDelete={handleDelete}
+                  onDelete={() => {
+                    setWarning(true);
+                    setScheduleId(item.id);
+                  }}
                 />
               )}
               keyExtractor={(item) => item.id!}
@@ -81,6 +88,31 @@ export default function DeleteSchedule() {
               refreshing={loading}
               className="mt-5"
             />
+            {warning && (
+              // <View className="w-full h-full flex items-center justify-center">
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={warning}
+                onRequestClose={() => setWarning(false)}
+              >
+                <View
+                  className="w-full h-full flex items-center justify-center"
+                  style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                >
+                  <BasicWarning
+                    text="Una vez que elimine el horario no se podrá volver para atrás."
+                    cancelButton={false}
+                    buttonLeft="Cancelar"
+                    buttonRight="Eliminar"
+                    onPressRight={() => {
+                      handleDelete(scheduleId!);
+                    }}
+                    onPressLeft={() => setWarning(false)}
+                  />
+                </View>
+              </Modal>
+            )}
           </View>
         ) : (
           <Text>No hay Horarios disponibles</Text>

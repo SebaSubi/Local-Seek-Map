@@ -24,13 +24,33 @@ import {
 } from "../../../../libs/libs";
 import BasicWarning from "../../../../components/BasicWarning";
 import { useLocalServiceIdStore } from "../../../../libs/localServiceZustang";
-import { updateServiceSchedule } from "../../../../libs/localService";
+import {
+  getServiceScheduleByScheduleId,
+  updateServiceSchedule,
+} from "../../../../libs/localService";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+type error =
+  | "day"
+  | "firstEnd"
+  | "secondStart"
+  | "secondEnd"
+  | "required"
+  | "thirdStart"
+  | "thirdFinish"
+  | "";
 
 export default function UpdateSchedule() {
   const { id } = useLocalSearchParams();
   const [errorModal, setErrorModal] = useState(false);
-  const [error, setError] = useState("");
+  const [schedule, setSchedule] = useState<LocalServiceSchedule>();
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const serviceSchedule = useLocalServiceIdStore(
     (state) => state.serviceSchedule
@@ -63,35 +83,82 @@ export default function UpdateSchedule() {
 
   const { name } = useLocalSearchParams();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const schedule = await getScheduleByScheduleId(id as string); //Make sure this is set
-  //     setSchedule(schedule[0]);
-  //     setLoaded(true);
-  //   };
-  //   fetchData();
-  // }, [serviceSchedule]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const schedule = await getServiceScheduleByScheduleId(id as string); //Make sure this is set
+      setSchedule(schedule);
+      setLoaded(true);
+    };
+    fetchData();
+  }, [serviceSchedule]);
 
-  // console.log("This is the service Schedule", serviceSchedule);
+  useEffect(() => {
+    if (schedule) {
+      if (schedule.FirstShiftStart) {
+        FirstShiftStartRef.current?.setTime(
+          createDateWithTime(schedule.FirstShiftStart)
+        );
+      }
+      if (schedule.FirstShiftFinish) {
+        FirstShiftFinishRef.current?.setTime(
+          createDateWithTime(schedule.FirstShiftFinish)
+        );
+      }
+      if (schedule.SecondShiftStart) {
+        SecondShiftStartRef.current?.setTime(
+          createDateWithTime(schedule.SecondShiftStart)
+        );
+      }
+      if (schedule.SecondShiftFinish) {
+        SecondShiftFinishRef.current?.setTime(
+          createDateWithTime(
+            schedule.SecondShiftFinish === "23:59"
+              ? "00:00"
+              : schedule.SecondShiftFinish
+          )
+        );
+      }
+      if (schedule.ThirdShiftStart) {
+        ThirdShiftStartRef.current?.setTime(
+          createDateWithTime(schedule.ThirdShiftStart)
+        );
+      }
+      if (schedule.ThirdShiftFinish) {
+        ThirdShiftFinishRef.current?.setTime(
+          createDateWithTime(
+            schedule.ThirdShiftFinish === "23:59"
+              ? "00:00"
+              : schedule.FirstShiftFinish
+          )
+        );
+      }
+    }
+  }, [serviceSchedule, schedule]);
 
   const handleCreate = () => {
     const localSchedule = createNewSchedule();
 
-    const validate = FirstShiftInputValidation(
-      FirstShiftStartRef.current?.getTime(),
-      FirstShiftFinishRef.current?.getTime()
-    );
-    if (validate !== "Correct") {
-      setError(validate);
-      setErrorModal(true);
-      return;
-    }
+    // const validate = FirstShiftInputValidation(
+    //   FirstShiftStartRef.current?.getTime(),
+    //   FirstShiftFinishRef.current?.getTime()
+    // );
+    // if (validate !== "Correct") {
+    //   setError(validate);
+    //   setErrorModal(true);
+    //   return;
+    // }
 
-    if (scheduleInputValidation(localSchedule) !== "Correct") {
-      setError(scheduleInputValidation(localSchedule) as string);
-      setErrorModal(true);
+    // if (scheduleInputValidation(localSchedule) !== "Correct") {
+    //   setError(scheduleInputValidation(localSchedule) as string);
+    //   setErrorModal(true);
+    // } else {
+    //   handleSubmit();
+    // }
+
+    if (scheduleInputValidation(localSchedule).type !== "") {
+      setError(scheduleInputValidation(localSchedule));
     } else {
-      handleSubmit();
+      handleSubmit(localSchedule);
     }
   };
 
@@ -158,8 +225,7 @@ export default function UpdateSchedule() {
     return newSchedule;
   };
 
-  async function handleSubmit() {
-    const newSchedule = createNewSchedule();
+  async function handleSubmit(newSchedule: LocalServiceSchedule) {
     if (JSON.stringify(serviceSchedule) === JSON.stringify(newSchedule)) return;
     if (serviceSchedule && serviceSchedule.id) {
       updateServiceSchedule(serviceSchedule.id, newSchedule);
@@ -170,7 +236,7 @@ export default function UpdateSchedule() {
     }
   }
 
-  return (
+  return loaded ? (
     <>
       <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
         <Stack.Screen
@@ -193,42 +259,76 @@ export default function UpdateSchedule() {
           }}
         >
           <View className="w-full h-full flex items-center justify-center">
+            {/* <Text className="mt-6">
+              Dia: {bringDayName(schedule?.dayNumber!)}
+            </Text> */}
+            <Text className="mt-1 text-sm font-light">
+              *Los campos que no cambie o deje en vacio quedaran sin modificar
+            </Text>
+            {error.type === "required" ? (
+              <Text className="text-red-800">{error.message}</Text>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Primer Turno:"
               ref={FirstShiftStartRef}
-              defaultTime={
-                serviceSchedule
-                  ? createDateWithTime(serviceSchedule.FirstShiftStart)
-                  : specificDate
-              }
+              textStyle={`mt-2 ${error.type === "required" ? " text-red-800" : ""}`}
+              // defaultTime={
+              //   serviceSchedule
+              //     ? createDateWithTime(serviceSchedule.FirstShiftStart)
+              //     : specificDate
+              // }
             />
             <TimeSelect
               text="Hora de Cerrada Primer Turno:"
               ref={FirstShiftFinishRef}
-              defaultTime={
-                serviceSchedule
-                  ? createDateWithTime(serviceSchedule.FirstShiftFinish)
-                  : specificDate
-              }
+              textStyle={`mt-2 ${error.type === "required" || error.type === "firstEnd" ? " text-red-800" : ""}`}
+              // defaultTime={
+              //   serviceSchedule
+              //     ? createDateWithTime(serviceSchedule.FirstShiftFinish)
+              //     : specificDate
+              // }
             />
+            {error.type === "firstEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Segundo Turno:"
               ref={SecondShiftStartRef}
-              defaultTime={
-                serviceSchedule.SecondShiftStart
-                  ? createDateWithTime(serviceSchedule.SecondShiftStart)
-                  : specificDate
-              }
+              textStyle={`mt-2 ${error.type === "secondStart" ? " text-red-800" : ""}`}
+              // defaultTime={
+              //   serviceSchedule.SecondShiftStart
+              //     ? createDateWithTime(serviceSchedule.SecondShiftStart)
+              //     : specificDate
+              // }
             />
+            {error.type === "secondStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Segundo Turno:"
               ref={SecondShiftFinishRef}
-              defaultTime={
-                serviceSchedule.SecondShiftFinish
-                  ? createDateWithTime(serviceSchedule.SecondShiftFinish)
-                  : specificDate
-              }
+              textStyle={`mt-2 ${error.type === "secondEnd" ? " text-red-800" : ""}`}
+              // defaultTime={
+              //   serviceSchedule.SecondShiftFinish
+              //     ? createDateWithTime(serviceSchedule.SecondShiftFinish)
+              //     : specificDate
+              // }
             />
+            {error.type === "secondEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
               *Los horarios nocturnos pueden ser aquellos que empiezan en un día
               y terminan en otro
@@ -236,23 +336,43 @@ export default function UpdateSchedule() {
             <TimeSelect
               text="Hora de Apertura Turno Nocturno:"
               ref={ThirdShiftStartRef}
-              defaultTime={
-                serviceSchedule.ThirdShiftStart
-                  ? createDateWithTime(serviceSchedule.ThirdShiftStart)
-                  : specificDate
-              }
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
+              // defaultTime={
+              //   serviceSchedule.ThirdShiftStart
+              //     ? createDateWithTime(serviceSchedule.ThirdShiftStart)
+              //     : specificDate
+              // }
             />
+            {error.type === "thirdStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Turno Nocturno:"
               ref={ThirdShiftFinishRef}
-              defaultTime={
-                serviceSchedule.ThirdShiftFinish
-                  ? createDateWithTime(serviceSchedule.ThirdShiftFinish)
-                  : specificDate
-              }
+              textStyle={`mt-2 ${error.type === "thirdFinish" ? " text-red-800" : ""}`}
+              // defaultTime={
+              //   serviceSchedule.ThirdShiftFinish
+              //     ? createDateWithTime(serviceSchedule.ThirdShiftFinish)
+              //     : specificDate
+              // }
             />
-
-            <View className="flex flex-col justify-center items-center w-3/4 mt-3">
+            {error.type === "thirdFinish" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
+            <View
+              className="flex flex-col justify-center items-center w-3/4 mt-3"
+              style={{
+                paddingBottom: insets.bottom,
+              }}
+            >
               <BasicButton
                 logo={<CreateLogo />}
                 text="Actualizar Horario"
@@ -262,7 +382,7 @@ export default function UpdateSchedule() {
             </View>
           </View>
         </ScrollView>
-        {error && (
+        {/* {error && (
           <Modal
             animationType="slide"
             transparent={true}
@@ -285,10 +405,10 @@ export default function UpdateSchedule() {
               />
             </View>
           </Modal>
-        )}
+        )} */}
       </View>
     </>
-  );
+  ) : null;
 } //For the Brand and for the Tupe, we will have to make them select from ones we give them, or else the database will get filled with garbage. We might have to make a new component for that.
 // Also add that you can change the imput type to number for the price. And it only accepts numbers
 

@@ -78,6 +78,7 @@ export default function UpdateSchedule() {
   useEffect(() => {
     const fetchData = async () => {
       const schedule = await getScheduleByScheduleId(id as string); //Make sure this is set
+
       setSchedule(schedule[0]);
       setLoaded(true);
     };

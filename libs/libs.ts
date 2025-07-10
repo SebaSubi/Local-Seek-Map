@@ -119,6 +119,12 @@ type error =
 export function scheduleInputValidation(
   schedule: LocalSchedule | LocalServiceSchedule
 ): { type: error; message: string } {
+  // if (!schedule.dayNumber) {
+  //   return {
+  //     type: "required",
+  //     message: "*Debe completar todos los campos obligatorios",
+  //   };
+  // }
   if (
     (schedule.dayNumber || schedule.dayNumber === 0) &&
     (schedule.dayNumber < 1 || schedule.dayNumber > 7)
@@ -212,6 +218,15 @@ export function scheduleInputValidation(
     return {
       type: "thirdFinish",
       message: "*Se debe indicar tanto la hora de apertura como de cierre",
+    };
+  } else if (
+    schedule.ThirdShiftStart &&
+    schedule.ThirdShiftStart < schedule.FirstShiftFinish
+  ) {
+    return {
+      type: "thirdStart",
+      message:
+        "*El horario de comienzo de turno nocturno no puede ser menor al cierre del primer turno",
     };
   }
 

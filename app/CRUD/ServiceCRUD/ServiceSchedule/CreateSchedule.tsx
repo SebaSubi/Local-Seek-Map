@@ -63,6 +63,7 @@ export default function CreateProduct() {
   // }, []);
 
   function validateSchedule(localSchedule: LocalServiceSchedule) {
+    setError({ type: "", message: "" });
     if (scheduleInputValidation(localSchedule).type !== "") {
       setError(scheduleInputValidation(localSchedule));
       return false;
@@ -75,6 +76,13 @@ export default function CreateProduct() {
     const schedules = await getScheduleByLocalServiceId(localService.id!);
 
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
+    if (!dayNumber) {
+      setError({
+        type: "required",
+        message: "*Debe completar todos los campos obligatorios",
+      });
+      return;
+    }
     let localWarning = false;
 
     if (schedules.length > 0) {
@@ -292,7 +300,7 @@ export default function CreateProduct() {
             ) : null}
             <TimeSelect
               text="Hora de Cerrada Nocturno:"
-              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
+              textStyle={`mt-2 ${error.type === "thirdFinish" ? " text-red-800" : ""}`}
               ref={ThirdShiftFinishRef}
             />
             {error.type === "thirdFinish" ? (

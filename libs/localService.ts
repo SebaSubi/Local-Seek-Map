@@ -372,7 +372,7 @@ export async function getServiceScheduleByScheduleId(id: string) {
 
 export async function createlocalServiceSchedule(data: LocalServiceSchedule) {
   try {
-    const response = await fetch(`${API_URL}/service-schedule`, {
+    const response = await fetch(`${API_URL}/service-schedule/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

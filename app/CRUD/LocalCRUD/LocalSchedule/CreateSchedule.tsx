@@ -64,6 +64,13 @@ export default function CreateProduct() {
   const handleCreate = async () => {
     const schedulest = await getSchedulesByLocalId(local.id!);
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
+    if (!dayNumber) {
+      setError({
+        type: "required",
+        message: "*Debe completar todos los campos obligatorios",
+      });
+      return;
+    }
     let localWarning = false;
 
     if (schedulest.length > 0) {
