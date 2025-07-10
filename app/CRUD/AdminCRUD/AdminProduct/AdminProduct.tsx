@@ -1,31 +1,29 @@
 import { View, Text, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Stack } from "expo-router";
-import GoBackButton from "../../../components/GoBackButton";
-import BasicSearchButton from "../../../components/BasicSearchBar";
-import { colors } from "../../../constants/colors";
-import BasicButton from "../../../components/BasicButton";
-import { ReloadIcon } from "../../../components/Logos";
-import { getAdminLocals } from "../../../libs/user";
-import { Local } from "../../../schema/GeneralSchema";
-import EditLocalContainer from "../../../components/EditLocalContainer";
+import GoBackButton from "../../../../components/GoBackButton";
+import BasicSearchButton from "../../../../components/BasicSearchBar";
+import { colors } from "../../../../constants/colors";
+import BasicButton from "../../../../components/BasicButton";
+import { ReloadIcon } from "../../../../components/Logos";
+import { getAdminProducts } from "../../../../libs/user";
+import { Product } from "../../../../schema/GeneralSchema";
+import SmallProductContainer from "../../../../components/SmallProductContainer";
 
-export default function AdminLocal() {
+export default function AdminProduct() {
   const [search, setSearch] = useState("");
-  const [locals, setLocals] = useState<Local[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  useEffect(() => {
-    fetchData();
-  }, [search]);
-
-  const fetchData = async () => {
-    const fetchedLocals = await getAdminLocals(search);
-    // console.log(fetchedLocals);
-    if (Array.isArray(fetchedLocals)) {
-      setLocals(fetchedLocals);
-    }
+  const fetchLocalsData = async () => {
+    setProducts((await getAdminProducts(search)) ?? []);
   };
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      await fetchLocalsData();
+    };
+    fetchUsers();
+  }, [search]);
   return (
     <>
       <Stack.Screen
@@ -37,26 +35,28 @@ export default function AdminLocal() {
         <View className="flex flex-row items-center justify-between w-full ">
           <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
-            Gestionar Locales
+            Gestionar Productos
           </Text>
           <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
         <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-start">
           <BasicSearchButton
-            placeholder="Buscar Local"
+            placeholder="Buscar Producto"
             onSearch={setSearch}
             background={colors.primary.lightGray}
             style="my-4"
           />
-          {locals.length !== 0 ? (
-            <View className="w-full h-4/5 mt-4">
+          {products.length !== 0 ? (
+            <View className="w-full h-4/5 mt-4 items-center justify-evenly">
               <FlatList
-                data={locals}
+                data={products}
                 horizontal={false}
                 numColumns={2}
-                renderItem={({ item }) => <EditLocalContainer local={item} />}
+                renderItem={({ item }) => (
+                  <SmallProductContainer product={item} />
+                )}
                 keyExtractor={(item) => item?.id!}
-                onRefresh={() => fetchData()}
+                onRefresh={() => fetchLocalsData()}
                 // refreshing={loading}
                 refreshing={false}
               />
@@ -70,7 +70,7 @@ export default function AdminLocal() {
               textStyle="text-white font-bold ml-2"
               logo={<ReloadIcon color="#fff" />}
               style="w-28 pl-2 mt-2"
-              onPress={() => fetchData()}
+              onPress={() => fetchLocalsData()}
             />
           </View>
         </View>

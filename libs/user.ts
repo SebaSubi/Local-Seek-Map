@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Platform, Role } from "react-native";
-import { DysplayUser, Local } from "../schema/GeneralSchema";
+import { DysplayUser, Local, Product } from "../schema/GeneralSchema";
 
 const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
 // const API_URL =
@@ -69,7 +69,9 @@ export async function getUserLocals(userId: string) {
       },
     });
     return Locals.data as Local[];
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error fetching user locals:", error);
+  }
 }
 
 export async function deleteUser(userId: string) {
@@ -115,6 +117,28 @@ export async function getAllUsersBySearch(search: string = "") {
     const request = await axios.get(`${API_URL}/all-users?search=${search}`);
     return request.data as DysplayUser[];
   } catch (error) {
-    console.log("Error fetching users by search:", error);
+    console.error("Error fetching users by search:", error);
+  }
+}
+
+export async function getAdminLocals(search: string = "") {
+  // console.log("here");
+  try {
+    const Locals = await axios.get(`${API_URL}/admin-locals?search=${search}`);
+    return Locals.data as Local[];
+  } catch (error) {
+    console.error("Error fetching admin locals:", error);
+  }
+}
+
+export async function getAdminProducts(search: string = "") {
+  // console.log("here");
+  try {
+    const Products = await axios.get(
+      `${API_URL}/admin-products?search=${search}`
+    );
+    return Products.data as Product[];
+  } catch (error) {
+    console.error("Error fetching admin locals:", error);
   }
 }

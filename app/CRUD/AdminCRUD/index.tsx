@@ -57,13 +57,13 @@ export default function AdminCrud() {
             style="mt-3"
           />
           <BasicSelectable
-            href="/CRUD/AdminCRUD/AdminProduct"
+            href="/CRUD/AdminCRUD/AdminProduct/AdminProduct"
             logo={<Supermercado color="#000" />}
             text="Gestionar Productos"
             style="mt-3"
           />
           <BasicSelectable
-            href="/CRUD/AdminCRUD/AdminService"
+            href="/CRUD/AdminCRUD/AdminService/AdminService"
             logo={<ServiceIcon />}
             text="Gestionar Servicios"
             style="mt-3"

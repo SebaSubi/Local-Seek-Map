@@ -140,6 +140,17 @@ export default function Login() {
                   </Text>
                 </Text>
               </TouchableOpacity>
+              <View className="flex items-center justify-end mt-3">
+                <Text className="text-sm mr-4">
+                  ¡Ante cualquier problema Contáctanos!
+                </Text>
+                <Text
+                  className="text-sm underline text-cyan-600"
+                  selectable={true}
+                >
+                  lsmmultiapp@gmail.com
+                </Text>
+              </View>
             </View>
           </View>
         </View>
