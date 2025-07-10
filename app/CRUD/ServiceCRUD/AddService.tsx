@@ -40,6 +40,11 @@ import { useLocalIdStore } from "../../../libs/localZustang";
 import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BasicWarning from "../../../components/BasicWarning";
+import { verifyUrl } from "../LocalCRUD/CreateLocal";
+
+type error = "address" | "location" | "required" | "whatsapp" | "url" | "";
 
 export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -50,10 +55,14 @@ export default function CreateService() {
   const [services, setServices] = useState<Service[]>([]);
   const [serviceModal, setServiceModal] = useState(true);
   const [selectedServiceId, setSelectedServiceId] = useState<string>();
-  const [typeModalVisibility, setTypeModalVisibility] = useState(false);
+  const [warning, setWarning] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [createType, setCreateType] = useState(false);
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
+  const insets = useSafeAreaInsets();
 
   const setLocalService = useLocalServiceIdStore(
     (state) => state.setLocalService
@@ -83,10 +92,10 @@ export default function CreateService() {
   }>(null);
   const typeRef = useRef<any>(null);
 
-  async function fetchServiceTypes() {
-    const serviceTypes = await getLocalServiceCatsByName(search);
-    setServiceTypes(serviceTypes);
-  }
+  // async function fetchServiceTypes() {
+  //   const serviceTypes = await getLocalServiceCatsByName(search);
+  //   setServiceTypes(serviceTypes);
+  // }
 
   async function fetchAndSetServices() {
     const services = await getServicesByName(search);
@@ -96,10 +105,8 @@ export default function CreateService() {
   useEffect(() => {
     if (serviceModal) {
       fetchAndSetServices();
-    } else {
-      fetchServiceTypes();
     }
-  }, [search, serviceModal, typeModalVisibility]);
+  }, [search, serviceModal]);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -122,45 +129,108 @@ export default function CreateService() {
     }
   };
 
-  const handleSubmit = async (schedule: boolean) => {
+  const handleSubmit = async (schedule: boolean, warn: boolean) => {
     const serviceId = selectedServiceId;
     const description = descriptionRef.current?.getValue();
     const reservationURL = URLRef.current?.getValue();
     const reservationNumber = reservationNumberRef.current?.getValue();
-    const serviceTypeId = selectedType.id!;
     const location = locationRef.current?.getValue();
     const address = addressRef.current?.getValue();
 
-    if (
-      !serviceId ||
-      !description ||
-      selectedType.id === "0000" ||
-      !location ||
-      !address
-    ) {
-      Alert.alert("Por favor rellenar los campos obligatorios");
+    if (!location || !address) {
+      setError({
+        type: "required",
+        message: "*Por favor complete todos los campos obligatorios",
+      });
       return;
-    } else if (!reservationURL && !reservationNumber) {
-      Alert.alert("Por favor rellenar los campos obligatorios");
+    } else if (warn && !reservationURL && !reservationNumber) {
+      setWarning(true);
+      return;
+    } else if (5 > address.length || address.length > 120) {
+      setError({
+        type: "address",
+        message:
+          "*La dirección no puede tener menos de 5 caracteres o mas de 120",
+      });
+      return;
+    } else if (
+      address &&
+      (address.includes("!") ||
+        address.includes("@") ||
+        address.includes("#") ||
+        address.includes("$") ||
+        address.includes("&") ||
+        address.includes("*"))
+    ) {
+      setError({
+        type: "address",
+        message:
+          "*La dirección del servicio no puede tener caracteres especiales",
+      });
+      return;
+    } else if (location.length < 10) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del servicio requieren mínimamente 14 caracteres",
+      });
+      return;
+    } else if (location.length >= 60) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del servicio no pueden tener mas de 60 caracteres",
+      });
+      return;
+    } else if (
+      location &&
+      (location.includes("!") ||
+        location.includes("@") ||
+        location.includes("#") ||
+        location.includes("$") ||
+        location.includes("&") ||
+        location.includes("*"))
+    ) {
+      setError({
+        type: "location",
+        message:
+          "*Las coordenadas del servicio no puede tener caracteres especiales",
+      });
+      return;
+    } else if (reservationNumber && reservationNumber.length < 8) {
+      setError({
+        type: "whatsapp",
+        message: "*La longitud minima de un numero es de 8",
+      });
+      return;
+    } else if (reservationNumber && reservationNumber.length > 18) {
+      setError({
+        type: "whatsapp",
+        message: "*La longitud maxima de un numero es de 18 ",
+      });
+      return;
+    }
+    if (reservationURL && !verifyUrl(reservationURL)) {
+      setError({ type: "url", message: "*URL no valida" });
       return;
     }
 
     try {
       console.log("image:", image);
 
-      if (!image) {
-        Alert.alert(
-          "Error",
-          "Por favor, seleccione una imagen para el producto."
-        );
-        return;
-      }
+      // if (!image) {
+      //   Alert.alert(
+      //     "Error",
+      //     "Por favor, seleccione una imagen para el producto."
+      //   );
+      //   return;
+      // }
 
-      const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
-      if (!uploadedImageUrl) {
-        Alert.alert("Error", "No se pudo cargar la imagen");
-        return;
-      }
+      // const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      // if (!uploadedImageUrl) {
+      //   Alert.alert("Error", "No se pudo cargar la imagen");
+      //   return;
+      // }
 
       const newService: LocalService = {
         serviceId,
@@ -170,8 +240,7 @@ export default function CreateService() {
         reservationNumber,
         location,
         address,
-        localServiceCategoryId: selectedType.id!,
-        imgURL: uploadedImageUrl,
+        // imgURL: uploadedImageUrl,
         dateFrom: new Date(),
         dateTo: null,
       };
@@ -186,6 +255,8 @@ export default function CreateService() {
             create: "true",
           },
         });
+      } else {
+        router.back();
       }
       setImage(null);
     } catch (error) {
@@ -293,7 +364,12 @@ export default function CreateService() {
           </View>
         </View>
       </Modal>
-      <View className="w-full h-[90%] rounded-3xl overflow-hidden bg-white">
+      <View
+        className={`w-full h-[90%] rounded-3xl overflow-hidden bg-white`}
+        style={{
+          paddingTop: insets.top,
+        }}
+      >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -307,7 +383,11 @@ export default function CreateService() {
               headerShown: false,
             }}
           />
-
+          {error.type === "required" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <BigTextInput
             inputType="text"
             value=""
@@ -315,8 +395,8 @@ export default function CreateService() {
             textStyle="mt-4"
             title="Descripcion del Servicio: "
             ref={descriptionRef}
+            maxLength={350}
           />
-
           <BasicTextInput
             inputType="text"
             value=""
@@ -326,7 +406,7 @@ export default function CreateService() {
             ref={URLRef}
           />
           <BasicTextInput
-            inputType="text"
+            inputType="number"
             value=""
             placeholder="Numero"
             textStyle="mt-4"
@@ -337,11 +417,15 @@ export default function CreateService() {
             inputType="text"
             value=""
             placeholder="Ej: 25 de Mayo 99, Libertador San Martin, Entre Rios"
-            textStyle="mt-4"
+            textStyle={`mt-4 ${error.type === "required" || error.type === "address" ? " text-red-800" : ""}`}
             title="Dirección"
             ref={addressRef}
           />
-
+          {error.type === "address" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <Pressable
             style={({ pressed }) => [
               { backgroundColor: pressed ? "#f8f8f8" : "white" },
@@ -362,11 +446,15 @@ export default function CreateService() {
             inputType="text"
             value=""
             placeholder="Ej: -1.000, -2.000"
-            textStyle="mt-4"
+            textStyle={`mt-4 ${error.type === "required" || error.type === "location" ? " text-red-800" : ""}`}
             title="Coordenadas"
             ref={locationRef}
           />
-
+          {error.type === "location" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <Pressable
             style={({ pressed }) => [
               { backgroundColor: pressed ? "#f8f8f8" : "white" },
@@ -382,7 +470,7 @@ export default function CreateService() {
               Utilizar las mismas coordenadas del local?
             </Text>
           </Pressable>
-          <Modal
+          {/* <Modal
             animationType="slide"
             transparent={true}
             visible={typeModalVisibility}
@@ -446,9 +534,9 @@ export default function CreateService() {
                 )}
               </View>
             </View>
-          </Modal>
+          </Modal> */}
 
-          <Pressable
+          {/* <Pressable
             onPress={() => {
               setTypeModalVisibility(true);
               fetchServiceTypes();
@@ -460,7 +548,7 @@ export default function CreateService() {
                 ? selectedType.name
                 : "Seleccionar Tipo de Servicio"}
             </Text>
-          </Pressable>
+          </Pressable> */}
 
           <View style={{ marginTop: 20 }}>
             <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
@@ -488,6 +576,30 @@ export default function CreateService() {
           <Text className="text-red-600 mt-4">
             *No te olvides de agregale un horario a tu Servicio!
           </Text>
+          {warning && (
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={warning}
+              onRequestClose={() => setWarning(false)}
+            >
+              <View
+                className="w-full h-full flex items-center justify-center"
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <BasicWarning
+                  text="No cargo ni un URL de reservas ni un numero de resevas, las personas no sabran como contactarlo, esta seguro que quiere crear el servicio?"
+                  cancelButton={false}
+                  buttonLeft="Cancelar"
+                  buttonRight="Crear"
+                  onPressRight={() => {
+                    handleSubmit(false, false);
+                  }}
+                  onPressLeft={() => setWarning(false)}
+                />
+              </View>
+            </Modal>
+          )}
         </ScrollView>
       </View>
       <View className="flex flex-row justify-evenly items-center w-full">
@@ -495,14 +607,14 @@ export default function CreateService() {
           logo={<CreateLogo />}
           text="Crear Servicio"
           style="mt-4"
-          onPress={() => handleSubmit(false)}
+          onPress={() => handleSubmit(false, true)}
           background="white"
         />
         <BasicButton
           logo={<CreateLogo />}
           text="Crear + Horario"
           style="mt-4"
-          onPress={() => handleSubmit(true)}
+          onPress={() => handleSubmit(true, true)}
           background="white"
         />
       </View>

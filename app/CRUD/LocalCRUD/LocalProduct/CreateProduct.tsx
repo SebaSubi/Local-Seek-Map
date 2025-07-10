@@ -36,6 +36,8 @@ import {
 } from "react-native-safe-area-context";
 import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 
+type error = "name" | "brand" | "measurement" | "description" | "required" | "";
+
 export default function CreateProduct() {
   const nameRef = useRef<any>(null);
   const brandRef = useRef<any>(null);
@@ -48,14 +50,13 @@ export default function CreateProduct() {
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [createType, setCreateType] = useState(false);
   const [search, setSearch] = useState<string>("");
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
   const router = useRouter();
 
   //errorHandlers
-  const [nameError, setNameError] = useState("");
-  const [brandError, setbrandError] = useState("");
-  const [measurementError, setMeasurementError] = useState("");
-
-  const insets = useSafeAreaInsets();
 
   // Función para seleccionar imagen
   const handleImagePicker = async () => {
@@ -99,59 +100,44 @@ export default function CreateProduct() {
   }, []);
 
   const handleSubmit = async () => {
+    setError({ type: "", message: "" });
     const name = nameRef.current?.getValue();
     const brand = brandRef.current?.getValue();
     const measurement = measurementRef.current?.getValue();
     const description = descriptionRef.current?.getValue();
     const productTypeId = selectedType?.id;
 
-    if (
-      !name ||
-      !brand ||
-      !measurement ||
-      !description ||
-      // !image ||
-      !productTypeId
-    ) {
-      Alert.alert("Error", "Por favor complete todos los campos");
+    if (!name || !brand || !measurement || !productTypeId) {
+      setError({
+        type: "required",
+        message: "*Por favor complete todos los campos obligatorios",
+      });
       return;
     }
     if (name.length < 2) {
-      setNameError("El nombre del produto es demasiado corto");
-      setbrandError("");
-      setMeasurementError("");
+      setError({
+        type: "name",
+        message: "*El nombre del producto es demasiado corto",
+      });
       return;
     } else if (name.includes(",") || name.includes(".")) {
-      setNameError(
-        "El nombre del produto no debe tener ni puntos '.' ni comas ','"
-      );
-      setbrandError("");
-      setMeasurementError("");
-      return;
-    } else if (name.length >= 50) {
-      setNameError("El nombre del produto es demasiado largo");
-      setbrandError("");
-      setMeasurementError("");
+      setError({
+        type: "name",
+        message:
+          "*El nombre del producto no debe tener ni puntos '.' ni comas ','",
+      });
       return;
     } else if (brand.length < 2) {
-      setNameError("");
-      setbrandError("La marca del produto es demasiado corta");
-      setMeasurementError("");
-      return;
-    } else if (brand.length >= 50) {
-      setNameError("");
-      setbrandError("La marca del produto es demasiado larga");
-      setMeasurementError("");
+      setError({
+        type: "brand",
+        message: "*La marca del producto es demasiado corta",
+      });
       return;
     } else if (measurement.length < 2) {
-      setNameError("");
-      setbrandError("");
-      setMeasurementError("La medida del produto es demasiado corta");
-      return;
-    } else if (measurement.length >= 50) {
-      setNameError("");
-      setbrandError("");
-      setMeasurementError("La medida del produto es demasiado larga");
+      setError({
+        type: "measurement",
+        message: "*La medida del producto es demasiado corta",
+      });
       return;
     }
 
@@ -199,7 +185,7 @@ export default function CreateProduct() {
       // brandRef.current.setValue("");
       // measurementRef.current.setValue("");
       // descriptionRef.current.setValue("");
-      // Sinceramente no estoy escribiendo nada. Unite a FACEA pa
+
       setImage(null);
     } catch (error) {
       Alert.alert("Error");
@@ -227,56 +213,80 @@ export default function CreateProduct() {
           </Text>
           <GoBackButton style="opacity-0" />
         </View>
-        <View className="flex-1 bg-white h-full w-full rounded-3xl flex items-center justify-center">
+        <View className="flex-1 bg-white h-full w-full rounded-3xl flex items-center justify-start">
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
             }}
             className=" bg-white w-full rounded-3xl overflow-hidden pt-3"
           >
-            {nameError === "" ? null : (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{nameError}</Text>
+            {error.type === "required" ? (
+              <View className="w-3/4 mb-5">
+                <Text className="text-red-800">{error.message}</Text>
               </View>
-            )}
+            ) : null}
             <BasicTextInput
               inputType="text"
               placeholder="Nombre"
               title="Nombre de Producto: "
               value=""
+              textStyle={
+                error.type === "name" || error.type === "required"
+                  ? "text-red-800"
+                  : ""
+              }
+              maxLength={30}
               ref={nameRef}
             />
-            {brandError === "" ? null : (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{brandError}</Text>
+            {error.type === "name" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800">{error.message}</Text>
               </View>
-            )}
+            ) : null}
             <BasicTextInput
               inputType="text"
               placeholder="Marca"
               title="Marca: "
               value=""
+              textStyle={
+                error.type === "brand" || error.type === "required"
+                  ? "text-red-800"
+                  : ""
+              }
+              maxLength={40}
               ref={brandRef}
             />
-            {measurementError === "" ? null : (
-              <View className="w-full flex items-start ml-28">
-                <Text className="text-red-800">{measurementError}</Text>
+            {error.type === "brand" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800">{error.message}</Text>
               </View>
-            )}
+            ) : null}
             <BasicTextInput
               inputType="text"
-              placeholder="Medida"
+              placeholder="Medida (Ej: 50g)"
               title="Medida: "
               value=""
+              textStyle={
+                error.type === "measurement" || error.type === "required"
+                  ? "text-red-800"
+                  : ""
+              }
+              maxLength={10}
               ref={measurementRef}
             />
+            {error.type === "measurement" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800">{error.message}</Text>
+              </View>
+            ) : null}
             <BigTextInput
               inputType="text"
               placeholder="Descripción"
               title="Descripción: "
               value=""
+              maxLength={350}
               ref={descriptionRef}
             />
             <Modal
@@ -303,6 +313,7 @@ export default function CreateProduct() {
                         placeholder="Nombre"
                         title="Nombre de Nueva Categoría: "
                         value=""
+                        maxLength={24}
                         ref={typeRef}
                       />
                       <BasicButton
@@ -357,12 +368,16 @@ export default function CreateProduct() {
               style={styles.typeButton}
               className="rounded-2xl"
             >
-              <Text style={styles.typeButtonText}>
+              <Text
+                style={styles.typeButtonText}
+                className={error.type === "required" ? "text-red-800" : ""}
+              >
                 {selectedType
                   ? selectedType.name
                   : "Seleccionar Tipo de Producto"}
               </Text>
             </Pressable>
+
             <View style={{ marginTop: 20 }}>
               <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
             </View>
