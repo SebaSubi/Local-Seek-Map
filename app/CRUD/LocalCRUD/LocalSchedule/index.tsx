@@ -47,7 +47,7 @@ export default function LocalSchedule() {
         <BasicSelectable
           href="/CRUD/LocalCRUD/LocalSchedule/ReadSchedule"
           logo={<ReaderIcon />}
-          text="Leer Horiarios"
+          text="Leer Horarios"
           style="mt-3"
           params={{ name: name }}
         />

@@ -89,12 +89,12 @@ export default function LocalProductContainer({
           <Text className="text-sm font-thin ml-2">
             Cantidad: {localProduct.product?.measurement}
           </Text>
-          <Text className="text-sm font-thin ml-2">
+          {/* <Text className="text-sm font-thin ml-2">
             Precio:{" "}
             {localProduct.price !== null && localProduct.price !== undefined
               ? `$${localProduct.price.toFixed(2)}`
               : "N/A"}
-          </Text>
+          </Text> */}
         </View>
       </Pressable>
     </Link>

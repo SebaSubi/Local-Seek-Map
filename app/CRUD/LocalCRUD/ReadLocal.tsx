@@ -22,7 +22,8 @@ import { getLocalTypes } from "../../../libs/localType";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const localFilters = ["Ubicación", "Quitar", "Apertura"];
+// const localFilters = ["Ubicación", "Quitar", "Apertura"];
+const localFilters = ["Quitar", "Apertura"];
 
 export default function ReadLocal() {
   const [locals, setLocals] = useState<Local[]>([]);

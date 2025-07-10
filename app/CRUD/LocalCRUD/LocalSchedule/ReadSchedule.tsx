@@ -35,11 +35,11 @@ export default function ReadSchedule() {
       <View className="flex flex-row justify-between w-full items-center">
         <GoBackButton style="ml-2" iconColor="white" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
-          Actualizar/Borrar Horarios
+          Leer Horarios
         </Text>
         <GoBackButton style="ml-2 opacity-0" iconColor="white" />
       </View>
-      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center overflow-hidden">
+      {/* <View className="bg-white h-[89%] w-full rounded-3xl flex items-center overflow-hidden">
         {loading ? (
           <Text>Loading...</Text>
         ) : schedule.length ? (
@@ -47,6 +47,21 @@ export default function ReadSchedule() {
             <Schedule schedule={schedule} />
           </View>
         ) : null}
+      </View> */}
+      <View className="bg-white h-[89%] w-full rounded-3xl flex items-center overflow-hidden">
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : schedule.length ? (
+          <View className="w-full h-full bg-white">
+            <Schedule schedule={schedule} />
+          </View>
+        ) : (
+          <View className="flex-1 justify-center items-center">
+            <Text className="text-gray-600 text-base">
+              No hay horarios disponibles
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );

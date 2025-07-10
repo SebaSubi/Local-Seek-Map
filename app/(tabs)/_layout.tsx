@@ -24,7 +24,7 @@ export default function TabLayout() {
         options={{
           title: "Search",
           headerShown: true,
-          tabBarIcon: ({ color }) => <SearchIcon />,
+          tabBarIcon: ({ color }) => <SearchIcon color={color} />,
         }}
       />
       <Tabs.Screen
