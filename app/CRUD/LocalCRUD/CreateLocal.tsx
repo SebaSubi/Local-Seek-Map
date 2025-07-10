@@ -261,6 +261,17 @@ export default function CreateLocal() {
       //   return;
       // }
 
+      let uploadedImageUrl: string | null = null;
+      try {
+        if (image) {
+          uploadedImageUrl = await uploadImageToCloudinaryLocals(image);
+        }
+      } catch (e) {
+        console.warn("Error subiendo la imagen:", e);
+        Alert.alert("Error", "No se pudo subir la imagen.");
+        return;
+      }
+
       const newLocal: Local = {
         name,
         location,
@@ -270,7 +281,7 @@ export default function CreateLocal() {
         facebook,
         webpage,
         localTypeID,
-        imgURL: "",
+        imgURL: uploadedImageUrl,
       };
 
       await createLocalAndAddOwner(newLocal, authState!.user!.id);

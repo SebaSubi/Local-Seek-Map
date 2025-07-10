@@ -180,7 +180,7 @@ export async function createLocal(local: Local) {
     if (!response.ok) {
       Alert.alert("Error", "Failed to create Local");
     } else {
-      console.log("Product succesfully added to dataBase");
+      console.log("Local succesfully added to dataBase");
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -286,7 +286,7 @@ export async function createLocalAndAddOwner(local: Local, userId: string) {
     if (!response.status) {
       Alert.alert("Error", "Failed to create Local");
     } else {
-      console.log("Product succesfully added to dataBase");
+      console.log("Local succesfully added to dataBase");
     }
   } catch (error) {
     console.log("Error: ", error);
