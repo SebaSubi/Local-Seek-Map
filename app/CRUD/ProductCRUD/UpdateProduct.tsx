@@ -47,7 +47,7 @@ const ReadProductScreen = () => {
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
 
@@ -64,6 +64,7 @@ const ReadProductScreen = () => {
     async function fetchCategories() {
       try {
         const data = await getProductTypes();
+        // console.log(data.allCategories);
         setCategories(data.allCategories);
       } catch (err) {
         console.error("Error fetching categories", err);

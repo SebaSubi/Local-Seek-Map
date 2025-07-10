@@ -48,7 +48,7 @@ const LocalEditModal = ({
       animationType="slide"
       transparent={true}
       visible={isVisible}
-      //   onRequestClose={() => setIsModalVisible(false)}
+      onRequestClose={() => setVisible(false)}
     >
       <View //this view exists because when you set a modal to visible, it ocupies the whole screen, and here its when it needs to be centered, also it needs to be made by styles
         style={{
@@ -81,7 +81,15 @@ const LocalEditModal = ({
               data={locals}
               horizontal={false}
               numColumns={2}
-              renderItem={({ item }) => <EditLocalContainer local={item} />}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={{ width: "50%" }}
+                  // onPressIn={() => setVisible(false)}
+                  onPress={() => setVisible(false)}
+                >
+                  <EditLocalContainer local={item} />
+                </Pressable>
+              )}
               keyExtractor={(item) => item?.id!}
               onRefresh={() => fetchData()}
               // refreshing={loading}
