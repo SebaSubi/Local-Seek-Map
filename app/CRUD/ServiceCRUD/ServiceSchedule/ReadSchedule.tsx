@@ -29,13 +29,14 @@ export default function ReadSchedule() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-row justify-between w-full items-center mb-2">
-        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
-        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center ">
+      <View className="flex flex-row justify-between w-full items-center">
+        <GoBackButton style="ml-2" iconColor="white" />
+        <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center">
           Horarios: {localService.service?.name}
         </Text>
-        <Text style={{ color: colors.primary.blue }}>aaaaaa</Text>
+        <GoBackButton style="opacity-0" />
       </View>
+
       <View className="bg-white h-[89%] w-full rounded-3xl overflow-hidden flex items-center">
         {loading ? (
           <Text>Loading...</Text>

@@ -265,6 +265,12 @@ export default function EditProductPage() {
         return;
       }
 
+      if (price === "") {
+        price = null;
+      } else {
+        price = parseFloat(price);
+      }
+
       const newProduct: LocalProduct = {
         price,
         localProductDescription,

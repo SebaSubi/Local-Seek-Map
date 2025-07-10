@@ -76,13 +76,13 @@ export default function CreateProduct() {
     const schedules = await getScheduleByLocalServiceId(localService.id!);
 
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
-    if (!dayNumber) {
-      setError({
-        type: "required",
-        message: "*Debe completar todos los campos obligatorios",
-      });
-      return;
-    }
+    // if (!dayNumber) {
+    //   setError({
+    //     type: "required",
+    //     message: "*Debe completar todos los campos obligatorios",
+    //   });
+    //   return;
+    // }
     let localWarning = false;
 
     if (schedules.length > 0) {
@@ -96,6 +96,14 @@ export default function CreateProduct() {
     }
 
     if (localWarning) {
+      return;
+    }
+
+    if (dayNumber < 1 || !dayNumber) {
+      setError({
+        type: "day",
+        message: "*El día debe ser entre 1 (domingo) y 7 (sábado)",
+      });
       return;
     }
 
@@ -208,12 +216,12 @@ export default function CreateProduct() {
           headerShown: false,
         }}
       />
-      <View className="flex flex-row justify-between w-full items-center mb-2">
-        <GoBackButton style="bg-white w-12 h-8 justify-center ml-3" />
+      <View className="flex flex-row justify-between w-full items-center">
+        <GoBackButton style="ml-2" iconColor="white" />
         <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
           {`Crear Horarios `}
         </Text>
-        <GoBackButton style="bg-white w-12 h-8 justify-center opacity-0" />
+        <GoBackButton style="mr-2 opacity-0" />
       </View>
       <View className="bg-white h-[89%] w-full rounded-3xl overflow-hidden flex items-center">
         <ScrollView

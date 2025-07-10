@@ -117,7 +117,7 @@ export default function CreateProduct() {
     if (name.length < 2) {
       setError({
         type: "name",
-        message: "*El nombre del producto es demasiado corto",
+        message: "*El nombre del producto debe tener mas de 2 caracteres",
       });
       return;
     } else if (name.includes(",") || name.includes(".")) {
@@ -130,13 +130,19 @@ export default function CreateProduct() {
     } else if (brand.length < 2) {
       setError({
         type: "brand",
-        message: "*La marca del producto es demasiado corta",
+        message: "*La marca del producto debe tener mas de 2 caracteres",
       });
       return;
     } else if (measurement.length < 2) {
       setError({
         type: "measurement",
         message: "*La medida del producto es demasiado corta",
+      });
+      return;
+    } else if (measurement && !/^[a-zA-Z0-9 ]+$/.test(measurement)) {
+      setError({
+        type: "measurement",
+        message: "*La medida no puede tener símbolos",
       });
       return;
     }

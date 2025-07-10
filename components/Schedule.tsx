@@ -101,8 +101,8 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
                         numColumns={2}
                         columnWrapperStyle={{
                           justifyContent: "center",
-                          marginBottom: 28,
-                          marginTop: 28,
+                          marginBottom: 18,
+                          marginTop: 18,
                           // fontSize: 20,
                         }}
                         renderItem={({ item }) => (
