@@ -25,6 +25,7 @@ export default function EditLocalContainer({ local }: { local: Local }) {
   }, [local.id]);
   return (
     <Link
+      style={{ width: "85%" }}
       href={{
         pathname: "CRUD/LocalCRUD",
         // params: {

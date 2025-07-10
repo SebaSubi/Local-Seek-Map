@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   LocalProduct,
   LocalProductCategory,
@@ -190,14 +191,45 @@ export async function deleteProduct(id: string) {
 
 //------------------------------------------------------------Local - Products -------------------------------------------------------
 
+const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}`;
+
+export async function UpdateProductAdmin(Product: Product) {
+  try {
+    const response = await axios.patch(
+      `${API_URL_2}/auth-v2/admin-product-update`,
+      {
+        id: Product.id,
+        name: Product.name,
+        brand: Product.brand,
+        measurement: Product.measurement,
+        description: Product.description,
+        imgURL: Product.imgURL,
+        dateFrom: new Date(),
+      }
+    );
+  } catch (error) {
+    console.error("Error updating product", error);
+  }
+}
+
+export async function deleteProductAdmin(productId: string) {
+  try {
+    const response = await axios.patch(
+      `${API_URL_2}/auth-v2/admin-product-delete`,
+      { productId }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error deleting product", error);
+  }
+}
+
 //------------------------------------------------------- LocalProduct Category ---------------------------------------------------
 
 // const API_URL_2 =
 //   Platform.OS === "android"
 //     ? "http://10.0.2.2:3000/local-product-categories"
 //     : "http://localhost:3000/local-product-categories";
-
-const API_URL_2 = `${process.env.EXPO_PUBLIC_API_ROUTE}`;
 
 export async function getLocalProductCategories(localId: string) {
   try {
