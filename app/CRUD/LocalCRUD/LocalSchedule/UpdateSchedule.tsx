@@ -234,7 +234,7 @@ export default function UpdateSchedule() {
         <View className="flex flex-row justify-between w-full items-center">
           <GoBackButton style="ml-2" iconColor="white" />
           <Text className="text-white font-semibold text-xl mt-1 w-3/4 text-center pr-3">
-            {`Actualizar Horarios ${name === undefined ? "" : (name as string)}`}
+            {bringDayName(schedule?.dayNumber!)}
           </Text>
           <GoBackButton style="opacity-0" />
         </View>
@@ -246,9 +246,9 @@ export default function UpdateSchedule() {
           }}
         >
           <View className="w-full h-full flex items-center justify-center">
-            <Text className="mt-6">
+            {/* <Text className="mt-6">
               Dia: {bringDayName(schedule?.dayNumber!)}
-            </Text>
+            </Text> */}
             <Text className="mt-1 text-sm font-light">
               *Los campos que no cambie o deje en vacio quedaran sin modificar
             </Text>

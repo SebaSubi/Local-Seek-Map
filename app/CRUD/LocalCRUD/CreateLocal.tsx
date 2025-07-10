@@ -9,21 +9,27 @@ import {
   Modal,
   StyleSheet,
   Text,
+  FlatList,
 } from "react-native";
 import BasicTextInput from "../../../components/BasicTextInput";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { CreateLogo } from "../../../components/Logos";
 import BasicButton from "../../../components/BasicButton";
 import { useRef, useState, useEffect } from "react";
 import { checkLocalName, createLocalAndAddOwner } from "../../../libs/local";
 // import { CategorySelectButtonLocals } from "../../../components/CategorySelectButton";
-import { getLocalTypes } from "../../../libs/localType";
+import {
+  createLocalType,
+  getLocalTypes,
+  getlocalategoriesByName,
+} from "../../../libs/localType";
 import { Local, LocalTypes } from "../../../schema/GeneralSchema";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryLocals } from "../../../libs/cloudinary";
 import { z } from "zod";
 import { useAuth } from "../../context/AuthContext";
 import GoBackButton from "../../../components/GoBackButton";
+import BasicSearchButton from "../../../components/BasicSearchBar";
 
 export const verifyUrl = (url: string): boolean => {
   const urlSchema = z.string().url();
@@ -44,6 +50,7 @@ type error =
   | "webpage"
   | "address"
   | "required"
+  | "category"
   | "";
 
 export default function CreateLocal() {
@@ -54,12 +61,15 @@ export default function CreateLocal() {
   const instagramRef = useRef<any>(null);
   const facebookRef = useRef<any>(null);
   const webpageRef = useRef<any>(null);
+  const categoryRef = useRef<any>(null);
   // const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [coordinatesInfo, setCoordinatesInfo] = useState<boolean>(false);
   const [image, setImage] = useState<string | null>(null);
+  const [search, setSearch] = useState<string>("");
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [localTypes, setLocalTypes] = useState<LocalTypes[]>([]);
   const [selectedType, setSelectedType] = useState<LocalTypes | null>(null);
+  const [createCategory, setCreateCategory] = useState(false);
 
   const [error, setError] = useState<{ type: error; message: string }>({
     type: "",
@@ -138,7 +148,7 @@ export default function CreateLocal() {
       });
 
       return;
-    } else if (address && !/^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ,\s]+$/.test(address)) {
+    } else if (address && !/^[a-zA-Z0-9\s,.\-#/áéíóúÁÉÍÓÚñÑ]*$/.test(address)) {
       setError({
         type: "address",
         message: "La dirección del local no puede tener caracteres especiales",
@@ -278,6 +288,27 @@ export default function CreateLocal() {
     }
   };
 
+  async function getAndSetCategories() {
+    const localProductCategories = await getlocalategoriesByName(search);
+    setLocalTypes(localProductCategories);
+  }
+  async function hanldeCreateCategory() {
+    const name = categoryRef.current?.getValue();
+    if (!name || name.length < 2) {
+      setError({
+        type: "category",
+        message:
+          "*El nombre de la categoría no puede tener menos de 2 caracteres",
+      });
+    } else {
+      setError({ type: "", message: "" });
+      const productCategory = await createLocalType({ name });
+      productCategory ? setSelectedType(productCategory) : null;
+      setCreateCategory(false);
+      setTypeModalVisibility(false);
+    }
+  }
+
   const fetchCategories = async () => {
     try {
       const data = await getLocalTypes();
@@ -295,8 +326,8 @@ export default function CreateLocal() {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    getAndSetCategories();
+  }, [search]);
 
   return (
     <>
@@ -430,7 +461,7 @@ export default function CreateLocal() {
               </View>
             ) : null}
 
-            <Modal
+            {/* <Modal
               animationType="slide"
               transparent={true}
               visible={typeModalVisibility}
@@ -466,6 +497,133 @@ export default function CreateLocal() {
                     style={styles.closeButton}
                   >
                     <Text style={styles.closeButtonText}>Cerrar</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal> */}
+            {/* <Modal
+              animationType="slide"
+              transparent={true}
+              visible={typeModalVisibility}
+              onRequestClose={() => setTypeModalVisibility(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    Selecciona el tipo de producto
+                  </Text>
+                  <ScrollView style={styles.scrollView}>
+                    {localTypes.length === 0 ? (
+                      <Text>No hay tipos disponibles</Text>
+                    ) : (
+                      localTypes.map((category, index) => (
+                        <Pressable
+                          key={index}
+                          onPress={() => {
+                            setSelectedType(category);
+                            setTypeModalVisibility(false);
+                          }}
+                          style={styles.modalOption}
+                        >
+                          <Text style={styles.modalOptionText}>
+                            {category.name}
+                          </Text>
+                        </Pressable>
+                      ))
+                    )}
+                  </ScrollView>
+                  <Pressable
+                    onPress={() => setTypeModalVisibility(false)}
+                    style={styles.closeButton}
+                  >
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal> */}
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={typeModalVisibility}
+              onRequestClose={() => setTypeModalVisibility(false)}
+            >
+              <View
+                className="flex items-center justify-center w-full h-full "
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
+                  <BasicButton
+                    text={
+                      createCategory ? "Volver" : "No encunetra la categoría?"
+                    }
+                    onPress={() => {
+                      createCategory
+                        ? setCreateCategory(false)
+                        : setCreateCategory(true);
+                    }}
+                    background="#f8f8f8"
+                    style="mt-4 mb-2"
+                  />
+                  {createCategory ? (
+                    <View className="w-full h-full flex items-center justify-center">
+                      <BasicTextInput
+                        inputType="text"
+                        placeholder="Nombre"
+                        title="Nombre de Nueva Categoría: "
+                        value=""
+                        ref={categoryRef}
+                        textStyle={
+                          error.type === "category" ? "text-red-800" : ""
+                        }
+                        maxLength={40}
+                      />
+                      {error.type === "category" ? (
+                        <View className="w-3/4">
+                          <Text className="text-red-800">{error.message}</Text>
+                        </View>
+                      ) : null}
+                      <BasicButton
+                        logo={<CreateLogo />}
+                        text="Crear Categoría"
+                        onPress={() => {
+                          hanldeCreateCategory();
+                        }}
+                        background="#f8f8f8"
+                        style="mt-4"
+                      />
+                    </View>
+                  ) : (
+                    <>
+                      <BasicSearchButton
+                        placeholder="Buscar Categoria"
+                        onSearch={setSearch}
+                        background="#f8f8f8"
+                      />
+                      <FlatList
+                        data={localTypes}
+                        renderItem={({ item, index }) => (
+                          <Pressable
+                            className={`flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden ${localTypes && index === localTypes.length - 1 ? "mb-14" : ""}`}
+                            onPress={() => {
+                              setSelectedType(item);
+                              setTypeModalVisibility(false);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </Pressable>
+                        )}
+                        keyExtractor={(item) => item.id!.toString()}
+                      />
+                    </>
+                  )}
+                  <Pressable
+                    onPress={() => {
+                      setTypeModalVisibility(false);
+                      setCreateCategory(false);
+                    }}
+                    className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
+                  >
+                    <Text className="text-white">Cancelar</Text>
                   </Pressable>
                 </View>
               </View>
@@ -521,7 +679,7 @@ export default function CreateLocal() {
                 setTypeModalVisibility(true);
                 fetchCategories();
               }}
-              style={styles.typeButton}
+              className="flex items-center justify-center w-3/4 rounded-2xl bg-defaultGray mt-2 h-12"
             >
               <Text style={styles.typeButtonText}>
                 {selectedType
@@ -554,6 +712,54 @@ export default function CreateLocal() {
   );
 }
 
+// const styles = StyleSheet.create({
+//   modalContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//   },
+//   modalContent: {
+//     width: "80%",
+//     backgroundColor: "#fff",
+//     borderRadius: 10,
+//     padding: 20,
+//     alignItems: "center",
+//     maxHeight: 400,
+//   },
+//   scrollView: { width: "100%", maxHeight: 300 },
+//   modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 15 },
+//   modalOption: {
+//     padding: 10,
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#ccc",
+//     width: "100%",
+//   },
+//   modalOptionText: { textAlign: "center", fontSize: 16 },
+//   closeButton: {
+//     marginTop: 15,
+//     padding: 10,
+//     backgroundColor: "#e1e8e8",
+//     borderRadius: 5,
+//   },
+//   closeButtonText: { color: "#000", fontWeight: "bold" },
+//   typeButton: {
+//     marginTop: 20,
+//     paddingVertical: 15, // Aumenta el padding vertical
+//     paddingHorizontal: 20, // Aumenta el padding horizontal
+//     borderRadius: 16,
+//     backgroundColor: "#f8f8f8",
+//     minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   typeButtonText: {
+//     fontSize: 16, // Aumenta el tamaño de la fuente
+//     // fontWeight: "bold",
+//     textAlign: "center",
+//   },
+// });
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
@@ -567,9 +773,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
-    maxHeight: 400,
+    maxHeight: 400, // Establece la altura máxima que deseas
   },
-  scrollView: { width: "100%", maxHeight: 300 },
+  scrollView: {
+    width: "100%",
+    maxHeight: 300, // Limita la altura del contenido dentro del ScrollView
+  },
   modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 15 },
   modalOption: {
     padding: 10,
@@ -589,8 +798,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 15, // Aumenta el padding vertical
     paddingHorizontal: 20, // Aumenta el padding horizontal
-    borderRadius: 16,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#e1e8e8",
+    borderRadius: 5,
     minWidth: 200, // Establece un ancho mínimo para que el botón sea más grande
     alignItems: "center",
     justifyContent: "center",

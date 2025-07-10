@@ -161,10 +161,10 @@ export default function UpdateLocal() {
         message: "*El nombre del Local ya esta en uso",
       });
       return;
-    } else if (address.length < 5) {
+    } else if (address.length < 10) {
       setError({
         type: "address",
-        message: "La dirección del Local requiere minimamente 5 caracteres",
+        message: "La dirección del Local requiere minimamente 10 caracteres",
       });
       return;
     } else if (address.length >= 120) {
@@ -176,19 +176,15 @@ export default function UpdateLocal() {
       return;
     } else if (
       address &&
-      (address.includes("!") ||
-        address.includes("@") ||
-        address.includes("#") ||
-        address.includes("$") ||
-        address.includes("&") ||
-        address.includes("*"))
+      address &&
+      !/^[a-zA-Z0-9\s,.\-#/áéíóúÁÉÍÓÚñÑ]*$/.test(address)
     ) {
       setError({
         type: "address",
         message: "La dirección del local no puede tener caracteres especiales",
       });
       return;
-    } else if (location.length < 10) {
+    } else if (location.length < 14) {
       setError({
         type: "location",
         message:
@@ -202,15 +198,7 @@ export default function UpdateLocal() {
           "Las coordenadas del Local no pueden tener mas de 60 caracteres caracteres",
       });
       return;
-    } else if (
-      location &&
-      (location.includes("!") ||
-        location.includes("@") ||
-        location.includes("#") ||
-        location.includes("$") ||
-        location.includes("&") ||
-        location.includes("*"))
-    ) {
+    } else if (location && !/^[0-9.,\- ]+$/.test(location)) {
       setError({
         type: "location",
         message:
@@ -273,13 +261,7 @@ export default function UpdateLocal() {
         message: "Un usuario de Facebook debe tener como máximo 50 caracteres",
       });
       return;
-    } else if (
-      facebook &&
-      (facebook.includes("-") ||
-        facebook.includes("@") ||
-        facebook.includes("#") ||
-        facebook.includes("$"))
-    ) {
+    } else if (facebook && !/^[a-zA-Z0-9.]+$/.test(facebook)) {
       setError({
         type: "facebook",
         message: "Un usuario de Facebook no permite estos caracteres",

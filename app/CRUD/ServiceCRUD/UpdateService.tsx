@@ -174,15 +174,7 @@ export default function UpdateService() {
           "*La dirección no puede tener menos de 5 caracteres o mas de 120",
       });
       return;
-    } else if (
-      address &&
-      (address.includes("!") ||
-        address.includes("@") ||
-        address.includes("#") ||
-        address.includes("$") ||
-        address.includes("&") ||
-        address.includes("*"))
-    ) {
+    } else if (address && !/^[a-zA-Z0-9\s,.\-#/áéíóúÁÉÍÓÚñÑ]*$/.test(address)) {
       setError({
         type: "address",
         message:
@@ -203,15 +195,7 @@ export default function UpdateService() {
           "Las coordenadas del servicio no pueden tener mas de 60 caracteres",
       });
       return;
-    } else if (
-      location &&
-      (location.includes("!") ||
-        location.includes("@") ||
-        location.includes("#") ||
-        location.includes("$") ||
-        location.includes("&") ||
-        location.includes("*"))
-    ) {
+    } else if (location && !/^[0-9.,\- ]+$/.test(location)) {
       setError({
         type: "location",
         message:

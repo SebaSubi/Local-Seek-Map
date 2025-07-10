@@ -77,9 +77,9 @@ export interface LocalSchedule {
 }
 
 export interface LocalTypes {
-  id: string;
+  id?: string;
   name: string;
-  locals: Local[];
+  locals?: Local[];
 }
 
 export interface ViewLocal {

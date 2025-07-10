@@ -64,13 +64,13 @@ export default function CreateProduct() {
   const handleCreate = async () => {
     const schedulest = await getSchedulesByLocalId(local.id!);
     const dayNumber = parseInt(dayNumberRef.current?.getValue());
-    if (!dayNumber) {
-      setError({
-        type: "required",
-        message: "*Debe completar todos los campos obligatorios",
-      });
-      return;
-    }
+    // if (!dayNumber) {
+    //   setError({
+    //     type: "required",
+    //     message: "*Debe completar todos los campos obligatorios",
+    //   });
+    //   return;
+    // }
     let localWarning = false;
 
     if (schedulest.length > 0) {
@@ -84,6 +84,13 @@ export default function CreateProduct() {
     }
 
     if (localWarning) {
+      return;
+    }
+    if (dayNumber < 1 || !dayNumber) {
+      setError({
+        type: "day",
+        message: "*El día debe ser entre 1 (domingo) y 7 (sábado)",
+      });
       return;
     }
 
@@ -300,7 +307,7 @@ export default function CreateProduct() {
             <TimeSelect
               text="Hora de Cerrada Nocturno:"
               ref={ThirdShiftFinishRef}
-              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
+              textStyle={`mt-2 ${error.type === "thirdFinish" ? " text-red-800" : ""}`}
               clear={clearTimes}
             />
             {error.type === "thirdFinish" ? (

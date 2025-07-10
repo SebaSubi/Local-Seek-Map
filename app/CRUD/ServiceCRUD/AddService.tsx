@@ -141,25 +141,14 @@ export default function CreateService() {
         message: "*Por favor complete todos los campos obligatorios",
       });
       return;
-    } else if (warn && !reservationURL && !reservationNumber) {
-      setWarning({ schedule: schedule, war: true });
-      return;
-    } else if (5 > address.length || address.length > 120) {
+    } else if (10 > address.length || address.length > 120) {
       setError({
         type: "address",
         message:
-          "*La dirección no puede tener menos de 5 caracteres o mas de 120",
+          "*La dirección no puede tener menos de 10 caracteres o mas de 120",
       });
       return;
-    } else if (
-      address &&
-      (address.includes("!") ||
-        address.includes("@") ||
-        address.includes("#") ||
-        address.includes("$") ||
-        address.includes("&") ||
-        address.includes("*"))
-    ) {
+    } else if (address && !/^[a-zA-Z0-9\s,.\-#/áéíóúÁÉÍÓÚñÑ]*$/.test(address)) {
       setError({
         type: "address",
         message:
@@ -180,15 +169,7 @@ export default function CreateService() {
           "Las coordenadas del servicio no pueden tener mas de 60 caracteres",
       });
       return;
-    } else if (
-      location &&
-      (location.includes("!") ||
-        location.includes("@") ||
-        location.includes("#") ||
-        location.includes("$") ||
-        location.includes("&") ||
-        location.includes("*"))
-    ) {
+    } else if (location && location && !/^[0-9.,\- ]+$/.test(location)) {
       setError({
         type: "location",
         message:
@@ -210,6 +191,9 @@ export default function CreateService() {
     }
     if (reservationURL && !verifyUrl(reservationURL)) {
       setError({ type: "url", message: "*URL no valida" });
+      return;
+    } else if (warn && !reservationURL && !reservationNumber) {
+      setWarning({ schedule: schedule, war: true });
       return;
     }
 
@@ -623,6 +607,7 @@ export default function CreateService() {
                   buttonLeft="Cancelar"
                   buttonRight="Crear"
                   onPressRight={() => {
+                    setWarning({ schedule: warning.schedule, war: false });
                     handleSubmit(warning.schedule, false);
                   }}
                   onPressLeft={() =>
