@@ -9,10 +9,13 @@ import { ReloadIcon } from "../../../components/Logos";
 import { getAdminLocals } from "../../../libs/user";
 import { Local } from "../../../schema/GeneralSchema";
 import EditLocalContainer from "../../../components/EditLocalContainer";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AdminLocal() {
   const [search, setSearch] = useState("");
   const [locals, setLocals] = useState<Local[]>([]);
+
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     fetchData();
@@ -49,7 +52,7 @@ export default function AdminLocal() {
             style="my-4"
           />
           {locals.length !== 0 ? (
-            <View className="w-full h-4/5 mt-4">
+            <View className="flex-1 mt-4">
               <FlatList
                 data={locals}
                 horizontal={false}
@@ -63,7 +66,12 @@ export default function AdminLocal() {
             </View>
           ) : null}
 
-          <View className="flex justify-center items-center">
+          <View
+            className="flex justify-center items-center"
+            style={{
+              paddingBottom: insets.bottom,
+            }}
+          >
             <BasicButton
               text="Recargar"
               background={colors.primary.blue}

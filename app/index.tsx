@@ -27,6 +27,11 @@ export default function Login() {
     const email = emailRef.current;
     const password = passwordRef.current;
 
+    const result = await onLogin!(email, password);
+    if (result.error) {
+      setLoginError("Correo o contraseña incorrectos.");
+    }
+
     if (!email.trim()) {
       setLoginError("Por favor, ingresa tu correo electrónico.");
       return;
@@ -40,11 +45,6 @@ export default function Login() {
     if (!password.trim()) {
       setLoginError("Por favor, ingresa tu contraseña.");
       return;
-    }
-
-    const result = await onLogin!(email, password);
-    if (result.error) {
-      setLoginError("Correo o contraseña incorrectos.");
     }
   };
 

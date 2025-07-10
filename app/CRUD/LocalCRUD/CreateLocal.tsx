@@ -119,15 +119,16 @@ export default function CreateLocal() {
       });
       return;
     } else if ((await checkLocalName(name)) === "true") {
+      // console.log("Here");
       setError({
         type: "name",
         message: "*El nombre del Local ya esta en uso",
       });
       return;
-    } else if (address.length < 5) {
+    } else if (address.length < 10) {
       setError({
         type: "address",
-        message: "La dirección del Local requiere minimamente 5 caracteres",
+        message: "La dirección del Local requiere mínimamente 10 caracteres",
       });
       return;
     } else if (address.length >= 120) {
@@ -137,15 +138,7 @@ export default function CreateLocal() {
       });
 
       return;
-    } else if (
-      address &&
-      (address.includes("!") ||
-        address.includes("@") ||
-        address.includes("#") ||
-        address.includes("$") ||
-        address.includes("&") ||
-        address.includes("*"))
-    ) {
+    } else if (address && !/^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ,\s]+$/.test(address)) {
       setError({
         type: "address",
         message: "La dirección del local no puede tener caracteres especiales",
@@ -165,15 +158,7 @@ export default function CreateLocal() {
           "Las coordenadas del Local no pueden tener mas de 60 caracteres",
       });
       return;
-    } else if (
-      location &&
-      (location.includes("!") ||
-        location.includes("@") ||
-        location.includes("#") ||
-        location.includes("$") ||
-        location.includes("&") ||
-        location.includes("*"))
-    ) {
+    } else if (location && !/^[0-9.,\- ]+$/.test(location)) {
       setError({
         type: "location",
         message:
@@ -236,13 +221,7 @@ export default function CreateLocal() {
         message: "Un usuario de Facebook debe tener como máximo 50 caracteres",
       });
       return;
-    } else if (
-      facebook &&
-      (facebook.includes("-") ||
-        facebook.includes("@") ||
-        facebook.includes("#") ||
-        facebook.includes("$"))
-    ) {
+    } else if (facebook && !/^[a-zA-Z0-9.]+$/.test(facebook)) {
       setError({
         type: "facebook",
         message: "Un usuario de Facebook no permite estos caracteres",

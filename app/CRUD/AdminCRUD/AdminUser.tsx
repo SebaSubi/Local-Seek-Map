@@ -11,6 +11,7 @@ import UserInfoModal from "../../../components/modals/UserInfoModal";
 import { Role } from "../../context/AuthContext";
 import BasicButton from "../../../components/BasicButton";
 import { LocalIcon, ReloadIcon } from "../../../components/Logos";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AdminUser() {
   const guestUser: DysplayUser = {
@@ -27,6 +28,7 @@ export default function AdminUser() {
   const [users, setUsers] = useState<DysplayUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<DysplayUser>(guestUser);
   const [userModalVisible, setUserModalVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const fetchUsersData = async () => {
     setUsers((await getAllUsersBySearch(search)) ?? []);
@@ -46,7 +48,10 @@ export default function AdminUser() {
         }}
       />
       <View className="flex w-full h-full bg-[#1a253d] flex-col items-center justify-end">
-        <View className="flex flex-row items-center justify-between w-full ">
+        <View
+          className="flex flex-row items-center justify-between w-full "
+          style={{ paddingTop: insets.top }}
+        >
           <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
             Administrar Usuarios
@@ -65,32 +70,34 @@ export default function AdminUser() {
             setVisible={setUserModalVisible}
             user={selectedUser}
           />
-          <FlatList
-            data={users}
-            horizontal={false}
-            numColumns={1}
-            renderItem={({ item }) => (
-              <UserCard
-                user={item}
-                isVisible={userModalVisible}
-                setVisible={setUserModalVisible}
-                setUser={setSelectedUser}
-              />
-            )}
-            ItemSeparatorComponent={() => (
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: colors.primary.lightGray,
-                  marginHorizontal: 10,
-                }}
-              />
-            )}
-            keyExtractor={(item) => item?.id!}
-            onRefresh={() => fetchUsersData()}
-            // refreshing={loading}
-            refreshing={false}
-          />
+          <View className="flex-1">
+            <FlatList
+              data={users}
+              horizontal={false}
+              numColumns={1}
+              renderItem={({ item }) => (
+                <UserCard
+                  user={item}
+                  isVisible={userModalVisible}
+                  setVisible={setUserModalVisible}
+                  setUser={setSelectedUser}
+                />
+              )}
+              ItemSeparatorComponent={() => (
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: colors.primary.lightGray,
+                    marginHorizontal: 10,
+                  }}
+                />
+              )}
+              keyExtractor={(item) => item?.id!}
+              onRefresh={() => fetchUsersData()}
+              // refreshing={loading}
+              refreshing={false}
+            />
+          </View>
           <BasicButton
             text="Recargar"
             background={colors.primary.blue}

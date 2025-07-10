@@ -81,7 +81,7 @@ export default function DeleteServiceComponent({
           className="flex flex-row items-center justify-between w-72 h-24 bg-defaultGray  rounded-2xl overflow-hidden "
           {...panResponder.panHandlers}
         >
-          <View className="w-32  ">
+          <View className="w-20 h-20 ml-2 rounded-lg overflow-hidden">
             <Image
               style={{
                 height: "100%",
@@ -94,7 +94,7 @@ export default function DeleteServiceComponent({
                   ? service.imgURL
                   : service.service?.imgURL
                     ? service.service?.imgURL
-                    : "https://sanantoniosports.org/wp-content/uploads/2022/07/placeholder-image.jpeg",
+                    : "https://i0.wp.com/mikeyarce.com/wp-content/uploads/2021/09/woocommerce-placeholder.png?ssl=1",
               }}
             />
           </View>
@@ -103,7 +103,7 @@ export default function DeleteServiceComponent({
               {service.service?.name}
             </Text>
             <Text className="font-thin text-sm">
-              {service.localServiceCategory?.name}
+              {service.service?.serviceType?.name}
             </Text>
           </View>
         </View>

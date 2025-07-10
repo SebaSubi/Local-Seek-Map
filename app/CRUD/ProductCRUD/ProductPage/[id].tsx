@@ -196,7 +196,7 @@ export default function ProductPage() {
           <BasicButton
             background={selectedOption === "Info" ? "white" : "#7e8592"}
             style="w-1/3 mb-2 bg-[#1a253d]"
-            text="Información"
+            text="Informaciónnnn"
             onPress={() => setSelectedOption("Info")}
           />
         </View>

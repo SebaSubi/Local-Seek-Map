@@ -51,6 +51,11 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
         type: "email",
         message: "La dirección de email no es válida.",
       });
+    } else if (validEmail === true) {
+      setError({
+        type: "email",
+        message: "Este Email ya tiene una cuenta asociada.",
+      });
     } else if (username.current.length < 2) {
       setError({
         type: "username",
@@ -83,11 +88,6 @@ const Register = ({ setReg, setModalVisible }: RegProps) => {
       setError({
         type: "password",
         message: "La contraseña no puede tener solo espacios",
-      });
-    } else if (validEmail === true) {
-      setError({
-        type: "email",
-        message: "Este Email ya tiene una cuenta asociada.",
       });
     } else if (validUsername === true) {
       setError({

@@ -110,15 +110,34 @@ export default function LocalProductPage() {
           {selectedOption === "Info" && (
             <ScrollView>
               <View className="flex items-center justify-center bg-back w-full h-56 ">
-                <Image
-                  source={{
-                    uri: image
-                      ? (image as string)
-                      : getPlaceholders(categoryName as string),
-                  }}
-                  style={{ height: 200, width: 100 }}
-                  resizeMode="contain"
-                />
+                <View className="h-56 w-56 rounded-xl overflow-hidden flex justify-center items-center">
+                  {categoryName ? (
+                    <Image
+                      source={{
+                        uri: image
+                          ? (image as string)
+                          : getPlaceholders(categoryName as string),
+                      }}
+                      style={{ height: "100%", width: "100%" }}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <>
+                      <View className="flex items-center justify-center w-20 h-20">
+                        <Image
+                          source={{
+                            uri: "https://static.wikia.nocookie.net/henrystickmin/images/8/8e/CtM_Henry%27s_Plan_Icon.PNG/revision/latest?cb=20240208180434",
+                          }}
+                          style={{ height: "100%", width: "100%" }}
+                          resizeMode="contain"
+                        />
+                      </View>
+                      <Text className="text-center mt-3">
+                        Este producto no parece tener una imagen asociada...
+                      </Text>
+                    </>
+                  )}
+                </View>
               </View>
               <View className="w-full h-[60%]">
                 <Text className="text-3xl font-bold ml-4 text-[#1a253d]">

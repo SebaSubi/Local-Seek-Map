@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Modal, FlatList } from "react-native";
+import { View, Text, Pressable, Modal, FlatList, Platform } from "react-native";
 import React, {
   Dispatch,
   SetStateAction,
@@ -90,6 +90,15 @@ const UserInfoModal = ({
       setLocals(fetchedLocals);
     }
   };
+  useEffect(() => {
+    setSelectedRole(
+      user.role === "ADMIN"
+        ? Role.ADMIN
+        : user.role === "STORE_OWNER"
+          ? Role.STOREOWNER
+          : Role.USER
+    );
+  }, [isVisible]);
 
   return (
     <Modal
@@ -231,39 +240,75 @@ const UserInfoModal = ({
                 <View className="w-full flex-row justify-start items-start">
                   <Text className="ml-7 mb-1 text-sm font-light">Rol:</Text>
                 </View>
-                <View
-                  style={{
-                    display: "flex",
-                    width: 200,
-                    height: 55,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: colors.primary.lightGray,
-                    borderRadius: 100,
-                    marginBottom: 8,
-                  }}
-                >
-                  <Picker
-                    selectedValue={selectedRole}
-                    onValueChange={(itemValue, itemIndex) =>
-                      setSelectedRole(itemValue)
-                    }
-                    mode="dropdown"
+                {Platform.OS === "android" ? (
+                  <View
                     style={{
                       display: "flex",
-                      width: 170,
-                      height: 50,
+                      width: 200,
+                      height: 55,
                       alignItems: "center",
                       justifyContent: "center",
                       backgroundColor: colors.primary.lightGray,
                       borderRadius: 100,
+                      marginBottom: 8,
                     }}
                   >
-                    <Picker.Item label="User" value={Role.USER} />
-                    <Picker.Item label="Store Owner" value={Role.STOREOWNER} />
-                    <Picker.Item label="Admin" value={Role.ADMIN} />
-                  </Picker>
-                </View>
+                    <Picker
+                      selectedValue={selectedRole}
+                      onValueChange={(itemValue, itemIndex) =>
+                        setSelectedRole(itemValue)
+                      }
+                      mode={Platform.OS === "android" ? "dropdown" : "dialog"}
+                      style={{
+                        display: "flex",
+                        width: 170,
+                        height: 50,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: colors.primary.lightGray,
+                        borderRadius: 100,
+                      }}
+                    >
+                      <Picker.Item label="User" value={Role.USER} />
+                      <Picker.Item
+                        label="Store Owner"
+                        value={Role.STOREOWNER}
+                      />
+                      <Picker.Item label="Admin" value={Role.ADMIN} />
+                    </Picker>
+                  </View>
+                ) : (
+                  <View className="w-full h-12 mb-2 flex flex-row justify-evenly ">
+                    <BasicButton
+                      text="Admin"
+                      textStyle={selectedRole === "ADMIN" ? "text-white" : ""}
+                      background={
+                        selectedRole === "ADMIN" ? colors.primary.blue : ""
+                      }
+                      onPress={() => setSelectedRole(Role.ADMIN)}
+                    />
+                    <BasicButton
+                      text="Store Owner"
+                      textStyle={
+                        selectedRole === "STORE_OWNER" ? "text-white" : ""
+                      }
+                      background={
+                        selectedRole === "STORE_OWNER"
+                          ? colors.primary.blue
+                          : ""
+                      }
+                      onPress={() => setSelectedRole(Role.STOREOWNER)}
+                    />
+                    <BasicButton
+                      text="User"
+                      textStyle={selectedRole === "USER" ? "text-white" : ""}
+                      background={
+                        selectedRole === "USER" ? colors.primary.blue : ""
+                      }
+                      onPress={() => setSelectedRole(Role.USER)}
+                    />
+                  </View>
+                )}
                 <BasicButton
                   text="Guardar"
                   background={colors.primary.blue}

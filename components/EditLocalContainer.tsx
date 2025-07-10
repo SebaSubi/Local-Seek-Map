@@ -9,7 +9,13 @@ import BasicButton from "./BasicButton";
 import { Edit, UpdateLogo } from "./Logos";
 import { useLocalIdStore } from "../libs/localZustang";
 
-export default function EditLocalContainer({ local }: { local: Local }) {
+export default function EditLocalContainer({
+  local,
+  setModal,
+}: {
+  local: Local;
+  setModal?: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [type, setLocalType] = useState<string>("");
   const setLocal = useLocalIdStore((state) => state.setLocal); //this is for sustand
@@ -25,7 +31,7 @@ export default function EditLocalContainer({ local }: { local: Local }) {
   }, [local.id]);
   return (
     <Link
-      style={{ width: "85%" }}
+      style={{ width: "45%" }}
       href={{
         pathname: "CRUD/LocalCRUD",
         // params: {
@@ -45,6 +51,7 @@ export default function EditLocalContainer({ local }: { local: Local }) {
         key={local.id}
         onPress={() => {
           setLocal(local);
+          setModal && setModal(false);
           // console.log("aaaaaaaaaaaaaaaaaaaaaaaa");
         }}
       >

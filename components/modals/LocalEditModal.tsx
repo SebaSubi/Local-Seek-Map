@@ -82,13 +82,7 @@ const LocalEditModal = ({
               horizontal={false}
               numColumns={2}
               renderItem={({ item }) => (
-                <Pressable
-                  style={{ width: "50%" }}
-                  // onPressIn={() => setVisible(false)}
-                  onPress={() => setVisible(false)}
-                >
-                  <EditLocalContainer local={item} />
-                </Pressable>
+                <EditLocalContainer local={item} setModal={setVisible} />
               )}
               keyExtractor={(item) => item?.id!}
               onRefresh={() => fetchData()}

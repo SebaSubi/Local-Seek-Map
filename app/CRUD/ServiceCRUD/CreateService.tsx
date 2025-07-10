@@ -129,7 +129,7 @@ export default function CreateService() {
 
       const service = await createService(newService);
       setImage(null);
-      // router.replace("/CRUD/ServiceCRUD/AddService");
+      router.replace("/CRUD/ServiceCRUD/AddService");
     } catch (error) {
       Alert.alert("Error", "No se pudo crear el local.");
     }
@@ -168,8 +168,6 @@ export default function CreateService() {
   //     );
   //   }
   // }
-
-  const defaultImage = "https://via.placeholder.com/150";
 
   return (
     <View className="w-full h-full bg-defaultBlue">

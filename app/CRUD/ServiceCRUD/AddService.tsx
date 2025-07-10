@@ -328,7 +328,9 @@ export default function CreateService() {
                   <View className="w-28 h-20 flex items-center justify-center  mt-3  ">
                     <Image
                       source={{
-                        uri: item.imgURL || "https://via.placeholder.com/150",
+                        uri:
+                          item.imgURL ||
+                          "https://i0.wp.com/mikeyarce.com/wp-content/uploads/2021/09/woocommerce-placeholder.png?ssl=1",
                       }}
                       style={{
                         height: "100%",
@@ -338,8 +340,18 @@ export default function CreateService() {
                       }}
                     />
                   </View>
-                  <Text className="font-light text-sm mt-2">{item.name}</Text>
-                  <Text className="font-light text-sm">
+                  <Text
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                    className="font-light text-sm mt-2"
+                  >
+                    {item.name}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    className="font-light text-sm px-2 pb-1"
+                  >
                     Tipo: {item.serviceType?.name}
                   </Text>
                 </Pressable>
