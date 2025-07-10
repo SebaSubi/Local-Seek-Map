@@ -48,6 +48,7 @@ type error =
   | "description"
   | "product-category"
   | "product sub-category"
+  | "price"
   | "";
 
 export default function AddProduct() {
@@ -132,6 +133,14 @@ export default function AddProduct() {
       setError({
         type: "description",
         text: "*La descripción de un producto no puede tener mas de 350 caracteres",
+      });
+      return;
+    }
+
+    if (!/^\d+(,\d+)?$/.test(price)) {
+      setError({
+        type: "price",
+        text: "El precio solo puede incluir números y una coma",
       });
       return;
     }
@@ -370,12 +379,18 @@ export default function AddProduct() {
           *Los siguientes campos son opcionales
         </Text>
         <BasicTextInput
-          inputType="number"
+          inputType="text"
           placeholder="Precio"
+          textStyle={error.type === "price" ? "text-red-800" : ""}
           title="Precio: "
           value=""
           ref={priceRef}
         />
+        {error.type === "price" && (
+          <View className="w-3/4">
+            <Text className="text-red-800">{error.text}</Text>
+          </View>
+        )}
         <BigTextInput
           inputType="text"
           textStyle={error.type === "description" ? "text-red-800" : ""}
