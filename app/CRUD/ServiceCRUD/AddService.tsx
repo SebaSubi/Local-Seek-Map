@@ -47,15 +47,13 @@ import { verifyUrl } from "../LocalCRUD/CreateLocal";
 type error = "address" | "location" | "required" | "whatsapp" | "url" | "";
 
 export default function CreateService() {
-  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
-  const [selectedType, setSelectedType] = useState<ServiceType>({
-    id: "0000",
-    name: "default",
-  });
   const [services, setServices] = useState<Service[]>([]);
   const [serviceModal, setServiceModal] = useState(true);
   const [selectedServiceId, setSelectedServiceId] = useState<string>();
-  const [warning, setWarning] = useState(false);
+  const [warning, setWarning] = useState<{ schedule: boolean; war: boolean }>({
+    schedule: false,
+    war: false,
+  });
   const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<{ type: error; message: string }>({
@@ -144,7 +142,7 @@ export default function CreateService() {
       });
       return;
     } else if (warn && !reservationURL && !reservationNumber) {
-      setWarning(true);
+      setWarning({ schedule: schedule, war: true });
       return;
     } else if (5 > address.length || address.length > 120) {
       setError({
@@ -200,13 +198,13 @@ export default function CreateService() {
     } else if (reservationNumber && reservationNumber.length < 8) {
       setError({
         type: "whatsapp",
-        message: "*La longitud minima de un numero es de 8",
+        message: "*La longitud mínima de un número es de 8",
       });
       return;
     } else if (reservationNumber && reservationNumber.length > 18) {
       setError({
         type: "whatsapp",
-        message: "*La longitud maxima de un numero es de 18 ",
+        message: "*La longitud máxima de un número es de 18 ",
       });
       return;
     }
@@ -248,8 +246,9 @@ export default function CreateService() {
       const service = await createLocalService(newService);
       if (schedule) {
         setLocalService(service);
+        setWarning({ schedule: false, war: false });
         router.push({
-          pathname: "/CRUD/ServiceCRUD/ServiceSchedule/",
+          pathname: "/CRUD/ServiceCRUD/ServiceSchedule/CreateSchedule",
           params: {
             id: service.id,
             create: "true",
@@ -264,12 +263,6 @@ export default function CreateService() {
       Alert.alert("Error", "No se pudo crear el local.");
     }
   };
-
-  async function handleCreateType() {
-    const name = typeRef.current?.getValue();
-    const newType = await createLocalServiceCategory({ name });
-    setSelectedType(newType);
-  }
 
   // function handleCreatePlusSchedule() {
   //   console.log(createdService);
@@ -405,6 +398,13 @@ export default function CreateService() {
             title="URL Reservas"
             ref={URLRef}
           />
+          {error.type === "url" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800 text-sm font-light">
+                {error.message}
+              </Text>
+            </View>
+          ) : null}
           <BasicTextInput
             inputType="number"
             value=""
@@ -413,6 +413,13 @@ export default function CreateService() {
             title="Numero de Reservas"
             ref={reservationNumberRef}
           />
+          {error.type === "whatsapp" && (
+            <View className="w-3/4">
+              <Text className="text-red-800 text-sm font-light">
+                {error.message}
+              </Text>
+            </View>
+          )}
           <BasicTextInput
             inputType="text"
             value=""
@@ -580,8 +587,10 @@ export default function CreateService() {
             <Modal
               animationType="slide"
               transparent={true}
-              visible={warning}
-              onRequestClose={() => setWarning(false)}
+              visible={warning.war}
+              onRequestClose={() =>
+                setWarning({ schedule: warning.schedule, war: false })
+              }
             >
               <View
                 className="w-full h-full flex items-center justify-center"
@@ -593,9 +602,11 @@ export default function CreateService() {
                   buttonLeft="Cancelar"
                   buttonRight="Crear"
                   onPressRight={() => {
-                    handleSubmit(false, false);
+                    handleSubmit(warning.schedule, false);
                   }}
-                  onPressLeft={() => setWarning(false)}
+                  onPressLeft={() =>
+                    setWarning({ schedule: warning.schedule, war: false })
+                  }
                 />
               </View>
             </Modal>

@@ -18,11 +18,25 @@ import {
 } from "../../../../libs/localService";
 import GoBackButton from "../../../../components/GoBackButton";
 
+type error =
+  | "day"
+  | "firstEnd"
+  | "secondStart"
+  | "secondEnd"
+  | "required"
+  | "thirdStart"
+  | "thirdFinish"
+  | "";
+
 export default function CreateProduct() {
   const [warning, setWarning] = useState(false);
   const [scheduleId, setScheduleId] = useState<string>();
-  const [error, setError] = useState("");
   const [errorModal, setErrorModal] = useState(false);
+
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
 
   const localService = useLocalServiceIdStore((state) => state.localService);
 
@@ -48,6 +62,15 @@ export default function CreateProduct() {
   //   fetchSchedules();
   // }, []);
 
+  function validateSchedule(localSchedule: LocalServiceSchedule) {
+    if (scheduleInputValidation(localSchedule).type !== "") {
+      setError(scheduleInputValidation(localSchedule));
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   const handleCreate = async () => {
     const schedules = await getScheduleByLocalServiceId(localService.id!);
 
@@ -69,13 +92,8 @@ export default function CreateProduct() {
     }
 
     const localSchedule = createNewSchedule();
-
-    if (scheduleInputValidation(localSchedule) !== "Correct") {
-      setError(scheduleInputValidation(localSchedule) as string);
-      setErrorModal(true);
-    } else {
-      handleSubmit();
-    }
+    const create = validateSchedule(localSchedule);
+    create ? handleSubmit(localSchedule) : null;
   };
 
   function checkSchedule(hour: Date): string | null {
@@ -160,9 +178,9 @@ export default function CreateProduct() {
     return newSchedule;
   }
 
-  async function handleSubmit() {
-    const newSchedule = createNewSchedule();
-    createlocalServiceSchedule(newSchedule);
+  async function handleSubmit(schedule: LocalServiceSchedule) {
+    createlocalServiceSchedule(schedule);
+    dayNumberRef.current.setValue("");
   }
 
   async function handleUpdate() {
@@ -197,42 +215,93 @@ export default function CreateProduct() {
           <View
             className={`flex justify-center items-center bg-white h-full w-full mb-8 ${warning ? "opacity-25" : "opacity-100"}`}
           >
+            {error.type === "required" ? (
+              <Text className="text-red-800">{error.message}</Text>
+            ) : null}
             <BasicTextInput
               inputType="text"
               value=""
               placeholder="Numero de Dia"
               title="Dia de la semana (1 = Domingo):"
-              textStyle="mt-4"
+              textStyle={`mt-4 ${error.type === "required" || error.type === "day" ? " text-red-800" : ""}`}
               ref={dayNumberRef}
             />
+            {error.type === "day" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Primer Turno:"
+              textStyle={`mt-2 ${error.type === "required" ? " text-red-800" : ""}`}
               ref={FirstShiftStartRef}
             />
             <TimeSelect
               text="Hora de Cerrada Primer Turno:"
+              textStyle={`mt-2 ${error.type === "required" || error.type === "firstEnd" ? " text-red-800" : ""}`}
               ref={FirstShiftFinishRef}
             />
+            {error.type === "firstEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Apertura Segundo Turno:"
+              textStyle={`mt-2 ${error.type === "secondStart" ? " text-red-800" : ""}`}
               ref={SecondShiftStartRef}
             />
+            {error.type === "secondStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Segundo Turno:"
+              textStyle={`mt-2 ${error.type === "secondEnd" ? " text-red-800" : ""}`}
               ref={SecondShiftFinishRef}
             />
+            {error.type === "secondEnd" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <Text className="ml-3 mr-3 mt-2 mb-2 text-sm font-light">
               *Los horarios nocturnos pueden ser aquellos que empiezan en un día
               y terminan en otro
             </Text>
             <TimeSelect
               text="Hora de Apertura Nocturno:"
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
               ref={ThirdShiftStartRef}
             />
+            {error.type === "thirdStart" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <TimeSelect
               text="Hora de Cerrada Nocturno:"
+              textStyle={`mt-2 ${error.type === "thirdStart" ? " text-red-800" : ""}`}
               ref={ThirdShiftFinishRef}
             />
+            {error.type === "thirdFinish" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800 text-sm font-light">
+                  {error.message}
+                </Text>
+              </View>
+            ) : null}
             <View className="flex flex-col justify-center items-center w-3/4 mt-3">
               <BasicButton
                 logo={<CreateLogo />}
@@ -246,7 +315,7 @@ export default function CreateProduct() {
           </View>
         </ScrollView>
 
-        <Modal
+        {/* <Modal
           animationType="fade"
           transparent={true}
           visible={warning}
@@ -268,8 +337,35 @@ export default function CreateProduct() {
               style="absolute"
             />
           </View>
-        </Modal>
-        <Modal
+        </Modal> */}
+        {warning && (
+          // <View className="w-full h-full flex items-center justify-center">
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={warning}
+            onRequestClose={() => setWarning(false)}
+          >
+            <View
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text="El dia que indicaste ya existe dentro de este horario, desea actualizarlo con los nuevo datos?"
+                cancelButton={false}
+                buttonLeft="Cancelar"
+                buttonRight="Reemplazar"
+                onPressRight={() => {
+                  handleUpdate();
+                }}
+                onPressLeft={() => setWarning(false)}
+                // style="absolute"
+              />
+            </View>
+          </Modal>
+          // </View>
+        )}
+        {/* <Modal
           animationType="fade"
           transparent={true}
           visible={errorModal}
@@ -290,7 +386,7 @@ export default function CreateProduct() {
               style="absolute"
             />
           </View>
-        </Modal>
+        </Modal> */}
       </View>
     </View>
   );

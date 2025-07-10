@@ -150,6 +150,7 @@ export default function UpdateService() {
   };
 
   const handleSubmit = async (schedule: boolean) => {
+    setError({ type: "", message: "" });
     const reservationNumber = reservationNumberRef.current?.getValue();
     const description = descriptionRef.current?.getValue();
     const reservationURL = URLRef.current?.getValue();
@@ -220,13 +221,13 @@ export default function UpdateService() {
     } else if (reservationNumber && reservationNumber.length < 8) {
       setError({
         type: "whatsapp",
-        message: "*La longitud minima de un numero es de 8",
+        message: "*La longitud mínima de un número es de 8 caracteres",
       });
       return;
     } else if (reservationNumber && reservationNumber.length > 18) {
       setError({
         type: "whatsapp",
-        message: "*La longitud maxima de un numero es de 18 ",
+        message: "*La longitud máxima de un número es de 18 caracteres",
       });
       return;
     }
@@ -321,27 +322,31 @@ export default function UpdateService() {
             inputType="text"
             value=""
             placeholder="URL"
-            textStyle="mt-4"
+            textStyle={`mt-4 ${error.type === "url" ? " text-red-800" : ""}`}
             title="URL Reservas"
             ref={URLRef}
           />
           {error.type === "url" && (
-            <Text className="text-defaultOrange text-sm font-light">
-              *{error.message}
-            </Text>
+            <View className="w-3/4">
+              <Text className="text-red-800 text-sm font-light">
+                {error.message}
+              </Text>
+            </View>
           )}
           <BasicTextInput
             inputType="number"
             value=""
-            placeholder="Numero"
+            placeholder="Número"
             textStyle="mt-4"
-            title="Numero de Reservas"
+            title="Número de Reservas"
             ref={reservationNumberRef}
           />
           {error.type === "whatsapp" && (
-            <Text className="text-defaultOrange text-sm font-light">
-              *{error.message}
-            </Text>
+            <View className="w-3/4">
+              <Text className="text-red-800 text-sm font-light">
+                {error.message}
+              </Text>
+            </View>
           )}
           <BasicTextInput
             inputType="text"
@@ -350,6 +355,7 @@ export default function UpdateService() {
             textStyle={`mt-4 ${error.type === "required" || error.type === "address" ? " text-red-800" : ""}`}
             title="Dirección"
             ref={addressRef}
+            maxLength={350}
           />
           {error.type === "address" ? (
             <View className="w-3/4">
