@@ -1,8 +1,11 @@
 import React from "react";
 import { FlatList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import ScheduleBox from "./ScheduleBox";
 import { shift } from "../constants/consts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocalServiceIdStore } from "../libs/localServiceZustang";
+import { getScheduleByServiceId } from "../libs/serviceSchedule";
 import { LocalSchedule, LocalServiceSchedule } from "../schema/GeneralSchema";
 
 type Shift = {
@@ -56,7 +59,7 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
               return (
                 <View
                   key={dayNumber}
-                  className="flex flex-row items-center justify-center my-3 px-3"
+                  className="flex flex-row items-center my-3 px-3"
                 >
                   <Text className="text-xl font-light w-1/4 text-center">
                     {
@@ -91,16 +94,16 @@ export default function Schedule({ schedule = [] }: ScheduleProps) {
                               (shift.shiftOpen === "SecondShiftStart" &&
                                 schedule.SecondShiftStart) ||
                               (shift.shiftOpen === "ThirdShiftStart" &&
-                                // eslint-disable-next-line prettier/prettier
                                 schedule.ThirdShiftStart)
-                            // eslint-disable-next-line prettier/prettier
                           )
                         )}
                         keyExtractor={(item, index) => index.toString()}
                         numColumns={2}
                         columnWrapperStyle={{
-                          justifyContent: "center", // Centra los turnos horizontalmente
-                          // marginBottom: 8,
+                          justifyContent: "center",
+                          marginBottom: 28,
+                          marginTop: 28,
+                          // fontSize: 20,
                         }}
                         renderItem={({ item }) => (
                           <View className="m-1 flex items-center">

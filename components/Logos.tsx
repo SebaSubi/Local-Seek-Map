@@ -90,8 +90,8 @@ export const HomeIcon = () => {
   return <Entypo name="home" size={24} color="black" />;
 };
 
-export const SearchIcon = () => {
-  return <Feather name="search" size={24} color="black" />;
+export const SearchIcon = ({ color = "black", size = 24 }) => {
+  return <Feather name="search" size={size} color={color} />;
 };
 
 export const PersonCircleIcon = ({ color = "black", size = 24 }) => {

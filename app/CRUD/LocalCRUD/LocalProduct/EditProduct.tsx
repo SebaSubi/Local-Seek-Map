@@ -12,6 +12,7 @@ import {
 import { useLocalIdStore } from "../../../../libs/localZustang";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
 import BasicWarning from "../../../../components/BasicWarning";
+import GoBackButton from "../../../../components/GoBackButton";
 
 export default function EditProduct() {
   const [products, setProduct] = useState<LocalProduct[]>([]);
@@ -47,11 +48,16 @@ export default function EditProduct() {
         }}
       />
       <View className=" flex justify-start flex-col h-full w-full bg-[#1a253d]">
+        {/* <GoBackButton iconColor="white" style="ml-1" /> */}
+        <View className="absolute top-8 left-0 right-0 rounded-full bg-[#1a253d] mt-8 ml-2 z-30 w-12 flex items-center justify-center">
+          <GoBackButton iconColor="white" style="ml-1" />
+        </View>
         <BasicSearchButton
           placeholder="Buscar"
           onSearch={setSearch}
           style="mt-16 mb-3"
         />
+        {/* <GoBackButton iconColor="white" style="ml-1 opacity-0" /> */}
 
         <View className="flex items-center h-[90%] w-full bg-white rounded-3xl overflow-hidden">
           <Text className="ml-2 mr-2 text-sm font-light">

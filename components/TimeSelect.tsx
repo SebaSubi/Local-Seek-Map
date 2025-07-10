@@ -118,9 +118,9 @@ const TimeSelect = forwardRef(
               }}
             >
               <View
-                style={{
-                  opacity: isPickerVisible ? 1 : 0,
-                }}
+              // style={{
+              //   opacity: isPickerVisible ? 1 : 0,
+              // }}
               >
                 <Text className="text-defaultOrange pr-3">Quitar</Text>
               </View>

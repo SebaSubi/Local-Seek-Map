@@ -309,6 +309,18 @@ export default function UpdateLocal() {
     // }
 
     // const newLocal: Local = {
+
+    let uploadedImageUrl = local.imgURL;
+
+    if (image) {
+      const uploadResult = await uploadImageToCloudinaryLocals(image);
+      if (!uploadResult) {
+        Alert.alert("Error", "No se pudo subir la imagen.");
+        return;
+      }
+      uploadedImageUrl = uploadResult;
+    }
+
     const newLocal: Local = {
       name,
       location,
@@ -317,7 +329,7 @@ export default function UpdateLocal() {
       instagram,
       facebook,
       webpage,
-      imgURL: "",
+      imgURL: uploadedImageUrl,
       dateFrom: new Date(),
     };
 

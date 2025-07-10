@@ -289,6 +289,12 @@ export default function CreateProduct() {
               maxLength={350}
               ref={descriptionRef}
             />
+            <View>
+              <Text className="text-gray-500 text-sm mb-2">
+                Al crear un producto del menú, seleccionar la categoría "Item
+                Menú"
+              </Text>
+            </View>
             <Modal
               animationType="slide"
               transparent={true}
