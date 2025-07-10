@@ -118,7 +118,7 @@ const UserInfoModal = ({
         <View
           style={{
             width: "80%",
-            height: "75%",
+            height: "auto",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
             justifyContent: "flex-start",
