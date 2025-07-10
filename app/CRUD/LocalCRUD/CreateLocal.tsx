@@ -162,7 +162,7 @@ export default function CreateLocal() {
       setError({
         type: "location",
         message:
-          "Las coordenadas del Local no pueden tener mas de 60 caracteres caracteres",
+          "Las coordenadas del Local no pueden tener mas de 60 caracteres",
       });
       return;
     } else if (

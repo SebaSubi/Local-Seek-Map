@@ -94,7 +94,7 @@ export default function ProductCrud() {
           <BasicSelectable
             href="/CRUD/LocalCRUD/LocalProduct/EditProduct"
             logo={<UpdateLogo />}
-            text="Editar Productos"
+            text="Editar/Borrar Productos"
             style="mt-3"
           />
           <BasicSelectable

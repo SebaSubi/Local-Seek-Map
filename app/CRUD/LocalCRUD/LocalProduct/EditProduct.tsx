@@ -3,7 +3,7 @@ import { LocalProduct, Product } from "../../../../schema/GeneralSchema";
 import { deleteProduct, getProducts } from "../../../../libs/product";
 import {} from "../../../../libs/local";
 import { Stack } from "expo-router";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Modal, Text, View } from "react-native";
 import EditProductContainer from "../../../../components/EditProductContainer";
 import {
   deleteProductOfLocal,
@@ -11,11 +11,14 @@ import {
 } from "../../../../libs/localProducts";
 import { useLocalIdStore } from "../../../../libs/localZustang";
 import BasicSearchButton from "../../../../components/BasicSearchBar";
+import BasicWarning from "../../../../components/BasicWarning";
 
 export default function EditProduct() {
   const [products, setProduct] = useState<LocalProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [warning, setWarning] = useState(false);
+  const [productId, setProductId] = useState<string | null | undefined>("");
 
   const local = useLocalIdStore((state) => state.local);
 
@@ -25,11 +28,12 @@ export default function EditProduct() {
     setProduct(products);
     setLoading(false);
   }
-  const handleDelete = (id: string) => {
-    setLoading(true);
+
+  function handleDelete(id: string) {
     deleteProductOfLocal(id);
     getAndSetProducts();
-  };
+    setWarning(false);
+  }
 
   useEffect(() => {
     getAndSetProducts();
@@ -57,7 +61,13 @@ export default function EditProduct() {
           <FlatList
             data={products}
             renderItem={({ item }) => (
-              <EditProductContainer product={item} onDelete={handleDelete} />
+              <EditProductContainer
+                product={item}
+                onDelete={() => {
+                  setWarning(true);
+                  setProductId(item.id);
+                }}
+              />
             )}
             keyExtractor={(item) => item.product!.id!}
             onRefresh={() => getAndSetProducts()}
@@ -65,6 +75,31 @@ export default function EditProduct() {
             className="mt-2"
           />
         </View>
+        {warning && (
+          // <View className="w-full h-full flex items-center justify-center">
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={warning}
+            onRequestClose={() => setWarning(false)}
+          >
+            <View
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <BasicWarning
+                text="Una vez que elimine el producto no se podrá volver para atrás."
+                cancelButton={false}
+                buttonLeft="Cancelar"
+                buttonRight="Eliminar"
+                onPressRight={() => {
+                  handleDelete(productId!);
+                }}
+                onPressLeft={() => setWarning(false)}
+              />
+            </View>
+          </Modal>
+        )}
       </View>
     </>
   );

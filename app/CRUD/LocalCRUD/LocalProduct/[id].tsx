@@ -42,6 +42,14 @@ import { uploadImageToCloudinaryProducts } from "../../../../libs/cloudinary";
 import GoBackButton from "../../../../components/GoBackButton";
 import { isNumeric } from "../../../../libs/libs";
 
+type error =
+  | "price"
+  | "description"
+  | "required"
+  | "product-category"
+  | "product sub-category"
+  | "";
+
 export default function EditProductPage() {
   const { id } = useLocalSearchParams();
   const priceRef = useRef<{
@@ -71,8 +79,9 @@ export default function EditProductPage() {
 
   const [product, setProduct] = useState<LocalProduct | null>(null);
   const [localProductCategories, setLocalProductCategories] = useState<
-    LocalProductCategory[] | LocalProductSubCategory[]
+    LocalProductCategory[]
   >([]);
+
   const [selectedProductCategory, setSelectedProductCategory] =
     useState<LocalProductCategory>();
   const [selectedProductSubCategory, setSelectedProductSubCategory] =
@@ -83,6 +92,10 @@ export default function EditProductPage() {
   const [createSubCategory, setCreateSubCategory] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
 
   const insets = useSafeAreaInsets();
 
@@ -220,7 +233,7 @@ export default function EditProductPage() {
     // console.log("localProductCategoryId:", localProductCategoryId);
     // console.log("localProductSubCategoryId:", localProductSubCategoryId);
     // console.log("price:", price);
-    console.log("image:", image);
+    // console.log("image:", image);
 
     try {
       let uploadedImageUrl = null;
@@ -232,15 +245,23 @@ export default function EditProductPage() {
         }
       }
 
-      if (price === "") {
-        price = null;
-      } else {
-        price = parseFloat(price);
-      }
+      // if (price === "") {
+      //   price = null;
+      // } else {
+      //   price = parseFloat(price);
+      // }
 
-      if (!isNumeric(price) && price !== null) {
-        Alert.alert("Error", "El precio solo puede tener numeros");
-        setPriceError(true);
+      // if (!isNumeric(price) && price !== null) {
+      //   Alert.alert("Error", "El precio solo puede tener numeros");
+      //   setPriceError(true);
+      //   return;
+      // }
+
+      if (!/^\d+(,\d+)?$/.test(price)) {
+        setError({
+          type: "price",
+          message: "El precio solo puede contener números y una coma",
+        });
         return;
       }
 
@@ -267,8 +288,8 @@ export default function EditProductPage() {
 
   async function getAndSetCategories() {
     const localProductCategories = await getLocalProductCategoriesByName(
-      search,
-      id as string
+      "1",
+      search
     );
     setLocalProductCategories(localProductCategories);
   }
@@ -306,23 +327,40 @@ export default function EditProductPage() {
       setImage(product.imgURL ?? null);
     }
   }, [product]);
-
   async function hanldeCreateCategory() {
     const name = categoryRef.current?.getValue();
-    const productCategory = await createLocalProductCategory({ name });
-    // console.log(productCategory);
-    productCategory ? setSelectedProductCategory(productCategory) : null;
-    setCreateCategory(false);
+    if (!name || name.length < 2) {
+      setError({
+        type: "product-category",
+        message:
+          "*El nombre de la categoría no puede tener menos de 2 caracteres",
+      });
+    } else {
+      setError({ type: "", message: "" });
+      const productCategory = await createLocalProductCategory({ name });
+      productCategory ? setSelectedProductCategory(productCategory) : null;
+      setCreateCategory(false);
+      setProductCategoryModal(false);
+    }
   }
 
   async function hanldeCreateSubCategory() {
     const name = subCategoryRef.current?.getValue();
-    const productSubCategory = await createLocalProductSubCategory({ name });
-    console.log(productSubCategory);
-    productSubCategory
-      ? setSelectedProductSubCategory(productSubCategory)
-      : null;
-    setCreateSubCategory(false);
+    if (!name || name.length < 2) {
+      setError({
+        type: "product sub-category",
+        message:
+          "*El nombre de la sub categoría no puede tener menos de 2 caracteres",
+      });
+    } else {
+      setError({ type: "", message: "" });
+      const productSubCategory = await createLocalProductSubCategory({ name });
+      productSubCategory
+        ? setSelectedProductSubCategory(productSubCategory)
+        : null;
+      setProductSubCategoryModal(false);
+      setCreateSubCategory(false);
+    }
   }
 
   const defaultImage = "https://via.placeholder.com/150";
@@ -361,16 +399,22 @@ export default function EditProductPage() {
               inputType="text"
               placeholder="Precio"
               title="Precio"
-              textStyle={priceError ? "text-defaultOrange" : ""}
+              textStyle={error.type === "price" ? "text-red-800" : ""}
               ref={priceRef}
               value=""
             />
+            {error.type === "price" ? (
+              <View className="w-3/4">
+                <Text className="text-red-800">{error.message}</Text>
+              </View>
+            ) : null}
             <BigTextInput
               inputType="text"
               placeholder="Descripción"
               title="Descripción: "
               ref={descriptionRef}
               value=""
+              maxLength={350}
             />
             <Pressable
               className="flex items-center justify-center w-[75%] h-12 bg-[#f8f8f8] mt-2 rounded-2xl"
@@ -419,8 +463,14 @@ export default function EditProductPage() {
               >
                 <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
                   <BasicButton
-                    text="No encunetra la categoría?"
-                    onPress={() => setCreateCategory(true)}
+                    text={
+                      createCategory ? "Volver" : "No encunetra la categoría?"
+                    }
+                    onPress={() => {
+                      createCategory
+                        ? setCreateCategory(false)
+                        : setCreateCategory(true);
+                    }}
                     background="#f8f8f8"
                     style="mt-4 mb-2"
                   />
@@ -432,14 +482,23 @@ export default function EditProductPage() {
                         title="Nombre de Nueva Categoría: "
                         value=""
                         ref={categoryRef}
+                        textStyle={
+                          error.type === "product-category"
+                            ? "text-red-800"
+                            : ""
+                        }
+                        maxLength={40}
                       />
+                      {error.type === "product-category" ? (
+                        <View className="w-3/4">
+                          <Text className="text-red-800">{error.message}</Text>
+                        </View>
+                      ) : null}
                       <BasicButton
                         logo={<CreateLogo />}
                         text="Crear Categoría"
                         onPress={() => {
-                          setCreateCategory(false);
                           hanldeCreateCategory();
-                          setProductCategoryModal(false);
                         }}
                         background="#f8f8f8"
                         style="mt-4"
@@ -456,7 +515,7 @@ export default function EditProductPage() {
                         data={localProductCategories}
                         renderItem={({ item, index }) => (
                           <Pressable
-                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            className={`flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden ${localProductCategories && index === localProductCategories.length - 1 ? "mb-14" : ""}`}
                             onPress={() => {
                               setSelectedProductCategory(item);
                               setProductCategoryModal(false);
@@ -472,6 +531,7 @@ export default function EditProductPage() {
                   <Pressable
                     onPress={() => {
                       setProductCategoryModal(false);
+                      setCreateCategory(false);
                     }}
                     className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
                   >
@@ -492,8 +552,16 @@ export default function EditProductPage() {
               >
                 <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
                   <BasicButton
-                    text="No encunetra la sub categoría?"
-                    onPress={() => setCreateSubCategory(true)}
+                    text={
+                      createSubCategory
+                        ? "Volver"
+                        : "No encunetra la sub categoría?"
+                    }
+                    onPress={() => {
+                      createSubCategory
+                        ? setCreateSubCategory(false)
+                        : setCreateSubCategory(true);
+                    }}
                     background="#f8f8f8"
                     style="mt-4 mb-2"
                   />
@@ -505,14 +573,23 @@ export default function EditProductPage() {
                         title="Nombre de Nueva Sub Categoría: "
                         value=""
                         ref={subCategoryRef}
+                        textStyle={
+                          error.type === "product sub-category"
+                            ? "text-red-800"
+                            : ""
+                        }
+                        maxLength={40}
                       />
+                      {error.type === "product sub-category" ? (
+                        <View className="w-3/4">
+                          <Text className="text-red-800">{error.message}</Text>
+                        </View>
+                      ) : null}
                       <BasicButton
                         logo={<CreateLogo />}
                         text="Crear Sub Categoría"
                         onPress={() => {
-                          setCreateSubCategory(false);
                           hanldeCreateSubCategory();
-                          setProductSubCategoryModal(false);
                         }}
                         background="#f8f8f8"
                         style="mt-4"
@@ -529,7 +606,7 @@ export default function EditProductPage() {
                         data={localProductCategories}
                         renderItem={({ item, index }) => (
                           <Pressable
-                            className="flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden"
+                            className={`flex items-center justify-center w-52 bg-[#f8f8f8] h-10 mt-2 rounded-2xl overflow-hidden  ${localProductCategories && index === localProductCategories.length - 1 ? "mb-14" : ""}`}
                             onPress={() => {
                               setSelectedProductSubCategory(item);
                               setProductSubCategoryModal(false);

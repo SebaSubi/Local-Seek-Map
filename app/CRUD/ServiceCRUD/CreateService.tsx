@@ -33,6 +33,8 @@ import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
 import GoBackButton from "../../../components/GoBackButton";
 
+type error = "name" | "category" | "required" | "";
+
 export default function CreateService() {
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [selectedType, setSelectedType] = useState<ServiceType>({
@@ -42,9 +44,11 @@ export default function CreateService() {
   const [typeModalVisibility, setTypeModalVisibility] = useState(false);
   const [search, setSearch] = useState("");
   const [createType, setCreateType] = useState(false);
-  const [createdService, setCreatedService] = useState<Service | null>(null);
-  const [goSchedule, setGoSchedule] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
 
   const local = useLocalIdStore((state) => state.local);
   const router = useRouter();
@@ -53,22 +57,7 @@ export default function CreateService() {
     getValue: () => string;
     setValue: (value: string) => void;
   }>(null);
-  const descriptionRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>(null);
-  const URLRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>(null);
-  const addressRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>(null);
-  const locationRef = useRef<{
-    getValue: () => string;
-    setValue: (value: string) => void;
-  }>(null);
+
   const typeRef = useRef<any>(null);
 
   async function fetchServiceTypes() {
@@ -103,17 +92,21 @@ export default function CreateService() {
 
   const handleSubmit = async () => {
     const name = nameRef.current?.getValue();
-    const description = descriptionRef.current?.getValue();
     const serviceTypeId = selectedType.id!;
-    const location = locationRef.current?.getValue();
-    const address = addressRef.current?.getValue();
 
     if (!name || serviceTypeId === "0000") {
-      Alert.alert("Por favor rellenar los campos obligatorios");
+      setError({
+        type: "required",
+        message: "*Por favor complete los campos obligatorios",
+      });
+      return;
+    } else if (name.length < 2) {
+      setError({
+        type: "name",
+        message: "*El nombre no puede tener menos de 2 caracteres",
+      });
       return;
     }
-
-    console.log(local.id);
 
     try {
       let uploadedImageUrl = null;
@@ -132,9 +125,11 @@ export default function CreateService() {
         dateFrom: new Date(),
       };
 
+      console.log(newService);
+
       const service = await createService(newService);
       setImage(null);
-      router.replace("/CRUD/ServiceCRUD/AddService");
+      // router.replace("/CRUD/ServiceCRUD/AddService");
     } catch (error) {
       Alert.alert("Error", "No se pudo crear el local.");
     }
@@ -142,8 +137,19 @@ export default function CreateService() {
 
   async function handleCreateType() {
     const name = typeRef.current?.getValue();
-    const newType = await createServiceType({ name });
-    setSelectedType(newType);
+    if (!name || name.length < 2) {
+      setError({
+        type: "category",
+        message:
+          "*El nombre de la categoría no puede tener menos de 2 caracteres",
+      });
+    } else {
+      setError({ type: "", message: "" });
+      const newType = await createServiceType({ name });
+      setSelectedType(newType);
+      setCreateType(false);
+      setTypeModalVisibility(false);
+    }
   }
 
   // function handleCreatePlusSchedule() {
@@ -181,14 +187,24 @@ export default function CreateService() {
               headerShown: false,
             }}
           />
+          {error.type === "required" ? (
+            <View className="w-3/4 mb-5">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <BasicTextInput
             inputType="text"
             value=""
             placeholder="Nombre"
-            textStyle="mt-4"
+            textStyle={`"mt-4 ${error.type === "required" || error.type === "name" ? "text-red-800" : ""}`}
             title="Nombre del Servicio: "
             ref={nameRef}
           />
+          {error.type === "name" ? (
+            <View className="w-3/4 mb-5">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <Modal
             animationType="slide"
             transparent={true}
@@ -201,8 +217,10 @@ export default function CreateService() {
             >
               <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
                 <BasicButton
-                  text="No encunetra la categoría?"
-                  onPress={() => setCreateType(true)}
+                  text={createType ? "Volver" : "No encunetra la categoría?"}
+                  onPress={() => {
+                    createType ? setCreateType(false) : setCreateType(true);
+                  }}
                   background="#f8f8f8"
                   style="mt-4 mb-2"
                 />
@@ -213,15 +231,22 @@ export default function CreateService() {
                       placeholder="Nombre"
                       title="Nombre de Nueva Categoría: "
                       value=""
+                      textStyle={
+                        error.type === "category" ? "text-red-800" : ""
+                      }
+                      maxLength={40}
                       ref={typeRef}
                     />
+                    {error.type === "category" ? (
+                      <View className="w-3/4 mb-5">
+                        <Text className="text-red-800">{error.message}</Text>
+                      </View>
+                    ) : null}
                     <BasicButton
                       logo={<CreateLogo />}
                       text="Crear Categoría"
                       onPress={() => {
-                        setCreateType(false);
                         handleCreateType();
-                        setTypeModalVisibility(false);
                       }}
                       background="#f8f8f8"
                       style="mt-4"
@@ -230,9 +255,10 @@ export default function CreateService() {
                 ) : (
                   <>
                     <BasicSearchButton
-                      placeholder="Buscar Categoria"
+                      placeholder="Buscar Categoría"
                       onSearch={setSearch}
                       background="#f8f8f8"
+                      style="mb-2"
                     />
                     <FlatList
                       data={serviceTypes}
@@ -253,11 +279,11 @@ export default function CreateService() {
                 )}
                 <Pressable
                   onPress={() => {
-                    router.back();
+                    setTypeModalVisibility(false);
                   }}
-                  className="w-20 h-10 bg-defaultGray rounded-2xl flex items-center justify-center my-4"
+                  className="w-20 h-10 bg-defaultBlue rounded-2xl flex items-center justify-center my-2 absolute bottom-2 "
                 >
-                  <Text>Volver</Text>
+                  <Text className="text-white">Cerrar</Text>
                 </Pressable>
               </View>
             </View>
@@ -267,7 +293,9 @@ export default function CreateService() {
             onPress={() => setTypeModalVisibility(true)}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
-            <Text className="text-sm font-light">
+            <Text
+              className={`text-sm font-light ${error.type === "required" || error.type === "category" ? "text-red-800" : ""}`}
+            >
               {selectedType && selectedType.name !== "default"
                 ? selectedType.name
                 : "Seleccionar Tipo de Servicio"}

@@ -42,6 +42,9 @@ import { useLocalServiceIdStore } from "../../../libs/localServiceZustang";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinaryServices } from "../../../libs/cloudinary";
 import { verifyUrl } from "../LocalCRUD/CreateLocal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+type error = "address" | "location" | "required" | "whatsapp" | "url" | "";
 
 export default function UpdateService() {
   const [serviceTypes, setServiceTypes] = useState<LocalServiceCategory[]>([]);
@@ -53,6 +56,8 @@ export default function UpdateService() {
   const [image, setImage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [createType, setCreateType] = useState(false);
+  const [warn, setWarning] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const localService = useLocalServiceIdStore((state) => state.localService);
 
@@ -60,8 +65,10 @@ export default function UpdateService() {
   const router = useRouter();
 
   //Error handlers
-  const [whatsappError, setWhatsappError] = useState("");
-  const [webpageError, setWebpageError] = useState("");
+  const [error, setError] = useState<{ type: error; message: string }>({
+    type: "",
+    message: "",
+  });
 
   const reservationNumberRef = useRef<{
     getValue: () => string;
@@ -88,10 +95,10 @@ export default function UpdateService() {
     setValue: (value: string) => void;
   }>(null);
 
-  async function fetchServiceTypes() {
-    const serviceTypes = await getLocalServiceCatsByName(search);
-    setServiceTypes(serviceTypes);
-  }
+  // async function fetchServiceTypes() {
+  //   const serviceTypes = await getLocalServiceCatsByName(search);
+  //   setServiceTypes(serviceTypes);
+  // }
 
   useEffect(() => {
     if (localService.service) {
@@ -117,9 +124,9 @@ export default function UpdateService() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchServiceTypes();
-  }, [search]);
+  // useEffect(() => {
+  //   fetchServiceTypes();
+  // }, [search]);
 
   const handleImagePicker = async () => {
     const permissionResult =
@@ -150,36 +157,81 @@ export default function UpdateService() {
     const location = locationRef.current?.getValue();
     const address = addressRef.current?.getValue();
 
-    if (reservationNumber && reservationNumber.length < 8) {
-      setWhatsappError(
-        // eslint-disable-next-line prettier/prettier
-        "La longitud minima de un numero es de 8"
-      );
-      setWebpageError("");
+    if (!location || !address) {
+      setError({
+        type: "required",
+        message: "*Por favor complete todos los campos obligatorios",
+      });
       return;
-    }
-    if (reservationNumber && reservationNumber.length > 18) {
-      //checkear esto y agregar que wpp no pueda ser negativo.
-      setWhatsappError(
-        // eslint-disable-next-line prettier/prettier
-        "La longitud maxima de un numero es de 18 "
-      );
-      setWebpageError("");
+    } else if (warn && !reservationURL && !reservationNumber) {
+      // setWarning(true);
+      return;
+    } else if (5 > address.length || address.length > 120) {
+      setError({
+        type: "address",
+        message:
+          "*La dirección no puede tener menos de 5 caracteres o mas de 120",
+      });
+      return;
+    } else if (
+      address &&
+      (address.includes("!") ||
+        address.includes("@") ||
+        address.includes("#") ||
+        address.includes("$") ||
+        address.includes("&") ||
+        address.includes("*"))
+    ) {
+      setError({
+        type: "address",
+        message:
+          "*La dirección del servicio no puede tener caracteres especiales",
+      });
+      return;
+    } else if (location.length < 10) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del servicio requieren mínimamente 14 caracteres",
+      });
+      return;
+    } else if (location.length >= 60) {
+      setError({
+        type: "location",
+        message:
+          "Las coordenadas del servicio no pueden tener mas de 60 caracteres",
+      });
+      return;
+    } else if (
+      location &&
+      (location.includes("!") ||
+        location.includes("@") ||
+        location.includes("#") ||
+        location.includes("$") ||
+        location.includes("&") ||
+        location.includes("*"))
+    ) {
+      setError({
+        type: "location",
+        message:
+          "*Las coordenadas del servicio no puede tener caracteres especiales",
+      });
+      return;
+    } else if (reservationNumber && reservationNumber.length < 8) {
+      setError({
+        type: "whatsapp",
+        message: "*La longitud minima de un numero es de 8",
+      });
+      return;
+    } else if (reservationNumber && reservationNumber.length > 18) {
+      setError({
+        type: "whatsapp",
+        message: "*La longitud maxima de un numero es de 18 ",
+      });
       return;
     }
     if (reservationURL && !verifyUrl(reservationURL)) {
-      setWhatsappError("");
-      setWebpageError("URL no valida");
-      return;
-    }
-
-    if (
-      !description ||
-      (!reservationURL && localServiceCategoryId === "0000") ||
-      !location ||
-      !address
-    ) {
-      Alert.alert("Por favor rellenar los campos obligatorios");
+      setError({ type: "url", message: "*URL no valida" });
       return;
     }
 
@@ -201,7 +253,6 @@ export default function UpdateService() {
         location,
         address,
         imgURL: uploadedImageUrl,
-        localServiceCategoryId,
         dateFrom: new Date(),
       };
 
@@ -235,7 +286,10 @@ export default function UpdateService() {
 
   return (
     <View className="w-full h-full bg-defaultBlue">
-      <View className="w-full h-[90%] rounded-3xl overflow-hidden bg-white">
+      <View
+        className="w-full h-[90%] rounded-3xl overflow-hidden bg-white"
+        style={{ paddingTop: insets.top }}
+      >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -249,6 +303,11 @@ export default function UpdateService() {
               headerShown: false,
             }}
           />
+          {error.type === "required" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <BigTextInput
             inputType="text"
             value=""
@@ -266,33 +325,37 @@ export default function UpdateService() {
             title="URL Reservas"
             ref={URLRef}
           />
-          {webpageError && (
+          {error.type === "url" && (
             <Text className="text-defaultOrange text-sm font-light">
-              *{webpageError}
+              *{error.message}
             </Text>
           )}
           <BasicTextInput
-            inputType="text"
+            inputType="number"
             value=""
             placeholder="Numero"
             textStyle="mt-4"
             title="Numero de Reservas"
             ref={reservationNumberRef}
           />
-          {whatsappError && (
+          {error.type === "whatsapp" && (
             <Text className="text-defaultOrange text-sm font-light">
-              *{whatsappError}
+              *{error.message}
             </Text>
           )}
           <BasicTextInput
             inputType="text"
             value=""
             placeholder="Ej: 25 de Mayo 99, Libertador San Martin, Entre Rios"
-            textStyle="mt-4"
+            textStyle={`mt-4 ${error.type === "required" || error.type === "address" ? " text-red-800" : ""}`}
             title="Dirección"
             ref={addressRef}
           />
-
+          {error.type === "address" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
           <Pressable
             style={({ pressed }) => [
               { backgroundColor: pressed ? "#f8f8f8" : "white" },
@@ -313,10 +376,15 @@ export default function UpdateService() {
             inputType="text"
             value=""
             placeholder="Ej: -1.000, -2.000"
-            textStyle="mt-4"
+            textStyle={`mt-4 ${error.type === "required" || error.type === "address" ? " text-red-800" : ""}`}
             title="Coordenadas"
             ref={locationRef}
           />
+          {error.type === "location" ? (
+            <View className="w-3/4">
+              <Text className="text-red-800">{error.message}</Text>
+            </View>
+          ) : null}
 
           <Pressable
             style={({ pressed }) => [
@@ -406,17 +474,6 @@ export default function UpdateService() {
               </View>
             </View>
           </Modal>
-
-          <Pressable
-            onPress={() => setTypeModalVisibility(true)}
-            className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
-          >
-            <Text className="text-sm font-light">
-              {selectedType && selectedType.name !== "default"
-                ? selectedType.name
-                : "Seleccionar Tipo de Servicio"}
-            </Text>
-          </Pressable>
 
           <View style={{ marginTop: 20 }}>
             <Button title="Seleccionar Imagen" onPress={handleImagePicker} />

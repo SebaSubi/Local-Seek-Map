@@ -24,7 +24,7 @@ export default function DeleteSchedule() {
 
   const insest = useSafeAreaInsets();
 
-  const { name } = useLocalSearchParams();
+  // const { name } = useLocalSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {

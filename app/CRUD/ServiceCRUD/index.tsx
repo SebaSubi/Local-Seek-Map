@@ -5,6 +5,7 @@ import {
   Animated,
   Dimensions,
   FlatList,
+  Modal,
 } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
@@ -20,12 +21,15 @@ import ServiceContainer from "../../../components/ServiceContainer";
 import DeleteServiceComponent from "../../../components/DeleteServiceComponent";
 import BasicButton from "../../../components/BasicButton";
 import GoBackButton from "../../../components/GoBackButton";
+import BasicWarning from "../../../components/BasicWarning";
 
 export default function ProductCrud() {
   const [expanded, setExpanded] = useState(false);
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<LocalService[]>([]);
   const [loading, setLoading] = useState(true);
+  const [warning, setWarning] = useState(false);
+  const [service, setService] = useState<string>();
   const router = useRouter();
   const widthAnim = useRef(new Animated.Value(48)).current; // Start from width 0
   const screenWidth = Dimensions.get("screen").width;
@@ -55,6 +59,7 @@ export default function ProductCrud() {
   const handleDelete = (id: string) => {
     deleteService(id);
     fetchAndSetServices();
+    setWarning(false);
   };
 
   return (
@@ -111,7 +116,10 @@ export default function ProductCrud() {
               renderItem={({ item }) => (
                 <DeleteServiceComponent
                   service={item}
-                  onDelete={handleDelete}
+                  onDelete={() => {
+                    setWarning(true);
+                    setService(item.id);
+                  }}
                 />
               )}
               keyExtractor={(item) => item.id!.toString()}
@@ -119,6 +127,30 @@ export default function ProductCrud() {
               refreshing={loading}
             />
           </View>
+          {warning && (
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={warning}
+              onRequestClose={() => setWarning(false)}
+            >
+              <View
+                className="w-full h-full flex items-center justify-center"
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              >
+                <BasicWarning
+                  text="Una vez que borra el servicio no podra ser recuperado."
+                  cancelButton={false}
+                  buttonLeft="Cancelar"
+                  buttonRight="Borrar"
+                  onPressRight={() => {
+                    handleDelete(service!);
+                  }}
+                  onPressLeft={() => setWarning(false)}
+                />
+              </View>
+            </Modal>
+          )}
         </View>
         <View className="flex flex-row justify-evenly items-end w-full">
           <View className="flex w-16 h-12 justify-center   items-start ">

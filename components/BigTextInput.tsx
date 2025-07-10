@@ -9,12 +9,14 @@ const BigTextInput = forwardRef(
       title,
       textStyle,
       value,
+      maxLength,
     }: {
       placeholder: string;
       inputType: "text" | "number";
       title?: string;
       textStyle?: string;
       value: string;
+      maxLength?: number;
     },
     ref: React.ForwardedRef<{
       getValue: () => string;
@@ -47,6 +49,7 @@ const BigTextInput = forwardRef(
           placeholder={placeholder}
           keyboardType={inputType === "number" ? "numeric" : "default"}
           multiline={true}
+          maxLength={maxLength}
         />
       </View>
     );

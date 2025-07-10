@@ -138,12 +138,11 @@ export interface LocalService {
   instagram?: string; // Optional field
   facebook?: string; // Optional field
   webpage?: string; // Optional field
-  description: string; // Max length of 256 characters
+  description?: string; // Max length of 256 characters
   imgURL?: string | null; // Optional field
   reservationURL?: string; // Optional field, mapped to "reservation_url" in the database
   schedule?: LocalServiceSchedule[]; // Assuming you have a `LocalServiceSchedule` interface defined
   localServiceCategory?: LocalServiceCategory; // Assuming you have a `LocalServiceCategory` interface defined
-  localServiceCategoryId: string;
   dateFrom: Date; // Defaults to `now()`, mapped to "date_from" in the database
   dateTo?: Date | null; // Optional field, mapped to "date_to" in the database
 }

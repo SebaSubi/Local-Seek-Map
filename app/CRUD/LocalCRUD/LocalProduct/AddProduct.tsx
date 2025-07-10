@@ -382,13 +382,9 @@ export default function AddProduct() {
           placeholder="Descripción"
           title="Descripción: "
           value=""
+          maxLength={350}
           ref={subDescriptionRef}
         />
-        {error.type === "description" ? (
-          <View className="w-3/4">
-            <Text className="text-red-800">{error.text}</Text>
-          </View>
-        ) : null}
         <View className="flex flex-row items-center justify-evenly w-full h-12  mt-2">
           <Pressable className="w-6 h-12 items-center justify-center opacity-0">
             <InfoIcon color="#1a253d" />
@@ -545,8 +541,16 @@ export default function AddProduct() {
           >
             <View className="flex items-center justify-start w-[85%] h-[75%] bg-white rounded-3xl">
               <BasicButton
-                text="No encunetra la sub categoría?"
-                onPress={() => setCreateSubCategory(true)}
+                text={
+                  createSubCategory
+                    ? "Volver"
+                    : "No encunetra la sub categoría?"
+                }
+                onPress={() => {
+                  createSubCategory
+                    ? setCreateSubCategory(false)
+                    : setCreateSubCategory(true);
+                }}
                 background="#f8f8f8"
                 style="mt-4 mb-2"
               />
