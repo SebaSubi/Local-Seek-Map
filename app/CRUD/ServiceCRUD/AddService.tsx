@@ -214,7 +214,7 @@ export default function CreateService() {
     }
 
     try {
-      console.log("image:", image);
+      // console.log("image:", image);
 
       // if (!image) {
       //   Alert.alert(
@@ -230,6 +230,15 @@ export default function CreateService() {
       //   return;
       // }
 
+      let uploadedImageUrl = null;
+      if (image) {
+        uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+        if (!uploadedImageUrl) {
+          Alert.alert("Error", "No se pudo cargar la imagen");
+          return;
+        }
+      }
+
       const newService: LocalService = {
         serviceId,
         localId: local.id!,
@@ -238,7 +247,7 @@ export default function CreateService() {
         reservationNumber,
         location,
         address,
-        // imgURL: uploadedImageUrl,
+        imgURL: uploadedImageUrl,
         dateFrom: new Date(),
         dateTo: null,
       };

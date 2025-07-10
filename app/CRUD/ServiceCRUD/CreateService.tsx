@@ -312,19 +312,19 @@ export default function CreateService() {
             />
           )}
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             onPress={handleImagePicker}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
             <Text className="text-sm font-light">Seleccionar Imagen</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
-          {/* {image && (
+          {image && (
             <Image
               source={{ uri: image || defaultImage }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )} */}
+          )}
         </ScrollView>
       </View>
       <View className="flex flex-row justify-evenly items-end w-full">

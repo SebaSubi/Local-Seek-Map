@@ -237,10 +237,20 @@ export default function UpdateService() {
     }
 
     try {
+      // let uploadedImageUrl = null;
+
+      // if (image) {
+      //   const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+      //   if (!uploadedImageUrl) {
+      //     Alert.alert("Error", "No se pudo cargar la imagen");
+      //     return;
+      //   }
+      // }
+
       let uploadedImageUrl = null;
 
       if (image) {
-        const uploadedImageUrl = await uploadImageToCloudinaryServices(image);
+        uploadedImageUrl = await uploadImageToCloudinaryServices(image);
         if (!uploadedImageUrl) {
           Alert.alert("Error", "No se pudo cargar la imagen");
           return;
@@ -481,7 +491,7 @@ export default function UpdateService() {
             </View>
           </Modal>
 
-          <View style={{ marginTop: 20 }}>
+          {/* <View style={{ marginTop: 20 }}>
             <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
           </View>
           {image && (
@@ -489,9 +499,9 @@ export default function UpdateService() {
               source={{ uri: image }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )}
+          )} */}
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             onPress={handleImagePicker}
             className="bg-defaultGray flex items-center justify-center h-10 w-3/4 rounded-2xl mt-5"
           >
@@ -502,7 +512,7 @@ export default function UpdateService() {
               source={{ uri: image }}
               style={{ width: 100, height: 100, marginTop: 10 }}
             />
-          )} */}
+          )}
 
           <Text className="text-red-600 mt-4">
             *No te olvides de agregale un horario a tu Servicio!
