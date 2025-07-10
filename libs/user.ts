@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Platform } from "react-native";
+import { Platform, Role } from "react-native";
 import { DysplayUser, Local } from "../schema/GeneralSchema";
 
 const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/auth-v2`;
@@ -33,6 +33,16 @@ export async function EditUser(user: {
   password: string;
 }) {
   return await axios.patch(`${API_URL}/update-user`, user); // I changed all PUT to PATCH -Lucas  update: it works lmao
+}
+
+export async function EditUserAdmin(user: {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  role: string;
+}) {
+  return await axios.patch(`${API_URL}/update-user-admin`, user); // I changed all PUT to PATCH -Lucas  update: it works lmao
 }
 
 export type UserLocal = {

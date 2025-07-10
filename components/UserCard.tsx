@@ -55,23 +55,25 @@ const UserCard = ({
             : user.email}
         </Text>
         <View className="flex-row">
-          <View className="flex flex-row items-center justify-between w-32">
+          <View className="flex flex-row items-center justify-between w-36">
             <Text className="mt-2 font-bold text-base">Rol:</Text>
-            <Text
-              className="mt-2 font-bold text-base"
-              style={{
-                color:
-                  user.role === Role.ADMIN
-                    ? colors.primary.orange
-                    : user.role === Role.STOREOWNER
-                      ? colors.primary.blue
-                      : "#000",
-              }}
-            >
-              {user.role}
-            </Text>
+            <View className="w-full items-center">
+              <Text
+                className="mt-2 font-bold text-base"
+                style={{
+                  color:
+                    user.role === Role.ADMIN
+                      ? colors.primary.orange
+                      : user.role === Role.STOREOWNER
+                        ? colors.primary.blue
+                        : "#000",
+                }}
+              >
+                {user.role}
+              </Text>
+            </View>
           </View>
-          <View className="flex flex-row items-center ml-10">
+          <View className="flex flex-row items-center ml-6">
             <Text className="mt-2 font-bold text-base">Locales:</Text>
             <Text className="mt-2 font-bold text-base ml-2">
               {user.localUser.length}
