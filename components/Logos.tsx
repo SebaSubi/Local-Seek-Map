@@ -207,3 +207,7 @@ export const StatsIcon = ({ color = "black", size = 24 }) => {
 export const RefreshLogo = ({ color = "black", size = 24 }) => {
   return <Ionicons name="refresh" size={size} color={color} />;
 };
+
+export const InfoCircle = ({ color = "black", size = 24 }) => {
+  return <Entypo name="info-with-circle" size={size} color={color} />;
+};

@@ -1,13 +1,16 @@
-import { View, Text, FlatList, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import UserComponent from "../../components/UserComponent";
 import { colors } from "../../constants/colors";
 import BasicButton from "../../components/BasicButton";
 import {
   Checkbox,
+  InfoCircle,
+  InfoIcon,
   LogOutIcon,
   ReloadIcon,
   Servicio,
+  StoreIcon,
   UpdateLogo,
 } from "../../components/Logos";
 import { Role, useAuth } from "../context/AuthContext";
@@ -19,42 +22,13 @@ import UserPermissionModal from "../../components/modals/UserPermissionModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { Link } from "expo-router";
+import LocalEditModal from "../../components/modals/LocalEditModal";
 
 export default function UserScreen() {
   const { authState, onLogout, onLogin } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [locals, setLocals] = useState<Local[]>([]);
   const [isPermissionModalVisible, setPermissionModalVisible] = useState(false);
-
-  // useEffect(() => {
-  //   fetchData();
-  //   // console.log("We are in the useEffect");
-  // }, [authState]);
-
-  // Dentro del componente UserScreen
-  useFocusEffect(
-    useCallback(() => {
-      fetchData(); // se ejecuta cada vez que esta pantalla recibe el foco
-    }, [authState?.user?.email])
-  );
-
-  const fetchData = async () => {
-    // console.log("username: ", authState?.user?.username);
-    // console.log(authState?.user?.username !== "Admin");
-    // console.log(authState?.user?.username !== Role.USER);
-    if (
-      authState?.user?.username &&
-      authState.user.username !== "Admin" &&
-      authState.user.username !== Role.USER
-    ) {
-      const fetchedLocals = await getUserLocals(authState?.user?.email);
-      // console.log(fetchedLocals);
-
-      if (Array.isArray(fetchedLocals)) {
-        setLocals(fetchedLocals);
-      }
-    }
-  };
+  const [isUserLocalsModalVisible, setUserLocalsModalVisible] = useState(false);
 
   // console.log(authState);
   const guestUser = {
@@ -103,47 +77,23 @@ export default function UserScreen() {
                     </Text>
                   </Pressable>
                 </Link>
-              ) : (
-                ""
-              )}
-            </>
-          ) : (
-            ""
-          )}
-
-          {authState?.user?.username !== "guest" ? (
-            <>
+              ) : null}
               {authState?.user?.role !== Role.USER ? (
                 <>
-                  {locals.length >= 1 ? (
-                    <>
-                      <Text className="text-2xl font-bold">Mi Local</Text>
-                      <View className="w-full h-[45%]">
-                        <FlatList
-                          data={locals}
-                          horizontal={false}
-                          numColumns={2}
-                          renderItem={({ item }) => (
-                            <EditLocalContainer local={item} />
-                          )}
-                          keyExtractor={(item) => item?.id!}
-                          onRefresh={() => fetchData()}
-                          // refreshing={loading}
-                          refreshing={false}
-                        />
-                      </View>
-                    </>
-                  ) : null}
-                  <View className="flex justify-center w-full items-center">
-                    <BasicButton
-                      text="Recargar"
-                      background={colors.primary.blue}
-                      textStyle="text-white font-bold ml-2"
-                      logo={<ReloadIcon color="#fff" />}
-                      style="w-28 pl-2 "
-                      onPress={() => fetchData()}
-                    />
-                  </View>
+                  <LocalEditModal
+                    isVisible={isUserLocalsModalVisible}
+                    setVisible={setUserLocalsModalVisible}
+                  />
+                  <BasicButton
+                    text="Editar mis Locales"
+                    background={colors.primary.blue}
+                    textStyle={`font-bold text-white text-base ml-2`}
+                    style="h-11 mt-1 justify-center"
+                    logo={<StoreIcon color="#fff" />}
+                    onPress={() =>
+                      setUserLocalsModalVisible(!isUserLocalsModalVisible)
+                    }
+                  />
                 </>
               ) : null}
               <View className="w-full">
@@ -164,6 +114,7 @@ export default function UserScreen() {
               </View>
             </>
           ) : null}
+
           <BasicButton
             text="Cerrar sesion"
             background={colors.primary.orange}
@@ -173,7 +124,14 @@ export default function UserScreen() {
             onPress={onLogout}
           />
         </View>
-        {/* <GoBackButton /> */}
+        <View className="flex items-center justify-end mt-5">
+          <Text className="text-base mr-4">
+            ¡Ante cualquier problema Contáctanos!
+          </Text>
+          <Text className="text-base underline text-cyan-600" selectable={true}>
+            lsmmultiapp@gmail.com
+          </Text>
+        </View>
       </View>
     </View>
   );
