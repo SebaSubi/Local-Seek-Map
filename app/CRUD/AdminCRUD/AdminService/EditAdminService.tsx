@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
 import React from "react";
-import GoBackButton from "../../../components/GoBackButton";
 import { Stack } from "expo-router";
+import GoBackButton from "../../../../components/GoBackButton";
 
-export default function AdminService() {
+export default function EditAdminService() {
   return (
     <>
       <Stack.Screen
@@ -15,13 +15,11 @@ export default function AdminService() {
         <View className="flex flex-row items-center justify-between w-full ">
           <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
-            Controles de Administrador
+            Editar Producto
           </Text>
           <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
-        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
-          <Text>AdminUser</Text>
-        </View>
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-start"></View>
       </View>
     </>
   );

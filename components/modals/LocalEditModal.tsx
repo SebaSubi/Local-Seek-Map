@@ -76,7 +76,7 @@ const LocalEditModal = ({
           </View>
           <View className="w-full items-end"></View>
           <Text className="font-normal text-2xl">Mis Locales</Text>
-          <View className="w-full">
+          <View className="w-full h-4/6">
             <FlatList
               data={locals}
               horizontal={false}

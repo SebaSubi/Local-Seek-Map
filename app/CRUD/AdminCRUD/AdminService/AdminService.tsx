@@ -1,13 +1,13 @@
-import { View, Text, FlatList } from "react-native";
-import React, { useState, useEffect } from "react";
+import { View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
-import GoBackButton from "../../../components/GoBackButton";
-import BasicSearchButton from "../../../components/BasicSearchBar";
-import { colors } from "../../../constants/colors";
-import BasicButton from "../../../components/BasicButton";
-import { ReloadIcon } from "../../../components/Logos";
+import GoBackButton from "../../../../components/GoBackButton";
+import BasicSearchButton from "../../../../components/BasicSearchBar";
+import { colors } from "../../../../constants/colors";
+import BasicButton from "../../../../components/BasicButton";
+import { ReloadIcon } from "../../../../components/Logos";
 
-export default function AdminProduct() {
+export default function AdminService() {
   const [search, setSearch] = useState("");
 
   const fetchLocalsData = async () => {
@@ -31,31 +31,31 @@ export default function AdminProduct() {
         <View className="flex flex-row items-center justify-between w-full ">
           <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
-            Gestionar Productos
+            Gestionar Servicios
           </Text>
           <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
         <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-start">
           <BasicSearchButton
-            placeholder="Buscar Producto"
+            placeholder="Buscar Servicio"
             onSearch={setSearch}
             background={colors.primary.lightGray}
             style="my-4"
           />
           {/* {locals.length !== 0 ? (
-                      <View className="w-full h-4/5 mt-4">
-                        <FlatList
-                          data={locals}
-                          horizontal={false}
-                          numColumns={2}
-                          renderItem={({ item }) => <EditLocalContainer local={item} />}
-                          keyExtractor={(item) => item?.id!}
-                          onRefresh={() => fetchLocalsData()}
-                          // refreshing={loading}
-                          refreshing={false}
-                        />
-                      </View>
-                    ) : null} */}
+                                <View className="w-full h-4/5 mt-4">
+                                  <FlatList
+                                    data={locals}
+                                    horizontal={false}
+                                    numColumns={2}
+                                    renderItem={({ item }) => <EditLocalContainer local={item} />}
+                                    keyExtractor={(item) => item?.id!}
+                                    onRefresh={() => fetchLocalsData()}
+                                    // refreshing={loading}
+                                    refreshing={false}
+                                  />
+                                </View>
+                              ) : null} */}
 
           <View className="flex justify-center items-center">
             <BasicButton
