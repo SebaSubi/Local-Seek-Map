@@ -192,6 +192,7 @@ const UserUpdateModal = ({
               isVisible={seeDeleteModal}
               setVisible={setSeeDeleteModal}
               setBeforeModalVisible={setVisible}
+              userId={user.id}
             />
           </View>
         </View>

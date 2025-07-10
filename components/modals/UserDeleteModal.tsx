@@ -6,15 +6,18 @@ import { useAuth } from "../../app/context/AuthContext";
 import BasicButton from "../BasicButton";
 import BasicTextInput from "../BasicTextInput";
 import { deleteUser } from "../../libs/user";
+import { router } from "expo-router";
 
 const UserDeleteModal = ({
   isVisible,
   setVisible,
   setBeforeModalVisible,
+  userId,
 }: {
   isVisible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
   setBeforeModalVisible: Dispatch<SetStateAction<boolean>>;
+  userId: string;
 }) => {
   const { onLogout, authState } = useAuth();
   const wordToCheck = authState?.user?.username ?? "cuenta";
@@ -26,14 +29,16 @@ const UserDeleteModal = ({
 
   const DeleteAccount = async () => {
     if (DeleteText.current?.getValue() === wordToCheck) {
-      if (authState?.user?.id) {
-        const response = await deleteUser(authState.user.id);
-        // console.log(response);
-        if (response.status === 200) {
-          onLogout;
-          setVisible(false);
-          setBeforeModalVisible(false);
+      const response = await deleteUser(userId);
+      console.log(response.status);
+      if (response.status === 200) {
+        console.log(authState?.user);
+        if (userId === authState?.user?.id) {
+          await onLogout!();
+          router.push("/");
         }
+        setVisible(false);
+        setBeforeModalVisible(false);
       }
     }
   };

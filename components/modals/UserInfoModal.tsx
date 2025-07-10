@@ -1,14 +1,36 @@
-import { View, Text, Pressable, Modal } from "react-native";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { CloseCircle, Eye, EyeOff, Save, TrashIcon } from "../Logos";
+import { View, Text, Pressable, Modal, FlatList } from "react-native";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  CloseCircle,
+  Eye,
+  EyeOff,
+  ReloadIcon,
+  Save,
+  TrashIcon,
+  WarningIcon,
+} from "../Logos";
+import { Picker } from "@react-native-picker/picker";
 import { colors } from "../../constants/colors";
-import { DysplayUser } from "../../schema/GeneralSchema";
+import { DysplayUser, Local } from "../../schema/GeneralSchema";
 import UserDeleteModal from "./UserDeleteModal";
 import BasicTextInput from "../BasicTextInput";
 import BasicButton from "../BasicButton";
-import { AuthUser, useAuth } from "../../app/context/AuthContext";
-import { checkEmail, checkUsername, EditUser } from "../../libs/user";
+import { AuthUser, Role, useAuth } from "../../app/context/AuthContext";
+import {
+  checkEmail,
+  checkUsername,
+  EditUser,
+  EditUserAdmin,
+  getUserLocals,
+} from "../../libs/user";
 import { validateEmail } from "../Register";
+import EditLocalContainer from "../EditLocalContainer";
 
 const UserInfoModal = ({
   isVisible,
@@ -19,6 +41,10 @@ const UserInfoModal = ({
   setVisible: Dispatch<SetStateAction<boolean>>;
   user: DysplayUser;
 }) => {
+  useEffect(() => {
+    fetchData();
+  }, [user]);
+
   const { onLogin } = useAuth();
 
   const email = useRef<{
@@ -42,10 +68,28 @@ const UserInfoModal = ({
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [seePassword, setSeePassword] = useState(true);
+  const [selectedRole, setSelectedRole] = useState<Role>(
+    user.role === "ADMIN"
+      ? Role.ADMIN
+      : user.role === "STORE_OWNER"
+        ? Role.STOREOWNER
+        : Role.USER
+  );
 
   const [seeDeleteModal, setSeeDeleteModal] = useState(false);
 
   const [editType, setEditType] = useState<"user" | "local">("user");
+
+  const [locals, setLocals] = useState<Local[]>([]);
+
+  const fetchData = async () => {
+    const fetchedLocals = await getUserLocals(user.email);
+    // console.log(fetchedLocals);
+
+    if (Array.isArray(fetchedLocals)) {
+      setLocals(fetchedLocals);
+    }
+  };
 
   return (
     <Modal
@@ -65,7 +109,7 @@ const UserInfoModal = ({
         <View
           style={{
             width: "80%",
-            height: "70%",
+            height: "75%",
             backgroundColor: colors.primary.white,
             borderRadius: 20,
             justifyContent: "flex-start",
@@ -83,10 +127,12 @@ const UserInfoModal = ({
               text="Usuario"
               background={
                 editType === "user"
-                  ? colors.primary.orange
+                  ? colors.primary.blue
                   : colors.primary.lightGray
               }
-              textStyle="text-black font-bold"
+              textStyle={`text-${
+                editType === "user" ? `white` : `black`
+              } font-bold`}
               style="w-24"
               onPress={() => setEditType("user")}
             />
@@ -94,10 +140,12 @@ const UserInfoModal = ({
               text="Locales"
               background={
                 editType === "local"
-                  ? colors.primary.orange
+                  ? colors.primary.blue
                   : colors.primary.lightGray
               }
-              textStyle="text-black font-bold"
+              textStyle={`text-${
+                editType === "local" ? `white` : `black`
+              } font-bold`}
               style="w-24"
               onPress={() => setEditType("local")}
             />
@@ -178,8 +226,44 @@ const UserInfoModal = ({
                 </View>
               </View>
               <View
-                className={`justify-end ${usernameError ? "mt-2" : "mt-6"}`}
+                className={`justify-end ${usernameError ? "mt-2" : "mt-6"} items-center w-full`}
               >
+                <View className="w-full flex-row justify-start items-start">
+                  <Text className="ml-7 mb-1 text-sm font-light">Rol:</Text>
+                </View>
+                <View
+                  style={{
+                    display: "flex",
+                    width: 200,
+                    height: 55,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: colors.primary.lightGray,
+                    borderRadius: 100,
+                    marginBottom: 8,
+                  }}
+                >
+                  <Picker
+                    selectedValue={selectedRole}
+                    onValueChange={(itemValue, itemIndex) =>
+                      setSelectedRole(itemValue)
+                    }
+                    mode="dropdown"
+                    style={{
+                      display: "flex",
+                      width: 170,
+                      height: 50,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: colors.primary.lightGray,
+                      borderRadius: 100,
+                    }}
+                  >
+                    <Picker.Item label="User" value={Role.USER} />
+                    <Picker.Item label="Store Owner" value={Role.STOREOWNER} />
+                    <Picker.Item label="Admin" value={Role.ADMIN} />
+                  </Picker>
+                </View>
                 <BasicButton
                   text="Guardar"
                   background={colors.primary.blue}
@@ -200,6 +284,7 @@ const UserInfoModal = ({
                       setPasswordError,
                       setUsernameError,
                       user,
+                      selectedRole,
                       // eslint-disable-next-line prettier/prettier
                       onLogin
                     );
@@ -221,10 +306,55 @@ const UserInfoModal = ({
                   isVisible={seeDeleteModal}
                   setVisible={setSeeDeleteModal}
                   setBeforeModalVisible={setVisible}
+                  userId={user.id}
                 />
               </View>
             </>
-          ) : null}
+          ) : (
+            <>
+              <View className="flex p-2 mt-2">
+                {user.localUser.length === 0 ? (
+                  <View className="flex items-center justify-center h-5/6">
+                    <WarningIcon size={100} color={colors.primary.orange} />
+                    <Text className="font-thin text-xl text-center">
+                      {" "}
+                      Este usuario no tiene locales
+                    </Text>
+                  </View>
+                ) : (
+                  <>
+                    {locals.length !== 0 ? (
+                      <View className="w-full h-72 mt-4">
+                        <FlatList
+                          data={locals}
+                          horizontal={false}
+                          numColumns={2}
+                          renderItem={({ item }) => (
+                            <EditLocalContainer local={item} />
+                          )}
+                          keyExtractor={(item) => item?.id!}
+                          onRefresh={() => fetchData()}
+                          // refreshing={loading}
+                          refreshing={false}
+                        />
+                      </View>
+                    ) : null}
+
+                    <View className="flex justify-center items-center">
+                      <BasicButton
+                        text="Recargar"
+                        background={colors.primary.blue}
+                        textStyle="text-white font-bold ml-2"
+                        logo={<ReloadIcon color="#fff" />}
+                        style="w-28 pl-2 "
+                        onPress={() => fetchData()}
+                      />
+                    </View>
+                  </>
+                )}
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Modal>
@@ -248,6 +378,7 @@ export const handleUserChange = async (
   setPasswordError: React.Dispatch<React.SetStateAction<string>>,
   setUsernameError: React.Dispatch<React.SetStateAction<string>>,
   user: DysplayUser,
+  SelectedRole: string,
   // eslint-disable-next-line prettier/prettier
   onLogin: any
 ) => {
@@ -267,7 +398,10 @@ export const handleUserChange = async (
     setPasswordError("");
     setEmailError("");
     setUsernameError("El nombre de usuario debe tener al menos 2 caracteres");
-  } else if ((password.current?.getValue().length ?? 0) < 8) {
+  } else if (
+    (password.current?.getValue().length ?? 0) < 8 &&
+    (password.current?.getValue().length ?? 0) !== 0
+  ) {
     //handle no first Password
     setPasswordError("La contraseña debe tener al menos 8 caracteres");
     setEmailError("");
@@ -279,7 +413,10 @@ export const handleUserChange = async (
     setPasswordError("La contraseña no debe tener mas de 64 caracteres.");
     setEmailError("");
     setUsernameError("");
-  } else if ((secondPassword.current?.getValue().length ?? 0) < 8) {
+  } else if (
+    (secondPassword.current?.getValue().length ?? 0) < 8 &&
+    (secondPassword.current?.getValue().length ?? 0) !== 0
+  ) {
     //handle no second Password
     setPasswordError("La contraseña debe tener al menos 8 caracteres");
     setEmailError("");
@@ -328,11 +465,12 @@ export const handleUserChange = async (
         username.current !== null &&
         password.current !== null
       ) {
-        const petition = await EditUser({
+        const petition = await EditUserAdmin({
           id: user.id,
           email: email.current.getValue(),
           username: username.current.getValue(),
           password: password.current.getValue(),
+          role: SelectedRole,
         });
         console.log(petition.status);
         if (petition.status === 200) {

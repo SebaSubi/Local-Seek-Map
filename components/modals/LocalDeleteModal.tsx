@@ -35,7 +35,6 @@ const LocalDeleteModal = ({
         if (response?.status === 200) {
           setVisible(false);
           navigation.goBack();
-          //   onLogout; FIXME: en vez de logout que recargue la parte de user
         }
       }
     }
