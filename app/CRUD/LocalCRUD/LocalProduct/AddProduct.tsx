@@ -570,7 +570,6 @@ export default function AddProduct() {
             <GoBackButton style="opacity-0" iconColor="white" />
           </View>
         </View>
-        ;
       </ScrollView>
     </View>
   );
