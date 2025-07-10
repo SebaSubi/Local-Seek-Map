@@ -1,5 +1,6 @@
 import { Alert, Platform } from "react-native";
-import { ServiceType } from "../schema/GeneralSchema";
+import { Service, ServiceType } from "../schema/GeneralSchema";
+import axios from "axios";
 
 const API_URL = `${process.env.EXPO_PUBLIC_API_ROUTE}/service-type`;
 // const API_URL =
@@ -65,5 +66,42 @@ export async function createServiceType(serviceType: ServiceType) {
     }
   } catch (error) {
     console.log("Error: ", error);
+  }
+}
+
+const API_URL_2 = process.env.EXPO_PUBLIC_API_ROUTE;
+
+export async function getAllServices(search: string) {
+  try {
+    const response = await axios.get(
+      `${API_URL_2}/auth-v2/admin-services?search=${search}`
+    );
+    return response.data as Service[];
+  } catch (error) {
+    console.error("Error updating product", error);
+  }
+}
+
+export async function UpdateAdminService(service: Service) {
+  try {
+    const response = await axios.patch(
+      `${API_URL_2}/auth-v2/admin-service-update`,
+      service
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product", error);
+  }
+}
+
+export async function DeleteAdminService(serviceId: string) {
+  try {
+    const response = await axios.patch(
+      `${API_URL_2}/auth-v2/admin-service-delete`,
+      { serviceId }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product", error);
   }
 }

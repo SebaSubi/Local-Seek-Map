@@ -4,14 +4,23 @@ import { colors } from "../constants/colors";
 import { Local, Product, Service, ServiceType } from "../schema/GeneralSchema";
 import { Link } from "expo-router";
 import { getIfServiceOpen } from "../libs/localService";
+import { useService } from "../libs/serviceZustang";
 
-export default function ServiceContainer({ service }: { service: Service }) {
+export default function ServiceContainer({
+  service,
+  pathname,
+}: {
+  service: Service;
+  pathname?: string;
+}) {
+  const setService = useService((service) => service.setService);
+
   if (!service || !service.name) return;
 
   return (
     <Link
       href={{
-        pathname: "/CRUD/ServiceCRUD/ServicePage/[id]",
+        pathname: pathname ? pathname : "/CRUD/ServiceCRUD/ServicePage/[id]",
         params: {
           id: service.id,
           name: service.name,
@@ -24,6 +33,7 @@ export default function ServiceContainer({ service }: { service: Service }) {
       <Pressable
         className="flex flex-col items-center  mt-3 w-[45%] bg-[#f8f8f8] h-52 rounded-3xl ml-3"
         key={service.id}
+        onPress={() => setService(service)}
       >
         <View className="w-[70%] h-[47%] flex items-center justify-center  mt-3">
           <Image

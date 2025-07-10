@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import GoBackButton from "../../../../components/GoBackButton";
@@ -6,12 +6,16 @@ import BasicSearchButton from "../../../../components/BasicSearchBar";
 import { colors } from "../../../../constants/colors";
 import BasicButton from "../../../../components/BasicButton";
 import { ReloadIcon } from "../../../../components/Logos";
+import { Service } from "../../../../schema/GeneralSchema";
+import { getAllServices } from "../../../../libs/serviceType";
+import ServiceContainer from "../../../../components/ServiceContainer";
 
 export default function AdminService() {
   const [search, setSearch] = useState("");
+  const [services, setServices] = useState<Service[]>([]);
 
   const fetchLocalsData = async () => {
-    // setUsers((await getAllUsersBySearch(search)) ?? []);
+    setServices((await getAllServices(search)) ?? []);
   };
 
   useEffect(() => {
@@ -19,6 +23,7 @@ export default function AdminService() {
       await fetchLocalsData();
     };
     fetchUsers();
+    // console.log(services);
   }, [search]);
   return (
     <>
@@ -42,20 +47,25 @@ export default function AdminService() {
             background={colors.primary.lightGray}
             style="my-4"
           />
-          {/* {locals.length !== 0 ? (
-                                <View className="w-full h-4/5 mt-4">
-                                  <FlatList
-                                    data={locals}
-                                    horizontal={false}
-                                    numColumns={2}
-                                    renderItem={({ item }) => <EditLocalContainer local={item} />}
-                                    keyExtractor={(item) => item?.id!}
-                                    onRefresh={() => fetchLocalsData()}
-                                    // refreshing={loading}
-                                    refreshing={false}
-                                  />
-                                </View>
-                              ) : null} */}
+          {services.length !== 0 ? (
+            <View className="w-full h-4/5 mt-4">
+              <FlatList
+                data={services}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => (
+                  <ServiceContainer
+                    service={item}
+                    pathname="/CRUD/AdminCRUD/AdminService/EditAdminService"
+                  />
+                )}
+                keyExtractor={(item) => item?.id!}
+                onRefresh={() => fetchLocalsData()}
+                // refreshing={loading}
+                refreshing={false}
+              />
+            </View>
+          ) : null}
 
           <View className="flex justify-center items-center">
             <BasicButton
