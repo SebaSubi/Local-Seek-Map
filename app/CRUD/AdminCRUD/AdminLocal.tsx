@@ -1,9 +1,31 @@
-import { View, Text } from "react-native";
-import React from "react";
+import { View, Text, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import GoBackButton from "../../../components/GoBackButton";
+import BasicSearchButton from "../../../components/BasicSearchBar";
+import { colors } from "../../../constants/colors";
+import BasicButton from "../../../components/BasicButton";
+import { ReloadIcon } from "../../../components/Logos";
+import { getAdminLocals } from "../../../libs/user";
+import { Local } from "../../../schema/GeneralSchema";
+import EditLocalContainer from "../../../components/EditLocalContainer";
 
 export default function AdminLocal() {
+  const [search, setSearch] = useState("");
+  const [locals, setLocals] = useState<Local[]>([]);
+
+  useEffect(() => {
+    fetchData();
+  }, [search]);
+
+  const fetchData = async () => {
+    const fetchedLocals = await getAdminLocals(search);
+    // console.log(fetchedLocals);
+    if (Array.isArray(fetchedLocals)) {
+      setLocals(fetchedLocals);
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -15,12 +37,42 @@ export default function AdminLocal() {
         <View className="flex flex-row items-center justify-between w-full ">
           <GoBackButton iconColor="white" style="ml-1" />
           <Text className="text-white font-semibold text-xl mt-1">
-            Controles de Administrador
+            Gestionar Locales
           </Text>
           <GoBackButton iconColor="white" style="ml-1 opacity-0" />
         </View>
-        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-center">
-          <Text>AdminLocal</Text>
+        <View className="bg-white h-[89%] w-full rounded-3xl flex items-center justify-start">
+          <BasicSearchButton
+            placeholder="Buscar Local"
+            onSearch={setSearch}
+            background={colors.primary.lightGray}
+            style="my-4"
+          />
+          {locals.length !== 0 ? (
+            <View className="w-full h-4/5 mt-4">
+              <FlatList
+                data={locals}
+                horizontal={false}
+                numColumns={2}
+                renderItem={({ item }) => <EditLocalContainer local={item} />}
+                keyExtractor={(item) => item?.id!}
+                onRefresh={() => fetchData()}
+                // refreshing={loading}
+                refreshing={false}
+              />
+            </View>
+          ) : null}
+
+          <View className="flex justify-center items-center">
+            <BasicButton
+              text="Recargar"
+              background={colors.primary.blue}
+              textStyle="text-white font-bold ml-2"
+              logo={<ReloadIcon color="#fff" />}
+              style="w-28 pl-2 mt-2"
+              onPress={() => fetchData()}
+            />
+          </View>
         </View>
       </View>
     </>

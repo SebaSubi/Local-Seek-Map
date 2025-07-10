@@ -37,7 +37,7 @@ export default function AdminUser() {
       await fetchUsersData();
     };
     fetchUsers();
-  }, [search]);
+  }, [search, userModalVisible]);
   return (
     <>
       <Stack.Screen
